@@ -214,14 +214,17 @@ public class GameController {
                 else System.out.println("outside of board");
                 break;
             case EAST:
-                if(x < board.width-amount) player.setSpace(board.getSpace(x+amount, y));
+                if(amount < 0 && x > 0) player.setSpace(board.getSpace(x+amount, y));
+                else if(x < board.width-amount) player.setSpace(board.getSpace(x+amount, y));
                 else System.out.println("outside of board");
                 break;
             case WEST:
+                if(amount < 0 && x< (board.width+amount)) player.setSpace((board.getSpace(x-amount,y)));
                 if(x > amount-1) player.setSpace(board.getSpace(x-amount, y));
                 else System.out.println("outside of board");
                 break;
             case SOUTH:
+                if(amount < 0 && y > 0) player.setSpace(board.getSpace(x, y+amount));
                 if(y < board.height-amount) player.setSpace(board.getSpace(x, y+amount));
                 else System.out.println("outside of board");
                 break;
