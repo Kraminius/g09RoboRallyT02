@@ -34,16 +34,21 @@ public class GameController {
 
     final public Board board;
 
+    /**
+     * Creates a gameController from a board
+     * @param board a non null board.
+     */
     public GameController(@NotNull Board board) {
         this.board = board;
     }
 
-    /**
-     * This is just some dummy controller operation to make a simple move to see something
-     * happening on the board. This method should eventually be deleted!
-     *
-     * @param space the space to which the current player should move
-     */
+    /*
+         Board has an ArrayArray ([][]) called spaces of the Class Space.
+         [x] pos and [y] pos.
+         Each space can contain a player, can be found with 'board.getSpace(x, y).getPlayer();'
+         The player variable in 'Space' is at default set to null. but '.setPlayer()' can be used to put a player there
+
+      */
     public void moveCurrentPlayerToSpace(@NotNull Space space)  {
         // TODO Assignment V1: method should be implemented by the students:
         //   - the current player should be moved to the given space
