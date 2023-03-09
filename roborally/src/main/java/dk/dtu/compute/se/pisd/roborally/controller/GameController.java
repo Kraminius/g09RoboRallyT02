@@ -197,22 +197,44 @@ public class GameController {
 
     // TODO Assignment V2
     public void moveForward(@NotNull Player player) {
-
+        moveForward(player, 1);
     }
 
     // TODO Assignment V2
     public void fastForward(@NotNull Player player) {
-
+        moveForward(player, 2);
+    }
+    private void moveForward(Player player, int amount){
+        int x = player.getSpace().x;
+        int y = player.getSpace().y;
+        switch (player.getHeading()){
+            case NORTH:
+                if(y > amount-1) player.setSpace(board.getSpace(x, y-amount));
+                else System.out.println("outside of board");
+                break;
+            case EAST:
+                if(x < board.width-amount) player.setSpace(board.getSpace(x+amount, y));
+                else System.out.println("outside of board");
+                break;
+            case WEST:
+                if(x > amount-1) player.setSpace(board.getSpace(x-amount, y));
+                else System.out.println("outside of board");
+                break;
+            case SOUTH:
+                if(y < board.height-amount) player.setSpace(board.getSpace(x, y+amount));
+                else System.out.println("outside of board");
+                break;
+        }
     }
 
     // TODO Assignment V2
     public void turnRight(@NotNull Player player) {
-
+        player.setHeading(player.getHeading().next());
     }
 
     // TODO Assignment V2
     public void turnLeft(@NotNull Player player) {
-
+        player.setHeading(player.getHeading().prev());
     }
 
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {
