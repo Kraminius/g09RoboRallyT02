@@ -209,7 +209,8 @@ public class GameController {
         int y = player.getSpace().y;
         switch (player.getHeading()){
             case NORTH:
-                if(y > amount-1) player.setSpace(board.getSpace(x, y-amount));
+                if(amount < 0 && y < board.height + amount) player.setSpace(board.getSpace(x, y-amount));
+                else if(y > amount-1 && amount > 0) player.setSpace(board.getSpace(x, y-amount));
                 else System.out.println("outside of board");
                 break;
             case EAST:
