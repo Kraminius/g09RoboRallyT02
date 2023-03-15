@@ -169,6 +169,9 @@ public class GameController {
         }
     }
 
+    public void executeCommandForTest(@NotNull Player player, Command command){
+        executeCommand(player, command);
+    }
     // XXX: V2
     private void executeCommand(@NotNull Player player, Command command) {
         if (player != null && player.board == board && command != null) {
