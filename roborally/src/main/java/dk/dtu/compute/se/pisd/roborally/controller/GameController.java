@@ -192,9 +192,6 @@ public class GameController {
                 case FAST_FORWARD:
                     this.fastForward(player);
                     break;
-                case OPTION_LEFT_RIGHT:
-                    board.setPhase(Phase.PLAYER_INTERACTION);
-                    break;
                 default:
                     // DO NOTHING (for now)
             }
