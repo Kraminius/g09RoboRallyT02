@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
  * ...
  *
  * @author Ekkart Kindler, ekki@dtu.dk
- *
  */
 public class GameController {
 
@@ -44,7 +43,7 @@ public class GameController {
      *
      * @param space the space to which the current player should move
      */
-    public void moveCurrentPlayerToSpace(@NotNull Space space)  {
+    public void moveCurrentPlayerToSpace(@NotNull Space space) {
         // TODO Assignment V1: method should be implemented by the students:
         //   - the current player should be moved to the given space
         //     (if it is free()
@@ -144,7 +143,8 @@ public class GameController {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
                     Command command = card.command;
-                    executeCommand(currentPlayer, command);
+                    boolean terminate = executeCommand(currentPlayer, command);
+                    if (terminate) return;
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
@@ -169,32 +169,47 @@ public class GameController {
         }
     }
 
-    public void executeCommandForTest(@NotNull Player player, Command command){
-        executeCommand(player, command);
-    }
-    // XXX: V2
-    private void executeCommand(@NotNull Player player, Command command) {
-        if (player != null && player.board == board && command != null) {
-            // XXX This is a very simplistic way of dealing with some basic cards and
-            //     their execution. This should eventually be done in a more elegant way
-            //     (this concerns the way cards are modelled as well as the way they are executed).
+    public void executeCommandAndContinue(@NotNull Player player, @NotNull Command command){
 
-            switch (command) {
-                case FORWARD:
-                    this.moveForward(player);
-                    break;
-                case RIGHT:
-                    this.turnRight(player);
-                    break;
-                case LEFT:
-                    this.turnLeft(player);
-                    break;
-                case FAST_FORWARD:
-                    this.fastForward(player);
-                    break;
-                default:
-                    // DO NOTHING (for now)
-            }
+    }
+
+    /*public void executeCommandForTest(@NotNull Player player, Command command) {
+        executeCommand(player, command);
+    }*/
+    // XXX: V2
+
+    /**
+     * @param player
+     * @param command
+     * @return true if the player interaction mode is enabled.
+     */
+    private boolean executeCommand(@NotNull Player player, @NotNull Command command) {
+        if (player.board != board) {
+            throw new RuntimeException("Player board different from current board");
+        }
+        // XXX This is a very simplistic way of dealing with some basic cards and
+        //     their execution. This should eventually be done in a more elegant way
+        //     (this concerns the way cards are modelled as well as the way they are executed).
+
+        switch (command) {
+            case FORWARD:
+                this.moveForward(player);
+                return false;
+            case RIGHT:
+                this.turnRight(player);
+                return false;
+            case LEFT:
+                this.turnLeft(player);
+                return false;
+            case FAST_FORWARD:
+                this.fastForward(player);
+                return false;
+            case OPTION_LEFT_RIGHT:
+                board.setPhase(Phase.PLAYER_INTERACTION);
+                return true;
+            default:
+                throw new RuntimeException("Should not happen");
+                // DO NOTHING (for now)
         }
     }
 
@@ -207,28 +222,29 @@ public class GameController {
     public void fastForward(@NotNull Player player) {
         moveForward(player, 2);
     }
-    private void moveForward(Player player, int amount){
+
+    private void moveForward(Player player, int amount) {
         int x = player.getSpace().x;
         int y = player.getSpace().y;
-        switch (player.getHeading()){
+        switch (player.getHeading()) {
             case NORTH:
-                if(amount < 0 && y < board.height + amount) player.setSpace(board.getSpace(x, y-amount));
-                else if(y > amount-1 && amount > 0) player.setSpace(board.getSpace(x, y-amount));
+                if (amount < 0 && y < board.height + amount) player.setSpace(board.getSpace(x, y - amount));
+                else if (y > amount - 1 && amount > 0) player.setSpace(board.getSpace(x, y - amount));
                 else System.out.println("outside of board");
                 break;
             case EAST:
-                if(amount < 0 && x > 0) player.setSpace(board.getSpace(x+amount, y));
-                else if(x < board.width-amount) player.setSpace(board.getSpace(x+amount, y));
+                if (amount < 0 && x > 0) player.setSpace(board.getSpace(x + amount, y));
+                else if (x < board.width - amount) player.setSpace(board.getSpace(x + amount, y));
                 else System.out.println("outside of board");
                 break;
             case WEST:
-                if(amount < 0 && x< (board.width+amount)) player.setSpace((board.getSpace(x-amount,y)));
-                if(x > amount-1) player.setSpace(board.getSpace(x-amount, y));
+                if (amount < 0 && x < (board.width + amount)) player.setSpace((board.getSpace(x - amount, y)));
+                if (x > amount - 1) player.setSpace(board.getSpace(x - amount, y));
                 else System.out.println("outside of board");
                 break;
             case SOUTH:
-                if(amount < 0 && y > 0) player.setSpace(board.getSpace(x, y+amount));
-                if(y < board.height-amount) player.setSpace(board.getSpace(x, y+amount));
+                if (amount < 0 && y > 0) player.setSpace(board.getSpace(x, y + amount));
+                if (y < board.height - amount) player.setSpace(board.getSpace(x, y + amount));
                 else System.out.println("outside of board");
                 break;
         }
