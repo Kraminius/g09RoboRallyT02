@@ -180,6 +180,9 @@ public class GameController {
         int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
         if (nextPlayerNumber < board.getPlayersNumber()) {
             board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+            if(!board.isStepMode()){
+                continuePrograms();
+            }
         } else {
             int step = board.getStep();
             step++;
@@ -187,6 +190,9 @@ public class GameController {
                 makeProgramFieldsVisible(step);
                 board.setStep(step);
                 board.setCurrentPlayer(board.getPlayer(0));
+                if(!board.isStepMode()){
+                    continuePrograms();
+                }
             } else {
                 startProgrammingPhase();
             }
