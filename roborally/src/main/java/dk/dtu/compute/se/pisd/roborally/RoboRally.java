@@ -75,6 +75,8 @@ public class RoboRally extends Application {
                     appController.exit();} );
         stage.setResizable(false);
         stage.sizeToScene();
+        stage.setX(700);
+        stage.setY(100);
         stage.show();
     }
 

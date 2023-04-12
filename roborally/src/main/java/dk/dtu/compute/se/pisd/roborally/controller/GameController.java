@@ -144,7 +144,10 @@ public class GameController {
                 if (card != null) {
                     Command command = card.command;
                     boolean terminate = executeCommand(currentPlayer, command);
-                    if (terminate) return;
+                    if (terminate){
+                        board.setPhase(Phase.PLAYER_INTERACTION);
+                        return;
+                    }
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
@@ -169,8 +172,25 @@ public class GameController {
         }
     }
 
-    public void executeCommandAndContinue(@NotNull Player player, @NotNull Command command){
+    public void executeCommandOptionAndContinue(@NotNull Command command){
+        board.setPhase(Phase.ACTIVATION);
+        Player currentPlayer = board.getCurrentPlayer();
+        boolean terminate = executeCommand(currentPlayer, command);
 
+        int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+        if (nextPlayerNumber < board.getPlayersNumber()) {
+            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+        } else {
+            int step = board.getStep();
+            step++;
+            if (step < Player.NO_REGISTERS) {
+                makeProgramFieldsVisible(step);
+                board.setStep(step);
+                board.setCurrentPlayer(board.getPlayer(0));
+            } else {
+                startProgrammingPhase();
+            }
+        }
     }
 
     /*public void executeCommandForTest(@NotNull Player player, Command command) {
@@ -205,7 +225,6 @@ public class GameController {
                 this.fastForward(player);
                 return false;
             case OPTION_LEFT_RIGHT:
-                board.setPhase(Phase.PLAYER_INTERACTION);
                 return true;
             default:
                 throw new RuntimeException("Should not happen");
