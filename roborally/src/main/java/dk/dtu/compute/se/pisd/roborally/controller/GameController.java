@@ -33,6 +33,10 @@ public class GameController {
 
     final public Board board;
 
+    /**
+     *
+     * @param board the board which the game is played on
+     */
     public GameController(@NotNull Board board) {
         this.board = board;
     }
@@ -172,6 +176,12 @@ public class GameController {
         }
     }
 
+    /**
+     *
+     * @param command
+     * resets the phase to activation, executes command and goes to the next player.
+     * Checks if stepmode is enabled, if not continues the programs.
+     */
     public void executeCommandOptionAndContinue(@NotNull Command command){
         board.setPhase(Phase.ACTIVATION);
         Player currentPlayer = board.getCurrentPlayer();
@@ -213,6 +223,9 @@ public class GameController {
         if (player.board != board) {
             throw new RuntimeException("Player board different from current board");
         }
+        if(command.isInteractive()){
+            return true;
+        }
         // XXX This is a very simplistic way of dealing with some basic cards and
         //     their execution. This should eventually be done in a more elegant way
         //     (this concerns the way cards are modelled as well as the way they are executed).
@@ -230,8 +243,6 @@ public class GameController {
             case FAST_FORWARD:
                 this.fastForward(player);
                 return false;
-            case OPTION_LEFT_RIGHT:
-                return true;
             default:
                 throw new RuntimeException("Should not happen");
                 // DO NOTHING (for now)
