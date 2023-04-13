@@ -256,7 +256,8 @@ public class GameController {
 
     // TODO Assignment V2
     public void fastForward(@NotNull Player player) {
-        moveForward(player, 2);
+        moveForward(player, 1);
+        moveForward(player, 1);
     }
 
     private void moveForward(Player player, int amount) {
