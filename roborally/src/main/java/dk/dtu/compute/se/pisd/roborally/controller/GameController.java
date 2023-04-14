@@ -295,7 +295,7 @@ public class GameController {
                 break;
         }
         if(space == null) return false; //If space was out of bounds return here.
-        if(obstacleInSpace(player.getSpace(), space, heading)) return false;
+        if(obstacleInSpace(player.getSpace(), space)) return false;
         Player playerToMove = space.getPlayer();
         if(isBelt){
             player.setSpace(space);
@@ -320,11 +320,50 @@ public class GameController {
      *
      * @param fromSpace The Space where the player currently is and will move from
      * @param toSpace The space where the player is moving to.
-     * @param heading The direction the players is coming from.
      * @return
      */
-    private boolean obstacleInSpace(Space fromSpace, Space toSpace, Heading heading){
-        return false;
+    private boolean obstacleInSpace(Space fromSpace, Space toSpace){
+
+        Heading directionHeadingTo = null;
+        Heading directionHeadingFrom = null;
+        Boolean obstacle = false;
+
+        if(fromSpace.getX() < toSpace.x){
+            directionHeadingTo = Heading.EAST;
+            directionHeadingFrom = Heading.WEST;
+        }
+        else if(fromSpace.getX() > toSpace.x){
+            directionHeadingTo = Heading.WEST;
+            directionHeadingFrom = Heading.EAST;
+        }
+        else if(fromSpace.getY() < toSpace.getY()){
+            directionHeadingTo = Heading.NORTH;
+            directionHeadingFrom = Heading.SOUTH;
+        }
+        else if (fromSpace.getY() > toSpace.getY()){
+            directionHeadingTo = Heading.SOUTH;
+            directionHeadingFrom = Heading.NORTH;
+        }
+
+        if(toSpace.getWallHeading() != null && directionHeadingTo != null){
+            for(int i = 0; i < toSpace.getWallHeading().length; i++){
+                if (toSpace.getWallHeading()[i] == directionHeadingTo) {
+                    obstacle = true;
+                }
+            }
+        }
+
+        if(fromSpace.getWallHeading() != null && directionHeadingFrom != null){
+            for(int i = 0; i < fromSpace.getWallHeading().length; i++){
+                if (fromSpace.getWallHeading()[i] == directionHeadingFrom) {
+                    obstacle = true;
+                }
+            }
+        }
+
+
+        return obstacle;
+
     }
 
     // TODO Assignment V2
