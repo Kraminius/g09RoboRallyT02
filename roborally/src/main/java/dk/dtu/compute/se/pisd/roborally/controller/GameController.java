@@ -314,6 +314,15 @@ public class GameController {
         }
     }
 
+    /**@author
+     *
+     * Checks for obstacles in a given space, used when moving a player into a field
+     *
+     * @param fromSpace The Space where the player currently is and will move from
+     * @param toSpace The space where the player is moving to.
+     * @param heading The direction the players is coming from.
+     * @return
+     */
     private boolean obstacleInSpace(Space fromSpace, Space toSpace, Heading heading){
         return false;
     }
