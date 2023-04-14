@@ -358,6 +358,12 @@ public class GameController {
         }
     }
 
+    /**
+     * @author Tobias Gørlyk     s223271.dtu.dk
+     *
+     * Activates the belts on the board for all players one at a time but right after each other. While a player is on a belt they don't have any push collision.
+     *
+     */
     public void activateBelts(){
         for(int i = 0; i < board.getPlayersNumber(); i++){
             Player player = board.getPlayer(i);
