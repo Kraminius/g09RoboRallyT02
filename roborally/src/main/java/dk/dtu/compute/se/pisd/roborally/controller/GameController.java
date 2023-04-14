@@ -278,7 +278,7 @@ public class GameController {
         if(heading == null) heading = player.getHeading();
         space = getSpaceAt(amount, heading, x, y);
         if(space == null) return false; //If space was out of bounds return here.
-        if(obstacleInSpace(player.getSpace(), space, heading)) return false;
+        if(obstacleInSpace(player.getSpace(), space)) return false;
         Player playerToMove = space.getPlayer();
         if(isBelt){
             player.setSpace(space);
@@ -317,24 +317,7 @@ public class GameController {
                 else System.out.println("outside of board");
                 break;
         }
-        if(space == null) return false; //If space was out of bounds return here.
-        if(obstacleInSpace(player.getSpace(), space, heading)) return false;
-        Player playerToMove = space.getPlayer();
-        if(isBelt){
-            player.setSpace(space);
-            return true;
-        }
-        if(playerToMove != null){ //Check if there is a player already on this field.
-            if(moveForward(playerToMove, amount, heading, false)){
-                player.setSpace(space); //There is a player in front and they can move, so we move too.
-                return true;
-            }
-            else return false; //There is a player there and they cannot move forward so no one moves.
-        }
-        else{
-            player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
-            return true;
-        }
+        return space;
     }
 
     /**@author
@@ -343,7 +326,6 @@ public class GameController {
      *
      * @param fromSpace The Space where the player currently is and will move from
      * @param toSpace The space where the player is moving to.
-     * @param heading The direction the players is coming from.
      * @return
      */
     private boolean obstacleInSpace(Space fromSpace, Space toSpace){

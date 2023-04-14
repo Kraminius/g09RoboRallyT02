@@ -37,6 +37,7 @@ public class Space extends Subject {
     public final int y;
 
     public final Heading[] wallHeading;
+    public Belt belt;
 
 
 
