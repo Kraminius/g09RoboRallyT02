@@ -260,6 +260,7 @@ public class GameController {
         moveForward(player, 1, null, false);
     }
 
+
     /**@author Tobias Gørlyk, s224271@dtu.dk
      *
      * Move Forward is a recursive method, that moves a player if there is space in the direction that is free.
@@ -267,7 +268,7 @@ public class GameController {
      * If no one can move because of an obstacle or it being outside the board, no one moves.
      * @param player The player to move
      * @param amount The amount to move, for pushing to work it must be either 1 or -1, depending on going forward or backward ones.
-     * @param heading This should always be null when called outside this method. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
+     * @param heading This should always be null when called outside this method, unless for belts or pushing. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
      * @param isBelt This should always be null, unless on a belt, where it should ignore players as they move at the same time.
      * @return a boolean value returning true if it can move into the space, returning false if it can't move at all.
      */
@@ -276,24 +277,7 @@ public class GameController {
         int y = player.getSpace().y;
         Space space = null;
         if(heading == null) heading = player.getHeading();
-        switch (heading) {
-            case NORTH:
-                if ((amount < 0 && y < board.height + amount) || (y > amount - 1 && amount > 0)) space = board.getSpace(x, y - amount);
-                else System.out.println("outside of board");
-                break;
-            case EAST:
-                if ((amount < 0 && x > 0) || (x < board.width - amount)) space =board.getSpace(x + amount, y);
-                else System.out.println("outside of board");
-                break;
-            case WEST:
-                if ((amount < 0 && x < (board.width + amount)) || (x > amount - 1)) space = board.getSpace(x - amount, y);
-                else System.out.println("outside of board");
-                break;
-            case SOUTH:
-                if ((amount < 0 && y > 0) || (y < board.height - amount)) space = board.getSpace(x, y + amount);
-                else System.out.println("outside of board");
-                break;
-        }
+        space = getSpaceAt(amount, heading, x, y);
         if(space == null) return false; //If space was out of bounds return here.
         if(obstacleInSpace(player.getSpace(), space, heading)) return false;
         Player playerToMove = space.getPlayer();
@@ -314,6 +298,28 @@ public class GameController {
         }
     }
 
+    private Space getSpaceAt(int amount, Heading heading, int x, int y){
+        Space space = null;
+        switch (heading) {
+            case NORTH:
+                if ((amount < 0 && y < board.height + amount) || (y > amount - 1 && amount > 0)) space = board.getSpace(x, y - amount);
+                else System.out.println("outside of board");
+                break;
+            case EAST:
+                if ((amount < 0 && x > 0) || (x < board.width - amount)) space =board.getSpace(x + amount, y);
+                else System.out.println("outside of board");
+                break;
+            case WEST:
+                if ((amount < 0 && x < (board.width + amount)) || (x > amount - 1)) space = board.getSpace(x - amount, y);
+                else System.out.println("outside of board");
+                break;
+            case SOUTH:
+                if ((amount < 0 && y > 0) || (y < board.height - amount)) space = board.getSpace(x, y + amount);
+                else System.out.println("outside of board");
+                break;
+        }
+        return space;
+    }
     /**@author
      *
      * Checks for obstacles in a given space, used when moving a player into a field
@@ -324,7 +330,10 @@ public class GameController {
      * @return
      */
     private boolean obstacleInSpace(Space fromSpace, Space toSpace, Heading heading){
+
+
         return false;
+
     }
 
     // TODO Assignment V2
@@ -348,6 +357,51 @@ public class GameController {
             return false;
         }
     }
+
+    public void activateBelts(){
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            Player player = board.getPlayer(i);
+            int moving;
+            if(player.getSpace().belt != null){
+                moving = player.getSpace().belt.speed;
+                for(int n = moving; n > 0; n--){
+                    Heading heading = player.getSpace().belt.heading;
+                    Space spaceInFront = null;
+                    switch (heading){
+                        case EAST:
+                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x+1, player.getSpace().y);
+                            break;
+                        case WEST:
+                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x-1, player.getSpace().y);
+                            break;
+                        case NORTH:
+                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y-1);
+                            break;
+                        case SOUTH:
+                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y+1);
+                            break;
+                        default:
+                            System.out.println("No Heading"); //This should not happen
+                            break;
+                    }
+                    if(spaceInFront == null) return;
+
+                    if(spaceInFront.belt == null){
+                        moveForward(player, 1, heading, false); //Can move players as this would be outside of belt.
+                        moving = 0; //No longer moving on a belt so this is set to 0.
+                    }
+                    else moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
+
+                    if(spaceInFront.belt.turn.equals("Left")) turnLeft(player);
+                    else if(spaceInFront.belt.turn.equals("Right")) turnRight(player);
+
+                }
+            }
+        }
+    }
+
+
+
 
     /**
      * A method called when no corresponding controller operation is implemented yet. This
