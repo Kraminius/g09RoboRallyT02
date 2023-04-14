@@ -251,40 +251,66 @@ public class GameController {
 
     // TODO Assignment V2
     public void moveForward(@NotNull Player player) {
-        moveForward(player, 1);
+        moveForward(player, 1, null);
     }
 
     // TODO Assignment V2
     public void fastForward(@NotNull Player player) {
-        moveForward(player, 1);
-        moveForward(player, 1);
+        moveForward(player, 1, null);
+        moveForward(player, 1, null);
     }
 
-    private void moveForward(Player player, int amount) {
+    /**@author Tobias Gørlyk, s224271@dtu.dk
+     *
+     * Move Forward is a recursive method, that moves a player if there is space in the direction that is free.
+     * If there is a player there it moves them forward if they can move forward.
+     * If no one can move because of an obstacle or it being outside the board, no one moves.
+     * @param player The player to move
+     * @param amount The amount to move, for pushing to work it must be either 1 or -1, depending on going forward or backward ones.
+     * @param heading This should always be null when called outside this method. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
+     * @return a boolean value returning true if it can move into the space, returning false if it can't move at all.
+     */
+    private boolean moveForward(Player player, int amount, Heading heading) {
         int x = player.getSpace().x;
         int y = player.getSpace().y;
-        switch (player.getHeading()) {
+        Space space = null;
+        if(heading == null) heading = player.getHeading();
+        switch (heading) {
             case NORTH:
-                if (amount < 0 && y < board.height + amount) player.setSpace(board.getSpace(x, y - amount));
-                else if (y > amount - 1 && amount > 0) player.setSpace(board.getSpace(x, y - amount));
+                if ((amount < 0 && y < board.height + amount) || (y > amount - 1 && amount > 0)) space = board.getSpace(x, y - amount);
                 else System.out.println("outside of board");
                 break;
             case EAST:
-                if (amount < 0 && x > 0) player.setSpace(board.getSpace(x + amount, y));
-                else if (x < board.width - amount) player.setSpace(board.getSpace(x + amount, y));
+                if ((amount < 0 && x > 0) || (x < board.width - amount)) space =board.getSpace(x + amount, y);
                 else System.out.println("outside of board");
                 break;
             case WEST:
-                if (amount < 0 && x < (board.width + amount)) player.setSpace((board.getSpace(x - amount, y)));
-                if (x > amount - 1) player.setSpace(board.getSpace(x - amount, y));
+                if ((amount < 0 && x < (board.width + amount)) || (x > amount - 1)) space = board.getSpace(x - amount, y);
                 else System.out.println("outside of board");
                 break;
             case SOUTH:
-                if (amount < 0 && y > 0) player.setSpace(board.getSpace(x, y + amount));
-                if (y < board.height - amount) player.setSpace(board.getSpace(x, y + amount));
+                if ((amount < 0 && y > 0) || (y < board.height - amount)) space = board.getSpace(x, y + amount);
                 else System.out.println("outside of board");
                 break;
         }
+        if(space == null) return false; //If space was out of bounds return here.
+        Player playerToMove = space.getPlayer();
+        if(obstacleInSpace(space, heading)) return false;
+        if(playerToMove != null){ //Check if there is a player already on this field.
+            if(moveForward(playerToMove, amount, heading)){
+                player.setSpace(space); //There is a player in front and they can move, so we move too.
+                return true;
+            }
+            else return false; //There is a player there and they cannot move forward so no one moves.
+        }
+        else{
+            player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
+            return true;
+        }
+    }
+
+    private boolean obstacleInSpace(Space space, Heading heading){
+        return false;
     }
 
     // TODO Assignment V2
