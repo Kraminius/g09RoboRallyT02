@@ -251,13 +251,13 @@ public class GameController {
 
     // TODO Assignment V2
     public void moveForward(@NotNull Player player) {
-        moveForward(player, 1, null);
+        moveForward(player, 1, null, false);
     }
 
     // TODO Assignment V2
     public void fastForward(@NotNull Player player) {
-        moveForward(player, 1, null);
-        moveForward(player, 1, null);
+        moveForward(player, 1, null, false);
+        moveForward(player, 1, null, false);
     }
 
     /**@author Tobias Gørlyk, s224271@dtu.dk
@@ -268,9 +268,10 @@ public class GameController {
      * @param player The player to move
      * @param amount The amount to move, for pushing to work it must be either 1 or -1, depending on going forward or backward ones.
      * @param heading This should always be null when called outside this method. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
+     * @param isBelt This should always be null, unless on a belt, where it should ignore players as they move at the same time.
      * @return a boolean value returning true if it can move into the space, returning false if it can't move at all.
      */
-    private boolean moveForward(Player player, int amount, Heading heading) {
+    private boolean moveForward(Player player, int amount, Heading heading, boolean isBelt) {
         int x = player.getSpace().x;
         int y = player.getSpace().y;
         Space space = null;
@@ -294,10 +295,14 @@ public class GameController {
                 break;
         }
         if(space == null) return false; //If space was out of bounds return here.
+        if(obstacleInSpace(player.getSpace(), space, heading)) return false;
         Player playerToMove = space.getPlayer();
-        if(obstacleInSpace(space, heading)) return false;
+        if(isBelt){
+            player.setSpace(space);
+            return true;
+        }
         if(playerToMove != null){ //Check if there is a player already on this field.
-            if(moveForward(playerToMove, amount, heading)){
+            if(moveForward(playerToMove, amount, heading, false)){
                 player.setSpace(space); //There is a player in front and they can move, so we move too.
                 return true;
             }
@@ -309,7 +314,7 @@ public class GameController {
         }
     }
 
-    private boolean obstacleInSpace(Space space, Heading heading){
+    private boolean obstacleInSpace(Space fromSpace, Space toSpace, Heading heading){
         return false;
     }
 
