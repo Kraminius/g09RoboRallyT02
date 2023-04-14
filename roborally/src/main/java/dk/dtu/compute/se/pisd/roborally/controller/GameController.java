@@ -267,7 +267,7 @@ public class GameController {
      * If no one can move because of an obstacle or it being outside the board, no one moves.
      * @param player The player to move
      * @param amount The amount to move, for pushing to work it must be either 1 or -1, depending on going forward or backward ones.
-     * @param heading This should always be null when called outside this method. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
+     * @param heading This should always be null when called outside this method, unless for belts or pushing. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
      * @param isBelt This should always be null, unless on a belt, where it should ignore players as they move at the same time.
      * @return a boolean value returning true if it can move into the space, returning false if it can't move at all.
      */
@@ -276,6 +276,29 @@ public class GameController {
         int y = player.getSpace().y;
         Space space = null;
         if(heading == null) heading = player.getHeading();
+        space = getSpaceAt(amount, heading, x, y);
+        if(space == null) return false; //If space was out of bounds return here.
+        if(obstacleInSpace(player.getSpace(), space, heading)) return false;
+        Player playerToMove = space.getPlayer();
+        if(isBelt){
+            player.setSpace(space);
+            return true;
+        }
+        if(playerToMove != null){ //Check if there is a player already on this field.
+            if(moveForward(playerToMove, amount, heading, false)){
+                player.setSpace(space); //There is a player in front and they can move, so we move too.
+                return true;
+            }
+            else return false; //There is a player there and they cannot move forward so no one moves.
+        }
+        else{
+            player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
+            return true;
+        }
+    }
+
+    private Space getSpaceAt(int amount, Heading heading, int x, int y){
+        Space space = null;
         switch (heading) {
             case NORTH:
                 if ((amount < 0 && y < board.height + amount) || (y > amount - 1 && amount > 0)) space = board.getSpace(x, y - amount);
@@ -295,7 +318,7 @@ public class GameController {
                 break;
         }
         if(space == null) return false; //If space was out of bounds return here.
-        if(obstacleInSpace(player.getSpace(), space)) return false;
+        if(obstacleInSpace(player.getSpace(), space, heading)) return false;
         Player playerToMove = space.getPlayer();
         if(isBelt){
             player.setSpace(space);
@@ -320,6 +343,7 @@ public class GameController {
      *
      * @param fromSpace The Space where the player currently is and will move from
      * @param toSpace The space where the player is moving to.
+     * @param heading The direction the players is coming from.
      * @return
      */
     private boolean obstacleInSpace(Space fromSpace, Space toSpace){
@@ -387,6 +411,57 @@ public class GameController {
             return false;
         }
     }
+
+    /**
+     * @author Tobias Gørlyk     s223271.dtu.dk
+     *
+     * Activates the belts on the board for all players one at a time but right after each other. While a player is on a belt they don't have any push collision.
+     *
+     */
+    public void activateBelts(){
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            Player player = board.getPlayer(i);
+            int moving;
+            if(player.getSpace().belt != null){
+                moving = player.getSpace().belt.speed;
+                for(int n = moving; n > 0; n--){
+                    Heading heading = player.getSpace().belt.heading;
+                    Space spaceInFront = null;
+                    switch (heading){
+                        case EAST:
+                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x+1, player.getSpace().y);
+                            break;
+                        case WEST:
+                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x-1, player.getSpace().y);
+                            break;
+                        case NORTH:
+                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y-1);
+                            break;
+                        case SOUTH:
+                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y+1);
+                            break;
+                        default:
+                            System.out.println("No Heading"); //This should not happen
+                            break;
+                    }
+                    if(spaceInFront == null) return;
+
+                    if(spaceInFront.belt == null){
+                        moveForward(player, 1, heading, false); //Can move players as this would be outside of belt.
+                        moving = 0; //No longer moving on a belt so this is set to 0.
+                    }
+                    else moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
+
+                    if(spaceInFront.belt.turn.equals("Left")) turnLeft(player);
+                    else if(spaceInFront.belt.turn.equals("Right")) turnRight(player);
+
+                }
+            }
+        }
+    }
+
+
+
 
     /**
      * A method called when no corresponding controller operation is implemented yet. This
