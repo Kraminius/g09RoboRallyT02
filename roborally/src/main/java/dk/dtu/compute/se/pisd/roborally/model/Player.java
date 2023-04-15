@@ -137,4 +137,12 @@ public class Player extends Subject {
         return cards[i];
     }
 
+    //Method to get their checkpoints reached
+    public boolean getCheckpointReadhed(int Checkpoint) {
+        return checkpointsReadhed[Checkpoint];
+    }
+    //Method to change their checkpoints reached
+    public void setCheckpointReadhed(int Checkpoint, boolean state) {
+        checkpointsReadhed[Checkpoint] = state;
+    }
 }

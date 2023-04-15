@@ -136,6 +136,8 @@ public class GameController {
         do {
             executeNextStep();
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
+        //Tester her, skal nok flyttes til kun at køre inden activation slutter
+        activateCheckpoints();
     }
 
     // XXX: V2
@@ -437,6 +439,25 @@ public class GameController {
                     if(spaceInFront.belt.turn.equals("Left")) turnLeft(player);
                     else if(spaceInFront.belt.turn.equals("Right")) turnRight(player);
 
+                }
+            }
+        }
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     *
+     * Activates the checkpoints on the board
+     */
+    public void activateCheckpoints(){
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            Player player = board.getPlayer(i);
+            int number;
+            if(player.getSpace().checkpoint != null){
+                number = player.getSpace().checkpoint.number;
+                if(number == 0 || player.getCheckpointReadhed((number-1)) == true) {
+                player.setCheckpointReadhed(number,true);
+                System.out.println("Player: "+ i +" has reached checkpoint: " + (number + 1));
                 }
             }
         }
