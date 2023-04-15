@@ -47,6 +47,8 @@ public class Player extends Subject {
 
     private CommandCardField[] program;
     private CommandCardField[] cards;
+    //Har lavet en array for om checkpoints er samlet
+    private boolean[] checkpointsReadhed;
 
     public Player(@NotNull Board board, String color, @NotNull String name) {
         this.board = board;
@@ -64,6 +66,8 @@ public class Player extends Subject {
         for (int i = 0; i < cards.length; i++) {
             cards[i] = new CommandCardField(this);
         }
+        //Her gives spilleren antallet af checkpoints
+        checkpointsReadhed = new boolean[board.getCheckpoints()];
     }
 
     public String getName() {
