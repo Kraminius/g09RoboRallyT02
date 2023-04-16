@@ -60,6 +60,7 @@ public class GameController {
 
     // XXX: V2
     public void startProgrammingPhase() {
+        activateCheckpoints(); //Ser om nogen spiller har nået et checkpoint
         board.setPhase(Phase.PROGRAMMING);
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
@@ -136,8 +137,6 @@ public class GameController {
         do {
             executeNextStep();
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
-        //Tester her, skal nok flyttes til kun at køre inden activation slutter
-        activateCheckpoints();
     }
 
     // XXX: V2
@@ -447,7 +446,8 @@ public class GameController {
     /**
      * @author Nicklas Christensen     s224314.dtu.dk
      *
-     * Activates the checkpoints on the board
+     * Activates the checkpoints on the board, cheks player for reaching checkpoint
+     * unless they haven't gotten previous checkpoint
      */
     public void activateCheckpoints(){
         for(int i = 0; i < board.getPlayersNumber(); i++){
@@ -457,7 +457,7 @@ public class GameController {
                 number = player.getSpace().checkpoint.number;
                 if(number == 0 || player.getCheckpointReadhed((number-1)) == true) {
                 player.setCheckpointReadhed(number,true);
-                System.out.println("Player: "+ i +" has reached checkpoint: " + (number + 1));
+                System.out.println("Player: "+ (i +1) +" has reached checkpoint: " + (number + 1));
                 }
             }
         }

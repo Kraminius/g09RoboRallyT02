@@ -78,25 +78,26 @@ public class Board extends Subject {
                     spaces[x][y] = space;
 
                 }
-                //Making a few checkpoints here
-                else if (y == 1 && x == 2) {
+                //Making a few checkpoints here. Comment if wished gone
+                else if (y == 1 && x == 2) {//Checkpoint 1
                 Space space = new Space(this,x,y,null);
                 Checkpoint checkpoint = new Checkpoint(0);
                 spaces[x][y] = space;
                 space.checkpoint = checkpoint;
                 }
-                else if (y == 2 && x == 3) {
+                else if (y == 2 && x == 3) {//Checkpoint 2
                     Space space = new Space(this,x,y,null);
                     Checkpoint checkpoint = new Checkpoint(1);
                     spaces[x][y] = space;
                     space.checkpoint = checkpoint;
                 }
-                else if (y == 3 && x == 4) {
+                else if (y == 3 && x == 4) {//Checkpoint 3
                     Space space = new Space(this,x,y,null);
                     Checkpoint checkpoint = new Checkpoint(2);
                     spaces[x][y] = space;
                     space.checkpoint = checkpoint;
                 }
+                //No more checkpoints
 
                 else {
                     Space space = new Space(this, x, y, null);

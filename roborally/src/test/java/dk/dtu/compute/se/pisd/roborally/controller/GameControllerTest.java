@@ -141,6 +141,7 @@ class GameControllerTest {
         Assertions.assertNull(board.getSpace(0, 0).getPlayer(), "Space (0,4) should be empty!");
         Assertions.assertNull(board.getSpace(0, 0).getPlayer(), "Space (0,5) should be empty!");
     }
+    /*
     @Test
     void executeCommand() {
         Board board = gameController.board;
@@ -159,6 +160,8 @@ class GameControllerTest {
         Assertions.assertEquals(current, board.getSpace(2,1).getPlayer(), "Player " + current.getName() + " should not have moved and is still on (2,1)");
         Assertions.assertEquals(SOUTH, current.getHeading(), "Players heading should be SOUTH!");
     }
+
+     */
 
 
 

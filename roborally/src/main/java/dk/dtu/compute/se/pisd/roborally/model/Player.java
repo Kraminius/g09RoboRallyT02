@@ -47,7 +47,7 @@ public class Player extends Subject {
 
     private CommandCardField[] program;
     private CommandCardField[] cards;
-    //Har lavet en array for om checkpoints er samlet
+    //Har lavet et array til at se alle checkpoints samlet
     private boolean[] checkpointsReadhed;
 
     public Player(@NotNull Board board, String color, @NotNull String name) {
