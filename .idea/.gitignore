@@ -1,3 +1,6 @@
+*.xml
+*.iml
+*.class
 # Default ignored files
 /shelf/
 /workspace.xml
@@ -7,6 +10,3 @@
 /dataSources/
 /dataSources.local.xml
 /target/
-*.xml
-*.iml
-*.class
