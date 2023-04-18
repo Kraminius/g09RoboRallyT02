@@ -6,6 +6,6 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-roborally.iml
-/target
+/target/
 *.xml
+*.iml
