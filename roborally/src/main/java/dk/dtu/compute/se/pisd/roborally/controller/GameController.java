@@ -215,7 +215,9 @@ public class GameController {
     }*/
     // XXX: V2
 
-    /**
+    /**@author Freja Egelund Grønnemose, s224286@dtu.dk
+     * A method that via a switch statement over the given command either calls the corresponding comand method,
+     * if the given commandcard is an interactive card the methods returns true.
      * @param player
      * @param command
      * @return true if the player interaction mode is enabled.
@@ -246,7 +248,6 @@ public class GameController {
                 return false;
             default:
                 throw new RuntimeException("Should not happen");
-                // DO NOTHING (for now)
         }
     }
 
@@ -382,7 +383,6 @@ public class GameController {
     public void turnLeft(@NotNull Player player) {
         player.setHeading(player.getHeading().prev());
     }
-
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {
         CommandCard sourceCard = source.getCard();
         CommandCard targetCard = target.getCard();
