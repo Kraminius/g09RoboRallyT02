@@ -67,7 +67,9 @@ public class Player extends Subject {
             cards[i] = new CommandCardField(this);
         }
         //Her gives spilleren antallet af checkpoints
-        checkpointsReadhed = new boolean[board.getCheckpoints()];
+        checkpointsReadhed = new boolean[board.getNumOfCheckpoints()];
+        //Set the first checkpoint to true, this is used for respawn.
+        checkpointsReadhed[0] = true;
     }
 
     public String getName() {
@@ -138,8 +140,8 @@ public class Player extends Subject {
     }
 
     //Method to get their checkpoints reached
-    public boolean getCheckpointReadhed(int Checkpoint) {
-        return checkpointsReadhed[Checkpoint];
+    public boolean[] getCheckpointReadhed() {
+        return checkpointsReadhed;
     }
     //Method to change their checkpoints reached
     public void setCheckpointReadhed(int Checkpoint, boolean state) {
