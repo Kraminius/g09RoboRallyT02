@@ -72,12 +72,28 @@ public class Board extends Subject {
                     Heading[] myHeadings = new Heading[2];
                     myHeadings[0] = Heading.WEST;
                     myHeadings[1] = Heading.EAST;
-                    Space space = new Space(this, x, y, myHeadings);
+                    Space space = new Space(this, x, y, myHeadings, null);
                     spaces[x][y] = space;
 
                 }
+                if(y == 4){
+                    if(x > 2 && x < 6){
+                        Belt belt = new Belt(Heading.EAST, "" , 2);
+                        Space space = new Space(this, x, y, null, belt);
+                        spaces[x][y] = space;
+                    }
+                    else if(x == 6){
+                        Belt belt = new Belt(Heading.NORTH, "Left" , 2);
+                        Space space = new Space(this, x, y, null, belt);
+                        spaces[x][y] = space;
+                    }
+                    else{
+                        Space space = new Space(this, x, y, null, null);
+                        spaces[x][y] = space;
+                    }
+                }
                 else {
-                    Space space = new Space(this, x, y, null);
+                    Space space = new Space(this, x, y, null, null);
                     spaces[x][y] = space;
                 }
 

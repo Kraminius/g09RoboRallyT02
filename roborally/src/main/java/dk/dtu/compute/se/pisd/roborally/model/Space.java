@@ -43,11 +43,12 @@ public class Space extends Subject {
 
     private Player player;
 
-    public Space(Board board, int x, int y, Heading[] wallHeading) {
+    public Space(Board board, int x, int y, Heading[] wallHeading, Belt belt) {
         this.board = board;
         this.x = x;
         this.y = y;
         this.wallHeading = wallHeading;
+        this.belt = belt;
 
         player = null;
     }
