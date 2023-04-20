@@ -34,7 +34,6 @@ public class GameController {
     final public Board board;
 
     /**
-     *
      * @param board the board which the game is played on
      */
     public GameController(@NotNull Board board) {
@@ -86,10 +85,6 @@ public class GameController {
         }
     }
 
-    /**
-     *  Generates a random Commandcard and returns it.
-     * @return
-     */
     // XXX: V2
     private CommandCard generateRandomCommandCard() {
         Command[] commands = Command.values();
@@ -97,9 +92,6 @@ public class GameController {
         return new CommandCard(commands[random]);
     }
 
-    /**
-     * Responsible for finishing the programming phase by hiding all the programming cards, setting the next phase to activation phase.
-     */
     // XXX: V2
     public void finishProgrammingPhase() {
         makeProgramFieldsInvisible();
@@ -109,10 +101,6 @@ public class GameController {
         board.setStep(0);
     }
 
-    /**
-     * Makes a specific programming field visible.
-     * @param register
-     */
     // XXX: V2
     private void makeProgramFieldsVisible(int register) {
         if (register >= 0 && register < Player.NO_REGISTERS) {
@@ -163,10 +151,6 @@ public class GameController {
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
-
-    /**
-     * Executes next step of the program allowing the gameplay to progress.
-     */
     // XXX: V2
     private void executeNextStep() {
         Player currentPlayer = board.getCurrentPlayer();
@@ -237,10 +221,6 @@ public class GameController {
             }
         }
     }
-
-    /*public void executeCommandForTest(@NotNull Player player, Command command) {
-        executeCommand(player, command);
-    }*/
     // XXX: V2
 
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
@@ -274,139 +254,188 @@ public class GameController {
             case FAST_FORWARD:
                 this.fastForward(player);
                 return false;
+            case U_TURN:
+                this.uTurn(player);
+                return false;
+            case BACK_UP:
+                this.backUp(player);
+                return false;
+            case AGAIN:
+                int prevProgramStep = board.getStep() - 1;
+                if(prevProgramStep < 0){
+                    return false;
+                } else {
+                    CommandCard prevCommand = player.getProgramField(prevProgramStep).getCard();
+                    if(prevCommand == null){
+                        return false;
+                    } else if (prevCommand.command == Command.AGAIN) {
+                        return false; //For now
+                    } else {
+                        this.again(player, prevCommand.command);
+                        return false;
+                    }
+                }
             default:
                 throw new RuntimeException("Should not happen");
         }
     }
 
-    /**
-     * Moves the player forward.
-     * @param player
-     */
     // TODO Assignment V2
     public void moveForward(@NotNull Player player) {
         moveForward(player, 1, null, false);
     }
 
-    /**
-     * Moves the player forward twice
-     * @param player
-     */
     // TODO Assignment V2
     public void fastForward(@NotNull Player player) {
         moveForward(player, 1, null, false);
         moveForward(player, 1, null, false);
     }
 
-    /**@author Tobias Gørlyk, s224271@dtu.dk
-     *
+    /**
+     * @param player  The player to move
+     * @param amount  The amount to move, for pushing to work it must be either 1 or -1, depending on going forward or backward ones.
+     * @param heading This should always be null when called outside this method, unless for belts or pushing. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
+     * @param isBelt  This should always be null, unless on a belt, where it should ignore players as they move at the same time.
+     * @return a boolean value returning true if it can move into the space, returning false if it can't move at all.
+     * @catch this method catches the OutsideBoardException thrown by the getSpaceAt method throws.
+     * @author Tobias Gørlyk, s224271@dtu.dk
+     * <p>
      * Move Forward is a recursive method, that moves a player if there is space in the direction that is free.
      * If there is a player there it moves them forward if they can move forward.
      * If no one can move because of an obstacle or it being outside the board, no one moves.
-     * @param player The player to move
-     * @param amount The amount to move, for pushing to work it must be either 1 or -1, depending on going forward or backward ones.
-     * @param heading This should always be null when called outside this method, unless for belts or pushing. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
-     * @param isBelt This should always be null, unless on a belt, where it should ignore players as they move at the same time.
-     * @return a boolean value returning true if it can move into the space, returning false if it can't move at all.
      */
     private boolean moveForward(Player player, int amount, Heading heading, boolean isBelt) {
-        int x = player.getSpace().x;
-        int y = player.getSpace().y;
-        Space space = null;
-        if(heading == null) heading = player.getHeading();
-        space = getSpaceAt(amount, heading, x, y);
-        if(space == null) return false; //If space was out of bounds return here.
-        if(obstacleInSpace(player.getSpace(), space)) return false;
-        Player playerToMove = space.getPlayer();
-        if(isBelt){
-            player.setSpace(space);
-            return true;
-        }
-        if(playerToMove != null){ //Check if there is a player already on this field.
-            if(moveForward(playerToMove, amount, heading, false)){
-                player.setSpace(space); //There is a player in front and they can move, so we move too.
+        try {
+            int x = player.getSpace().x;
+            int y = player.getSpace().y;
+            Space space = null;
+            if (heading == null) heading = player.getHeading();
+            space = getSpaceAt(amount, heading, x, y);
+            if (space == null) return false; //If space was out of bounds return here.
+            if (obstacleInSpace(player.getSpace(), space)) return false;
+            Player playerToMove = space.getPlayer();
+            if (isBelt) {
+                player.setSpace(space);
                 return true;
             }
-            else return false; //There is a player there and they cannot move forward so no one moves.
+            if (playerToMove != null) { //Check if there is a player already on this field.
+                if (moveForward(playerToMove, amount, heading, false)) {
+                    player.setSpace(space); //There is a player in front and they can move, so we move too.
+                    return true;
+                } else return false; //There is a player there and they cannot move forward so no one moves.
+            } else {
+                player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
+                return true;
+            }
+        } catch (OutsideBoardException e){
+            respawnPlayer(player);
         }
-        else{
-            player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
-            return true;
+        return true;
+    }
+
+    /**
+     *
+     * @param amount the amount of spaces the player should move
+     * @param heading the players heading
+     * @param x the x value of the space they want to move to
+     * @param y the y value of the space they want to move to
+     * @return the target space
+     * @throws OutsideBoardException if player ends up outside of board
+     */
+    private Space getSpaceAt(int amount, Heading heading, int x, int y) throws OutsideBoardException {
+        Space space = null;
+            switch (heading) {
+                case NORTH:
+                    if (amount < 0 && y < board.height - 1) {
+                        space = board.getSpace(x, y + Math.abs(amount));
+                    } else if (y >= amount && amount > 0) {
+                        space = board.getSpace(x, y - amount);
+                    } else {
+                        throw new OutsideBoardException();
+                    }
+                    break;
+                case EAST:
+                    if (amount < 0 && x > 0) {
+                        space = board.getSpace(x + Math.abs(amount), y);
+                    } else if (x < board.width - amount && amount >= 0) {
+                        space = board.getSpace(x + amount, y);
+                    } else {
+                        throw new OutsideBoardException();
+                    }
+                    break;
+                case WEST:
+                    if (amount < 0 && x < board.width - 1) {
+                        space = board.getSpace(x - Math.abs(amount), y);
+                    } else if (x >= amount && amount > 0) {
+                        space = board.getSpace(x - amount, y);
+                    } else {
+                        throw new OutsideBoardException();
+                    }
+                    break;
+                case SOUTH:
+                    if (amount < 0 && y > 0) {
+                        space = board.getSpace(x, y - Math.abs(amount));
+                    } else if (y < board.height - amount && amount >= 0) {
+                        space = board.getSpace(x, y + amount);
+                    } else {
+                        throw new OutsideBoardException();
+                    }
+                    break;
+            }
+            return space;
+        }
+
+    /**@author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This methods set the players space to the space of the rebootToken. At some point the method should cover more than 1 reboot token.
+     * The method also removes ALL the players remaining program cards.
+     * @param player the player that should be respawned
+     */
+    private void respawnPlayer(@NotNull Player player){
+        Space rebootToken = board.getRebootToken();
+        player.setSpace(rebootToken);
+        for (int j = board.getStep(); j < Player.NO_REGISTERS; j++) {
+            CommandCardField field = player.getProgramField(j);
+            field.setCard(null);
+            field.setVisible(true);
         }
     }
 
     /**
-     * Checks if the player is outside of board
-     * @param amount
-     * @param heading
-     * @param x
-     * @param y
-     * @return
-     */
-    private Space getSpaceAt(int amount, Heading heading, int x, int y){
-        Space space = null;
-        switch (heading) {
-            case NORTH:
-                if ((amount < 0 && y < board.height + amount) || (y > amount - 1 && amount > 0)) space = board.getSpace(x, y - amount);
-                else System.out.println("outside of board");
-                break;
-            case EAST:
-                if ((amount < 0 && x > 0) || (x < board.width - amount)) space =board.getSpace(x + amount, y);
-                else System.out.println("outside of board");
-                break;
-            case WEST:
-                if ((amount < 0 && x < (board.width + amount)) || (x > amount - 1)) space = board.getSpace(x - amount, y);
-                else System.out.println("outside of board");
-                break;
-            case SOUTH:
-                if ((amount < 0 && y > 0) || (y < board.height - amount)) space = board.getSpace(x, y + amount);
-                else System.out.println("outside of board");
-                break;
-        }
-        return space;
-    }
-
-    /**@author
-     *
-     * Checks for obstacles in a given space, used when moving a player into a field
-     *
      * @param fromSpace The Space where the player currently is and will move from
-     * @param toSpace The space where the player is moving to.
+     * @param toSpace   The space where the player is moving to.
      * @return
+     * @author Checks for obstacles in a given space, used when moving a player into a field
      */
-    private boolean obstacleInSpace(Space fromSpace, Space toSpace){
+    private boolean obstacleInSpace(Space fromSpace, Space toSpace) {
 
         Heading directionHeadingTo = null;
         Heading directionHeadingFrom = null;
         Boolean obstacle = false;
 
-        if(fromSpace.getX() < toSpace.x){
+        if (fromSpace.getX() < toSpace.x) {
             directionHeadingTo = Heading.EAST;
             directionHeadingFrom = Heading.WEST;
-        }
-        else if(fromSpace.getX() > toSpace.x){
+        } else if (fromSpace.getX() > toSpace.x) {
             directionHeadingTo = Heading.WEST;
             directionHeadingFrom = Heading.EAST;
-        }
-        else if(fromSpace.getY() < toSpace.getY()){
+        } else if (fromSpace.getY() < toSpace.getY()) {
             directionHeadingTo = Heading.NORTH;
             directionHeadingFrom = Heading.SOUTH;
-        }
-        else if (fromSpace.getY() > toSpace.getY()){
+        } else if (fromSpace.getY() > toSpace.getY()) {
             directionHeadingTo = Heading.SOUTH;
             directionHeadingFrom = Heading.NORTH;
         }
 
-        if(toSpace.getWallHeading() != null && directionHeadingTo != null){
-            for(int i = 0; i < toSpace.getWallHeading().length; i++){
+        if (toSpace.getWallHeading() != null && directionHeadingTo != null) {
+            for (int i = 0; i < toSpace.getWallHeading().length; i++) {
                 if (toSpace.getWallHeading()[i] == directionHeadingTo) {
                     obstacle = true;
                 }
             }
         }
 
-        if(fromSpace.getWallHeading() != null && directionHeadingFrom != null){
-            for(int i = 0; i < fromSpace.getWallHeading().length; i++){
+        if (fromSpace.getWallHeading() != null && directionHeadingFrom != null) {
+            for (int i = 0; i < fromSpace.getWallHeading().length; i++) {
                 if (fromSpace.getWallHeading()[i] == directionHeadingFrom) {
                     obstacle = true;
                 }
@@ -418,29 +447,52 @@ public class GameController {
 
     }
 
-    /**
-     * Turns the player right
-     * @param player
-     */
     // TODO Assignment V2
     public void turnRight(@NotNull Player player) {
         player.setHeading(player.getHeading().next());
     }
 
-    /**
-     * Turns the player left
-     * @param player
-     */
     // TODO Assignment V2
     public void turnLeft(@NotNull Player player) {
         player.setHeading(player.getHeading().prev());
     }
 
+    /**@author Freja Egelund Grønnemose, 224286@dtu.dk
+     * A method to make a u-turn done by turning left two times.
+     * @param player the player that should be moved.
+     */
+    public void uTurn(@NotNull Player player) {
+        player.setHeading(player.getHeading().prev().prev());
+    }
+
+    /**@author Freja Egelund Grønnemose, 224286@dtu.dk
+     *  A method to move the player backwards without changing their heading.
+     * @param player the player that should be moved
+     */
+    public void backUp(@NotNull Player player) {
+        try {
+            Space space = getSpaceAt(-1, player.getHeading(), player.getSpace().x, player.getSpace().y);
+            player.setSpace(space);
+        } catch (OutsideBoardException e){
+            respawnPlayer(player);
+        }
+    }
+
     /**
-     * Moves command cards in UI.
-     * @param source
-     * @param target
-     * @return
+     * @author Freja Egelund Grønnemose, 224286@dtu.dk
+     * This method calls the executeCommand() method to get the previous command executed one more time
+     * @param player the player that uses the again command
+     * @param command the command in the previous programfield
+     */
+    public void again(@NotNull Player player, @NotNull Command command){
+        executeCommand(player,command);
+    }
+
+    /**@Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This method moves a card from one field to another. It is used by OneDragDrop handler.
+     * @param source the CommandCardField the player would like to move a card from
+     * @param target the CommandCardField that the player would like to move the card to
+     * @return true if operation is succesfull
      */
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {
         CommandCard sourceCard = source.getCard();
@@ -456,46 +508,61 @@ public class GameController {
 
     /**
      * @author Tobias Gørlyk     s223271.dtu.dk
-     *
      * Activates the belts on the board for all players one at a time but right after each other. While a player is on a belt they don't have any push collision.
-     *
+     * Tries to move player, and catches the OutsideBoardException if necessary.
+     * Not implemented in game yet.
      */
-    public void activateBelts(){
-        for(int i = 0; i < board.getPlayersNumber(); i++){
+    public void activateBelts() {
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
             int moving;
-            if(player.getSpace().belt != null){
+            if (player.getSpace().belt != null) {
                 moving = player.getSpace().belt.speed;
-                for(int n = moving; n > 0; n--){
+                for (int n = moving; n > 0; n--) {
                     Heading heading = player.getSpace().belt.heading;
                     Space spaceInFront = null;
-                    switch (heading){
+                    switch (heading) {
                         case EAST:
-                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x+1, player.getSpace().y);
+                            try {
+                                spaceInFront = getSpaceAt(1, heading, player.getSpace().x + 1, player.getSpace().y);
+                            } catch (OutsideBoardException e){
+                                respawnPlayer(player);
+                            }
                             break;
                         case WEST:
-                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x-1, player.getSpace().y);
+                            try {
+                                spaceInFront = getSpaceAt(1, heading, player.getSpace().x - 1, player.getSpace().y);
+                            } catch (OutsideBoardException e){
+                                respawnPlayer(player);
+                            }
                             break;
                         case NORTH:
-                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y-1);
+                            try {
+                                spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y - 1);
+                            } catch (OutsideBoardException e){
+                                respawnPlayer(player);
+                            }
                             break;
                         case SOUTH:
-                            spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y+1);
+                            try {
+                                spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y + 1);
+                            } catch (OutsideBoardException e){
+                                respawnPlayer(player);
+                            }
                             break;
                         default:
-                            System.out.println("No Heading"); //This should not happen
-                            break;
+                            throw new RuntimeException("No Heading"); //This should not happen
                     }
-                    if(spaceInFront == null) return;
+                    if (spaceInFront == null) return;
 
-                    if(spaceInFront.belt == null){
+                    if (spaceInFront.belt == null) {
                         moveForward(player, 1, heading, false); //Can move players as this would be outside of belt.
                         moving = 0; //No longer moving on a belt so this is set to 0.
-                    }
-                    else moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
+                    } else
+                        moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
 
-                    if(spaceInFront.belt.turn.equals("Left")) turnLeft(player);
-                    else if(spaceInFront.belt.turn.equals("Right")) turnRight(player);
+                    if (spaceInFront.belt.turn.equals("Left")) turnLeft(player);
+                    else if (spaceInFront.belt.turn.equals("Right")) turnRight(player);
 
                 }
             }
@@ -506,24 +573,26 @@ public class GameController {
      * @author Nicklas Christensen     s224314.dtu.dk
      *
      * Activates the checkpoints on the board, cheks player for reaching checkpoint
-     * unless they haven't gotten previous checkpoint
+     * unless they haven't gotten previous checkpoint.
      */
-    public void activateCheckpoints(){
-        for(int i = 0; i < board.getPlayersNumber(); i++){
+    public void activateCheckpoints() {
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
+            Space space = player.getSpace();
+            boolean[] checkpointStatus = player.getCheckpointReadhed();
             int number;
-            if(player.getSpace().checkpoint != null){
-                number = player.getSpace().checkpoint.number;
-                if(number == 0 || player.getCheckpointReadhed((number-1)) == true) {
-                player.setCheckpointReadhed(number,true);
-                System.out.println("Player: "+ (i +1) +" has reached checkpoint: " + (number + 1));
+            if (space instanceof Checkpoint) {
+                number = ((Checkpoint) space).getCheckpointNumber();
+                if (number == 1) {
+                    player.setCheckpointReadhed(0, true);
+                    System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
+                } else if (checkpointStatus[(number - 2)]) {
+                    player.setCheckpointReadhed(number - 1, true);
+                    System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 }
             }
         }
     }
-
-
-
 
     /**
      * A method called when no corresponding controller operation is implemented yet. This

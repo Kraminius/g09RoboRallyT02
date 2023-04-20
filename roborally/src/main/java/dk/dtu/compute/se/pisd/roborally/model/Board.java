@@ -58,13 +58,18 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
-    private int checkpoints = 3;
+    private final int CHECKPOINTS = 3;
+
+    private Space[] checkpoints;
+
+    private Space rebootToken;
 
     public Board(int width, int height, @NotNull String boardName) {
         this.boardName = boardName;
         this.width = width;
         this.height = height;
         spaces = new Space[width][height];
+        checkpoints = new Space[CHECKPOINTS];
         for (int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 //Check for space things (walls, power ups, etc)
@@ -80,25 +85,25 @@ public class Board extends Subject {
                 }
                 //Making a few checkpoints here. Comment if wished gone
                 else if (y == 1 && x == 2) {//Checkpoint 1
-                Space space = new Space(this,x,y,null);
-                Checkpoint checkpoint = new Checkpoint(0);
+                    Space space = new Checkpoint(this,x,y,null,1);
+                    checkpoints[0] = space;
                 spaces[x][y] = space;
-                space.checkpoint = checkpoint;
                 }
                 else if (y == 2 && x == 3) {//Checkpoint 2
-                    Space space = new Space(this,x,y,null);
-                    Checkpoint checkpoint = new Checkpoint(1);
+                    Space space = new Checkpoint(this,x,y,null,2);
+                    checkpoints[1] = space;
                     spaces[x][y] = space;
-                    space.checkpoint = checkpoint;
                 }
                 else if (y == 3 && x == 4) {//Checkpoint 3
-                    Space space = new Space(this,x,y,null);
-                    Checkpoint checkpoint = new Checkpoint(2);
+                    Space space = new Checkpoint(this,x,y,null,3);
+                    checkpoints[2] = space;
                     spaces[x][y] = space;
-                    space.checkpoint = checkpoint;
+                }//No more checkpoints
+                else if (y == 4 && x == 5) {//Reboot token
+                    Space space = new Reboot(this,x,y,null);
+                    rebootToken = space;
+                    spaces[x][y] = space;
                 }
-                //No more checkpoints
-
                 else {
                     Space space = new Space(this, x, y, null);
                     spaces[x][y] = space;
@@ -251,9 +256,15 @@ public class Board extends Subject {
                 ", Step: " + getStep();
     }
 
-    public int getCheckpoints(){
-        return checkpoints;
+    public int getNumOfCheckpoints(){
+        return CHECKPOINTS;
     }
 
+    public Space getCheckPoint(int checkpointnumber){
+        return checkpoints[checkpointnumber - 1];
+    }
 
+    public Space getRebootToken() {
+        return rebootToken;
+    }
 }

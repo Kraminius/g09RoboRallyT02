@@ -19,11 +19,8 @@ class CheckPointsTest {
     void setUp() {
         Board board = new Board(TEST_WIDTH, TEST_HEIGHT);
         gameController = new GameController(board);
-        for(int i = 0; i < 3; i++) {
-            Checkpoint checkpoint = new Checkpoint(i);
-            board.getSpace((i+2), (i+1)).checkpoint = checkpoint;
-        }
-        for (int i = 0; i < 6; i++) {
+
+        for (int i = 0; i < 3; i++) {
             Player player = new Player(board, null,"Player " + i);
             board.addPlayer(player);
             player.setSpace(board.getSpace(i, (i)));
@@ -43,43 +40,48 @@ class CheckPointsTest {
         Board board = gameController.board;
         Player current = board.getCurrentPlayer();
         Player second = board.getPlayer(1);
+
         //Sets player at first checkpoint
-        current.setSpace(board.getSpace(2,1));
-
-        Assertions.assertEquals(false, current.getCheckpointReadhed(0),"Player " + current.getName() + " Should NOT have reached" +
+        current.setSpace(board.getCheckPoint(1));
+        boolean[] checkpointStatus = current.getCheckpointReadhed();
+        Assertions.assertFalse(checkpointStatus[0], "Player " + current.getName() + " Should NOT have reached" +
                 "checkpoint 1");
 
         gameController.activateCheckpoints();
-
-        Assertions.assertEquals(true, current.getCheckpointReadhed(0),"Player " + current.getName() + " Should have reached" +
+        Assertions.assertTrue(checkpointStatus[0], "Player " + current.getName() + " Should have reached" +
                 "checkpoint 1");
 
-        current.setSpace(board.getSpace(3,2));
-        gameController.activateCheckpoints();
-        Assertions.assertEquals(true, current.getCheckpointReadhed(0),"Player " + current.getName() + " Should have reached" +
+        //Move current player to checkpoint 2
+        current.setSpace(board.getCheckPoint(2));
+        Assertions.assertTrue(checkpointStatus[0], "Player " + current.getName() + " Should have reached" +
                 "checkpoint 1");
-        Assertions.assertEquals(true, current.getCheckpointReadhed(1),"Player " + current.getName() + " Should have reached" +
+        Assertions.assertFalse(checkpointStatus[1], "Player " + current.getName() + " Should NOT have reached" +
                 "checkpoint 2");
 
-        current.setSpace(board.getSpace(4,3));
         gameController.activateCheckpoints();
-        Assertions.assertEquals(true, current.getCheckpointReadhed(0),"Player " + current.getName() + " Should have reached" +
-                "checkpoint 1");
-        Assertions.assertEquals(true, current.getCheckpointReadhed(1),"Player " + current.getName() + " Should have reached" +
+        Assertions.assertTrue(checkpointStatus[1], "Player " + current.getName() + " Should have reached" +
                 "checkpoint 2");
-        Assertions.assertEquals(true, current.getCheckpointReadhed(2),"Player " + current.getName() + " Should have reached" +
+
+        current.setSpace(board.getCheckPoint(3));
+        gameController.activateCheckpoints();
+        Assertions.assertTrue(checkpointStatus[0], "Player " + current.getName() + " Should have reached" +
+                "checkpoint 1");
+        Assertions.assertTrue(checkpointStatus[0], "Player " + second.getName() + " Should NOT have reached" +
+                "checkpoint 1");
+        Assertions.assertTrue(checkpointStatus[1], "Player " + current.getName() + " Should have reached" +
+                "checkpoint 2");
+        Assertions.assertTrue(checkpointStatus[1], "Player " + second.getName() + " Should NOT have reached" +
+                "checkpoint 2");
+        Assertions.assertTrue(checkpointStatus[2], "Player " + current.getName() + " Should have reached" +
+                "checkpoint 3");
+        Assertions.assertTrue(checkpointStatus[2], "Player " + second.getName() + " Should NOT have reached" +
                 "checkpoint 3");
 
-        second.setSpace(board.getSpace(3,2));
+        second.setSpace(board.getCheckPoint(2));
         gameController.activateCheckpoints();
-        Assertions.assertEquals(false, second.getCheckpointReadhed(0),"Player " + second.getName() + " Should NOT have reached" +
+        Assertions.assertTrue(checkpointStatus[0], "Player " + second.getName() + " Should NOT have reached" +
                 "checkpoint 1");
-        Assertions.assertEquals(false, second.getCheckpointReadhed(1),"Player " + second.getName() + " Should NOT have reached" +
+        Assertions.assertTrue(checkpointStatus[0], "Player " + second.getName() + " Should NOT have reached" +
                 "checkpoint 2");
-
     }
-
-
-
-
 }
