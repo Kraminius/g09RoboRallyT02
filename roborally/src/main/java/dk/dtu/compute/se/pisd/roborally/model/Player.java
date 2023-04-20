@@ -68,8 +68,6 @@ public class Player extends Subject {
         }
         //Her gives spilleren antallet af checkpoints
         checkpointsReadhed = new boolean[board.getNumOfCheckpoints()];
-        //Set the first checkpoint to true, this is used for respawn.
-        checkpointsReadhed[0] = true;
     }
 
     public String getName() {

@@ -58,7 +58,7 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
-    private final int CHECKPOINTS = 4;
+    private final int CHECKPOINTS = 3;
 
     private Space[] checkpoints;
 
@@ -261,7 +261,7 @@ public class Board extends Subject {
     }
 
     public Space getCheckPoint(int checkpointnumber){
-        return checkpoints[checkpointnumber];
+        return checkpoints[checkpointnumber - 1];
     }
 
     public Space getRebootToken() {

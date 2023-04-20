@@ -177,9 +177,10 @@ public class GameController {
         }
     }
 
-    /**
-     * @param command resets the phase to activation, executes command and goes to the next player.
-     *                Checks if stepmode is enabled, if not continues the programs.
+    /**@author Freja Egelund Grønnemose, s224286@dtu.dk
+     * A method that resets the phase to activation, executes command and goes to the next player.
+     *  Checks if stepmode is enabled, if not it continues the programs.
+     * @param command command that should be performed
      */
     public void executeCommandOptionAndContinue(@NotNull Command command) {
         board.setPhase(Phase.ACTIVATION);
@@ -207,17 +208,13 @@ public class GameController {
             }
         }
     }
-
-    /*public void executeCommandForTest(@NotNull Player player, Command command) {
-        executeCommand(player, command);
-    }*/
     // XXX: V2
 
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
      * if the given commandcard is an interactive card the methods returns true.
-     * In the statement for the again command the methods checks if the card in the previous slot is null.
-     * If that is the case nothing happens - DON'T WASTE YOUR AGAIN CARDS!! .. stupid.
+     * In the statement for the again command the methods checks if the program step is -1 (case where the again card is placed in first slot), also checks if the card in the previous slot is null.
+     * If that is the case nothing happens - DON'T WASTE YOUR AGAIN CARDS!! .. stupid. (Should be changed later on to not be possible)
      * @param player
      * @param command
      * @return true if the player interaction mode is enabled.
@@ -254,11 +251,11 @@ public class GameController {
                 this.backUp(player);
                 return false;
             case AGAIN:
-                int programStep = board.getStep() - 1;
-                if(programStep < 0){
+                int prevProgramStep = board.getStep() - 1;
+                if(prevProgramStep < 0){
                     return false;
                 } else {
-                    CommandCard prevCommand = player.getProgramField(programStep).getCard();
+                    CommandCard prevCommand = player.getProgramField(prevProgramStep).getCard();
                     if(prevCommand == null){
                         return false;
                     } else if (prevCommand.command == Command.AGAIN) {
@@ -290,6 +287,7 @@ public class GameController {
      * @param heading This should always be null when called outside this method, unless for belts or pushing. The heading is used during the pushing as they won't necessarily be pushed the direction they are facing. The player will find the heading itself.
      * @param isBelt  This should always be null, unless on a belt, where it should ignore players as they move at the same time.
      * @return a boolean value returning true if it can move into the space, returning false if it can't move at all.
+     * @catch this method catches the OutsideBoardException thrown by the getSpaceAt method throws.
      * @author Tobias Gørlyk, s224271@dtu.dk
      * <p>
      * Move Forward is a recursive method, that moves a player if there is space in the direction that is free.
@@ -325,6 +323,15 @@ public class GameController {
         return true;
     }
 
+    /**
+     *
+     * @param amount the amount of spaces the player should move
+     * @param heading the players heading
+     * @param x the x value of the space they want to move to
+     * @param y the y value of the space they want to move to
+     * @return the target space
+     * @throws OutsideBoardException if player ends up outside of board
+     */
     private Space getSpaceAt(int amount, Heading heading, int x, int y) throws OutsideBoardException {
         Space space = null;
             switch (heading) {
@@ -370,11 +377,17 @@ public class GameController {
 
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * This methods set the players space to the space of the rebootToken. At some point the method should cover more than 1 reboot token.
+     * The method also removes ALL the players remaining program cards.
      * @param player the player that should be respawned
      */
     private void respawnPlayer(@NotNull Player player){
         Space rebootToken = board.getRebootToken();
         player.setSpace(rebootToken);
+        for (int j = board.getStep(); j < Player.NO_REGISTERS; j++) {
+            CommandCardField field = player.getProgramField(j);
+            field.setCard(null);
+            field.setVisible(true);
+        }
     }
 
     /**
@@ -443,7 +456,7 @@ public class GameController {
     }
 
     /**@author Freja Egelund Grønnemose, 224286@dtu.dk
-     *  A method to move the player backwards without changing directions.
+     *  A method to move the player backwards without changing their heading.
      * @param player the player that should be moved
      */
     public void backUp(@NotNull Player player) {
@@ -465,6 +478,12 @@ public class GameController {
         executeCommand(player,command);
     }
 
+    /**@Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This method moves a card from one field to another. It is used by OneDragDrop handler.
+     * @param source the CommandCardField the player would like to move a card from
+     * @param target the CommandCardField that the player would like to move the card to
+     * @return true if operation is succesfull
+     */
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {
         CommandCard sourceCard = source.getCard();
         CommandCard targetCard = target.getCard();
@@ -479,8 +498,9 @@ public class GameController {
 
     /**
      * @author Tobias Gørlyk     s223271.dtu.dk
-     * <p>
      * Activates the belts on the board for all players one at a time but right after each other. While a player is on a belt they don't have any push collision.
+     * Tries to move player, and catches the OutsideBoardException if necessary.
+     * Not implemented in game yet.
      */
     public void activateBelts() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
@@ -543,21 +563,26 @@ public class GameController {
      * @author Nicklas Christensen     s224314.dtu.dk
      * <p>
      * Activates the checkpoints on the board, cheks player for reaching checkpoint
-     * unless they haven't gotten previous checkpoint
+     * unless they haven't gotten previous checkpoint.
      */
     public void activateCheckpoints() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
             Space space = player.getSpace();
+            boolean[] checkpointStatus = player.getCheckpointReadhed();
             int number;
             if (space instanceof Checkpoint) {
                 number = ((Checkpoint) space).getCheckpointNumber();
-                player.setCheckpointReadhed(number - 1, true);
-                    System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number + 1));
+                if (number == 1) {
+                    player.setCheckpointReadhed(0, true);
+                    System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
+                } else if (checkpointStatus[(number - 2)]) {
+                    player.setCheckpointReadhed(number - 1, true);
+                    System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 }
             }
         }
-
+    }
 
     /**
      * A method called when no corresponding controller operation is implemented yet. This
