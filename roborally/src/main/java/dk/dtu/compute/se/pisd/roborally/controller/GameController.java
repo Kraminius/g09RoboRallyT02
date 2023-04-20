@@ -374,7 +374,7 @@ public class GameController {
      * @param toSpace The space where the player is moving to.
      * @return
      */
-    private boolean obstacleInSpace(Space fromSpace, Space toSpace){
+    boolean obstacleInSpace(Space fromSpace, Space toSpace){
 
         Heading directionHeadingTo = null;
         Heading directionHeadingFrom = null;

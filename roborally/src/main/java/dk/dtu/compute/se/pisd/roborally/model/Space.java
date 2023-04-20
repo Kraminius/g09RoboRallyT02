@@ -86,11 +86,16 @@ public class Space extends Subject {
         return wallHeading;
     }
 
+
+
     public int getX() {
         return x;
     }
 
     public int getY() {
         return y;
+    }
+
+    public void setWallHeading(Heading[] headings) {
     }
 }

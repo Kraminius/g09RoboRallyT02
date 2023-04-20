@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.*;
+import static org.testng.AssertJUnit.*;
 
 class GameControllerTest {
 
@@ -141,6 +142,35 @@ class GameControllerTest {
         Assertions.assertNull(board.getSpace(0, 0).getPlayer(), "Space (0,4) should be empty!");
         Assertions.assertNull(board.getSpace(0, 0).getPlayer(), "Space (0,5) should be empty!");
     }
+
+    @Test
+    void getSpaceAtTest(){
+
+    }
+
+    @Test
+    void moveForwardTest(){
+
+    }
+/*
+    @Test
+    void obstacleInSpaceTest(){
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+
+        gameController.board.getSpace(1,0).setWallHeading(new Heading[]{Heading.WEST});
+
+        current.setSpace(gameController.board.getSpace(0,0));
+        current.setHeading(EAST);
+        gameController.moveForward(current);
+
+        System.out.println(gameController.board.getSpace(0,0).getPlayer().getName());
+
+
+    }
+
+ */
+
     /*
     @Test
     void executeCommand() {
