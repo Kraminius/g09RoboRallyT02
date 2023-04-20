@@ -343,7 +343,7 @@ public class GameController {
      * @param y
      * @return
      */
-    private Space getSpaceAt(int amount, Heading heading, int x, int y){
+    public Space getSpaceAt(int amount, Heading heading, int x, int y){
         Space space = null;
         switch (heading) {
             case NORTH:

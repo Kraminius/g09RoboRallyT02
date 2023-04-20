@@ -146,12 +146,43 @@ class GameControllerTest {
 
     @Test
     void getSpaceAtTest(){
+        Board board = gameController.board;
+        Player player0 = board.getPlayer(0);
+        Player player1 = board.getPlayer(1);
+        Player player2 = board.getPlayer(2);
+        player0.setSpace(gameController.board.getSpace(0,0));
+        player1.setSpace(gameController.board.getSpace(3,0));
+        player2.setSpace(board.getSpace(1,0));
+        gameController.moveForward(player2);
+        player0.setHeading(NORTH);
+        player1.setHeading(EAST);
+        gameController.moveForward(player0);
+        gameController.moveForward(player1);
+
+        assertNull(gameController.getSpaceAt(1, NORTH, 0,0));
 
     }
 
     @Test
     void moveForwardTest(){
+        Board board = gameController.board;
+        Player player0 = board.getPlayer(0);
+        Player player1 = board.getPlayer(1);
+        Player player2 = board.getPlayer(2);
+        player0.setSpace(gameController.board.getSpace(0,0));
+        player1.setSpace(gameController.board.getSpace(3,0));
+        player2.setSpace(board.getSpace(1,0));
+        gameController.moveForward(player2);
+        player0.setHeading(EAST);
+        player1.setHeading(EAST);
+        gameController.moveForward(player0);
+        gameController.moveForward(player1);
 
+        assertTrue(gameController.obstacleInSpace(board.getSpace(0,0), board.getSpace(1,0)));
+        assertEquals(player0, gameController.board.getSpace(0,0).getPlayer());
+        assertEquals(null, gameController.board.getSpace(3,0).getPlayer());
+        assertEquals(player1, board.getSpace(4,0).getPlayer());
+        assertEquals(player2, board.getSpace(1,0).getPlayer());
     }
 
     @Test
@@ -169,14 +200,11 @@ class GameControllerTest {
         gameController.moveForward(player0);
         gameController.moveForward(player1);
 
-
+        assertTrue(gameController.obstacleInSpace(board.getSpace(0,0), board.getSpace(1,0)));
         assertEquals(player0, gameController.board.getSpace(0,0).getPlayer());
         assertEquals(null, gameController.board.getSpace(3,0).getPlayer());
-
+        assertEquals(player1, board.getSpace(4,0).getPlayer());
         assertEquals(player2, board.getSpace(1,0).getPlayer());
-
-
-
 
     }
 
