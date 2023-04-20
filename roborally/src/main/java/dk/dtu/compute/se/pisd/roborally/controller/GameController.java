@@ -58,6 +58,10 @@ public class GameController {
 
     }
 
+    /**
+     * Prepares the game for the programming phase by clearing previous programming, setting the game state and give
+     * the players new cards
+     */
     // XXX: V2
     public void startProgrammingPhase() {
         activateCheckpoints(); //Ser om nogen spiller har nået et checkpoint
@@ -82,6 +86,10 @@ public class GameController {
         }
     }
 
+    /**
+     *  Generates a random Commandcard and returns it.
+     * @return
+     */
     // XXX: V2
     private CommandCard generateRandomCommandCard() {
         Command[] commands = Command.values();
@@ -89,6 +97,9 @@ public class GameController {
         return new CommandCard(commands[random]);
     }
 
+    /**
+     * Responsible for finishing the programming phase by hiding all the programming cards, setting the next phase to activation phase.
+     */
     // XXX: V2
     public void finishProgrammingPhase() {
         makeProgramFieldsInvisible();
@@ -98,6 +109,10 @@ public class GameController {
         board.setStep(0);
     }
 
+    /**
+     * Makes a specific programming field visible.
+     * @param register
+     */
     // XXX: V2
     private void makeProgramFieldsVisible(int register) {
         if (register >= 0 && register < Player.NO_REGISTERS) {
@@ -109,6 +124,9 @@ public class GameController {
         }
     }
 
+    /**
+     *  Makes a specific programming field invisible.
+     */
     // XXX: V2
     private void makeProgramFieldsInvisible() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
@@ -120,12 +138,18 @@ public class GameController {
         }
     }
 
+    /**
+     * Setting stemode to false, so we can execute multiple programs at a time.
+     */
     // XXX: V2
     public void executePrograms() {
         board.setStepMode(false);
         continuePrograms();
     }
 
+    /**
+     * Setting stepmode to true.
+     */
     // XXX: V2
     public void executeStep() {
         board.setStepMode(true);
@@ -139,6 +163,10 @@ public class GameController {
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
+
+    /**
+     * Executes next step of the program allowing the gameplay to progress.
+     */
     // XXX: V2
     private void executeNextStep() {
         Player currentPlayer = board.getCurrentPlayer();
@@ -251,11 +279,19 @@ public class GameController {
         }
     }
 
+    /**
+     * Moves the player forward.
+     * @param player
+     */
     // TODO Assignment V2
     public void moveForward(@NotNull Player player) {
         moveForward(player, 1, null, false);
     }
 
+    /**
+     * Moves the player forward twice
+     * @param player
+     */
     // TODO Assignment V2
     public void fastForward(@NotNull Player player) {
         moveForward(player, 1, null, false);
@@ -299,6 +335,14 @@ public class GameController {
         }
     }
 
+    /**
+     * Checks if the player is outside of board
+     * @param amount
+     * @param heading
+     * @param x
+     * @param y
+     * @return
+     */
     private Space getSpaceAt(int amount, Heading heading, int x, int y){
         Space space = null;
         switch (heading) {
@@ -374,15 +418,30 @@ public class GameController {
 
     }
 
+    /**
+     * Turns the player right
+     * @param player
+     */
     // TODO Assignment V2
     public void turnRight(@NotNull Player player) {
         player.setHeading(player.getHeading().next());
     }
 
+    /**
+     * Turns the player left
+     * @param player
+     */
     // TODO Assignment V2
     public void turnLeft(@NotNull Player player) {
         player.setHeading(player.getHeading().prev());
     }
+
+    /**
+     * Moves command cards in UI.
+     * @param source
+     * @param target
+     * @return
+     */
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {
         CommandCard sourceCard = source.getCard();
         CommandCard targetCard = target.getCard();
