@@ -24,8 +24,9 @@ class GameControllerTest {
             Player player = new Player(board, null,"Player " + i);
             board.addPlayer(player);
             player.setSpace(board.getSpace(i, i));
-            player.setHeading(Heading.values()[i % Heading.values().length]);
         }
+
+        gameController.board.getSpace(1,0).setWallHeading(new Heading[]{Heading.WEST, Heading.EAST, SOUTH, NORTH});
         board.setCurrentPlayer(board.getPlayer(0));
     }
 
@@ -152,24 +153,32 @@ class GameControllerTest {
     void moveForwardTest(){
 
     }
-/*
+
     @Test
     void obstacleInSpaceTest(){
         Board board = gameController.board;
-        Player current = board.getCurrentPlayer();
+        Player player0 = board.getPlayer(0);
+        Player player1 = board.getPlayer(1);
+        Player player2 = board.getPlayer(2);
+        player0.setSpace(gameController.board.getSpace(0,0));
+        player1.setSpace(gameController.board.getSpace(3,0));
+        player2.setSpace(board.getSpace(1,0));
+        gameController.moveForward(player2);
+        player0.setHeading(EAST);
+        player1.setHeading(EAST);
+        gameController.moveForward(player0);
+        gameController.moveForward(player1);
 
-        gameController.board.getSpace(1,0).setWallHeading(new Heading[]{Heading.WEST});
 
-        current.setSpace(gameController.board.getSpace(0,0));
-        current.setHeading(EAST);
-        gameController.moveForward(current);
+        assertEquals(player0, gameController.board.getSpace(0,0).getPlayer());
+        assertEquals(null, gameController.board.getSpace(3,0).getPlayer());
 
-        System.out.println(gameController.board.getSpace(0,0).getPlayer().getName());
+        assertEquals(player2, board.getSpace(1,0).getPlayer());
+
+
 
 
     }
-
- */
 
     /*
     @Test

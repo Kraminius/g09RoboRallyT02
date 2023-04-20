@@ -347,15 +347,16 @@ public class GameController {
         Space space = null;
         switch (heading) {
             case NORTH:
-                if ((amount < 0 && y < board.height + amount) || (y > amount - 1 && amount > 0)) space = board.getSpace(x, y - amount);
-                else System.out.println("outside of board");
+                if ((amount < 0 && y < board.height + amount) || (y > amount-1 && amount > 0)) space = board.getSpace(x, y - amount);
+                else System.out.println(space);
                 break;
             case EAST:
                 if ((amount < 0 && x > 0) || (x < board.width - amount)) space =board.getSpace(x + amount, y);
                 else System.out.println("outside of board");
+
                 break;
             case WEST:
-                if ((amount < 0 && x < (board.width + amount)) || (x > amount - 1)) space = board.getSpace(x - amount, y);
+                if ((amount < 0 && x < (board.width + amount)) || (x >= amount-1)) space = board.getSpace(x - amount, y);
                 else System.out.println("outside of board");
                 break;
             case SOUTH:
