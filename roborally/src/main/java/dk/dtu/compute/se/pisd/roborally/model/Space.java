@@ -24,6 +24,8 @@ package dk.dtu.compute.se.pisd.roborally.model;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.*;
 
+import java.util.ArrayList;
+
 /**
  * ...
  *
@@ -37,7 +39,6 @@ public class Space extends Subject {
     public final int x;
     public final int y;
 
-    public Heading[] wallHeading = null;
     public Belt belt = null;
     public Checkpoint checkpoint = null;
     public EnergyField energyField;
@@ -93,8 +94,9 @@ public class Space extends Subject {
         notifyChange();
     }
 
-    public Heading[] getWallHeading() {
-        return wallHeading;
+    public ArrayList<Heading> getWallHeading() {
+        if(wall == null) return null;
+        return wall.wallHeadings;
     }
 
 
@@ -105,9 +107,5 @@ public class Space extends Subject {
 
     public int getY() {
         return y;
-    }
-
-    public void setWallHeading(Heading[] headings) {
-        wallHeading = headings;
     }
 }

@@ -60,7 +60,7 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     for(int j = 2; j < values.length; j++){
-                        b.spaces[x][y].wall = new Wall();
+                        if(b.spaces[x][y].wall == null) b.spaces[x][y].wall = new Wall();
                         b.spaces[x][y].wall.wallHeadings.add(getHeading(values[j]));
                     }
                 }
@@ -76,6 +76,7 @@ public class BoardLoader {
                     else b.spaces[x][y].belt.turn = values[2];
                     b.spaces[x][y].belt.heading = getHeading(values[3]);
                     b.spaces[x][y].belt.speed = parseInt(values[4]);
+
                 }
                 break;
             case "checkpoint":

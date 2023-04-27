@@ -429,16 +429,16 @@ public class GameController {
         }
 
         if (toSpace.getWallHeading() != null && directionHeadingTo != null) {
-            for (int i = 0; i < toSpace.getWallHeading().length; i++) {
-                if (toSpace.getWallHeading()[i] == directionHeadingTo) {
+            for (int i = 0; i < toSpace.getWallHeading().size(); i++) {
+                if (toSpace.getWallHeading().get(i) == directionHeadingTo) {
                     obstacle = true;
                 }
             }
         }
 
         if (fromSpace.getWallHeading() != null && directionHeadingFrom != null) {
-            for (int i = 0; i < fromSpace.getWallHeading().length; i++) {
-                if (fromSpace.getWallHeading()[i] == directionHeadingFrom) {
+            for (int i = 0; i < fromSpace.getWallHeading().size(); i++) {
+                if (fromSpace.getWallHeading().get(i) == directionHeadingFrom) {
                     obstacle = true;
                 }
             }
