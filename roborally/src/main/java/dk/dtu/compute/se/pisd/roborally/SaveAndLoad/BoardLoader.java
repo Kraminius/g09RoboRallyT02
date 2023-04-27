@@ -1,55 +1,199 @@
 package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 
-import com.beust.ah.A;
-import dk.dtu.compute.se.pisd.roborally.model.Board;
-import dk.dtu.compute.se.pisd.roborally.model.Space;
+import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+
+import static java.lang.Integer.parseInt;
 
 public class BoardLoader {
 
 
     JSONHandler json = new JSONHandler();
 
+    private static BoardLoader boardLoader;
+
+    public static BoardLoader getInstance(){
+        if(boardLoader == null) boardLoader = new BoardLoader();
+        return boardLoader;
+    }
+
+
+
+
     /** Loads a board from files and inserts each key and their value into the board.
      *
      * @param id board id
+     * @param board the board that it should be loaded into
      * @return the board that is saved with the id
      */
-    public Board getBoard(int id){
+    public void loadBoard(int id, Board board){
         JSONObject obj = json.load("board_" + id);
-        Board board = new Board(0, 0);
+
+        board.width = parseInt((String) obj.get("width"));
+        board.height = parseInt((String) obj.get("height"));
+        board.spaces = new Space[board.width][board.height];
+        for(int x = 0; x < board.width; x++){
+            for(int y = 0; y < board.height; y++){
+                board.spaces[x][y] = new Space(board, x, y);
+            }
+        }
         for(Object key : obj.keySet()){
             insert(board, obj.get(key), (String) key);
         }
     }
-
     private void insert(Board b, Object value, String varName){
+
+        if(value == null) return;
+
         switch (varName){
-            case "width":
-                b.width = (int)value;
-                break;
-            case "height":
-                b.height = (int)value;
-                b.loadSpaces();
-                break;
             case "name":
                 b.boardName = (String) value;
                 break;
             case "wall":
                 ArrayList<String> walls = getList((JSONArray) value);
-                Space[][] spaces = new Space[b.width][b.height];
-
                 for(int i = 0; i < walls.size(); i++){
                     String[] values = walls.get(i).split(";");
-                    spaces[0][1].wall.wallHeadings
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    for(int j = 2; j < values.length; j++){
+                        b.spaces[x][y].wall = new Wall();
+                        b.spaces[x][y].wall.wallHeadings.add(getHeading(values[j]));
+                    }
                 }
-
+                break;
+            case "belt":
+                ArrayList<String> belts = getList((JSONArray) value);
+                for(int i = 0; i < belts.size(); i++){
+                    String[] values = belts.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].belt = new Belt();
+                    if(values[2].equals("null")) b.spaces[x][y].belt.turn = ""; //LEFT/RIGHT/null
+                    else b.spaces[x][y].belt.turn = values[2];
+                    b.spaces[x][y].belt.heading = getHeading(values[3]);
+                    b.spaces[x][y].belt.speed = parseInt(values[4]);
+                }
+                break;
+            case "checkpoint":
+                ArrayList<String> checkpoints = getList((JSONArray) value);
+                for(int i = 0; i < checkpoints.size(); i++){
+                    String[] values = checkpoints.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                   // b.spaces[x][y].checkpoint = new Checkpoint();
+                }
+                break;
+            case "laser":
+                ArrayList<String> lasers = getList((JSONArray) value);
+                for(int i = 0; i < lasers.size(); i++){
+                    String[] values = lasers.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].laser = new Laser();
+                    b.spaces[x][y].laser.heading = getHeading(values[2]);
+                    b.spaces[x][y].laser.range = parseInt(values[3]);
+                    b.spaces[x][y].laser.damage = parseInt(values[4]);
+                }
+                break;
+            case "antenna":
+                ArrayList<String> antennas = getList((JSONArray) value);
+                for(int i = 0; i < antennas.size(); i++){
+                    String[] values = antennas.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].isAntenna = true;
+                }
+                break;
+            case "push":
+                ArrayList<String> pushers = getList((JSONArray) value);
+                for(int i = 0; i < pushers.size(); i++){
+                    String[] values = pushers.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].push = new Push();
+                    b.spaces[x][y].push.heading = getHeading(values[2]);
+                    for(int j = 3; j < values.length; j++){
+                        b.spaces[x][y].push.activateRounds.add(parseInt(values[j]));
+                    }
+                }
+                break;
+            case "energyField":
+                ArrayList<String> energyFields = getList((JSONArray) value);
+                for(int i = 0; i < energyFields.size(); i++){
+                    String[] values = energyFields.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].energyField = new EnergyField();
+                    b.spaces[x][y].energyField.cubes = parseInt(values[2]);
+                }
+                break;
+            case "gear":
+                ArrayList<String> gears = getList((JSONArray) value);
+                for(int i = 0; i < gears.size(); i++){
+                    String[] values = gears.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].gear = new Gear();
+                    b.spaces[x][y].gear.rotation = values[2]; //LEFT/RIGHT
+                }
+                break;
+            case "hole":
+                ArrayList<String> holes = getList((JSONArray) value);
+                for(int i = 0; i < holes.size(); i++){
+                    String[] values = holes.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].isHole = true;
+                }
+                break;
+            case "respawn":
+                ArrayList<String> respawns = getList((JSONArray) value);
+                for(int i = 0; i < respawns.size(); i++){
+                    String[] values = respawns.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].isRespawn = true;
+                }
+                break;
+            case "noField":
+                ArrayList<String> noFields = getList((JSONArray) value);
+                for(int i = 0; i < noFields.size(); i++){
+                    String[] values = noFields.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].isSpace = false;
+                }
+                break;
+            case "startFields":
+                ArrayList<String> startFields = getList((JSONArray) value);
+                for(int i = 0; i < startFields.size(); i++){
+                    String[] values = startFields.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].startField = new StartField();
+                    b.spaces[x][y].startField.id = parseInt(values[2]);
+                }
+                break;
         }
     }
 
+    public Heading getHeading(String heading){
+        switch (heading){
+            case "SOUTH":
+                return Heading.SOUTH;
+            case "WEST":
+                return Heading.WEST;
+            case "NORTH":
+                return Heading.NORTH;
+            case "EAST":
+                return Heading.EAST;
+        }
+        return null;
+    }
     private ArrayList<String> getList(JSONArray arr){
         ArrayList<String> list = new ArrayList<>();
         for(int i = 0; i < arr.size(); i++){
@@ -57,15 +201,4 @@ public class BoardLoader {
         }
         return list;
     }
-
-
-    /* board_x.json file structure
-    {
-        "varName":"stringValue",
-        "varName": intValue,
-        "varName":["stringValue1", "stringValue2", "stringValue3"],
-        "varName":[intValue1, intValue2, intValue3],
-        "wall":["0;0;EAST;WEST", "2;3;NORTH;EAST"]
-    }
-     */
 }

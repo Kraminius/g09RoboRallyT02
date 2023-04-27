@@ -22,10 +22,11 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoader;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
@@ -46,7 +47,7 @@ public class Board extends Subject {
 
     private Integer gameId;
 
-    private final Space[][] spaces;
+    public Space[][] spaces;
 
     private final List<Player> players = new ArrayList<>();
 
@@ -64,60 +65,10 @@ public class Board extends Subject {
 
     private Space rebootToken;
 
-    public Board(int width, int height, @NotNull String boardName) {
-        this.boardName = boardName;
-        this.width = width;
-        this.height = height;
-        spaces = new Space[width][height];
-        checkpoints = new Space[CHECKPOINTS];
-        for (int x = 0; x < width; x++) {
-            for(int y = 0; y < height; y++) {
-                //Check for space things (walls, power ups, etc)
-                // Arraylist wallheading = space headings
-                //Remove this if statements if you dont want a wall on space (0, 3)
-                if(y == 0 && x == 2){
-                    Heading[] myHeadings = new Heading[2];
-                    myHeadings[0] = Heading.WEST;
-                    myHeadings[1] = Heading.EAST;
-                    Space space = new Space(this, x, y, myHeadings);
-                    spaces[x][y] = space;
+    Board board;
 
-                }
-                //Making a few checkpoints here. Comment if wished gone
-                else if (y == 1 && x == 2) {//Checkpoint 1
-                    Space space = new Checkpoint(this,x,y,null,1);
-                    checkpoints[0] = space;
-                spaces[x][y] = space;
-                }
-                else if (y == 2 && x == 3) {//Checkpoint 2
-                    Space space = new Checkpoint(this,x,y,null,2);
-                    checkpoints[1] = space;
-                    spaces[x][y] = space;
-                }
-                else if (y == 3 && x == 4) {//Checkpoint 3
-                    Space space = new Checkpoint(this,x,y,null,3);
-                    checkpoints[2] = space;
-                    spaces[x][y] = space;
-                }//No more checkpoints
-                else if (y == 4 && x == 5) {//Reboot token
-                    Space space = new Reboot(this,x,y,null);
-                    rebootToken = space;
-                    spaces[x][y] = space;
-                }
-                else {
-                    Space space = new Space(this, x, y, null);
-                    spaces[x][y] = space;
-                }
-
-
-            }
-        }
-
-        this.stepMode = false;
-    }
-
-    public Board(int width, int height) {
-        this(width, height, "defaultboard");
+    public Board(int id){
+        BoardLoader.getInstance().loadBoard(id, this);
     }
 
     public Integer getGameId() {

@@ -21,7 +21,9 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -581,8 +583,8 @@ public class GameController {
             Space space = player.getSpace();
             boolean[] checkpointStatus = player.getCheckpointReadhed();
             int number;
-            if (space instanceof Checkpoint) {
-                number = ((Checkpoint) space).getCheckpointNumber();
+            if (space.checkpoint != null) {
+                number = space.checkpoint.number;
                 if (number == 1) {
                     player.setCheckpointReadhed(0, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));

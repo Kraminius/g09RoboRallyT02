@@ -1,4 +1,6 @@
-package dk.dtu.compute.se.pisd.roborally.model;
+package dk.dtu.compute.se.pisd.roborally.model.SpaceElements;
+
+import dk.dtu.compute.se.pisd.roborally.model.Heading;
 
 public class Belt {
 
@@ -11,10 +13,5 @@ public class Belt {
     public String turn = ""; //"Left", "Right", ""
 
     public int speed;
-
-    public Belt(Heading heading, String turn, int speed){
-        this.heading = heading;
-        this.turn = turn;
-        this.speed = speed;
-    }
+    public Heading T_Heading;
 }

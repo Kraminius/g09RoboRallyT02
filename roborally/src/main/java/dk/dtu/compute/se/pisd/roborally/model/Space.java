@@ -22,6 +22,7 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.*;
 
 /**
  * ...
@@ -36,23 +37,32 @@ public class Space extends Subject {
     public final int x;
     public final int y;
 
-    public Heading[] wallHeading;
-    public Belt belt;
-    public Checkpoint checkpoint;
-    //public Laser laser;
+    public Heading[] wallHeading = null;
+    public Belt belt = null;
+    public Checkpoint checkpoint = null;
+    public EnergyField energyField;
+    public Gear gear;
+    public Laser laser;
+    public Push push;
+    public StartField startField;
     public Wall wall;
+
+    public boolean isAntenna;
+    public boolean isRespawn;
+    public boolean isHole;
+    public boolean isSpace = true;
+
+
 
     //Has added checkpoints to spaces
     //They are either NULL (not there) or present
 
     private Player player;
 
-    public Space(Board board, int x, int y, Heading[] wallHeading) {
+    public Space(Board board, int x, int y) {
         this.board = board;
         this.x = x;
         this.y = y;
-        this.wallHeading = wallHeading;
-
         player = null;
     }
 
