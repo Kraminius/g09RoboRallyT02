@@ -38,11 +38,11 @@ import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
  */
 public class Board extends Subject {
 
-    public final int width;
+    public int width;
 
-    public final int height;
+    public int height;
 
-    public final String boardName;
+    public String boardName;
 
     private Integer gameId;
 

@@ -38,6 +38,9 @@ public class Space extends Subject {
 
     public Heading[] wallHeading;
     public Belt belt;
+    public Checkpoint checkpoint;
+    //public Laser laser;
+    public Wall wall;
 
     //Has added checkpoints to spaces
     //They are either NULL (not there) or present
