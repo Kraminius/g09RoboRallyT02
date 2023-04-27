@@ -60,12 +60,29 @@ public class BoardLoader {
 
 
     /* board_x.json file structure
+
+
     {
         "varName":"stringValue",
         "varName": intValue,
         "varName":["stringValue1", "stringValue2", "stringValue3"],
         "varName":[intValue1, intValue2, intValue3],
-        "wall":["0;0;EAST;WEST", "2;3;NORTH;EAST"]
+        "wall":["x;y;EAST;WEST", "x;y;NORTH;EAST"],
+        "belt":["x;y;LEFT/RIGHT/null;HEADING;SPEED"],
+        "checkpoint":["x;y;checkpointNumber"],
+        "laser":["x;y;HEADING;range;amount"], //amount = amount of lasers = amount of damage cards taken.
+        "antenna":["x;y"],
+        "push":["x;y;heading;1"] // number after heading = activation on turn.
+        "energyField":["x;y;energyCubes"],
+        "gear": ["x;y;LEFT/RIGHT"],
+        "hole": ["x;y"],
+        "respawn": ["x;y;spawnHeading"],
+        "noField": ["x;y"];
+        "startFields":["x;y;id];
+
+    }
+    {
+
     }
      */
 }
