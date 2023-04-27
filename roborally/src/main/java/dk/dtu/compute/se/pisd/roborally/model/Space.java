@@ -36,7 +36,7 @@ public class Space extends Subject {
     public final int x;
     public final int y;
 
-    public final Heading[] wallHeading;
+    public Heading[] wallHeading;
     public Belt belt;
 
     //Has added checkpoints to spaces
@@ -84,11 +84,17 @@ public class Space extends Subject {
         return wallHeading;
     }
 
+
+
     public int getX() {
         return x;
     }
 
     public int getY() {
         return y;
+    }
+
+    public void setWallHeading(Heading[] headings) {
+        wallHeading = headings;
     }
 }
