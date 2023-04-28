@@ -22,6 +22,9 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.*;
+
+import java.util.ArrayList;
 
 /**
  * ...
@@ -36,23 +39,32 @@ public class Space extends Subject {
     public final int x;
     public final int y;
 
-    public Heading[] wallHeading;
-    public Belt belt;
-    public Checkpoint checkpoint;
-    //public Laser laser;
+    public Belt belt = null;
+    public Checkpoint checkpoint = null;
+    public EnergyField energyField;
+    public Gear gear;
+    public Laser laser;
+    public Push push;
+    public StartField startField;
     public Wall wall;
+
+    public boolean isAntenna;
+    public boolean isRespawn;
+    public boolean isHole;
+    public boolean isSpace = true;
+    public boolean isRepair;
+
+
 
     //Has added checkpoints to spaces
     //They are either NULL (not there) or present
 
     private Player player;
 
-    public Space(Board board, int x, int y, Heading[] wallHeading) {
+    public Space(Board board, int x, int y) {
         this.board = board;
         this.x = x;
         this.y = y;
-        this.wallHeading = wallHeading;
-
         player = null;
     }
 
@@ -83,8 +95,9 @@ public class Space extends Subject {
         notifyChange();
     }
 
-    public Heading[] getWallHeading() {
-        return wallHeading;
+    public ArrayList<Heading> getWallHeading() {
+        if(wall == null) return null;
+        return wall.wallHeadings;
     }
 
 
@@ -95,9 +108,5 @@ public class Space extends Subject {
 
     public int getY() {
         return y;
-    }
-
-    public void setWallHeading(Heading[] headings) {
-        wallHeading = headings;
     }
 }

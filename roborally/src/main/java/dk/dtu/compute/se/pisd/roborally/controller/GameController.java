@@ -21,7 +21,9 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -427,16 +429,16 @@ public class GameController {
         }
 
         if (toSpace.getWallHeading() != null && directionHeadingTo != null) {
-            for (int i = 0; i < toSpace.getWallHeading().length; i++) {
-                if (toSpace.getWallHeading()[i] == directionHeadingTo) {
+            for (int i = 0; i < toSpace.getWallHeading().size(); i++) {
+                if (toSpace.getWallHeading().get(i) == directionHeadingTo) {
                     obstacle = true;
                 }
             }
         }
 
         if (fromSpace.getWallHeading() != null && directionHeadingFrom != null) {
-            for (int i = 0; i < fromSpace.getWallHeading().length; i++) {
-                if (fromSpace.getWallHeading()[i] == directionHeadingFrom) {
+            for (int i = 0; i < fromSpace.getWallHeading().size(); i++) {
+                if (fromSpace.getWallHeading().get(i) == directionHeadingFrom) {
                     obstacle = true;
                 }
             }
@@ -581,8 +583,8 @@ public class GameController {
             Space space = player.getSpace();
             boolean[] checkpointStatus = player.getCheckpointReadhed();
             int number;
-            if (space instanceof Checkpoint) {
-                number = ((Checkpoint) space).getCheckpointNumber();
+            if (space.checkpoint != null) {
+                number = space.checkpoint.number;
                 if (number == 1) {
                     player.setCheckpointReadhed(0, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
