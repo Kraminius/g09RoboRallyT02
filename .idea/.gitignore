@@ -16,3 +16,5 @@ target/
 /dataSources/
 /dataSources.local.xml
 /target/
+/roborally/target/
+
