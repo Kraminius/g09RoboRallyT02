@@ -39,6 +39,4 @@ public enum Heading {
         return values()[(this.ordinal() + values().length - 1) % values().length];
     }
 
-
-
 }
