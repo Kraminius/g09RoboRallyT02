@@ -13,5 +13,4 @@ public class Belt {
     public String turn = ""; //"Left", "Right", ""
 
     public int speed;
-    public Heading T_Heading;
 }

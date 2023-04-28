@@ -52,6 +52,7 @@ public class Space extends Subject {
     public boolean isRespawn;
     public boolean isHole;
     public boolean isSpace = true;
+    public boolean isRepair;
 
 
 

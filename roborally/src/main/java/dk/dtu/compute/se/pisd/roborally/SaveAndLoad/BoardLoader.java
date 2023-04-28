@@ -85,7 +85,9 @@ public class BoardLoader {
                     String[] values = checkpoints.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                   // b.spaces[x][y].checkpoint = new Checkpoint();
+                    b.spaces[x][y].checkpoint = new Checkpoint();
+                    b.spaces[x][y].checkpoint.number = parseInt(values[2]);
+
                 }
                 break;
             case "laser":
@@ -96,8 +98,8 @@ public class BoardLoader {
                     int y = parseInt(values[1]);
                     b.spaces[x][y].laser = new Laser();
                     b.spaces[x][y].laser.heading = getHeading(values[2]);
-                    b.spaces[x][y].laser.range = parseInt(values[3]);
-                    b.spaces[x][y].laser.damage = parseInt(values[4]);
+                    b.spaces[x][y].laser.damage = parseInt(values[3]);
+                    if(values[4].equals("TRUE")) b.spaces[x][y].laser.isStart = true;
                 }
                 break;
             case "antenna":
@@ -177,6 +179,15 @@ public class BoardLoader {
                     int y = parseInt(values[1]);
                     b.spaces[x][y].startField = new StartField();
                     b.spaces[x][y].startField.id = parseInt(values[2]);
+                }
+                break;
+            case "repair":
+                ArrayList<String> repairFields = getList((JSONArray) value);
+                for(int i = 0; i < repairFields.size(); i++){
+                    String[] values = repairFields.get(i).split(";");
+                    int x = parseInt(values[0]);
+                    int y = parseInt(values[1]);
+                    b.spaces[x][y].isRepair = true;
                 }
                 break;
         }
