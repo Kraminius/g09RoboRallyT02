@@ -26,13 +26,13 @@ public class BoardLoader {
 
     /** Loads a board from files and inserts each key and their value into the board.
      *
-     * @param id board id
+     * @param name board name
      * @param board the board that it should be loaded into
      * @return the board that is saved with the id
      */
-    public void loadBoard(int id, Board board){
-        JSONObject obj = json.load("board_" + id);
-
+    public boolean loadBoard(String name, Board board){
+        JSONObject obj = json.load(name);
+        if(obj == null) return false;
         board.width = parseInt((String) obj.get("width"));
         board.height = parseInt((String) obj.get("height"));
         board.spaces = new Space[board.width][board.height];
@@ -44,7 +44,14 @@ public class BoardLoader {
         for(Object key : obj.keySet()){
             insert(board, obj.get(key), (String) key);
         }
+        return true;
     }
+    /**@Author Tobias Gørlyk - s224271@dtu.dk
+     * Goes through all the keys and adds their values to a space
+     * @param b the board that the changes should be made to
+     * @param value the Object that comes with the key, this is cast onto different values.
+     * @param varName The name of the change we should make.
+     */
     private void insert(Board b, Object value, String varName){
 
         if(value == null) return;

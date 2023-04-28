@@ -69,7 +69,9 @@ public class SpaceView extends StackPane implements ViewObserver {
     StackPane elementLayer = new StackPane();
     ImageLoader imageLoader = ImageLoader.get();
 
-
+    /**@Author Tobias Gørlyk - s224271@dtu.dk
+     * Creates the space and inserts a few layers of Stackpanes or Imageviews to show both the player, space backgrounds and elements on the board.
+     */
     public SpaceView(@NotNull Space space) {
         this.space = space;
 
@@ -85,9 +87,6 @@ public class SpaceView extends StackPane implements ViewObserver {
         this.setStyle("-fx-border-color: #eeeeee; -fx-background-color: #eeeeee");
         addPictures();
 
-        // updatePlayer();
-
-
         //Layers
         layers = new StackPane();
         this.getChildren().add(layers);
@@ -102,64 +101,10 @@ public class SpaceView extends StackPane implements ViewObserver {
         space.attach(this);
         update(space);
     }
-    private void colorSpace(){
-        String style = "";
-        if(!this.space.isSpace) style = "-fx-background-color: #eeeeee; -fx-border-color: #eeeeee";
-        if(this.space.isHole) style = "-fx-background-color: #101010; -fx-border-color: #fffb3d";
-        if(this.space.belt != null){
-            VBox box = new VBox();
-            this.getChildren().add(box);
-            box.setAlignment(Pos.CENTER_RIGHT);
-            box.setMaxWidth(SPACE_WIDTH);
-            box.setMaxHeight(40);
-            box.setPadding(new Insets(10, 10, 10, 10));
-            VBox pointer = new VBox();
-            pointer.setMaxWidth(10);
-            pointer.setMaxHeight(30);
-            pointer.setMinWidth(10);
-            pointer.setMinHeight(30);
-            pointer.setStyle("-fx-background-color: #ffffff");
 
-            box.getChildren().add(pointer);
-            setRotation(box,this.space.belt.heading, 0);
-
-            if(this.space.belt.speed == 1){
-                box.setStyle("-fx-background-color: #8dfa71; -fx-border-color: #bbbbbb");
-            }else if(this.space.belt.speed == 2){
-                box.setStyle("-fx-background-color: #4ba3e0; -fx-border-color: #bbbbbb");
-            }
-        }
-        if(this.space.wall != null){
-            StackPane walls = new StackPane();
-            this.getChildren().add(walls);
-            for(int i = 0; i < this.space.wall.wallHeadings.size(); i++){
-                VBox box = new VBox();
-                box.setAlignment(Pos.CENTER_RIGHT);
-                VBox wall = new VBox();
-                wall.setMaxWidth(10);
-                wall.setMaxHeight(SPACE_HEIGHT);
-                wall.setMinWidth(10);
-                wall.setMinHeight(SPACE_HEIGHT);
-                wall.setStyle("-fx-background-color: #fffb3d; -fx-border-color: #404040");
-                box.getChildren().add(wall);
-                setRotation(box, this.space.wall.wallHeadings.get(i), 0);
-                walls.getChildren().add(box);
-            }
-        }
-        if(this.space.isRespawn){
-            VBox box = new VBox();
-            this.getChildren().add(box);
-            box.setAlignment(Pos.CENTER);
-            VBox respawn = new VBox();
-            respawn.setMinWidth(50);
-            respawn.setMinHeight(50);
-            respawn.setMaxWidth(50);
-            respawn.setMaxHeight(50);
-            respawn.setStyle("-fx-background-color: #73e5d5; -fx-border-color: #404040; -fx-border-radius: 100; -fx-background-radius: 105; -fx-border-width: 5");
-            box.getChildren().add(respawn);
-        }
-        this.setStyle(this.getStyle() + ";" + style);
-    }
+    /**@Author Tobias Gørlyk - s224271@dtu.dk
+     * Adds image onto the board if they should be there, loading several things onto the same field can cause problems in the gui.
+     */
     private void addPictures(){
         if(this.space.isSpace) backgroundLayer.setImage(imageLoader.empty);
         if(this.space.isHole) backgroundLayer.setImage(imageLoader.hole);
@@ -298,7 +243,12 @@ public class SpaceView extends StackPane implements ViewObserver {
             }
         }
     }
-
+    /**@Author Tobias Gørlyk - s224271@dtu.dk
+     * Rotates a javaFX Node to be in the direction of a heading with the possibility of an added rotation offset if the image isn't rotated right.
+     * @param node the node that should be rotated
+     * @param heading the heading it should rotate to
+     * @param addedRotation the rotation offset there is to an image. The default heading of an image is EAST, so if the image is not heading east, you can add some rotation.
+     */
     private void setRotation(Node node, Heading heading, int addedRotation){ //This method believes 0 is facing east.
         switch (heading){
             case NORTH:

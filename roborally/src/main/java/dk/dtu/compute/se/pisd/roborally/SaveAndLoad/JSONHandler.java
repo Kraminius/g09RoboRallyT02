@@ -21,9 +21,20 @@ public class JSONHandler {
         raw.writeJSON("test",jsonObject);
         printJSON("test");
     }
+    /**@Author Tobias Gørlyk - s224271@dtu.dk
+     * Loads a json file and recieves a JSON object.
+     * @param name the name of the file it should look for
+     * @return an JSONObject if the file is found, if not it returns null.
+     */
     public JSONObject load(String name){
         return raw.readJSON(name);
     }
+    /**@Author Tobias Gørlyk - s224271@dtu.dk
+     * Saves a json object under a name into a file in the directory.
+     * If it already exist it will overwrite it.
+     * @param json the json Object that needs to be saved
+     * @param name the name the file should be saved under or overwrite
+     */
     public void save(String name, JSONObject json){
         raw.writeJSON(name, json);
     }

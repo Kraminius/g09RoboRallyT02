@@ -10,7 +10,7 @@ public class Belt {
      * It saves a heading of the belt, if it's turning and it's speed.
      */
     public Heading heading;
-    public String turn = ""; //"Left", "Right", ""
+    public String turn = ""; //"LEFT", "RIGHT", LEFT_T, RIGHT_T, ""
 
     public int speed;
 }

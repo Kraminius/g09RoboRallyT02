@@ -28,10 +28,17 @@ public class ImageLoader {
 
     private static ImageLoader loader;
 
+    /**@Author Tobias Gørlyk - s224271@dtu.dk
+     * Singleton gets instance of the loader so we only have to load from files once.
+     */
     public static ImageLoader get(){
         if(loader == null) loader = new ImageLoader();
         return loader;
     }
+
+    /**@Author Tobias Gørlyk - s224271@dtu.dk
+     * Loads all the images when the class is instantiated.
+     */
     public ImageLoader(){
         empty = loadImage("empty");
         antenna = loadImage("antenna");
