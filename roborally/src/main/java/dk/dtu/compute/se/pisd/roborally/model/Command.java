@@ -46,7 +46,17 @@ public enum Command {
 
     AGAIN("Again"),
 
-    OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT);
+    OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT),
+
+    //SPAM CARDS
+
+    SPAM ("Spam"),
+
+    WORM ("Worm"),
+
+    TROJAN_HORSE("Trojan horse"),
+
+    VIRUS("Virus");
 
     // XXX Assignment P3
 
