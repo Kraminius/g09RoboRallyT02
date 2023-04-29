@@ -26,6 +26,8 @@ import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -97,6 +99,14 @@ public class GameController {
         int random = (int) (Math.random() * validCommands.size());
         Command randomCommand = validCommands.toArray(new Command[0])[random];
         return new CommandCard(randomCommand);
+    }
+
+    private void shuffleDiscardPileToDeck(Player player){
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        ArrayList<CommandCard> cardDeck = player.getCardDeck();
+        Collections.shuffle(discardPile);
+        cardDeck.addAll(discardPile);
+        discardPile.clear();
     }
 
     // XXX: V2
