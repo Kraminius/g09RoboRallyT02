@@ -85,7 +85,7 @@ public class GameController {
                 }
                 for (int j = 0; j < Player.NO_CARDS; j++) {
                     CommandCardField field = player.getCardField(j);
-                    field.setCard(generateRandomCommandCard());
+                    field.setCard(drawTopCard(player));
                     field.setVisible(true);
                 }
             }
@@ -107,6 +107,23 @@ public class GameController {
         Collections.shuffle(discardPile);
         cardDeck.addAll(discardPile);
         discardPile.clear();
+    }
+
+    private CommandCard drawTopCard(Player player){
+        ArrayList<CommandCard> cardDeck = player.getCardDeck();
+        int i = cardDeck.size() - 1;
+        if(i < 0){
+            shuffleDiscardPileToDeck(player);
+            cardDeck = player.getCardDeck();
+        }
+        CommandCard topCard = cardDeck.get(i);
+        cardDeck.remove(i);
+        return topCard;
+    }
+
+    private void discardCard(Player player, CommandCard card){
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        discardPile.add(card);
     }
 
     // XXX: V2
@@ -260,8 +277,13 @@ public class GameController {
 
         switch (command) {
             case FORWARD:
-                this.moveForward(player);
-                return false;
+                try {
+                    this.moveForward(player);
+                    return false;
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRebootToken());
+                    return true;
+                }
             case RIGHT:
                 this.turnRight(player);
                 return false;
@@ -269,14 +291,24 @@ public class GameController {
                 this.turnLeft(player);
                 return false;
             case FAST_FORWARD:
-                this.fastForward(player);
-                return false;
+                try {
+                    this.fastForward(player);
+                    return false;
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRebootToken());
+                    return true;
+                }
             case U_TURN:
                 this.uTurn(player);
                 return false;
             case BACK_UP:
-                this.backUp(player);
-                return false;
+                try {
+                    this.backUp(player);
+                    return false;
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRebootToken());
+                    return true;
+                }
             case AGAIN:
                 int prevProgramStep = board.getStep() - 1;
                 if(prevProgramStep < 0){
@@ -298,12 +330,12 @@ public class GameController {
     }
 
     // TODO Assignment V2
-    public void moveForward(@NotNull Player player) {
+    public void moveForward(@NotNull Player player) throws OutsideBoardException {
         moveForward(player, 1, null, false);
     }
 
     // TODO Assignment V2
-    public void fastForward(@NotNull Player player) {
+    public void fastForward(@NotNull Player player) throws OutsideBoardException {
         moveForward(player, 1, null, false);
         moveForward(player, 1, null, false);
     }
@@ -321,8 +353,7 @@ public class GameController {
      * If there is a player there it moves them forward if they can move forward.
      * If no one can move because of an obstacle or it being outside the board, no one moves.
      */
-    private boolean moveForward(Player player, int amount, Heading heading, boolean isBelt) {
-        try {
+    private boolean moveForward(Player player, int amount, Heading heading, boolean isBelt) throws OutsideBoardException{
             int x = player.getSpace().x;
             int y = player.getSpace().y;
             Space space = null;
@@ -344,10 +375,6 @@ public class GameController {
                 player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
                 return true;
             }
-        } catch (OutsideBoardException e){
-            respawnPlayer(player);
-        }
-        return true;
     }
 
     /**
@@ -407,13 +434,33 @@ public class GameController {
      * The method also removes ALL the players remaining program cards.
      * @param player the player that should be respawned
      */
-    private void respawnPlayer(@NotNull Player player){
-        Space rebootToken = board.getRebootToken();
-        player.setSpace(rebootToken);
+    public void respawnPlayer(@NotNull Player player, @NotNull Heading heading){
+        Player currentPlayer = player;
         for (int j = board.getStep(); j < Player.NO_REGISTERS; j++) {
             CommandCardField field = player.getProgramField(j);
             field.setCard(null);
             field.setVisible(true);
+        }
+        board.setPhase(Phase.ACTIVATION);
+        int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+        if (nextPlayerNumber < board.getPlayersNumber()) {
+            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+            if(!board.isStepMode()){
+                continuePrograms();
+            }
+        } else {
+            int step = board.getStep();
+            step++;
+            if (step < Player.NO_REGISTERS) {
+                makeProgramFieldsVisible(step);
+                board.setStep(step);
+                board.setCurrentPlayer(board.getPlayer(0));
+                if(!board.isStepMode()){
+                    continuePrograms();
+                }
+            } else {
+                startProgrammingPhase();
+            }
         }
     }
 
@@ -486,13 +533,9 @@ public class GameController {
      *  A method to move the player backwards without changing their heading.
      * @param player the player that should be moved
      */
-    public void backUp(@NotNull Player player) {
-        try {
+    public void backUp(@NotNull Player player) throws OutsideBoardException {
             Space space = getSpaceAt(-1, player.getHeading(), player.getSpace().x, player.getSpace().y);
             player.setSpace(space);
-        } catch (OutsideBoardException e){
-            respawnPlayer(player);
-        }
     }
 
     /**
@@ -529,7 +572,7 @@ public class GameController {
      * Tries to move player, and catches the OutsideBoardException if necessary.
      * Not implemented in game yet.
      */
-    public void activateBelts() {
+    public void activateBelts() throws OutsideBoardException {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
             int moving;
@@ -540,32 +583,16 @@ public class GameController {
                     Space spaceInFront = null;
                     switch (heading) {
                         case EAST:
-                            try {
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x + 1, player.getSpace().y);
-                            } catch (OutsideBoardException e){
-                                respawnPlayer(player);
-                            }
                             break;
                         case WEST:
-                            try {
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x - 1, player.getSpace().y);
-                            } catch (OutsideBoardException e){
-                                respawnPlayer(player);
-                            }
                             break;
                         case NORTH:
-                            try {
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y - 1);
-                            } catch (OutsideBoardException e){
-                                respawnPlayer(player);
-                            }
                             break;
                         case SOUTH:
-                            try {
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y + 1);
-                            } catch (OutsideBoardException e){
-                                respawnPlayer(player);
-                            }
                             break;
                         default:
                             throw new RuntimeException("No Heading"); //This should not happen

@@ -28,6 +28,7 @@ import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoadWindow;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.CommandCard;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 
 import javafx.application.Platform;
@@ -42,6 +43,7 @@ import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -89,6 +91,10 @@ public class AppController implements Observer {
             int no = result.get();
             for (int i = 0; i < no; i++) {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
+                ArrayList<CommandCard> cardDeck= player.getCardDeck();
+                for(int j = 0; j < player.NO_CARDS; j++){
+                    cardDeck.add(gameController.generateRandomCommandCard());
+                }
                 board.addPlayer(player);
                 player.setSpace(board.getSpace(i % board.width, i));
             }
