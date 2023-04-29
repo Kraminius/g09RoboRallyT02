@@ -26,6 +26,9 @@ import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * ...
  *
@@ -88,10 +91,12 @@ public class GameController {
     }
 
     // XXX: V2
-    private CommandCard generateRandomCommandCard() {
-        Command[] commands = Command.values();
-        int random = (int) (Math.random() * commands.length);
-        return new CommandCard(commands[random]);
+    public CommandCard generateRandomCommandCard() {
+        Set<Command> validCommands = EnumSet.allOf(Command.class);
+        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS));
+        int random = (int) (Math.random() * validCommands.size());
+        Command randomCommand = validCommands.toArray(new Command[0])[random];
+        return new CommandCard(randomCommand);
     }
 
     // XXX: V2
