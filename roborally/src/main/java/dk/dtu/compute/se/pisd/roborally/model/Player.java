@@ -24,6 +24,9 @@ package dk.dtu.compute.se.pisd.roborally.model;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
 
 /**
@@ -47,6 +50,10 @@ public class Player extends Subject {
 
     private CommandCardField[] program;
     private CommandCardField[] cards;
+
+    private ArrayList<CommandCard> cardDeck;
+
+    private ArrayList<CommandCard> discardPile;
     //Har lavet et array til at se alle checkpoints samlet
     private boolean[] checkpointsReadhed;
 
@@ -54,8 +61,10 @@ public class Player extends Subject {
         this.board = board;
         this.name = name;
         this.color = color;
-
         this.space = null;
+
+        this.cardDeck = new ArrayList<>();
+        this.discardPile = new ArrayList<>();
 
         program = new CommandCardField[NO_REGISTERS];
         for (int i = 0; i < program.length; i++) {
@@ -137,6 +146,13 @@ public class Player extends Subject {
         return cards[i];
     }
 
+    public ArrayList<CommandCard> getCardDeck(){
+        return cardDeck;
+    }
+
+    public ArrayList<CommandCard> getDiscardPile(){
+        return discardPile;
+    }
     //Method to get their checkpoints reached
     public boolean[] getCheckpointReadhed() {
         return checkpointsReadhed;
