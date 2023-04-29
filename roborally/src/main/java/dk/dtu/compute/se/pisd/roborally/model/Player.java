@@ -133,8 +133,18 @@ public class Player extends Subject {
         return program[i];
     }
 
+    public void setProgramField(int i, CommandCardField newProgram)
+    {
+        program[i] = newProgram;
+    }
+
+
     public CommandCardField getCardField(int i) {
         return cards[i];
+    }
+
+    public void setCardField(int i, CommandCardField newCard) {
+        cards[i] = newCard;
     }
 
     //Method to get their checkpoints reached
