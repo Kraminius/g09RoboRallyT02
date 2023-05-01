@@ -40,6 +40,8 @@ public class GameController {
 
     final public Board board;
 
+    private List<Player> sequence;
+
     /**
      * @param board the board which the game is played on
      */
@@ -70,11 +72,11 @@ public class GameController {
      */
     // XXX: V2
     public void startProgrammingPhase() {
-        //Checks who has priority
-        antennaPriority();
+
 
         activateCheckpoints(); //Ser om nogen spiller har nået et checkpoint
         board.setPhase(Phase.PROGRAMMING);
+        //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
 
@@ -104,10 +106,15 @@ public class GameController {
 
     // XXX: V2
     public void finishProgrammingPhase() {
+        //Checks who has priority
+        antennaPriority();
+
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
         board.setPhase(Phase.ACTIVATION);
-        board.setCurrentPlayer(board.getPlayer(0));
+        board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+        sequence.remove(0);
+        //board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
     }
 
@@ -176,8 +183,8 @@ public class GameController {
                         return;
                     }
                 }
-                int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-                if (nextPlayerNumber < board.getPlayersNumber()) {
+                //int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+                /*if (nextPlayerNumber < board.getPlayersNumber()) {
                     board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
                 } else {
                     step++;
@@ -188,7 +195,23 @@ public class GameController {
                     } else {
                         startProgrammingPhase();
                     }
+                }*/
+
+                if(sequence.size() == 0){
+                    step++;
+                    if (step < Player.NO_REGISTERS) {
+                        makeProgramFieldsVisible(step);
+                        board.setStep(step);
+                        antennaPriority();
+                        board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                    } else {
+                        startProgrammingPhase();
+                    }
+                }else{
+                    board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                    sequence.remove(0);
                 }
+
             } else {
                 // this should not happen
                 assert false;
@@ -613,26 +636,41 @@ public class GameController {
         assert false;
     }
 
+    /**
+     * Method for determining in what order the players will play their turn.
+     */
     public void antennaPriority(){
 
         List<Player> sortedPlayers = findPlayerSequence(board.getAntenna());
+
+        //Testing to see the player sequence in console
         System.out.println("Player sequence:");
         for (Player player : sortedPlayers) {
             System.out.println("Player " + player.getName());
         }
+
+        //Maybe change how we save the sequence playerlist
+        this.sequence = sortedPlayers;
     }
 
 
+    /**
+     * Calculates the sequence.
+     * @param antenna
+     * @return
+     */
     public List<Player> findPlayerSequence(Space antenna) {
 
         List<Player> players = new ArrayList<>();
 
+        //Used for checking the position of each player
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             players.add(board.getPlayer(i));
             System.out.println("x: " + board.getPlayer(i).getSpace().x+ " y: " + board.getPlayer(i).getSpace().x);
 
         }
 
+        //Antenna sequence
         System.out.println("Antenna: " + antenna.x + " " +antenna.y);
 
         List<Player> sortedPlayers = new ArrayList<>(players);
@@ -642,14 +680,24 @@ public class GameController {
             public int compare(Player p1, Player p2) {
                 double distance1 = calculateDistance(antenna, p1.getSpace());
                 double distance2 = calculateDistance(antenna, p2.getSpace());
-                System.out.println("my distances: " + distance1 + " " + distance2);
-                return Double.compare(distance1, distance2);
+                if (distance1 == distance2) {
+                    return compareByClockwiseRadar(antenna, p1, p2);
+                } else {
+                    return Double.compare(distance1, distance2);
+                }
+
             }
         });
 
         return sortedPlayers;
     }
 
+    /**
+     * Calculates the distance between player and antenna.
+     * @param space
+     * @param antenna
+     * @return
+     */
     public double calculateDistance(Space space, Space antenna){
         int dx = Math.abs(space.x - antenna.x);
         int dy = Math.abs(space.y - antenna.y);
@@ -657,5 +705,61 @@ public class GameController {
         return dx + dy;
 
     }
+
+    /**
+     * If 2 or more players have the same distance a rader will determine who goes first. This is based on a direction
+     * then based on that direction it follows a clockwise movement.
+     * @param antenna
+     * @param p1
+     * @param p2
+     * @return
+     */
+    public static int compareByClockwiseRadar(Space antenna, Player p1, Player p2) {
+
+        //Right now the direction is always east, Antenna object should have a direction value on it
+        String initialDirection = "east";
+
+        double angle1 = Math.atan2(p1.getSpace().y - antenna.y, p1.getSpace().x - antenna.x);
+        double angle2 = Math.atan2(p2.getSpace().y - antenna.y, p2.getSpace().x - antenna.x);
+
+        angle1 = adjustAngle(angle1, initialDirection);
+        angle2 = adjustAngle(angle2, initialDirection);
+
+        if (angle1 < 0) {
+            angle1 += 2 * Math.PI;
+        }
+        if (angle2 < 0) {
+            angle2 += 2 * Math.PI;
+        }
+
+        return Double.compare(angle1, angle2);
+    }
+
+    /**
+     * Adjusts the angle based on direction (North, west, east and south).
+     * @param angle
+     * @param initialDirection
+     * @return
+     */
+    public static double adjustAngle(double angle, String initialDirection) {
+        double adjustment;
+        switch (initialDirection.toLowerCase()) {
+            case "north":
+                adjustment = Math.PI / 2;
+                break;
+            case "west":
+                adjustment = Math.PI;
+                break;
+            case "south":
+                adjustment = -Math.PI / 2;
+                break;
+            case "east":
+            default:
+                adjustment = 0;
+                break;
+        }
+        return angle + adjustment;
+    }
+
 
 }
