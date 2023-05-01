@@ -191,8 +191,8 @@ public class SpaceView extends StackPane implements ViewObserver {
             setRotation(backgroundLayer, heading, rotationOffset);
         }
         if(this.space.laser != null){
-            Heading heading = this.space.laser.heading;
-            int damage = this.space.laser.damage;
+            Heading heading = this.space.laser.getHeading();
+            int damage = this.space.laser.getDamage();
 
             VBox box = new VBox();
             box.setMaxSize(SPACE_WIDTH, SPACE_HEIGHT);
@@ -210,7 +210,7 @@ public class SpaceView extends StackPane implements ViewObserver {
             elementLayer.getChildren().add(box);
 
 
-            if(this.space.laser.isStart){
+            if(this.space.laser.isStart()){
                 VBox start = new VBox();
                 start.setMaxSize(SPACE_WIDTH, SPACE_HEIGHT);
                 start.setMinSize(SPACE_WIDTH, SPACE_HEIGHT);

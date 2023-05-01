@@ -104,9 +104,9 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     b.spaces[x][y].laser = new Laser();
-                    b.spaces[x][y].laser.heading = getHeading(values[2]);
-                    b.spaces[x][y].laser.damage = parseInt(values[3]);
-                    if(values[4].equals("TRUE")) b.spaces[x][y].laser.isStart = true;
+                    b.spaces[x][y].laser.setHeading(getHeading(values[2]));
+                    b.spaces[x][y].laser.setDamage(parseInt(values[3]));
+                    if(values[4].equals("TRUE")) b.spaces[x][y].laser.setStart(true);
                 }
                 break;
             case "antenna":
