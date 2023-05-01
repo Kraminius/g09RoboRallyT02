@@ -73,7 +73,7 @@ public class Board extends Subject {
 
     /**@Author Tobias Gørlyk - s224271@dtu.dk
      * Creates a Board by loading a .json file under an id, if it doesn't exist it loads a testboard instead.
-     * @param id the id of the board
+     *
      *
      */
     public Board(String boardName){
