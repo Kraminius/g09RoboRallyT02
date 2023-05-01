@@ -135,8 +135,8 @@ public class SpaceView extends StackPane implements ViewObserver {
             }
         }
         if(this.space.push != null){
-            Heading heading = this.space.push.heading;
-            ArrayList<Integer> rounds = this.space.push.activateRounds;
+            Heading heading = this.space.push.getHeading();
+            ArrayList<Integer> rounds = this.space.push.getActivateRounds();
             ImageView pusher = new ImageView();
             if(rounds.contains(1) && rounds.contains(3) && rounds.contains(5)){
                 pusher.setImage(imageLoader.push[1]);

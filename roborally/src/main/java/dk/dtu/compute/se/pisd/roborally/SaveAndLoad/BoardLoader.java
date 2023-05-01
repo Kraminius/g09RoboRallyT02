@@ -125,9 +125,9 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     b.spaces[x][y].push = new Push();
-                    b.spaces[x][y].push.heading = getHeading(values[2]);
+                    b.spaces[x][y].push.setHeading(getHeading(values[2]));
                     for(int j = 3; j < values.length; j++){
-                        b.spaces[x][y].push.activateRounds.add(parseInt(values[j]));
+                        b.spaces[x][y].push.getActivateRounds().add(parseInt(values[j]));
                     }
                 }
                 break;
