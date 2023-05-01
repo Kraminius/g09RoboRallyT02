@@ -40,6 +40,8 @@ public class GameController {
 
     final public Board board;
 
+    private List<Player> sequence;
+
     /**
      * @param board the board which the game is played on
      */
@@ -70,11 +72,11 @@ public class GameController {
      */
     // XXX: V2
     public void startProgrammingPhase() {
-        //Checks who has priority
-        antennaPriority();
+
 
         activateCheckpoints(); //Ser om nogen spiller har nået et checkpoint
         board.setPhase(Phase.PROGRAMMING);
+        //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
 
@@ -104,10 +106,15 @@ public class GameController {
 
     // XXX: V2
     public void finishProgrammingPhase() {
+        //Checks who has priority
+        antennaPriority();
+
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
         board.setPhase(Phase.ACTIVATION);
-        board.setCurrentPlayer(board.getPlayer(0));
+        board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+        sequence.remove(0);
+        //board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
     }
 
@@ -176,8 +183,8 @@ public class GameController {
                         return;
                     }
                 }
-                int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-                if (nextPlayerNumber < board.getPlayersNumber()) {
+                //int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+                /*if (nextPlayerNumber < board.getPlayersNumber()) {
                     board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
                 } else {
                     step++;
@@ -188,7 +195,23 @@ public class GameController {
                     } else {
                         startProgrammingPhase();
                     }
+                }*/
+
+                if(sequence.size() == 0){
+                    step++;
+                    if (step < Player.NO_REGISTERS) {
+                        makeProgramFieldsVisible(step);
+                        board.setStep(step);
+                        antennaPriority();
+                        board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                    } else {
+                        startProgrammingPhase();
+                    }
+                }else{
+                    board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                    sequence.remove(0);
                 }
+
             } else {
                 // this should not happen
                 assert false;
@@ -620,6 +643,8 @@ public class GameController {
         for (Player player : sortedPlayers) {
             System.out.println("Player " + player.getName());
         }
+
+        this.sequence = sortedPlayers;
     }
 
 

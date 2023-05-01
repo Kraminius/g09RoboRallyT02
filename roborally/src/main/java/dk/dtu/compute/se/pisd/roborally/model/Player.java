@@ -39,6 +39,8 @@ public class Player extends Subject {
 
     final public Board board;
 
+    private int id;
+
     private String name;
     private String color;
 
@@ -50,10 +52,11 @@ public class Player extends Subject {
     //Har lavet et array til at se alle checkpoints samlet
     private boolean[] checkpointsReadhed;
 
-    public Player(@NotNull Board board, String color, @NotNull String name) {
+    public Player(@NotNull Board board, String color, @NotNull String name, @NotNull int id) {
         this.board = board;
         this.name = name;
         this.color = color;
+        this.id = id;
 
         this.space = null;
 
@@ -154,5 +157,14 @@ public class Player extends Subject {
     //Method to change their checkpoints reached
     public void setCheckpointReadhed(int Checkpoint, boolean state) {
         checkpointsReadhed[Checkpoint] = state;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
