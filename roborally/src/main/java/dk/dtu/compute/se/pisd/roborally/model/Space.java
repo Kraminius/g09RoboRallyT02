@@ -97,7 +97,7 @@ public class Space extends Subject {
 
     public ArrayList<Heading> getWallHeading() {
         if(wall == null) return null;
-        return wall.wallHeadings;
+        return wall.getWallHeadings();
     }
 
 

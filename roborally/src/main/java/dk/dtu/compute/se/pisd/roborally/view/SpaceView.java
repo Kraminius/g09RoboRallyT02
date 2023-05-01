@@ -113,7 +113,7 @@ public class SpaceView extends StackPane implements ViewObserver {
         if(this.space.isRepair) backgroundLayer.setImage(imageLoader.repair);
         if(this.space.energyField != null) backgroundLayer.setImage(imageLoader.energyField);
         if(this.space.startField != null){
-            int id = this.space.startField.id;
+            int id = this.space.startField.getId();
             backgroundLayer.setImage(imageLoader.startField);
             Text number = new Text("" + id);
             number.setStyle("-fx-font-weight: bold; -fx-font-size: 18");
@@ -230,7 +230,7 @@ public class SpaceView extends StackPane implements ViewObserver {
 
         }
         if(this.space.wall != null){
-            for(int i = 0; i < this.space.wall.wallHeadings.size(); i++){
+            for(int i = 0; i < this.space.wall.getWallHeadings().size(); i++){
                 VBox box = new VBox();
                 box.setAlignment(Pos.CENTER_RIGHT);
                 ImageView wall = new ImageView();
@@ -238,7 +238,7 @@ public class SpaceView extends StackPane implements ViewObserver {
                 wall.setFitWidth(15);
                 wall.setFitHeight(SPACE_HEIGHT);
                 box.getChildren().add(wall);
-                setRotation(box, this.space.wall.wallHeadings.get(i), 0);
+                setRotation(box, this.space.wall.getWallHeadings().get(i), 0);
                 elementLayer.getChildren().add(box);
             }
         }

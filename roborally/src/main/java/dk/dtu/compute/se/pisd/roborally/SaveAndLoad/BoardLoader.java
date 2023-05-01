@@ -68,7 +68,7 @@ public class BoardLoader {
                     int y = parseInt(values[1]);
                     for(int j = 2; j < values.length; j++){
                         if(b.spaces[x][y].wall == null) b.spaces[x][y].wall = new Wall();
-                        b.spaces[x][y].wall.wallHeadings.add(getHeading(values[j]));
+                        b.spaces[x][y].wall.getWallHeadings().add(getHeading(values[j]));
                     }
                 }
                 break;
@@ -185,7 +185,7 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     b.spaces[x][y].startField = new StartField();
-                    b.spaces[x][y].startField.id = parseInt(values[2]);
+                    b.spaces[x][y].startField.setId(parseInt(values[2]));
                 }
                 break;
             case "repair":
