@@ -526,10 +526,10 @@ public class GameController {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
             int moving;
-            if (player.getSpace().belt != null) {
-                moving = player.getSpace().belt.getSpeed();
+            if (player.getSpace().getElement().getBelt() != null) {
+                moving = player.getSpace().getElement().getBelt().getSpeed();
                 for (int n = moving; n > 0; n--) {
-                    Heading heading = player.getSpace().belt.getHeading();
+                    Heading heading = player.getSpace().getElement().getBelt().getHeading();
                     Space spaceInFront = null;
                     switch (heading) {
                         case EAST:
@@ -565,14 +565,14 @@ public class GameController {
                     }
                     if (spaceInFront == null) return;
 
-                    if (spaceInFront.belt == null) {
+                    if (spaceInFront.getElement().getBelt() == null) {
                         moveForward(player, 1, heading, false); //Can move players as this would be outside of belt.
                         moving = 0; //No longer moving on a belt so this is set to 0.
                     } else
                         moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
 
-                    if (spaceInFront.belt.getTurn().equals("LEFT")) turnLeft(player);
-                    else if (spaceInFront.belt.getTurn().equals("RIGHT")) turnRight(player);
+                    if (spaceInFront.getElement().getBelt().getTurn().equals("LEFT")) turnLeft(player);
+                    else if (spaceInFront.getElement().getBelt().getTurn().equals("RIGHT")) turnRight(player);
 
                 }
             }
@@ -591,8 +591,8 @@ public class GameController {
             Space space = player.getSpace();
             boolean[] checkpointStatus = player.getCheckpointReadhed();
             int number;
-            if (space.checkpoint != null) {
-                number = space.checkpoint.getNumber();
+            if (space.getElement().getCheckpoint() != null) {
+                number = space.getElement().getCheckpoint().getNumber();
                 if (number == 1) {
                     player.setCheckpointReadhed(0, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));

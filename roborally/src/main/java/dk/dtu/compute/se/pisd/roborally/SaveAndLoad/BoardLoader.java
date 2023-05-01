@@ -67,10 +67,13 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     for(int j = 2; j < values.length; j++){
-                        if(b.spaces[x][y].wall == null) b.spaces[x][y].wall = new Wall();
-                        b.spaces[x][y].wall.getWallHeadings().add(getHeading(values[j]));
+                        Wall wall;
+                        if(b.spaces[x][y].getElement().getWall() == null) wall = new Wall();
+                        else wall = b.spaces[x][y].getElement().getWall();
+                        wall.getWallHeadings().add(getHeading(values[j]));
+                        b.spaces[x][y].getElement().setWall(wall);
                     }
-                }
+                    }
                 break;
             case "belt":
                 ArrayList<String> belts = getList((JSONArray) value);
@@ -78,11 +81,12 @@ public class BoardLoader {
                     String[] values = belts.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].belt = new Belt();
-                    if(values[2].equals("null")) b.spaces[x][y].belt.setTurn(""); //LEFT/RIGHT/null
-                    else b.spaces[x][y].belt.setTurn(values[2]);
-                    b.spaces[x][y].belt.setHeading(getHeading(values[3]));
-                    b.spaces[x][y].belt.setSpeed(parseInt(values[4]));
+                    Belt belt = new Belt();
+                    if(values[2].equals("null")) belt.setTurn(""); //LEFT/RIGHT/null
+                    else belt.setTurn(values[2]);
+                    belt.setHeading(getHeading(values[3]));
+                    belt.setSpeed(parseInt(values[4]));
+                    b.spaces[x][y].getElement().setBelt(belt);
 
                 }
                 break;
@@ -92,9 +96,9 @@ public class BoardLoader {
                     String[] values = checkpoints.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].checkpoint = new Checkpoint();
-                    b.spaces[x][y].checkpoint.setNumber(parseInt(values[2]));
-
+                    Checkpoint checkpoint = new Checkpoint();
+                    checkpoint.setNumber(parseInt(values[2]));
+                    b.spaces[x][y].getElement().setCheckpoint(checkpoint);
                 }
                 break;
             case "laser":
@@ -103,10 +107,11 @@ public class BoardLoader {
                     String[] values = lasers.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].laser = new Laser();
-                    b.spaces[x][y].laser.setHeading(getHeading(values[2]));
-                    b.spaces[x][y].laser.setDamage(parseInt(values[3]));
-                    if(values[4].equals("TRUE")) b.spaces[x][y].laser.setStart(true);
+                    Laser laser = new Laser();
+                    laser.setHeading(getHeading(values[2]));
+                    laser.setDamage(parseInt(values[3]));
+                    if(values[4].equals("TRUE")) laser.setStart(true);
+                    b.spaces[x][y].getElement().setLaser(laser);
                 }
                 break;
             case "antenna":
@@ -115,7 +120,7 @@ public class BoardLoader {
                     String[] values = antennas.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].isAntenna = true;
+                    b.spaces[x][y].getElement().setAntenna(true);
                     b.setAntenna(b.spaces[x][y]);
 
                 }
@@ -126,11 +131,12 @@ public class BoardLoader {
                     String[] values = pushers.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].push = new Push();
-                    b.spaces[x][y].push.setHeading(getHeading(values[2]));
+                    Push push = new Push();
+                    push.setHeading(getHeading(values[2]));
                     for(int j = 3; j < values.length; j++){
-                        b.spaces[x][y].push.getActivateRounds().add(parseInt(values[j]));
+                        push.getActivateRounds().add(parseInt(values[j]));
                     }
+                    b.spaces[x][y].getElement().setPush(push);
                 }
                 break;
             case "energyField":
@@ -139,8 +145,9 @@ public class BoardLoader {
                     String[] values = energyFields.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].energyField = new EnergyField();
-                    b.spaces[x][y].energyField.setCubes(parseInt(values[2]));
+                    EnergyField energyField = new EnergyField();
+                    energyField.setCubes(parseInt(values[2]));
+                    b.spaces[x][y].getElement().setEnergyField(energyField);
                 }
                 break;
             case "gear":
@@ -149,8 +156,9 @@ public class BoardLoader {
                     String[] values = gears.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].gear = new Gear();
-                    b.spaces[x][y].gear.setRotation(values[2]); //LEFT/RIGHT
+                    Gear gear = new Gear();
+                    gear.setRotation(values[2]); //LEFT/RIGHT
+                    b.spaces[x][y].getElement().setGear(gear);
                 }
                 break;
             case "hole":
@@ -159,7 +167,7 @@ public class BoardLoader {
                     String[] values = holes.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].isHole = true;
+                    b.spaces[x][y].getElement().setHole(true);
                 }
                 break;
             case "respawn":
@@ -168,7 +176,7 @@ public class BoardLoader {
                     String[] values = respawns.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].isRespawn = true;
+                    b.spaces[x][y].getElement().setRespawn(true);
                 }
                 break;
             case "noField":
@@ -177,7 +185,7 @@ public class BoardLoader {
                     String[] values = noFields.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].isSpace = false;
+                    b.spaces[x][y].getElement().setSpace(false);
                 }
                 break;
             case "startFields":
@@ -186,8 +194,9 @@ public class BoardLoader {
                     String[] values = startFields.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].startField = new StartField();
-                    b.spaces[x][y].startField.setId(parseInt(values[2]));
+                    StartField startField = new StartField();
+                    startField.setId(parseInt(values[2]));
+                    b.spaces[x][y].getElement().setStartField(startField);
                 }
                 break;
             case "repair":
@@ -196,7 +205,7 @@ public class BoardLoader {
                     String[] values = repairFields.get(i).split(";");
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
-                    b.spaces[x][y].isRepair = true;
+                    b.spaces[x][y].getElement().setRepair(true);
                 }
                 break;
         }

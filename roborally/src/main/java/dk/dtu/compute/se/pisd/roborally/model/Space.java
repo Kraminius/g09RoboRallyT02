@@ -39,25 +39,7 @@ public class Space extends Subject {
     public final int x;
     public final int y;
 
-    public Belt belt = null;
-    public Checkpoint checkpoint = null;
-    public EnergyField energyField;
-    public Gear gear;
-    public Laser laser;
-    public Push push;
-    public StartField startField;
-    public Wall wall;
-
-    public boolean isAntenna;
-    public boolean isRespawn;
-    public boolean isHole;
-    public boolean isSpace = true;
-    public boolean isRepair;
-
-
-
-
-
+    private SpaceElement spaceElement = new SpaceElement();
     //Has added checkpoints to spaces
     //They are either NULL (not there) or present
 
@@ -98,8 +80,8 @@ public class Space extends Subject {
     }
 
     public ArrayList<Heading> getWallHeading() {
-        if(wall == null) return null;
-        return wall.getWallHeadings();
+        if(spaceElement.getWall() == null) return null;
+        return spaceElement.getWall().getWallHeadings();
     }
 
 
@@ -110,5 +92,13 @@ public class Space extends Subject {
 
     public int getY() {
         return y;
+    }
+
+    public SpaceElement getElement() {
+        return spaceElement;
+    }
+
+    public void setElement(SpaceElement element) {
+        this.spaceElement = element;
     }
 }

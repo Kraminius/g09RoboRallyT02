@@ -106,37 +106,37 @@ public class SpaceView extends StackPane implements ViewObserver {
      * Adds image onto the board if they should be there, loading several things onto the same field can cause problems in the gui.
      */
     private void addPictures(){
-        if(this.space.isSpace) backgroundLayer.setImage(imageLoader.empty);
-        if(this.space.isHole) backgroundLayer.setImage(imageLoader.hole);
-        if(this.space.isRespawn) backgroundLayer.setImage(imageLoader.respawn);
-        if(this.space.isAntenna) backgroundLayer.setImage(imageLoader.antenna);
-        if(this.space.isRepair) backgroundLayer.setImage(imageLoader.repair);
-        if(this.space.energyField != null) backgroundLayer.setImage(imageLoader.energyField);
-        if(this.space.startField != null){
-            int id = this.space.startField.getId();
+        if(this.space.getElement().isSpace()) backgroundLayer.setImage(imageLoader.empty);
+        if(this.space.getElement().isHole()) backgroundLayer.setImage(imageLoader.hole);
+        if(this.space.getElement().isRespawn()) backgroundLayer.setImage(imageLoader.respawn);
+        if(this.space.getElement().isAntenna()) backgroundLayer.setImage(imageLoader.antenna);
+        if(this.space.getElement().isRepair()) backgroundLayer.setImage(imageLoader.repair);
+        if(this.space.getElement().getEnergyField() != null) backgroundLayer.setImage(imageLoader.energyField);
+        if(this.space.getElement().getStartField() != null){
+            int id = this.space.getElement().getStartField().getId();
             backgroundLayer.setImage(imageLoader.startField);
             Text number = new Text("" + id);
             number.setStyle("-fx-font-weight: bold; -fx-font-size: 18");
             elementLayer.getChildren().add(number);
         }
-        if(this.space.checkpoint != null){
-            int number = this.space.checkpoint.getNumber();
+        if(this.space.getElement().getCheckpoint() != null){
+            int number = this.space.getElement().getCheckpoint().getNumber();
             backgroundLayer.setImage(imageLoader.checkpoints[number-1]);
         }
-        if(this.space.gear != null){
-            if(this.space.gear.getRotation().equals("LEFT")){
+        if(this.space.getElement().getGear() != null){
+            if(this.space.getElement().getGear().getRotation().equals("LEFT")){
                 backgroundLayer.setImage(imageLoader.gear[0]);
             }
-            else if(this.space.gear.getRotation().equals("RIGHT")){
+            else if(this.space.getElement().getGear().getRotation().equals("RIGHT")){
                 backgroundLayer.setImage(imageLoader.gear[1]);
             }
             else{
-                System.out.println("gear rotation is wrong, should be either LEFT or RIGHT, it is currently: " + this.space.gear.getRotation());
+                System.out.println("gear rotation is wrong, should be either LEFT or RIGHT, it is currently: " + this.space.getElement().getGear().getRotation());
             }
         }
-        if(this.space.push != null){
-            Heading heading = this.space.push.getHeading();
-            ArrayList<Integer> rounds = this.space.push.getActivateRounds();
+        if(this.space.getElement().getPush() != null){
+            Heading heading = this.space.getElement().getPush().getHeading();
+            ArrayList<Integer> rounds = this.space.getElement().getPush().getActivateRounds();
             ImageView pusher = new ImageView();
             if(rounds.contains(1) && rounds.contains(3) && rounds.contains(5)){
                 pusher.setImage(imageLoader.push[1]);
@@ -156,10 +156,10 @@ public class SpaceView extends StackPane implements ViewObserver {
             setRotation(box, heading, 180);
             elementLayer.getChildren().add(box);
         }
-        if(this.space.belt != null){
-            Heading heading = this.space.belt.getHeading();
-            int speed = this.space.belt.getSpeed();
-            String turn = this.space.belt.getTurn();
+        if(this.space.getElement().getBelt() != null){
+            Heading heading = this.space.getElement().getBelt().getHeading();
+            int speed = this.space.getElement().getBelt().getSpeed();
+            String turn = this.space.getElement().getBelt().getTurn();
             int rotationOffset;
             switch (turn){
                 case "LEFT":
@@ -190,9 +190,9 @@ public class SpaceView extends StackPane implements ViewObserver {
             }
             setRotation(backgroundLayer, heading, rotationOffset);
         }
-        if(this.space.laser != null){
-            Heading heading = this.space.laser.getHeading();
-            int damage = this.space.laser.getDamage();
+        if(this.space.getElement().getLaser() != null){
+            Heading heading = this.space.getElement().getLaser().getHeading();
+            int damage = this.space.getElement().getLaser().getDamage();
 
             VBox box = new VBox();
             box.setMaxSize(SPACE_WIDTH, SPACE_HEIGHT);
@@ -210,7 +210,7 @@ public class SpaceView extends StackPane implements ViewObserver {
             elementLayer.getChildren().add(box);
 
 
-            if(this.space.laser.isStart()){
+            if(this.space.getElement().getLaser().isStart()){
                 VBox start = new VBox();
                 start.setMaxSize(SPACE_WIDTH, SPACE_HEIGHT);
                 start.setMinSize(SPACE_WIDTH, SPACE_HEIGHT);
@@ -229,8 +229,8 @@ public class SpaceView extends StackPane implements ViewObserver {
 
 
         }
-        if(this.space.wall != null){
-            for(int i = 0; i < this.space.wall.getWallHeadings().size(); i++){
+        if(this.space.getElement().getWall() != null){
+            for(int i = 0; i < this.space.getElement().getWall().getWallHeadings().size(); i++){
                 VBox box = new VBox();
                 box.setAlignment(Pos.CENTER_RIGHT);
                 ImageView wall = new ImageView();
@@ -238,7 +238,7 @@ public class SpaceView extends StackPane implements ViewObserver {
                 wall.setFitWidth(15);
                 wall.setFitHeight(SPACE_HEIGHT);
                 box.getChildren().add(wall);
-                setRotation(box, this.space.wall.getWallHeadings().get(i), 0);
+                setRotation(box, this.space.getElement().getWall().getWallHeadings().get(i), 0);
                 elementLayer.getChildren().add(box);
             }
         }
