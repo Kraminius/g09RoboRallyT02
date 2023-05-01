@@ -26,6 +26,11 @@ import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * ...
  *
@@ -65,6 +70,9 @@ public class GameController {
      */
     // XXX: V2
     public void startProgrammingPhase() {
+        //Checks who has priority
+        antennaPriority();
+
         activateCheckpoints(); //Ser om nogen spiller har nået et checkpoint
         board.setPhase(Phase.PROGRAMMING);
         board.setCurrentPlayer(board.getPlayer(0));
@@ -603,6 +611,51 @@ public class GameController {
     public void notImplemented() {
         // XXX just for now to indicate that the actual method is not yet implemented
         assert false;
+    }
+
+    public void antennaPriority(){
+
+        List<Player> sortedPlayers = findPlayerSequence(board.getAntenna());
+        System.out.println("Player sequence:");
+        for (Player player : sortedPlayers) {
+            System.out.println("Player " + player.getName());
+        }
+    }
+
+
+    public List<Player> findPlayerSequence(Space antenna) {
+
+        List<Player> players = new ArrayList<>();
+
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            players.add(board.getPlayer(i));
+            System.out.println("x: " + board.getPlayer(i).getSpace().x+ " y: " + board.getPlayer(i).getSpace().x);
+
+        }
+
+        System.out.println("Antenna: " + antenna.x + " " +antenna.y);
+
+        List<Player> sortedPlayers = new ArrayList<>(players);
+
+        Collections.sort(sortedPlayers, new Comparator<Player>() {
+            @Override
+            public int compare(Player p1, Player p2) {
+                double distance1 = calculateDistance(antenna, p1.getSpace());
+                double distance2 = calculateDistance(antenna, p2.getSpace());
+                System.out.println("my distances: " + distance1 + " " + distance2);
+                return Double.compare(distance1, distance2);
+            }
+        });
+
+        return sortedPlayers;
+    }
+
+    public double calculateDistance(Space space, Space antenna){
+        int dx = Math.abs(space.x - antenna.x);
+        int dy = Math.abs(space.y - antenna.y);
+
+        return dx + dy;
+
     }
 
 }

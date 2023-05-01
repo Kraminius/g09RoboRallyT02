@@ -116,6 +116,8 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     b.spaces[x][y].isAntenna = true;
+                    b.setAntenna(b.spaces[x][y]);
+
                 }
                 break;
             case "push":

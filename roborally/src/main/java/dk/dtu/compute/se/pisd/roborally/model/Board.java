@@ -67,6 +67,10 @@ public class Board extends Subject {
 
     Board board;
 
+    private Space antenna;
+
+
+
     /**@Author Tobias Gørlyk - s224271@dtu.dk
      * Creates a Board by loading a .json file under an id, if it doesn't exist it loads a testboard instead.
      * @param id the id of the board
@@ -225,5 +229,13 @@ public class Board extends Subject {
 
     public Space getRebootToken() {
         return rebootToken;
+    }
+
+    public Space getAntenna() {
+        return antenna;
+    }
+
+    public void setAntenna(Space antenna) {
+        this.antenna = antenna;
     }
 }

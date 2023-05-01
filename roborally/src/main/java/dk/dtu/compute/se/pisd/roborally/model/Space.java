@@ -56,6 +56,8 @@ public class Space extends Subject {
 
 
 
+
+
     //Has added checkpoints to spaces
     //They are either NULL (not there) or present
 
