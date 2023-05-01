@@ -519,9 +519,9 @@ public class GameController {
             Player player = board.getPlayer(i);
             int moving;
             if (player.getSpace().belt != null) {
-                moving = player.getSpace().belt.speed;
+                moving = player.getSpace().belt.getSpeed();
                 for (int n = moving; n > 0; n--) {
-                    Heading heading = player.getSpace().belt.heading;
+                    Heading heading = player.getSpace().belt.getHeading();
                     Space spaceInFront = null;
                     switch (heading) {
                         case EAST:
@@ -563,8 +563,8 @@ public class GameController {
                     } else
                         moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
 
-                    if (spaceInFront.belt.turn.equals("LEFT")) turnLeft(player);
-                    else if (spaceInFront.belt.turn.equals("RIGHT")) turnRight(player);
+                    if (spaceInFront.belt.getTurn().equals("LEFT")) turnLeft(player);
+                    else if (spaceInFront.belt.getTurn().equals("RIGHT")) turnRight(player);
 
                 }
             }

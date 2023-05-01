@@ -157,9 +157,9 @@ public class SpaceView extends StackPane implements ViewObserver {
             elementLayer.getChildren().add(box);
         }
         if(this.space.belt != null){
-            Heading heading = this.space.belt.heading;
-            int speed = this.space.belt.speed;
-            String turn = this.space.belt.turn;
+            Heading heading = this.space.belt.getHeading();
+            int speed = this.space.belt.getSpeed();
+            String turn = this.space.belt.getTurn();
             int rotationOffset;
             switch (turn){
                 case "LEFT":
