@@ -79,10 +79,10 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     b.spaces[x][y].belt = new Belt();
-                    if(values[2].equals("null")) b.spaces[x][y].belt.turn = ""; //LEFT/RIGHT/null
-                    else b.spaces[x][y].belt.turn = values[2];
-                    b.spaces[x][y].belt.heading = getHeading(values[3]);
-                    b.spaces[x][y].belt.speed = parseInt(values[4]);
+                    if(values[2].equals("null")) b.spaces[x][y].belt.setTurn(""); //LEFT/RIGHT/null
+                    else b.spaces[x][y].belt.setTurn(values[2]);
+                    b.spaces[x][y].belt.setHeading(getHeading(values[3]));
+                    b.spaces[x][y].belt.setSpeed(parseInt(values[4]));
 
                 }
                 break;

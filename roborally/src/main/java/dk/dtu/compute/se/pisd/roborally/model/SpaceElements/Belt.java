@@ -9,8 +9,32 @@ public class Belt {
      * This class is used to store information about a conveyor belt on a given Space, each space has one, but it can be null meaning no belt.
      * It saves a heading of the belt, if it's turning and it's speed.
      */
-    public Heading heading;
-    public String turn = ""; //"LEFT", "RIGHT", LEFT_T, RIGHT_T, ""
+    private Heading heading;
+    private String turn = ""; //"LEFT", "RIGHT", LEFT_T, RIGHT_T, ""
 
-    public int speed;
+    private int speed;
+
+    public Heading getHeading() {
+        return heading;
+    }
+
+    public void setHeading(Heading heading) {
+        this.heading = heading;
+    }
+
+    public String getTurn() {
+        return turn;
+    }
+
+    public void setTurn(String turn) {
+        this.turn = turn;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
 }
