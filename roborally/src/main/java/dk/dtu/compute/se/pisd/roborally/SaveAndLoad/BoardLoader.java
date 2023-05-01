@@ -138,7 +138,7 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     b.spaces[x][y].energyField = new EnergyField();
-                    b.spaces[x][y].energyField.cubes = parseInt(values[2]);
+                    b.spaces[x][y].energyField.setCubes(parseInt(values[2]));
                 }
                 break;
             case "gear":
@@ -148,7 +148,7 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     b.spaces[x][y].gear = new Gear();
-                    b.spaces[x][y].gear.rotation = values[2]; //LEFT/RIGHT
+                    b.spaces[x][y].gear.setRotation(values[2]); //LEFT/RIGHT
                 }
                 break;
             case "hole":

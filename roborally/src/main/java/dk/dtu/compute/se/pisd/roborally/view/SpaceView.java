@@ -124,14 +124,14 @@ public class SpaceView extends StackPane implements ViewObserver {
             backgroundLayer.setImage(imageLoader.checkpoints[number-1]);
         }
         if(this.space.gear != null){
-            if(this.space.gear.rotation.equals("LEFT")){
+            if(this.space.gear.getRotation().equals("LEFT")){
                 backgroundLayer.setImage(imageLoader.gear[0]);
             }
-            else if(this.space.gear.rotation.equals("RIGHT")){
+            else if(this.space.gear.getRotation().equals("RIGHT")){
                 backgroundLayer.setImage(imageLoader.gear[1]);
             }
             else{
-                System.out.println("gear rotation is wrong, should be either LEFT or RIGHT, it is currently: " + this.space.gear.rotation);
+                System.out.println("gear rotation is wrong, should be either LEFT or RIGHT, it is currently: " + this.space.gear.getRotation());
             }
         }
         if(this.space.push != null){
