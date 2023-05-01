@@ -93,7 +93,7 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     b.spaces[x][y].checkpoint = new Checkpoint();
-                    b.spaces[x][y].checkpoint.number = parseInt(values[2]);
+                    b.spaces[x][y].checkpoint.setNumber(parseInt(values[2]));
 
                 }
                 break;

@@ -120,7 +120,7 @@ public class SpaceView extends StackPane implements ViewObserver {
             elementLayer.getChildren().add(number);
         }
         if(this.space.checkpoint != null){
-            int number = this.space.checkpoint.number;
+            int number = this.space.checkpoint.getNumber();
             backgroundLayer.setImage(imageLoader.checkpoints[number-1]);
         }
         if(this.space.gear != null){

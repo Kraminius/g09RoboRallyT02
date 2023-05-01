@@ -584,7 +584,7 @@ public class GameController {
             boolean[] checkpointStatus = player.getCheckpointReadhed();
             int number;
             if (space.checkpoint != null) {
-                number = space.checkpoint.number;
+                number = space.checkpoint.getNumber();
                 if (number == 1) {
                     player.setCheckpointReadhed(0, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));

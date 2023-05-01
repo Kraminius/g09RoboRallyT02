@@ -10,5 +10,13 @@ import dk.dtu.compute.se.pisd.roborally.model.Space;
  * in which it must be collected
  */
 public class Checkpoint {
-    public int number;
+    private int number;
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 }
