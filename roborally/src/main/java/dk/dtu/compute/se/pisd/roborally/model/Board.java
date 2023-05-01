@@ -65,6 +65,8 @@ public class Board extends Subject {
 
     private Space rebootToken;
 
+    private Space priorityAntenna;
+
     Board board;
 
     /**@Author Tobias Gørlyk - s224271@dtu.dk
@@ -222,6 +224,9 @@ public class Board extends Subject {
     public Space getCheckPoint(int checkpointnumber){
         return checkpoints[checkpointnumber - 1];
     }
+
+    public void setPriorityAntenna(Space priorityAntenna){this.priorityAntenna = priorityAntenna;}
+    public Space getPriorityAntenna(){return priorityAntenna;}
 
     public Space getRebootToken() {
         return rebootToken;

@@ -24,6 +24,7 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.PriorityAntenna;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -596,6 +597,34 @@ public class GameController {
         }
     }
 
+    public Player findPriority(){
+        Space antenna = board.getPriorityAntenna();
+        Player nextPlayer = null;
+        int nextPlayerDistance;
+        //going throug all the player
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            //Calculate their distance from antenna
+            int xDist = board.getPlayer(i).getSpace().x - antenna.x;
+        int distance =
+        distance += board.getPlayer(i).getSpace().y - antenna.y;
+        //Se if they are the next player to choose.
+        if(nextPlayer == null || nextPlayerDistance > distance){
+            nextPlayer = board.getPlayer(i);
+            nextPlayerDistance = distance;
+        }
+        }
+
+
+        int[][] playerDistance = new int[board.getPlayersNumber()][(board.width + board.height)];
+        Player[] used = new Player[board.getPlayersNumber()];
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            for(int j = 0; i < board.width; j++){
+                if(j = board.getPlayer())
+            }
+        }
+    }
+
+
     /**
      * A method called when no corresponding controller operation is implemented yet. This
      * should eventually be removed.
@@ -604,5 +633,6 @@ public class GameController {
         // XXX just for now to indicate that the actual method is not yet implemented
         assert false;
     }
+
 
 }

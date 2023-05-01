@@ -41,6 +41,9 @@ public class Space extends Subject {
 
     public Belt belt = null;
     public Checkpoint checkpoint = null;
+
+    //A space can have an antenna
+    public PriorityAntenna antenna = null;
     public EnergyField energyField;
     public Gear gear;
     public Laser laser;
