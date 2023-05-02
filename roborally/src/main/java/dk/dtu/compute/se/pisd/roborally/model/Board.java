@@ -201,7 +201,37 @@ public class Board extends Subject {
                 break;
         }
 
-        return getSpace(x, y);
+        return (x < 0 || x >= width || y < 0 || y >= height) ? null : getSpace(x, y);
+    }
+
+    public List<Player> findPlayerWithinRadius(Player currentPlayer){
+        List<Player> playersWithinRadius = new ArrayList<>();
+        int currentX = currentPlayer.getSpace().x;
+        int currentY = currentPlayer.getSpace().y;
+        int radius = 6;
+        for(int x = currentX - radius; x <= currentX + radius; x++){
+            for(int y = currentY - radius; x <= currentY + radius; y++){
+                if(x < 0 || x >= board.height || y < 0 || y >= board.width){
+                    continue;
+                }
+                Space space = getSpace(x, y);
+                Player player = space.getPlayer();
+                if(player != null && player != currentPlayer){
+                    playersWithinRadius.add(player);
+                }
+
+                for(Heading heading : Heading.values()){
+                    Space neighbor = board.getNeighbour(space, heading);
+                    if(neighbor != null){
+                        Player neighborPlayer = neighbor.getPlayer();
+                        if(neighborPlayer != null && neighborPlayer != currentPlayer){
+                            playersWithinRadius.add(neighborPlayer);
+                        }
+                    }
+                }
+            }
+        }
+        return playersWithinRadius;
     }
 
     public String getStatusMessage() {

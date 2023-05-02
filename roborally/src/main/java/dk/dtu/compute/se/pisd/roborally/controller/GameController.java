@@ -26,10 +26,7 @@ import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ...
@@ -324,6 +321,18 @@ public class GameController {
                         return false;
                     }
                 }
+            case SPAM:
+                this.playSpam(player);
+                return false;
+            case TROJAN_HORSE:
+                this.playTrojan(player);
+                return false;
+            case WORM:
+                player.setSpace(board.getRebootToken());
+                return true;
+            case VIRUS:
+                this.playVirus(player);
+                return false;
             default:
                 throw new RuntimeException("Should not happen");
         }
@@ -638,6 +647,40 @@ public class GameController {
         }
     }
 
+    public void addDamageCard(Player player, Command type){
+        CommandCard damageCard = new CommandCard(type);
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        discardPile.add(damageCard);
+    }
+
+    /**
+     * This method get the topCard from the players deck, places it in the current register (and shows it),
+     * then it calls the executeCommand() with the topCards command.
+     * @param player
+     */
+    public void playSpam(Player player){
+        int step = board.getStep();
+        CommandCard topCard = drawTopCard(player);
+        CommandCardField currentRegister = player.getProgramField(step);
+        currentRegister.setCard(topCard);
+        currentRegister.setVisible(true);
+        executeCommand(player, topCard.command);
+    }
+
+    public void playTrojan(Player player){
+        for(int i = 0; i < 2; i++){
+            addDamageCard(player, Command.SPAM);
+        }
+        playSpam(player);
+    }
+
+    public void playVirus(Player player){
+        List<Player> playersInRadius = board.findPlayerWithinRadius(player);
+        for(Player otherPlayer : playersInRadius){
+            addDamageCard(otherPlayer, Command.SPAM);
+        }
+        playSpam(player);
+    }
     /**
      * A method called when no corresponding controller operation is implemented yet. This
      * should eventually be removed.
