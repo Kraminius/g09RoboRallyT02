@@ -229,6 +229,7 @@ public class SpaceView extends StackPane implements ViewObserver {
 
 
         }
+        if(!this.space.getElement().isAntenna()){
         if(this.space.getElement().getWall() != null){
             for(int i = 0; i < this.space.getElement().getWall().getWallHeadings().size(); i++){
                 VBox box = new VBox();
@@ -241,6 +242,7 @@ public class SpaceView extends StackPane implements ViewObserver {
                 setRotation(box, this.space.getElement().getWall().getWallHeadings().get(i), 0);
                 elementLayer.getChildren().add(box);
             }
+        }
         }
     }
     /**@Author Tobias Gørlyk - s224271@dtu.dk
