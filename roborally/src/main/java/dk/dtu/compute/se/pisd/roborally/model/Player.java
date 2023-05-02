@@ -22,6 +22,7 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.view.PlayerView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class Player extends Subject {
     private Heading heading = SOUTH;
 
     private boolean respawnStatus;
+    private PlayerView playerView;
 
     private CommandCardField[] program;
     private CommandCardField[] cards;
@@ -195,5 +197,13 @@ public class Player extends Subject {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public PlayerView getPlayerView() {
+        return playerView;
+    }
+
+    public void setPlayerView(PlayerView playerView) {
+        this.playerView = playerView;
     }
 }

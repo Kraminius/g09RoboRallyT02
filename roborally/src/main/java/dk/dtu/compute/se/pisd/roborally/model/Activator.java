@@ -24,6 +24,13 @@ public class Activator {
     public void activateBoard(Board board, GameController controller){
         this.board = board;
         this.controller = controller;
+        activateBelts();
+        activatePush();
+        activateGears();
+        activateLasers();
+        activatePlayerLasers();
+        activateEnergyFields();
+        activateCheckPoints();
     }
 
     private void activateBelts(){
@@ -71,7 +78,11 @@ public class Activator {
         }
     }
     private void activatePlayerLasers(){
-
+        Player[] players = new Player[board.getPlayersNumber()];
+        for(int i = 0; i < players.length; i++){
+            players[i] = board.getPlayer(i);
+        }
+        controller.playerLaserActivate(players);
     }
 
     private void activateEnergyFields(){

@@ -76,9 +76,6 @@ public class GameController {
      */
     // XXX: V2
     public void startProgrammingPhase() {
-
-
-        activateCheckpoints(); //Ser om nogen spiller har nået et checkpoint
         board.setPhase(Phase.PROGRAMMING);
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
