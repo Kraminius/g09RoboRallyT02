@@ -142,7 +142,7 @@ public class GameController {
         makeProgramFieldsVisible(0);
         board.setPhase(Phase.ACTIVATION);
         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
-        sequence.remove(0);
+        //sequence.remove(0);
         //board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
     }
@@ -199,9 +199,16 @@ public class GameController {
 
     // XXX: V2
     private void executeNextStep() {
+
+        int step = board.getStep();
+
+
+
         Player currentPlayer = board.getCurrentPlayer();
+        sequence.remove(0);
+        System.out.println("Curr: " + currentPlayer.getId());
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
-            int step = board.getStep();
+
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
@@ -238,8 +245,9 @@ public class GameController {
                     }
                 }else{
                     board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
-                    sequence.remove(0);
                 }
+
+
 
             } else {
                 // this should not happen
@@ -799,7 +807,7 @@ public class GameController {
      * @param p2
      * @return
      */
-    public static int compareByClockwiseRadar(Space antenna, Player p1, Player p2) {
+    public int compareByClockwiseRadar(Space antenna, Player p1, Player p2) {
 
         //Right now the direction is always east, Antenna object should have a direction value on it
         String initialDirection = "east";
@@ -826,7 +834,7 @@ public class GameController {
      * @param initialDirection
      * @return
      */
-    public static double adjustAngle(double angle, String initialDirection) {
+    public double adjustAngle(double angle, String initialDirection) {
         double adjustment;
         switch (initialDirection.toLowerCase()) {
             case "north":
@@ -845,6 +853,20 @@ public class GameController {
         }
         return angle + adjustment;
     }
+
+    public void pickStartPosition(){
+
+
+        //Used for checking the position of each player
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+
+        }
+
+
+
+
+    }
+
 
 
 }
