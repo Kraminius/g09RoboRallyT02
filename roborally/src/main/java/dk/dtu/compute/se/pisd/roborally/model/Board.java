@@ -23,7 +23,6 @@ package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoader;
-import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -237,5 +236,137 @@ public class Board extends Subject {
 
     public void setAntenna(Space antenna) {
         this.antenna = antenna;
+    }
+
+    /*
+    Lasers
+    EnergyFields
+    Belts
+    Gear
+    Push
+    StartFields
+    Walls
+
+    bools
+    Antenna
+    Respawn
+    Hole
+    OutsideOfBoardSpaces
+    Repair
+     */
+
+    /**
+     * getter for checkpoints on board
+     * @return an unsorted ArrayList of Spaces containing that specific Element
+     */
+
+    public ArrayList<Space> getCheckPointSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().getCheckpoint() != null) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public ArrayList<Space> getLaserSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().getLaser() != null) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public ArrayList<Space> getEnergyFieldSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().getEnergyField() != null) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public ArrayList<Space> getGearSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().getGear() != null) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public ArrayList<Space> getPushSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().getPush() != null) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public ArrayList<Space> getStartFieldSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().getStartField() != null) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+
+    public ArrayList<Space> getWallSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().getWall() != null) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public Space getAntennaSpace(){
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().isAntenna()) return this.spaces[x][y];
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Space> getRespawnSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().isRespawn()) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public ArrayList<Space> getHoleSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().isHole()) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public ArrayList<Space> getOutSideOfBoardSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(!this.spaces[x][y].getElement().isSpace()) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
+    }
+    public ArrayList<Space> getRepairSpaces(){
+        ArrayList<Space> spaces = new ArrayList<>();
+        for(int x = 0; x < this.spaces.length; x++){
+            for(int y = 0; y < this.spaces[x].length; y++){
+                if(this.spaces[x][y].getElement().isRepair()) spaces.add(this.spaces[x][y]);
+            }
+        }
+        return spaces;
     }
 }
