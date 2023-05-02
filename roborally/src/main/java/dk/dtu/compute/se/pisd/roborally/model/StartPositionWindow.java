@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.Integer.reverse;
 
 public class StartPositionWindow {
     Board board;
@@ -23,7 +24,8 @@ public class StartPositionWindow {
     Label label;
     TextField textField;
     Button button;
-    ChoiceBox<String> choices;
+    ChoiceBox<String> startHeading;
+    ChoiceBox<String> startPosChoice;
     Stage stage;
     Player nextPlayer;
 
@@ -44,8 +46,14 @@ public class StartPositionWindow {
         ArrayList<Space> spaces = board.getStartFieldSpaces();
         spaces = sortSpacesWithIDs(spaces);
         for(int i = 0; i < spaces.size(); i++){
-            if(spaces.get(i).getPlayer() == null) choices.getItems().add(spaces.get(i).getElement().getStartField().getId() + "");
+            if(spaces.get(i).getPlayer() == null) startPosChoice.getItems().add(spaces.get(i).getElement().getStartField().getId() + "");
         }
+    }
+    private void getHeadings(){
+        startHeading.getItems().add("North");
+        startHeading.getItems().add("East");
+        startHeading.getItems().add("West");
+        startHeading.getItems().add("South");
     }
 
 
@@ -54,20 +62,29 @@ public class StartPositionWindow {
         window.setAlignment(Pos.TOP_CENTER);
         window.setSpacing(10);
         window.setPadding(new Insets(30, 50, 30, 50));
-        label = new Label("Choose Name & Starting Position");
+        label = new Label("Choose Name, Starting Position & Heading.");
+        label.setAlignment(Pos.CENTER);
+        label.setMinHeight(30);
+        label.setWrapText(true);
         label.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
         textField = new TextField();
         button = new Button("OK");
         button.setOnAction(e -> addPos());
         button.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
-        choices = new ChoiceBox<>();
+        startPosChoice = new ChoiceBox<>();
+        startHeading = new ChoiceBox<>();
         getChoices();
-        choices.setPrefWidth(200);
+        getHeadings();
+        startHeading.setValue(startHeading.getItems().get(0));
+        startPosChoice.setValue(startPosChoice.getItems().get(0));
+        startPosChoice.setPrefWidth(200);
+        startHeading.setPrefWidth(200);
         window.getChildren().add(label);
         window.getChildren().add(textField);
-        window.getChildren().add(choices);
+        window.getChildren().add(startPosChoice);
+        window.getChildren().add(startHeading);
         window.getChildren().add(button);
-        Scene scene = new Scene(window, 300, 200);
+        Scene scene = new Scene(window, 300, 300);
         stage = new Stage();
         stage.setTitle("");
         stage.setScene(scene);
@@ -84,17 +101,26 @@ public class StartPositionWindow {
             label.setText("Please Input a name");
             return;
         }
-        int number = parseInt(choices.getValue());
+        int number = parseInt(startPosChoice.getValue());
         ArrayList<Space> startFields = board.getStartFieldSpaces();
         for(int i = 0; i < startFields.size(); i++){
             if(startFields.get(i).getElement().getStartField().getId() == number){
                 startFields.get(i).setPlayer(nextPlayer);
                 nextPlayer.setName(textField.getText());
                 nextPlayer.getPlayerView().setText(nextPlayer.getName());
+                nextPlayer.setHeading(getHeading(startHeading.getValue()));
                 stage.close();
                 return;
             }
         }
-
+    }
+    private Heading getHeading(String heading){
+        switch (heading){
+            case "North": return Heading.NORTH;
+            case "South": return Heading.SOUTH;
+            case "West": return Heading.WEST;
+            case "East": return Heading.EAST;
+        }
+        return null;
     }
 }
