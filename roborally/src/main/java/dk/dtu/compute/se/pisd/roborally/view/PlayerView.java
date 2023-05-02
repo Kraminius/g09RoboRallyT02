@@ -68,6 +68,7 @@ public class PlayerView extends Tab implements ViewObserver {
 
     public PlayerView(@NotNull GameController gameController, @NotNull Player player) {
         super(player.getName());
+        player.setPlayerView(this);
         this.setStyle("-fx-text-base-color: " + player.getColor() + ";");
 
         top = new VBox();
@@ -212,13 +213,13 @@ public class PlayerView extends Tab implements ViewObserver {
                     //      the player's choices of the interactive command card. The
                     //      following is just a mockup showing two options
                     if(player.getRespawnStatus()){
-                       Set<Heading> headings = EnumSet.allOf(Heading.class);
-                       for(Heading heading : headings){
-                           Button optionButton = new Button(heading.name());
-                           optionButton.setOnAction( e -> gameController.respawnPlayer(player, heading));
-                           optionButton.setDisable(false);
-                           playerInteractionPanel.getChildren().add(optionButton);
-                       }
+                        Set<Heading> headings = EnumSet.allOf(Heading.class);
+                        for(Heading heading : headings){
+                            Button optionButton = new Button(heading.name());
+                            optionButton.setOnAction( e -> gameController.respawnPlayer(player, heading));
+                            optionButton.setDisable(false);
+                            playerInteractionPanel.getChildren().add(optionButton);
+                        }
                     }
                     /*Access the interactive command card and creates buttons from the options the command has */
                     CommandCard card = player.getProgramField(gameController.board.getStep()).getCard();

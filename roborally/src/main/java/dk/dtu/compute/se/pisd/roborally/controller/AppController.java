@@ -27,9 +27,7 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoadWindow;
-import dk.dtu.compute.se.pisd.roborally.model.Board;
-import dk.dtu.compute.se.pisd.roborally.model.CommandCard;
-import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.*;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -93,7 +91,7 @@ public class AppController implements Observer {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i+1);
                 gameController.fillStartDeck(player.getCardDeck());
                 board.addPlayer(player);
-                player.setSpace(board.getSpace(i % board.width, i));
+                //player.setSpace(board.getSpace(i % board.width, i));
             }
 
             // XXX: V2
@@ -101,6 +99,9 @@ public class AppController implements Observer {
             gameController.startProgrammingPhase();
 
             roboRally.createBoardView(gameController);
+            StartPositionWindow positionWindow = new StartPositionWindow();
+            positionWindow.getStartSpaces(board);
+
         }
     }
 
