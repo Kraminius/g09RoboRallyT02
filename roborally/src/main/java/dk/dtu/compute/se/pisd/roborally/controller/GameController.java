@@ -33,6 +33,9 @@ import java.util.List;
 
 import java.util.*;
 
+import static dk.dtu.compute.se.pisd.roborally.model.Heading.*;
+import static dk.dtu.compute.se.pisd.roborally.model.Heading.WEST;
+
 /**
  * ...
  *
@@ -895,6 +898,77 @@ public class GameController {
 
 
 
+    }
+
+
+    public void playerLaserActivate(Player[] players){
+        for(int i = 0; i < players.length; i++){
+            Space start = players[i].getSpace();
+            Heading direction = players[i].getHeading();
+            Heading directOposite;
+            int move;
+            boolean end = false;
+            switch (direction){
+                case SOUTH:
+                    move = -1; //y
+                    directOposite = NORTH;
+                    break;
+                case NORTH:
+                    move = 1; //y
+                    directOposite = SOUTH;
+                    break;
+                case WEST:
+                    move = -1; //x
+                    directOposite = EAST;
+                    break;
+                case EAST:
+                    move = 1; //x
+                    directOposite = WEST;
+                    break;
+                default:
+                    throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
+            }
+            //Maybe a Do while
+            while(end == false){
+                //Are we moving into a wall?
+                if(start.getWallHeading().contains(direction)){
+                    end = true;
+                }
+                //We are moving verticaly
+                if(direction == SOUTH || direction == NORTH){
+                    if(start.y <= 0 || start.y >= board.height){
+                        end = true;
+                    }
+                    else{start = board.getSpace(start.x,(start.y + move));}
+                    //are we hitting a wall
+                    if(start.getWallHeading().contains(directOposite)){
+                        end = true;
+                    }
+                    //Are we moving into a player?
+                    else if(start.getPlayer() != null){
+                        end = true;
+                        //Deal damage to player
+                        addDamageCard(start.getPlayer(), Command.SPAM);
+                    }
+                }
+                //We are moving horisontaly
+                if(direction == EAST || direction == WEST){
+                    if(start.x < 0 || start.x > board.width){
+                        end = true;
+                    }
+                    else{start = board.getSpace((start.x + move), start.y);
+                        //are we hitting a wall
+                        if(start.getWallHeading().contains(directOposite)){
+                            end = true;
+                        }
+                        //Are we moving into a player?
+                        else if(start.getPlayer() != null){
+                            end = true;
+                            //Deal damage to player
+                            addDamageCard(start.getPlayer(), Command.SPAM);
+                        }}}
+            }
+        }
     }
 
 
