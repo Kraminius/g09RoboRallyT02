@@ -1,0 +1,16 @@
+{
+  "name": "Dizzy Highway",
+  "width": "13",
+  "height": "10",
+  "wall":["1;2;NORTH","1;7;SOUTH","2;4;EAST","2;5;EAST"],
+  "belt":["2;0;null;EAST;1", "2;9;null;EAST;1", "4;0;null;SOUTH;2", "9;0;RIGHT;EAST;1", "10;0;null;EAST;1", "11;0;LEFT;NORTH;1", "3;1;LEFT;WEST;1", "4;1;LEFT;EAST;2", "5;1;null;EAST;2", "6;1;null;EAST;2", "9;1;null;NORTH;1", "11;1;LEFT;SOUTH;2", "12;1;null;WEST;2", "3;2;null;NORTH;1", "9;2;null;NORTH;1", "11;2;null;SOUTH;2", "3;3;RIGHT;NORTH;1", "4;3;null;WEST;1", "5;3;null;WEST;1", "6;3;null;WEST;1", "9;3;null;NORTH;1", "11;3;null;SOUTH;2", "4;6;null;NORTH;2", "6;6;null;SOUTH;1", "9;6;null;EAST;1", "10;6;null;EAST;1", "11;6;null;EAST;1", "12;6;RIGHT;SOUTH;1", "4;7;null;NORTH;2", "6;7;null;SOUTH;1", "12;7;null;SOUTH;1", "3;8;null;EAST;2", "4;8;LEFT;NORTH;2", "6;8;null;SOUTH;1", "9;8;null;WEST;2", "10;8;null;WEST;2", "11;8;LEFT;WEST;2", "12;8;LEFT;EAST;1", "4;9;LEFT;SOUTH;1", "5;9;null;WEST;1", "6;9;RIGHT;WEST;1", "11;9;null;NORTH;2"],
+  "checkpoint":["12;9;1", "12;0;2", "9;9;3"],
+  "antenna":["0;4"],
+  "push": null,
+  "energyField":["3;5;1", "8;0;1", "5;8;1", "11;5;1", "10;9;1"],
+  "gear": null,
+  "hole": ["4;5","7;1", "8;8", "11;4"],
+  "respawn": ["5;4"],
+  "noField": null,
+  "startFields":["1;1;1", "0;3;2", "1;4;3", "1;5;4", "0;6;5", "1;8;6"]
+}
