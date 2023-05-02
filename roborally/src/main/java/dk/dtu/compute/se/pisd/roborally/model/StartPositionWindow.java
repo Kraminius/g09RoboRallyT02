@@ -29,7 +29,10 @@ public class StartPositionWindow {
     Stage stage;
     Player nextPlayer;
 
-
+    /**
+     *
+     * @param board
+     */
     public void getStartSpaces(Board board){
         this.board = board;
         for(int i = 0; i < board.getPlayersNumber(); i++){
