@@ -6,6 +6,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static java.lang.Integer.parseInt;
 
@@ -122,6 +123,10 @@ public class BoardLoader {
                     int y = parseInt(values[1]);
                     b.spaces[x][y].getElement().setAntenna(true);
                     b.setAntenna(b.spaces[x][y]);
+                    ArrayList<Heading> antennaWalls = new ArrayList<>(Arrays.asList(Heading.SOUTH, Heading.WEST, Heading.EAST, Heading.NORTH));
+                    Wall wall = new Wall();
+                    wall.setWallHeadings(antennaWalls);
+                    b.spaces[x][y].getElement().setWall(wall);
 
                 }
                 break;
