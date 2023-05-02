@@ -364,7 +364,6 @@ public class Board extends Subject {
     }
 
     public Space getRespawnSpaces(){
-        ArrayList<Space> spaces = new ArrayList<>();
         for(int x = 0; x < this.spaces.length; x++){
             for(int y = 0; y < this.spaces[x].length; y++){
                 if(this.spaces[x][y].getElement().isRespawn()) return this.spaces[x][y];
