@@ -410,9 +410,9 @@ public class GameController {
     }
 
     public void sprintForward(@NotNull Player player) throws OutsideBoardException {
-        moveForward(player, 1, null, false);
-        moveForward(player, 1, null, false);
-        moveForward(player, 1, null, false);
+        movePlayerForward(player, 1, null, false);
+        movePlayerForward(player, 1, null, false);
+        movePlayerForward(player, 1, null, false);
     }
 
     /**
