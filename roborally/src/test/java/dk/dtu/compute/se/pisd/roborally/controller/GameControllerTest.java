@@ -11,14 +11,11 @@ import static org.testng.AssertJUnit.*;
 
 class GameControllerTest {
 
-    private final int TEST_WIDTH = 8;
-    private final int TEST_HEIGHT = 8;
-
     private GameController gameController;
 
     @BeforeEach
     void setUp() {
-        Board board = new Board(TEST_WIDTH, TEST_HEIGHT);
+        Board board = new Board(empty);
         gameController = new GameController(board);
         for (int i = 0; i < 6; i++) {
             Player player = new Player(board, null,"Player " + i);

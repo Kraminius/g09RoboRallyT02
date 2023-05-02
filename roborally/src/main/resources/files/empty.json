@@ -2,5 +2,6 @@
   "name": "Dizzy Highway TESTBOARD",
   "width": "14",
   "height": "10",
-  "respawn": ["7;3"]
+  "respawn": ["7;3"],
+  "antenna":["14;10"]
 }
