@@ -52,7 +52,7 @@ public class PlayerSaver {
         }
         obj.put("cards", cards);
         JSONArray checkpoints = new JSONArray();
-        for(int i = 0; i < player.board.getNumOfCheckpoints(); i++) {
+        for(int i = 0; i < player.board.getCheckPointSpaces().size(); i++) {
             String unlocked = getBoolean(player.getCheckpointReadhed()[i]);
             cards.add(unlocked);
         }

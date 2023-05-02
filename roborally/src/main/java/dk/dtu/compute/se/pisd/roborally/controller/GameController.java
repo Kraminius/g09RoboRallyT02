@@ -309,7 +309,7 @@ public class GameController {
                     this.moveForward(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    player.setSpace(board.getRebootToken());
+                    player.setSpace(board.getRespawnSpaces());
                     return true;
                 }
             case RIGHT:
@@ -323,7 +323,7 @@ public class GameController {
                     this.fastForward(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    player.setSpace(board.getRebootToken());
+                    player.setSpace(board.getRespawnSpaces());
                     return true;
                 }
             case U_TURN:
@@ -334,7 +334,7 @@ public class GameController {
                     this.backUp(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    player.setSpace(board.getRebootToken());
+                    player.setSpace(board.getRespawnSpaces());
                     return true;
                 }
             case AGAIN:
@@ -359,7 +359,7 @@ public class GameController {
                 this.playTrojan(player);
                 return false;
             case WORM:
-                player.setSpace(board.getRebootToken());
+                player.setSpace(board.getRespawnSpaces());
                 return true;
             case VIRUS:
                 this.playVirus(player);

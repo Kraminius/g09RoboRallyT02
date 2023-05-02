@@ -248,18 +248,6 @@ public class Board extends Subject {
                 ", Step: " + getStep();
     }
 
-    public int getNumOfCheckpoints(){
-        return CHECKPOINTS;
-    }
-
-    public Space getCheckPoint(int checkpointnumber){
-        return checkpoints[checkpointnumber - 1];
-    }
-
-    public Space getRebootToken() {
-        return rebootToken;
-    }
-
     public Space getAntenna() {
         return antenna;
     }

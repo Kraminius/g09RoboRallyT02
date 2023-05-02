@@ -83,7 +83,7 @@ public class Player extends Subject {
             cards[i] = new CommandCardField(this);
         }
         //Her gives spilleren antallet af checkpoints
-        checkpointsReadhed = new boolean[board.getNumOfCheckpoints()];
+        checkpointsReadhed = new boolean[board.getCheckPointSpaces().size()];
     }
 
     public String getName() {
