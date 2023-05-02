@@ -23,7 +23,6 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
-import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -379,13 +378,13 @@ public class GameController {
 
     // TODO Assignment V2
     public void moveForward(@NotNull Player player) throws OutsideBoardException {
-        moveForward(player, 1, null, false);
+        movePlayerForward(player, 1, null, false);
     }
 
     // TODO Assignment V2
     public void fastForward(@NotNull Player player) throws OutsideBoardException {
-        moveForward(player, 1, null, false);
-        moveForward(player, 1, null, false);
+        movePlayerForward(player, 1, null, false);
+        movePlayerForward(player, 1, null, false);
     }
 
     /**
@@ -401,7 +400,7 @@ public class GameController {
      * If there is a player there it moves them forward if they can move forward.
      * If no one can move because of an obstacle or it being outside the board, no one moves.
      */
-    private boolean moveForward(Player player, int amount, Heading heading, boolean isBelt) throws OutsideBoardException{
+    public boolean movePlayerForward(Player player, int amount, Heading heading, boolean isBelt) throws OutsideBoardException{
             int x = player.getSpace().x;
             int y = player.getSpace().y;
             Space space = null;
@@ -415,7 +414,7 @@ public class GameController {
                 return true;
             }
             if (playerToMove != null) { //Check if there is a player already on this field.
-                if (moveForward(playerToMove, amount, heading, false)) {
+                if (movePlayerForward(playerToMove, amount, heading, false)) {
                     player.setSpace(space); //There is a player in front and they can move, so we move too.
                     return true;
                 } else return false; //There is a player there and they cannot move forward so no one moves.
@@ -648,10 +647,10 @@ public class GameController {
                     if (spaceInFront == null) return;
 
                     if (spaceInFront.getElement().getBelt() == null) {
-                        moveForward(player, 1, heading, false); //Can move players as this would be outside of belt.
+                        movePlayerForward(player, 1, heading, false); //Can move players as this would be outside of belt.
                         moving = 0; //No longer moving on a belt so this is set to 0.
                     } else
-                        moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
+                        movePlayerForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
 
                     if (spaceInFront.getElement().getBelt().getTurn().equals("LEFT")) turnLeft(player);
                     else if (spaceInFront.getElement().getBelt().getTurn().equals("RIGHT")) turnRight(player);
