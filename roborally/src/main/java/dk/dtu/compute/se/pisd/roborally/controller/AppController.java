@@ -90,7 +90,7 @@ public class AppController implements Observer {
             gameController = new GameController(board);
             int no = result.get();
             for (int i = 0; i < no; i++) {
-                Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), +i);
+                Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i+1);
                 gameController.fillStartDeck(player.getCardDeck());
                 board.addPlayer(player);
                 player.setSpace(board.getSpace(i % board.width, i));
