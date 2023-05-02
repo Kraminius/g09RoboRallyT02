@@ -363,14 +363,14 @@ public class Board extends Subject {
         return null;
     }
 
-    public ArrayList<Space> getRespawnSpaces(){
+    public Space getRespawnSpaces(){
         ArrayList<Space> spaces = new ArrayList<>();
         for(int x = 0; x < this.spaces.length; x++){
             for(int y = 0; y < this.spaces[x].length; y++){
-                if(this.spaces[x][y].getElement().isRespawn()) spaces.add(this.spaces[x][y]);
+                if(this.spaces[x][y].getElement().isRespawn()) return this.spaces[x][y];
             }
         }
-        return spaces;
+        return null;
     }
     public ArrayList<Space> getHoleSpaces(){
         ArrayList<Space> spaces = new ArrayList<>();

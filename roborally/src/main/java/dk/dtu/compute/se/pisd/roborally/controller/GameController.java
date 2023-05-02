@@ -574,11 +574,8 @@ public class GameController {
      * @param player the player that should be moved
      */
     public void backUp(@NotNull Player player) throws OutsideBoardException {
-            Space space = getSpaceAt(-1, player.getHeading(), player.getSpace().x, player.getSpace().y);
-            player.setSpace(space);
-        } catch (OutsideBoardException e){
-            respawnPlayer(player);
-        }
+        Space space = getSpaceAt(-1, player.getHeading(), player.getSpace().x, player.getSpace().y);
+        player.setSpace(space);
     }
 
     /**
