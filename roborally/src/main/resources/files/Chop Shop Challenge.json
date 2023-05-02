@@ -1,0 +1,17 @@
+{
+  "name": "Chop Shop Challenge",
+  "width": "23",
+  "height": "10",
+  "wall":["1;2;NORTH","1;7;SOUTH","2;4;EAST","2;5;EAST", "4;1;NORTH", "5;2;WEST", "11;1;EAST", "17;0;NORTH", "17;1;SOUTH", "10;2;NORTH", "7;3;WEST", "11;3;WEST", "7;4;EAST", "9;4;WEST", "14;4;NORTH", "14;5;SOUTH", "15;4;EAST", "19;4;WEST", "7;5;WEST", "4;6;EAST", "8;6;EAST", "20;6;WEST", "22;6;EAST", "5;7;SOUTH", "10;7;EAST", "17;7;NORTH", "4;8;WEST", "9;8;NORTH", "11;8;SOUTH", "17;9;SOUTH", "20;9;NORTH"],
+  "belt":["2;0;null;EAST;1", "2;9;null;EAST;1", "4;0;null;WEST;1", "5;0;null;WEST;1", "6;0;null;WEST;1", "7;0;LEFT;WEST;1", "7;1;RIGHT;NORTH;1", "8;1;null;WEST;1", "21;1;null;NORTH;1", "12;2;null;NORTH;1", "16;2;LEFT;SOUTH;2", "17;2;null;WEST;2", "18;2;null;WEST;2", "19;2;null;WEST;2", "20;2;null;WEST;2", "21;2;null;NORTH;1", "12;3;null;NORTH;1", "16;3;null;SOUTH;2", "18;3;RIGHT;EAST;1", "19;3;null;EAST;1", "20;3;null;EAST;1", "21;3;LEFT;NORTH;1", "4;4;null;SOUTH;1", "11;4;RIGHT;EAST;1", "12;4;LEFT;NORTH;1", "16;4;null;SOUTH;2", "18;4;null;NORTH;1", "3;5;LEFT;SOUTH;1", "4;5;RIGHT;WEST;1", "11;5;null;NORTH;1", "16;5;null;SOUTH;2", "18;5;null;NORTH;1", "3;6;null;SOUTH;1", "16;6;null;SOUTH;2", "18;6;null;NORTH;1", "3;7;null;SOUTH;1", "15;7;null;WEST;2", "16;7;RIGHT;WEST;2", "18;7;null;NORTH;1", "3;8;null;SOUTH;1", "7;8;null;EAST;1", "8;8;RIGHT;SOUTH;1", "16;8;null;EAST;1", "17;8;null;EAST;1", "18;8;LEFT;NORTH;1", "8;9;LEFT;EAST;1", "9;9;null;EAST;1", "10;9;null;EAST;1", "11;9;null;EAST;1"],
+  "checkpoint":["6;6;1", "10;4;2", "14;7;3", "17;3;5", "22;1;4", "22;9;6"],
+  "laser":["14;4;SOUTH;2;TRUE", "14;5;NORTH;2;TRUE", "17;0;SOUTH;1;TRUE", "17;1;NORTH;1;TRUE", "17;7;SOUTH;1;TRUE", "17;8;SOUTH;1;FALSE", "17;9;NORTH;1;TRUE", "20;6;EAST;1;TRUE", "21;6;EAST;1;FALSE", "22;6;WEST;1;TRUE"],
+  "antenna":["0;4"],
+  "push": ["4;1;SOUTH;1;3;5", "5;2;EAST;1;3;5", "11;1;WEST;2;4", "10;2;SOUTH;2;4", "11;1;WEST;1;3;5", "7;3;EAST;2;4", "7;4;WEST;1;3;5", "9;4;EAST;2;4", "15;4;WEST;2;4", "19;4;EAST;1;3;5", "8;6;WEST;2;4", "5;7;NORTH;1;3;5", "10;7;WEST;2;4", "4;8;EAST;1;3;5", "11;8;NORTH;2;4"],
+  "energyField":["5;3;1", "6;4;1", "6;7;1", "9;2;1", "10;6;1", "14;6;1", "16;1;1", "17;4;1", "20;8;1", "22;2;0"],
+  "gear": ["13;2;LEFT", "13;7;RIGHT", "20;0;LEFT", "21;4;RIGHT", "21;8;LEFT"],
+  "hole": ["4;2", "6;2", "10;1", "15;1", "8;3", "10;3", "5;6", "7;6", "9;7", "11;7", "5;8", "19;8"],
+  "respawn": ["4;9"],
+  "noField": null,
+  "startFields":["1;1;1", "0;3;2", "1;4;3", "1;5;4", "0;6;5", "1;8;6"]
+}
