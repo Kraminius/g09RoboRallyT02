@@ -107,6 +107,22 @@ public class GameController {
         return new CommandCard(randomCommand);
     }
 
+    public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
+        Set<Command> validCommands = EnumSet.allOf(Command.class);
+        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT));
+
+        int[] counts = {6, 4, 3, 3, 2, 2, 1, 1};
+        int index = 0;
+        for(Command command : validCommands){
+            int count = counts[index];
+            for(int i = 0; i < count; i++){
+                playerDeck.add(new CommandCard(command));
+            }
+            index++;
+        }
+        Collections.shuffle(playerDeck);
+    }
+
     private void shuffleDiscardPileToDeck(Player player){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         ArrayList<CommandCard> cardDeck = player.getCardDeck();
@@ -136,7 +152,6 @@ public class GameController {
     public void finishProgrammingPhase() {
         //Checks who has priority
         antennaPriority();
-
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
         board.setPhase(Phase.ACTIVATION);
@@ -333,6 +348,13 @@ public class GameController {
                     player.setSpace(board.getRespawnSpaces());
                     return true;
                 }
+            case SPRINT_FORWARD:
+                try {
+                    this.sprintForward(player);
+                    return false;
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRespawnSpaces());
+                }
             case U_TURN:
                 this.uTurn(player);
                 return false;
@@ -385,6 +407,12 @@ public class GameController {
     public void fastForward(@NotNull Player player) throws OutsideBoardException {
         movePlayerForward(player, 1, null, false);
         movePlayerForward(player, 1, null, false);
+    }
+
+    public void sprintForward(@NotNull Player player) throws OutsideBoardException {
+        moveForward(player, 1, null, false);
+        moveForward(player, 1, null, false);
+        moveForward(player, 1, null, false);
     }
 
     /**
@@ -483,8 +511,10 @@ public class GameController {
      */
     public void respawnPlayer(@NotNull Player player, @NotNull Heading heading){
         Player currentPlayer = player;
+        addDamageCard(player, Command.SPAM);
         for (int j = board.getStep(); j < Player.NO_REGISTERS; j++) {
             CommandCardField field = player.getProgramField(j);
+            discardCard(player, field.getCard());
             field.setCard(null);
             field.setVisible(true);
         }
