@@ -6,6 +6,7 @@ target/
 *.ear
 *.logs
 *.iml
+*.xml
 .idea/
 # Default ignored files
 /shelf/

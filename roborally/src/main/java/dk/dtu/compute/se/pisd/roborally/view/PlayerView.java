@@ -32,7 +32,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * ...
@@ -209,14 +211,18 @@ public class PlayerView extends Tab implements ViewObserver {
                     //      an interactive command card, and the buttons should represent
                     //      the player's choices of the interactive command card. The
                     //      following is just a mockup showing two options
-
+                    if(player.getRespawnStatus()){
+                       Set<Heading> headings = EnumSet.allOf(Heading.class);
+                       for(Heading heading : headings){
+                           Button optionButton = new Button(heading.name());
+                           optionButton.setOnAction( e -> gameController.respawnPlayer(player, heading));
+                           optionButton.setDisable(false);
+                           playerInteractionPanel.getChildren().add(optionButton);
+                       }
+                    }
                     /*Access the interactive command card and creates buttons from the options the command has */
-                    System.out.println("CurrentPlayer = " + gameController.board.getCurrentPlayer().getColor());
                     CommandCard card = player.getProgramField(gameController.board.getStep()).getCard();
-                    System.out.println("Command = " + card.command);
                     List<Command> options = card.command.getOptions();
-                    System.out.println("Options = " + options);
-                    System.out.println("Player = " + player.getColor());
                     for (int i = 0; i < options.size(); i++){
                         final Command option = options.get(i);
                         Button optionButton = new Button(options.get(i).displayName);

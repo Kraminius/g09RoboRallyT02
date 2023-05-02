@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import java.util.*;
+
 /**
  * ...
  *
@@ -90,7 +92,7 @@ public class GameController {
                 }
                 for (int j = 0; j < Player.NO_CARDS; j++) {
                     CommandCardField field = player.getCardField(j);
-                    field.setCard(generateRandomCommandCard());
+                    field.setCard(drawTopCard(player));
                     field.setVisible(true);
                 }
             }
@@ -98,10 +100,37 @@ public class GameController {
     }
 
     // XXX: V2
-    private CommandCard generateRandomCommandCard() {
-        Command[] commands = Command.values();
-        int random = (int) (Math.random() * commands.length);
-        return new CommandCard(commands[random]);
+    public CommandCard generateRandomCommandCard() {
+        Set<Command> validCommands = EnumSet.allOf(Command.class);
+        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS));
+        int random = (int) (Math.random() * validCommands.size());
+        Command randomCommand = validCommands.toArray(new Command[0])[random];
+        return new CommandCard(randomCommand);
+    }
+
+    private void shuffleDiscardPileToDeck(Player player){
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        ArrayList<CommandCard> cardDeck = player.getCardDeck();
+        Collections.shuffle(discardPile);
+        cardDeck.addAll(discardPile);
+        discardPile.clear();
+    }
+
+    private CommandCard drawTopCard(Player player){
+        ArrayList<CommandCard> cardDeck = player.getCardDeck();
+        int i = cardDeck.size() - 1;
+        if(i < 0){
+            shuffleDiscardPileToDeck(player);
+            cardDeck = player.getCardDeck();
+        }
+        CommandCard topCard = cardDeck.get(i);
+        cardDeck.remove(i);
+        return topCard;
+    }
+
+    private void discardCard(Player player, CommandCard card){
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        discardPile.add(card);
     }
 
     // XXX: V2
@@ -276,8 +305,13 @@ public class GameController {
 
         switch (command) {
             case FORWARD:
-                this.moveForward(player);
-                return false;
+                try {
+                    this.moveForward(player);
+                    return false;
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRebootToken());
+                    return true;
+                }
             case RIGHT:
                 this.turnRight(player);
                 return false;
@@ -285,14 +319,24 @@ public class GameController {
                 this.turnLeft(player);
                 return false;
             case FAST_FORWARD:
-                this.fastForward(player);
-                return false;
+                try {
+                    this.fastForward(player);
+                    return false;
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRebootToken());
+                    return true;
+                }
             case U_TURN:
                 this.uTurn(player);
                 return false;
             case BACK_UP:
-                this.backUp(player);
-                return false;
+                try {
+                    this.backUp(player);
+                    return false;
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRebootToken());
+                    return true;
+                }
             case AGAIN:
                 int prevProgramStep = board.getStep() - 1;
                 if(prevProgramStep < 0){
@@ -308,18 +352,30 @@ public class GameController {
                         return false;
                     }
                 }
+            case SPAM:
+                this.playSpam(player);
+                return false;
+            case TROJAN_HORSE:
+                this.playTrojan(player);
+                return false;
+            case WORM:
+                player.setSpace(board.getRebootToken());
+                return true;
+            case VIRUS:
+                this.playVirus(player);
+                return false;
             default:
                 throw new RuntimeException("Should not happen");
         }
     }
 
     // TODO Assignment V2
-    public void moveForward(@NotNull Player player) {
+    public void moveForward(@NotNull Player player) throws OutsideBoardException {
         moveForward(player, 1, null, false);
     }
 
     // TODO Assignment V2
-    public void fastForward(@NotNull Player player) {
+    public void fastForward(@NotNull Player player) throws OutsideBoardException {
         moveForward(player, 1, null, false);
         moveForward(player, 1, null, false);
     }
@@ -337,8 +393,7 @@ public class GameController {
      * If there is a player there it moves them forward if they can move forward.
      * If no one can move because of an obstacle or it being outside the board, no one moves.
      */
-    private boolean moveForward(Player player, int amount, Heading heading, boolean isBelt) {
-        try {
+    private boolean moveForward(Player player, int amount, Heading heading, boolean isBelt) throws OutsideBoardException{
             int x = player.getSpace().x;
             int y = player.getSpace().y;
             Space space = null;
@@ -360,10 +415,6 @@ public class GameController {
                 player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
                 return true;
             }
-        } catch (OutsideBoardException e){
-            respawnPlayer(player);
-        }
-        return true;
     }
 
     /**
@@ -423,13 +474,33 @@ public class GameController {
      * The method also removes ALL the players remaining program cards.
      * @param player the player that should be respawned
      */
-    private void respawnPlayer(@NotNull Player player){
-        Space rebootToken = board.getRebootToken();
-        player.setSpace(rebootToken);
+    public void respawnPlayer(@NotNull Player player, @NotNull Heading heading){
+        Player currentPlayer = player;
         for (int j = board.getStep(); j < Player.NO_REGISTERS; j++) {
             CommandCardField field = player.getProgramField(j);
             field.setCard(null);
             field.setVisible(true);
+        }
+        board.setPhase(Phase.ACTIVATION);
+        int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+        if (nextPlayerNumber < board.getPlayersNumber()) {
+            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+            if(!board.isStepMode()){
+                continuePrograms();
+            }
+        } else {
+            int step = board.getStep();
+            step++;
+            if (step < Player.NO_REGISTERS) {
+                makeProgramFieldsVisible(step);
+                board.setStep(step);
+                board.setCurrentPlayer(board.getPlayer(0));
+                if(!board.isStepMode()){
+                    continuePrograms();
+                }
+            } else {
+                startProgrammingPhase();
+            }
         }
     }
 
@@ -502,8 +573,7 @@ public class GameController {
      *  A method to move the player backwards without changing their heading.
      * @param player the player that should be moved
      */
-    public void backUp(@NotNull Player player) {
-        try {
+    public void backUp(@NotNull Player player) throws OutsideBoardException {
             Space space = getSpaceAt(-1, player.getHeading(), player.getSpace().x, player.getSpace().y);
             player.setSpace(space);
         } catch (OutsideBoardException e){
@@ -545,7 +615,7 @@ public class GameController {
      * Tries to move player, and catches the OutsideBoardException if necessary.
      * Not implemented in game yet.
      */
-    public void activateBelts() {
+    public void activateBelts() throws OutsideBoardException {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
             int moving;
@@ -556,32 +626,16 @@ public class GameController {
                     Space spaceInFront = null;
                     switch (heading) {
                         case EAST:
-                            try {
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x + 1, player.getSpace().y);
-                            } catch (OutsideBoardException e){
-                                respawnPlayer(player);
-                            }
                             break;
                         case WEST:
-                            try {
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x - 1, player.getSpace().y);
-                            } catch (OutsideBoardException e){
-                                respawnPlayer(player);
-                            }
                             break;
                         case NORTH:
-                            try {
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y - 1);
-                            } catch (OutsideBoardException e){
-                                respawnPlayer(player);
-                            }
                             break;
                         case SOUTH:
-                            try {
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y + 1);
-                            } catch (OutsideBoardException e){
-                                respawnPlayer(player);
-                            }
                             break;
                         default:
                             throw new RuntimeException("No Heading"); //This should not happen
@@ -627,6 +681,40 @@ public class GameController {
         }
     }
 
+    public void addDamageCard(Player player, Command type){
+        CommandCard damageCard = new CommandCard(type);
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        discardPile.add(damageCard);
+    }
+
+    /**
+     * This method get the topCard from the players deck, places it in the current register (and shows it),
+     * then it calls the executeCommand() with the topCards command.
+     * @param player
+     */
+    public void playSpam(Player player){
+        int step = board.getStep();
+        CommandCard topCard = drawTopCard(player);
+        CommandCardField currentRegister = player.getProgramField(step);
+        currentRegister.setCard(topCard);
+        currentRegister.setVisible(true);
+        executeCommand(player, topCard.command);
+    }
+
+    public void playTrojan(Player player){
+        for(int i = 0; i < 2; i++){
+            addDamageCard(player, Command.SPAM);
+        }
+        playSpam(player);
+    }
+
+    public void playVirus(Player player){
+        List<Player> playersInRadius = board.findPlayerWithinRadius(player);
+        for(Player otherPlayer : playersInRadius){
+            addDamageCard(otherPlayer, Command.SPAM);
+        }
+        playSpam(player);
+    }
     /**
      * A method called when no corresponding controller operation is implemented yet. This
      * should eventually be removed.
