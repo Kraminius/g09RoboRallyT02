@@ -47,7 +47,7 @@ public class GameController {
 
     final public Board board;
 
-    private List<Player> sequence;
+   private List<Player> sequence;
 
     /**
      * @param board the board which the game is played on
@@ -1173,6 +1173,14 @@ public class GameController {
                 //Platform.exit();
             }
         }
+    }
+
+    public List<Player> getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(List<Player> sequence) {
+        this.sequence = sequence;
     }
 
 
