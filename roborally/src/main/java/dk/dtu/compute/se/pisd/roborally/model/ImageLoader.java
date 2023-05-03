@@ -19,6 +19,7 @@ public class ImageLoader {
     public Image respawn;
     public Image startField;
     public Image wall;
+    public Image energyCube;
 
     public Image[] checkpoints;
     public Image[] greenBelts;
@@ -50,6 +51,7 @@ public class ImageLoader {
         respawn = loadImage("respawn");
         startField = loadImage("startField");
         wall = loadImage("wall");
+        energyCube = loadImage("energyCube");
         checkpoints = new Image[8];
         checkpoints[0] = loadImage("1");
         checkpoints[1] = loadImage("2");

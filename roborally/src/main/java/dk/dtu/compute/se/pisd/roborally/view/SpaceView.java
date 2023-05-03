@@ -111,7 +111,16 @@ public class SpaceView extends StackPane implements ViewObserver {
         if(this.space.getElement().isRespawn()) backgroundLayer.setImage(imageLoader.respawn);
         if(this.space.getElement().isAntenna()) backgroundLayer.setImage(imageLoader.antenna);
         if(this.space.getElement().isRepair()) backgroundLayer.setImage(imageLoader.repair);
-        if(this.space.getElement().getEnergyField() != null) backgroundLayer.setImage(imageLoader.energyField);
+        if(this.space.getElement().getEnergyField() != null){
+            backgroundLayer.setImage(imageLoader.energyField);
+            ImageView energyCube = new ImageView(ImageLoader.get().energyCube);
+            space.getElement().getEnergyField().setImageView(energyCube);
+            energyCube.setFitWidth(40);
+            energyCube.setFitHeight(40);
+            energyCube.setStyle("-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,1) , 5, 0.2 , 0 , 1 )");
+            elementLayer.getChildren().add(energyCube);
+
+        }
         if(this.space.getElement().getStartField() != null){
             int id = this.space.getElement().getStartField().getId();
             backgroundLayer.setImage(imageLoader.startField);

@@ -23,6 +23,7 @@ package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.view.PlayerView;
+import javafx.scene.control.Label;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,10 +40,14 @@ public class Player extends Subject {
 
     final public static int NO_REGISTERS = 5;
     final public static int NO_CARDS = 9;
+    final public static int NO_UPGRADE_CARDS = 4;
 
     final public Board board;
 
     private int id;
+
+    private int energyCubes;
+    private Label energyCubeLabel;
 
     private String name;
     private String color;
@@ -55,6 +60,7 @@ public class Player extends Subject {
 
     private CommandCardField[] program;
     private CommandCardField[] cards;
+    private CommandCardField[] upgradeCards;
 
     private ArrayList<CommandCard> cardDeck;
 
@@ -83,6 +89,10 @@ public class Player extends Subject {
         cards = new CommandCardField[NO_CARDS];
         for (int i = 0; i < cards.length; i++) {
             cards[i] = new CommandCardField(this);
+        }
+        upgradeCards = new CommandCardField[NO_UPGRADE_CARDS];
+        for (int i = 0; i < upgradeCards.length; i++) {
+            upgradeCards[i] = new CommandCardField(this);
         }
         //Her gives spilleren antallet af checkpoints
         checkpointsReadhed = new boolean[board.getCheckPointSpaces().size()];
@@ -165,6 +175,14 @@ public class Player extends Subject {
         cards[i] = newCard;
     }
 
+    public CommandCardField getUpgradeCards(int i) {
+        return upgradeCards[i];
+    }
+
+    public void setUpgradeCards(CommandCardField[] upgradeCards) {
+        this.upgradeCards = upgradeCards;
+    }
+
     public ArrayList<CommandCard> getCardDeck(){
         return cardDeck;
     }
@@ -205,5 +223,16 @@ public class Player extends Subject {
 
     public void setPlayerView(PlayerView playerView) {
         this.playerView = playerView;
+    }
+    public int getEnergyCubes() {
+        return energyCubes;
+    }
+
+    public void setEnergyCubes(int energyCubes) {
+        this.energyCubes = energyCubes;
+        energyCubeLabel.setText(energyCubes + "");
+    }
+    public void setEnergyCubeLabel(Label label){
+        energyCubeLabel = label;
     }
 }

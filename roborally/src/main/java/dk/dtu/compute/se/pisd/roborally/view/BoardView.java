@@ -28,6 +28,7 @@ import dk.dtu.compute.se.pisd.roborally.model.Phase;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -55,12 +56,19 @@ public class BoardView extends VBox implements ViewObserver {
 
     public BoardView(@NotNull GameController gameController) {
         board = gameController.board;
-
         mainBoardPane = new GridPane();
         playersView = new PlayersView(gameController);
         statusLabel = new Label("<no status>");
-
-        this.getChildren().add(mainBoardPane);
+        VBox centerTheDiv = new VBox();
+        VBox center2 = new VBox();
+        centerTheDiv.setStyle("-fx-background-color: #eeeeee");
+        center2.getChildren().add(mainBoardPane);
+        centerTheDiv.getChildren().add(center2);
+        centerTheDiv.setAlignment(Pos.CENTER);
+        center2.setAlignment(Pos.CENTER);
+        center2.setMaxWidth(1);
+        centerTheDiv.setPrefSize(200, 200);
+        this.getChildren().add(centerTheDiv);
         this.getChildren().add(playersView);
         this.getChildren().add(statusLabel);
 

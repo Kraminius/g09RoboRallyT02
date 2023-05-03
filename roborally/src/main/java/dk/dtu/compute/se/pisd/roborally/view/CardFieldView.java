@@ -52,11 +52,11 @@ public class CardFieldView extends GridPane implements ViewObserver {
     final public static int CARDFIELD_WIDTH = 65;
     final public static int CARDFIELD_HEIGHT = 100;
 
-    final public static Border BORDER = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(2)));
+    final public static Border BORDER = new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(2)));
 
-    final public static Background BG_DEFAULT = new Background(new BackgroundFill(Color.WHITE, null, null));
-    final public static Background BG_DRAG = new Background(new BackgroundFill(Color.GRAY, null, null));
-    final public static Background BG_DROP = new Background(new BackgroundFill(Color.LIGHTGRAY, null, null));
+    public static Background BG_default = new Background(new BackgroundFill(Color.WHITE, null, null));
+    public static Background BG_drag = new Background(new BackgroundFill(Color.DARKGRAY, null, null));
+    public static Background BG_drop = new Background(new BackgroundFill(Color.LIGHTGRAY, null, null));
 
     final public static Background BG_ACTIVE = new Background(new BackgroundFill(Color.YELLOW, null, null));
     final public static Background BG_DONE = new Background(new BackgroundFill(Color.GREENYELLOW,  null, null));
@@ -73,9 +73,8 @@ public class CardFieldView extends GridPane implements ViewObserver {
 
         this.setAlignment(Pos.CENTER);
         this.setPadding(new Insets(5, 5, 5, 5));
-
         this.setBorder(BORDER);
-        this.setBackground(BG_DEFAULT);
+        this.setBackground(BG_default);
 
         this.setPrefWidth(CARDFIELD_WIDTH);
         this.setMinWidth(CARDFIELD_WIDTH);
@@ -173,7 +172,7 @@ public class CardFieldView extends GridPane implements ViewObserver {
                     content.put(ROBO_RALLY_CARD, cardFieldRepresentation(cardField));
 
                     db.setContent(content);
-                    source.setBackground(BG_DRAG);
+                    source.setBackground(BG_drag);
                 }
             }
             event.consume();
@@ -217,7 +216,7 @@ public class CardFieldView extends GridPane implements ViewObserver {
                         cardField.player.board != null) {
                     if (event.getGestureSource() != target &&
                             event.getDragboard().hasContent(ROBO_RALLY_CARD)) {
-                        target.setBackground(BG_DROP);
+                        target.setBackground(BG_drop);
                     }
                 }
             }
@@ -240,7 +239,7 @@ public class CardFieldView extends GridPane implements ViewObserver {
                         cardField.player.board != null) {
                     if (event.getGestureSource() != target &&
                             event.getDragboard().hasContent(ROBO_RALLY_CARD)) {
-                        target.setBackground(BG_DEFAULT);
+                        target.setBackground(BG_default);
                     }
                 }
             }
@@ -281,7 +280,7 @@ public class CardFieldView extends GridPane implements ViewObserver {
                     }
                 }
                 event.setDropCompleted(success);
-                target.setBackground(BG_DEFAULT);
+                target.setBackground(BG_default);
             }
             event.consume();
         }
@@ -295,7 +294,7 @@ public class CardFieldView extends GridPane implements ViewObserver {
             Object t = event.getTarget();
             if (t instanceof CardFieldView) {
                 CardFieldView source = (CardFieldView) t;
-                source.setBackground(BG_DEFAULT);
+                source.setBackground(BG_default);
             }
             event.consume();
         }
