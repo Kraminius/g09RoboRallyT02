@@ -555,6 +555,11 @@ public class GameController {
                     }
                     break;
             }
+            if(space.getElement().isHole()){
+                throw new OutsideBoardException();
+            } else if (!space.getElement().isSpace()){
+                throw new OutsideBoardException();
+            }
             return space;
         }
 
