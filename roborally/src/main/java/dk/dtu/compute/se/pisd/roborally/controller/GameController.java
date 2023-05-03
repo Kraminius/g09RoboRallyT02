@@ -78,10 +78,8 @@ public class GameController {
      */
     // XXX: V2
     public void startUpgradePhase(){
+        System.out.println("Upgrade Phase Started");
         board.setPhase(Phase.UPGRADE);
-        UpgradeShop upgradeShop = new UpgradeShop();
-        upgradeShop.openShop(board, this);
-        startProgrammingPhase();
     }
 
     public void startProgrammingPhase() {
@@ -134,6 +132,7 @@ public class GameController {
     public void openUpgradeShop(){
         UpgradeShop upgradeShop = new UpgradeShop();
         upgradeShop.openShop(board, this);
+        startProgrammingPhase();
     }
 
     private void shuffleDiscardPileToDeck(Player player){

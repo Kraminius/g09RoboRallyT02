@@ -131,7 +131,7 @@ public class PlayerView extends Tab implements ViewObserver {
         valuesWindow = new VBox();
         valuesWindow.setPrefSize(200, 250);
         valuesWindow.setMaxWidth(200);
-        valuesWindow.setSpacing(53);
+        valuesWindow.setSpacing(23);
         energyCubes = new HBox();
         energyCubes.setAlignment(Pos.CENTER_RIGHT);
         energyCubes.setSpacing(20);
@@ -160,13 +160,23 @@ public class PlayerView extends Tab implements ViewObserver {
         upgradeCards.setVgap(2.0);
         upgradeCards.setHgap(2.0);
         upgradeCardView = new CardFieldView[Player.NO_UPGRADE_CARDS];
+        HBox useButtons = new HBox();
+        useButtons.setSpacing(3);
         for (int i = 0; i < Player.NO_UPGRADE_CARDS; i++) {
-            CommandCardField cardField = player.getUpgradeCards(i);
+            CommandCardField cardField = player.getUpgradeCard(i);
             if (cardField != null) {
+                Button button = new Button("Use");
+                final int at = i;
+                button.setOnAction(e -> gameController.board.useCard( upgradeCardView[at].getField().getCard().command, player));
+                button.setStyle("-fx-border-color: #6969d3");
+                button.setPrefWidth(65);
+                useButtons.getChildren().add(button);
                 upgradeCardView[i] = new CardFieldView(gameController, cardField);
                 upgradeCards.add(upgradeCardView[i], i, 0);
             }
         }
+
+
         Label upgradeCardsLabel = new Label("Upgrade Cards");
         upgradeCardsLabel.setStyle("-fx-font-weight: bold");
         upgradeCardsLabel.setScaleX(1.5);
@@ -174,6 +184,7 @@ public class PlayerView extends Tab implements ViewObserver {
         Label upgradeCardsTempOrPerm = new Label("Permanent Cards                                    Tempoary Cards");
         energyCubeWindow.getChildren().add(upgradeCardsLabel);
         energyCubeWindow.getChildren().add(upgradeCardsTempOrPerm);
+        energyCubeWindow.getChildren().add(useButtons);
         energyCubeWindow.getChildren().add(upgradeCards);
         valuesWindow.getChildren().add(energyCubeWindow);
 
@@ -245,6 +256,7 @@ public class PlayerView extends Tab implements ViewObserver {
                     programPane.getChildren().remove(playerInteractionPanel);
                     programPane.add(buttonPanel, Player.NO_REGISTERS, 0);
                 }
+                System.out.println(player.board.getPhase());
                 switch (player.board.getPhase()) {
                     case INITIALISATION:
                         finishButton.setDisable(true);
@@ -273,7 +285,7 @@ public class PlayerView extends Tab implements ViewObserver {
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
                         openShopButton.setDisable(false);
-
+                        break;
                     default:
                         finishButton.setDisable(true);
                         executeButton.setDisable(true);
@@ -281,8 +293,6 @@ public class PlayerView extends Tab implements ViewObserver {
                         openShopButton.setDisable(true);
 
                 }
-
-
             } else {
                 if (!programPane.getChildren().contains(playerInteractionPanel)) {
                     programPane.getChildren().remove(buttonPanel);

@@ -175,8 +175,11 @@ public class Player extends Subject {
         cards[i] = newCard;
     }
 
-    public CommandCardField getUpgradeCards(int i) {
+    public CommandCardField getUpgradeCard(int i) {
         return upgradeCards[i];
+    }
+    public CommandCardField[] getUpgradeCards(){
+        return this.upgradeCards;
     }
 
     public void setUpgradeCards(CommandCardField[] upgradeCards) {

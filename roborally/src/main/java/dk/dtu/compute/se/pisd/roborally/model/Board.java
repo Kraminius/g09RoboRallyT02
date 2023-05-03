@@ -386,4 +386,7 @@ public class Board extends Subject {
         }
         return spaces;
     }
+    public void useCard(Command command, Player player){
+
+    }
 }
