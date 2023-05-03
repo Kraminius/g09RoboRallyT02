@@ -348,7 +348,7 @@ public class GameController {
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                     } else {
                         //Probably upgrade phase here?
-                        startProgrammingPhase();
+                        startUpgradePhase();
                     }
                 }else{
                     board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));

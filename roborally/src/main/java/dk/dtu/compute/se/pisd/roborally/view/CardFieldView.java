@@ -305,6 +305,10 @@ public class CardFieldView extends GridPane implements ViewObserver {
     public void setField(CommandCardField field) {
         this.field = field;
     }
+
+    public Label getLabel() {
+        return label;
+    }
 }
 
 

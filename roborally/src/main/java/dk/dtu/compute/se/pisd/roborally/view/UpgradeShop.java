@@ -32,9 +32,9 @@ public class UpgradeShop {
     private int playerOrder;
     private Player currentPlayer;
 
-    private ArrayList<Command> deck;
-    private ArrayList<Command> discarded;
-    private ArrayList<Command> out;
+    private ArrayList<CommandCard> deck;
+    private ArrayList<CommandCard> discarded;
+    private ArrayList<CommandCard> out;
 
     private void createWindow(){
         HBox window = new HBox();
@@ -47,57 +47,64 @@ public class UpgradeShop {
         shop.setAlignment(Pos.TOP_CENTER);
         playerInfo.setAlignment(Pos.TOP_CENTER);
         shop.setStyle("-fx-border-color: #6969d3");
-        playerInfo.setStyle("-fx-border-color: #6969d3");
         shop.setSpacing(10);
+        playerInfo.setStyle("-fx-border-color: #6969d3");
+        //shop.setSpacing(50);
         playerInfo.setSpacing(10);
         shop.setPadding(new Insets(30, 50, 30, 50));
         playerInfo.setPadding(new Insets(30, 50, 30, 50));
         Label label = new Label("Upgrade Shop");
         label.setAlignment(Pos.CENTER);
         label.setWrapText(true);
-        label.setStyle("-fx-font-size: 32; -fx-font-weight: bold");
+        label.setStyle("-fx-font-size: 48; -fx-font-weight: bold");
         messageLabel = new Label("");
         label.setAlignment(Pos.CENTER);
         label.setWrapText(true);
-        label.setStyle("-fx-font-size: 16; -fx-font-weight: bold");
-        nextPlayer = new Button("Start Upgrade Phase");
+        label.setStyle("-fx-font-size: 32; -fx-font-weight: bold");
+        nextPlayer = new Button("Start Shopping!");
         nextPlayer.setOnAction(e -> switchToNextPlayer());
         nextPlayer.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
         VBox cardHolder = new VBox();
         cardHolder.setAlignment(Pos.CENTER);
-
         buyCards = new FlowPane();
+        buyCards.setPadding(new Insets(100, 10, 100, 10));
+        buyCards.setHgap(60);
+        buyCards.setVgap(100);
+        buyCards.setAlignment(Pos.TOP_CENTER);
         cardsToBuy = new CardFieldView[board.getPlayersNumber()];
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             CommandCardField cardField = getNextCardField();
             if (cardField != null) {
-                StackPane cardStackPane = new StackPane();
                 VBox card = new VBox();
-                cardStackPane.getChildren().add(card);
+                StackPane cardStackPane = new StackPane();
+
+                card.getChildren().add(cardStackPane);
                 cardsToBuy[i] = new CardFieldView(controller, cardField);
-                card.getChildren().add(cardsToBuy[i]);
+                cardStackPane.getChildren().add(cardsToBuy[i]);
                 Button button = new Button("Buy");
-                button.setPrefSize(65, 20);
-                button.setStyle("-fx-border-color: #6969d3;");
-                final CardFieldView cardView = playerCards[i];
+                button.setPrefSize(65, 15);
+                button.setStyle("-fx-border-color: #6969d3; -fx-font-weight: bold; -fx-font-size: 8;");
+                final CardFieldView cardView = cardsToBuy[i];
                 button.setOnAction(e -> chooseCardAt(cardView));
                 card.getChildren().add(button);
-
                 VBox priceAllign = new VBox();
                 cardStackPane.getChildren().add(priceAllign);
                 priceAllign.setAlignment(Pos.TOP_RIGHT);
+                priceAllign.setPadding(new Insets(4, 4, 4, 4));
                 VBox priceBox = new VBox();
-                priceBox.setMaxSize(40, 40);
-                priceBox.setStyle("-fx-border-color: #6969d3; -fx-border-radius: 100");
+                priceBox.setMaxSize(20, 20);
+                priceBox.setStyle("-fx-border-color: #6969d3; -fx-border-radius: 200");
                 priceBox.setAlignment(Pos.CENTER);
                 Label price = new Label();
+                price.maxWidth(1);
                 price.setText(getPrice(cardsToBuy[i].getField().getCard().command) + "");
-                price.setStyle("-fx-text-fill: #6969d3; -fx-font-weight: bold; -fx-font-size: 16");
+                cardsToBuy[i].getLabel().setStyle(cardsToBuy[i].getLabel().getStyle() + ";-fx-font-size: 6");
+                price.setStyle("-fx-text-fill: #6969d3; -fx-font-weight: bold; -fx-font-size: 12; -fx-border-width: 2");
                 priceBox.getChildren().add(price);
                 priceAllign.getChildren().add(priceBox);
-
-
-                buyCards.getChildren().add(cardStackPane);
+                card.setScaleX(2);
+                card.setScaleY(2);
+                buyCards.getChildren().add(card);
             }
         }
         cardHolder.getChildren().add(buyCards);
@@ -189,11 +196,12 @@ public class UpgradeShop {
         switchToNextPlayer();
 
     }
-    private ArrayList<Command> getDeck(){
+    private ArrayList<CommandCard> getDeck(){
         if(deck == null){
             deck = new ArrayList<>();
             discarded = new ArrayList<>();
             out = new ArrayList<>();
+            controller.fillUpgradeCardDeck(deck);
             shuffle(deck);
         }
         else if(deck.size() == 0){
@@ -207,30 +215,31 @@ public class UpgradeShop {
         }
         return deck;
     }
-    private void shuffle(ArrayList<Command> shuffle){
+    private void shuffle(ArrayList<CommandCard> shuffle){
         Random rnd = new Random();
         int switcher;
         for(int i = 0; i < shuffle.size(); i++){
             switcher = rnd.nextInt(0, shuffle.size());
-            Command temp = shuffle.get(i);
+            CommandCard temp = shuffle.get(i);
             shuffle.set(i, shuffle.get(switcher));
             shuffle.set(switcher, temp);
         }
     }
     private CommandCardField getNextCardField(){
-        ArrayList<Command> myDeck = getDeck();
+        ArrayList<CommandCard> myDeck = getDeck();
         if(myDeck.size() == 0) {
             System.out.println("No cards in upgrade deck");
             return null;
         }
-        Command command = myDeck.remove(myDeck.size()-1);
-        out.add(command);
-        CommandCard card = new CommandCard(command);
+        CommandCard command = myDeck.remove(myDeck.size()-1);
+        CommandCard card = myDeck.remove(myDeck.size()-1);
+        out.add(card);
         CommandCardField cardField = new CommandCardField(null);
         cardField.setCard(card);
         return cardField;
     }
     private void chooseCardAt(CardFieldView cardFieldView){
+        if(nextPlayer.getText().equals("Start Shopping!")) return;
         int freeIndex = -1;
         for(int i = 0; i < playerCards.length; i++){
             if(playerCards[i].getField().getCard() == null){
@@ -243,12 +252,12 @@ public class UpgradeShop {
                 int amountOfSame = 0;
                 for(int i = 0; i < playerCards.length; i++){
                     if(playerCards[i].getField().getCard() != null){
-                        if(getPermanent(playerCards[i].getField().getCard().command)) amountOfSame++;
+                        if(getPermanent(cardsToBuy[i].getField().getCard().command)) amountOfSame++;
                     }
                 }
                 if(amountOfSame > 2) messageLabel.setText("You already have three permanent cards, you can only have three");
                 else{
-                    if(currentPlayer.getEnergyCubes() >= getPrice(playerCards[freeIndex].getField().getCard().command)){
+                    if(currentPlayer.getEnergyCubes() >= getPrice(cardFieldView.getField().getCard().command)){
                         playerCards[freeIndex].getField().setCard(cardFieldView.getField().getCard());
                         switchToNextPlayer();
                     }
@@ -264,7 +273,7 @@ public class UpgradeShop {
                 }
                 if(amountOfSame > 2) messageLabel.setText("You already have three temporary cards, you can only have three");
                 else {
-                    if(currentPlayer.getEnergyCubes() >= getPrice(playerCards[freeIndex].getField().getCard().command)){
+                    if(currentPlayer.getEnergyCubes() >= getPrice(cardFieldView.getField().getCard().command)){
                         playerCards[freeIndex].getField().setCard(cardFieldView.getField().getCard());
                         switchToNextPlayer();
                     }
