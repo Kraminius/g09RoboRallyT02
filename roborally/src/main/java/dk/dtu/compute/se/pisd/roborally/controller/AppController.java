@@ -102,6 +102,8 @@ public class AppController implements Observer {
             StartPositionWindow positionWindow = new StartPositionWindow();
             positionWindow.getStartSpaces(board);
 
+            gameController.startUpgradePhase();
+
         }
     }
 

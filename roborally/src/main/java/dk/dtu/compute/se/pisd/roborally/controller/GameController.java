@@ -23,6 +23,8 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
+import dk.dtu.compute.se.pisd.roborally.view.ViewObserver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -75,6 +77,13 @@ public class GameController {
      * the players new cards
      */
     // XXX: V2
+    public void startUpgradePhase(){
+        board.setPhase(Phase.UPGRADE);
+        UpgradeShop upgradeShop = new UpgradeShop();
+        upgradeShop.openShop(board, this);
+        startProgrammingPhase();
+    }
+
     public void startProgrammingPhase() {
         board.setPhase(Phase.PROGRAMMING);
         //board.setCurrentPlayer(sequence.get(0));
@@ -121,6 +130,10 @@ public class GameController {
             index++;
         }
         Collections.shuffle(playerDeck);
+    }
+    public void openUpgradeShop(){
+        UpgradeShop upgradeShop = new UpgradeShop();
+        upgradeShop.openShop(board, this);
     }
 
     private void shuffleDiscardPileToDeck(Player player){
@@ -255,7 +268,7 @@ public class GameController {
                         antennaPriority();
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                     } else {
-                        startProgrammingPhase();
+                        startUpgradePhase();
                     }
                 }else{
                     board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
@@ -301,7 +314,7 @@ public class GameController {
                     continuePrograms();
                 }
             } else {
-                startProgrammingPhase();
+                startUpgradePhase();
             }
         }
     }
@@ -536,7 +549,7 @@ public class GameController {
                     continuePrograms();
                 }
             } else {
-                startProgrammingPhase();
+                startUpgradePhase();
             }
         }
     }

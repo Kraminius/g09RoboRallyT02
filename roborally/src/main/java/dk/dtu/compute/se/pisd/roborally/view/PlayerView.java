@@ -64,6 +64,7 @@ public class PlayerView extends Tab implements ViewObserver {
     private Button finishButton;
     private Button executeButton;
     private Button stepButton;
+    private Button openShopButton;
     private VBox playerInteractionPanel;
     private VBox valuesWindow;
     private HBox energyCubes;
@@ -110,7 +111,12 @@ public class PlayerView extends Tab implements ViewObserver {
         stepButton = new Button("Execute Current Register");
         stepButton.setOnAction( e-> gameController.executeStep());
 
-        buttonPanel = new VBox(finishButton, executeButton, stepButton);
+        openShopButton = new Button("Open Upgrade Shop");
+        openShopButton.setOnAction( e-> gameController.openUpgradeShop());
+
+
+
+        buttonPanel = new VBox(finishButton, executeButton, stepButton, openShopButton);
         buttonPanel.setAlignment(Pos.CENTER_LEFT);
         buttonPanel.setSpacing(3.0);
         // programPane.add(buttonPanel, Player.NO_REGISTERS, 0); done in update now
@@ -121,11 +127,11 @@ public class PlayerView extends Tab implements ViewObserver {
 
         bottomBar = new VBox();
         bottomBar.setAlignment(Pos.CENTER_RIGHT);
-        bottomBar.setMinWidth(920);
+        bottomBar.setMinWidth(1020);
         valuesWindow = new VBox();
         valuesWindow.setPrefSize(200, 250);
         valuesWindow.setMaxWidth(200);
-        valuesWindow.setSpacing(44);
+        valuesWindow.setSpacing(53);
         energyCubes = new HBox();
         energyCubes.setAlignment(Pos.CENTER_RIGHT);
         energyCubes.setSpacing(20);
@@ -165,7 +171,7 @@ public class PlayerView extends Tab implements ViewObserver {
         upgradeCardsLabel.setStyle("-fx-font-weight: bold");
         upgradeCardsLabel.setScaleX(1.5);
         upgradeCardsLabel.setScaleY(1.5);
-        Label upgradeCardsTempOrPerm = new Label("Permanent Cards             Tempoary Cards");
+        Label upgradeCardsTempOrPerm = new Label("Permanent Cards                                    Tempoary Cards");
         energyCubeWindow.getChildren().add(upgradeCardsLabel);
         energyCubeWindow.getChildren().add(upgradeCardsTempOrPerm);
         energyCubeWindow.getChildren().add(upgradeCards);
@@ -246,24 +252,34 @@ public class PlayerView extends Tab implements ViewObserver {
                         //     from the initialization phase to the programming phase somehow!
                         executeButton.setDisable(false);
                         stepButton.setDisable(true);
+                        openShopButton.setDisable(true);
                         break;
 
                     case PROGRAMMING:
                         finishButton.setDisable(false);
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
+                        openShopButton.setDisable(true);
                         break;
 
                     case ACTIVATION:
                         finishButton.setDisable(true);
                         executeButton.setDisable(false);
                         stepButton.setDisable(false);
+                        openShopButton.setDisable(true);
                         break;
+                    case UPGRADE:
+                        finishButton.setDisable(true);
+                        executeButton.setDisable(true);
+                        stepButton.setDisable(true);
+                        openShopButton.setDisable(false);
 
                     default:
                         finishButton.setDisable(true);
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
+                        openShopButton.setDisable(true);
+
                 }
 
 
