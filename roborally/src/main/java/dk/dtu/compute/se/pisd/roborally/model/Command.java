@@ -37,12 +37,14 @@ public enum Command {
 
     FORWARD("Move 1"),
     FAST_FORWARD("Move 2"),
-    SPRINT_FORWARD("Move 3"),
-    BACK_UP("Back up"),
     LEFT("Turn Left"),
     RIGHT("Turn Right"),
+    SPRINT_FORWARD("Move 3"),
+    BACK_UP("Back up"),
     U_TURN("U-turn"),
     AGAIN("Again"),
+
+    POWER_UP("Power up"),
     OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT),
 
     //SPAM CARDS
@@ -53,8 +55,17 @@ public enum Command {
 
     TROJAN_HORSE("Trojan horse"),
 
-    VIRUS("Virus");
+    VIRUS("Virus"),
+    RAMMING_GEAR("Ramming Gear - text here"),
 
+    REPEAT("Repeat Routine"),
+    SPAM_FOLDER("Spam folder"),
+
+    SANDBOX("Sandbox Routine", FORWARD, FAST_FORWARD, SPRINT_FORWARD, BACK_UP, LEFT, RIGHT, U_TURN),
+
+    WEASEL("Weasel routine", LEFT, RIGHT, U_TURN),
+    SPEED("Speed routine"),
+    ENERGY("Energy routine");
     // XXX Assignment P3
 
     final public String displayName;

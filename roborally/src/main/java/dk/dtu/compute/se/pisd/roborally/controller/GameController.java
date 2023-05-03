@@ -71,10 +71,9 @@ public class GameController {
         //     if the player is moved
 
     }
-
-    /**
-     * Prepares the game for the programming phase by clearing previous programming, setting the game state and give
-     * the players new cards
+    /** @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * Prepares the game for the programming phase by clearing previous programming, adding the previous programming cards to the players discard pile,
+     * setting the game state and give the players new cards from their deck.
      */
     // XXX: V2
     public void startUpgradePhase(){
@@ -93,6 +92,10 @@ public class GameController {
             if (player != null) {
                 for (int j = 0; j < Player.NO_REGISTERS; j++) {
                     CommandCardField field = player.getProgramField(j);
+                    CommandCard card = field.getCard();
+                    if(card != null) {
+                        discardCard(player, card);
+                    }
                     field.setCard(null);
                     field.setVisible(true);
                 }
@@ -106,6 +109,13 @@ public class GameController {
     }
 
     // XXX: V2
+
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * Creates new CommandCard object with a random command taken from an EnumSet containing all valid commands.
+     * Meaning that the damage cards has been removed.
+     * @return
+     */
     public CommandCard generateRandomCommandCard() {
         Set<Command> validCommands = EnumSet.allOf(Command.class);
         validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS));
@@ -114,11 +124,17 @@ public class GameController {
         return new CommandCard(randomCommand);
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This methods creates an EnumSet of all valid commands (damage cards removed), and then adds new CommandCard objects to the players card deck,
+     * with the valid enum. It has an int array that contains the value of how many cards of a type that exist in a player deck.
+     * @param playerDeck the ArrayList that holds the players cards.
+     */
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
         Set<Command> validCommands = EnumSet.allOf(Command.class);
-        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT));
+        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX, Command.SPAM_FOLDER, Command.ENERGY, Command.REPEAT, Command.RAMMING_GEAR));
 
-        int[] counts = {6, 4, 3, 3, 2, 2, 1, 1};
+        int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
         int index = 0;
         for(Command command : validCommands){
             int count = counts[index];
@@ -135,33 +151,95 @@ public class GameController {
         startProgrammingPhase();
     }
 
-    private void shuffleDiscardPileToDeck(Player player){
+    public void fillUpgradeCardDeck(@NotNull ArrayList<CommandCard> upgradeDeck){
+        Set<Command> upgradeCards = EnumSet.allOf(Command.class);
+        upgradeCards.removeAll(EnumSet.of(
+                Command.FORWARD,
+                Command.FAST_FORWARD,
+                Command.LEFT,
+                Command.RIGHT,
+                Command.SPRINT_FORWARD,
+                Command.BACK_UP,
+                Command.U_TURN,
+                Command.AGAIN,
+                Command.OPTION_LEFT_RIGHT,
+                Command.SPAM,
+                Command.WORM,
+                Command.TROJAN_HORSE,
+                Command.VIRUS));
+
+        for(Command command : upgradeCards){
+            upgradeDeck.add(new CommandCard(command));
+        }
+    }
+
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This method fetches a players two ArrayLists - discardPile & cardDeck.
+     * It then adds all the elements from the discardPile to the cardDeck array, removes the elements from the discardPile and shuffles the cardDeck.
+     * @param player the player whos discardPile should be shuffled into their cardDeck.
+     */
+    protected void shuffleDiscardPileToDeck(Player player){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         ArrayList<CommandCard> cardDeck = player.getCardDeck();
-        Collections.shuffle(discardPile);
         cardDeck.addAll(discardPile);
+        Collections.shuffle(cardDeck);
         discardPile.clear();
     }
 
-    private CommandCard drawTopCard(Player player){
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This method fetches a players cardDeck arrayList.
+     * It then checks the size of the array, and if it is empty it calls the method that shuffles the dicardPile into the cardDeck.
+     * The method then removes the topCard - the last element in the array.
+     * @param player the player that draws a card.
+     * @return the last element of the cardDeck array - the topCard.
+     */
+    protected CommandCard drawTopCard(Player player){
         ArrayList<CommandCard> cardDeck = player.getCardDeck();
         int i = cardDeck.size() - 1;
         if(i < 0){
             shuffleDiscardPileToDeck(player);
             cardDeck = player.getCardDeck();
+            i = cardDeck.size() - 1;
         }
         CommandCard topCard = cardDeck.get(i);
         cardDeck.remove(i);
         return topCard;
     }
 
-    private void discardCard(Player player, CommandCard card){
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This method adds a card to a players discardPile.
+     * @param player the player that owns the discardPile
+     * @param card the card that should be placed in the discardPile.
+     */
+    protected void discardCard(Player player, CommandCard card){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         discardPile.add(card);
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This method iterates over every player and all of their remaining cards in their cards array. (The ones that have not been placed in program fields).
+     * It then discards those cards, if there isn't any card in a field, it skips to the next.
+     */
+    protected void discardUnusedCards(){
+        for (int i = 0; i < board.getPlayersNumber(); i++){
+            Player player = board.getPlayer(i);
+            for(int j = 0; j < Player.NO_CARDS; j++ ){
+                CommandCard card = player.getCardField(j).getCard();
+                if(card != null){
+                    discardCard(player, card);
+                    CommandCardField field = player.getCardField(j);
+                    field.setCard(null);
+                }
+            }
+        }
+    }
     // XXX: V2
     public void finishProgrammingPhase() {
+        discardUnusedCards();
         //Checks who has priority
         antennaPriority();
         makeProgramFieldsInvisible();
@@ -218,18 +296,17 @@ public class GameController {
 
     // XXX: V2
     private void continuePrograms() {
+
         do {
             executeNextStep();
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
+
+
     // XXX: V2
     private void executeNextStep() {
-
         int step = board.getStep();
-
-
-
         Player currentPlayer = board.getCurrentPlayer();
         sequence.remove(0);
         System.out.println("Curr: " + currentPlayer.getId());
@@ -267,13 +344,12 @@ public class GameController {
                         antennaPriority();
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                     } else {
-                        startUpgradePhase();
+                        //Probably upgrade phase here?
+                        startProgrammingPhase();
                     }
                 }else{
                     board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                 }
-
-
 
             } else {
                 // this should not happen
@@ -294,27 +370,20 @@ public class GameController {
     public void executeCommandOptionAndContinue(@NotNull Command command){
         board.setPhase(Phase.ACTIVATION);
         Player currentPlayer = board.getCurrentPlayer();
-        boolean terminate = executeCommand(currentPlayer, command);
-
-        int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-        if (nextPlayerNumber < board.getPlayersNumber()) {
-            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
-            if(!board.isStepMode()){
-                continuePrograms();
-            }
-        } else {
+        executeCommand(currentPlayer, command);
+        if(sequence.size() == 0){
             int step = board.getStep();
             step++;
             if (step < Player.NO_REGISTERS) {
                 makeProgramFieldsVisible(step);
                 board.setStep(step);
-                board.setCurrentPlayer(board.getPlayer(0));
-                if(!board.isStepMode()){
-                    continuePrograms();
-                }
+                antennaPriority();
+                board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
             } else {
                 startUpgradePhase();
             }
+        }else{
+            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
         }
     }
     // XXX: V2
@@ -344,6 +413,7 @@ public class GameController {
                     return false;
                 } catch (OutsideBoardException e){
                     player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case RIGHT:
@@ -358,6 +428,7 @@ public class GameController {
                     return false;
                 } catch (OutsideBoardException e){
                     player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case SPRINT_FORWARD:
@@ -366,6 +437,8 @@ public class GameController {
                     return false;
                 } catch (OutsideBoardException e){
                     player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                    return true;
                 }
             case U_TURN:
                 this.uTurn(player);
@@ -376,23 +449,36 @@ public class GameController {
                     return false;
                 } catch (OutsideBoardException e){
                     player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case AGAIN:
                 int prevProgramStep = board.getStep() - 1;
                 if(prevProgramStep < 0){
+                    //Should not be able to happen.
                     return false;
                 } else {
                     CommandCard prevCommand = player.getProgramField(prevProgramStep).getCard();
                     if(prevCommand == null){
+                        //Should also not happen
                         return false;
                     } else if (prevCommand.command == Command.AGAIN) {
-                        return false; //For now
+                        prevCommand = player.getProgramField(prevProgramStep - 1).getCard();
+                        this.again(player, prevCommand.command);
+                    } else if(prevCommand.command == Command.SPAM || prevCommand.command == Command.VIRUS || prevCommand.command == Command.TROJAN_HORSE || prevCommand.command == Command.WORM){
+                        CommandCard topCard = drawTopCard(player);
+                        discardCard(player, player.getProgramField(board.getStep()).getCard());
+                        player.getProgramField(board.getStep()).setCard(topCard);
+                        this.again(player, topCard.command);
+                        return false;
                     } else {
                         this.again(player, prevCommand.command);
                         return false;
                     }
                 }
+            case POWER_UP:
+                this.powerUp(player, 1);
+                return false;
             case SPAM:
                 this.playSpam(player);
                 return false;
@@ -401,10 +487,31 @@ public class GameController {
                 return false;
             case WORM:
                 player.setSpace(board.getRespawnSpaces());
+                player.setRespawnStatus(true);
                 return true;
             case VIRUS:
                 this.playVirus(player);
                 return false;
+            case REPEAT:
+                executeCommand(player, Command.AGAIN);
+                return false;
+            case SPEED:
+                try {
+                    this.sprintForward(player);
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                    return true;
+                }
+                return false;
+            case SPAM_FOLDER:
+                this.playSpamFolder(player);
+                return false;
+            case ENERGY:
+                this.playEnergyRoutine(player);
+                return false;
+            case RAMMING_GEAR:
+
             default:
                 throw new RuntimeException("Should not happen");
         }
@@ -455,7 +562,7 @@ public class GameController {
             }
             if (playerToMove != null) { //Check if there is a player already on this field.
                 if (movePlayerForward(playerToMove, amount, heading, false)) {
-                    player.setSpace(space); //There is a player in front and they can move, so we move too.
+                    player.setSpace(space);//There is a player in front and they can move, so we move too.
                     return true;
                 } else return false; //There is a player there and they cannot move forward so no one moves.
             } else {
@@ -513,6 +620,11 @@ public class GameController {
                     }
                     break;
             }
+            if(space.getElement().isHole()){
+                throw new OutsideBoardException();
+            } else if (!space.getElement().isSpace()){
+                throw new OutsideBoardException();
+            }
             return space;
         }
 
@@ -523,7 +635,10 @@ public class GameController {
      */
     public void respawnPlayer(@NotNull Player player, @NotNull Heading heading){
         Player currentPlayer = player;
+        player.setHeading(heading);
         addDamageCard(player, Command.SPAM);
+        addDamageCard(player, Command.SPAM);
+        player.setRespawnStatus(false);
         for (int j = board.getStep(); j < Player.NO_REGISTERS; j++) {
             CommandCardField field = player.getProgramField(j);
             discardCard(player, field.getCard());
@@ -531,25 +646,19 @@ public class GameController {
             field.setVisible(true);
         }
         board.setPhase(Phase.ACTIVATION);
-        int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-        if (nextPlayerNumber < board.getPlayersNumber()) {
-            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
-            if(!board.isStepMode()){
-                continuePrograms();
-            }
-        } else {
+        if(sequence.size() == 0){
             int step = board.getStep();
             step++;
             if (step < Player.NO_REGISTERS) {
                 makeProgramFieldsVisible(step);
                 board.setStep(step);
-                board.setCurrentPlayer(board.getPlayer(0));
-                if(!board.isStepMode()){
-                    continuePrograms();
-                }
+                antennaPriority();
+                board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
             } else {
                 startUpgradePhase();
             }
+        }else{
+            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
         }
     }
 
@@ -635,6 +744,10 @@ public class GameController {
      */
     public void again(@NotNull Player player, @NotNull Command command){
         executeCommand(player,command);
+    }
+
+    public void powerUp(@NotNull Player player, int cubeAmount){
+        player.setEnergyCubes(cubeAmount);
     }
 
     /**@Author Freja Egelund Grønnemose s224286@dtu.dk
@@ -761,6 +874,22 @@ public class GameController {
         }
         playSpam(player);
     }
+
+    public void playSpamFolder(Player player){
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        for(int i = 0; i < discardPile.size(); i++){
+            CommandCard cardToRemove = discardPile.get(i);
+            if(cardToRemove.getName().equals(Command.SPAM.displayName)){
+                discardPile.remove(i);
+                break;
+            }
+        }
+    }
+
+    public void playEnergyRoutine(Player player){
+        powerUp(player, 1);
+    }
+
     /**
      * A method called when no corresponding controller operation is implemented yet. This
      * should eventually be removed.
@@ -900,6 +1029,9 @@ public class GameController {
 
         //Used for checking the position of each player
         for (int i = 0; i < board.getPlayersNumber(); i++) {
+            //Maybe set current player
+            //Space space = drop down menu;
+            //board.getPlayer(i).setSpace(space);
 
         }
 
@@ -907,6 +1039,11 @@ public class GameController {
 
 
     }
+
+
+
+
+
 
 
     /**
@@ -979,9 +1116,19 @@ public class GameController {
                             end = true;
                             //Deal damage to player
                             addDamageCard(start.getPlayer(), Command.SPAM);
-                        }}}
+                        }
+                    }
+                }
             }
         }
+    }
+
+    public void tempUpgradeCards(int tempCardID){
+
+        switch (tempCardID){
+
+        }
+
     }
 
 

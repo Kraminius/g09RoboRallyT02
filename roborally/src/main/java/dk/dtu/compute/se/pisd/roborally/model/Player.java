@@ -27,6 +27,7 @@ import javafx.scene.control.Label;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
 
@@ -67,6 +68,7 @@ public class Player extends Subject {
     private ArrayList<CommandCard> discardPile;
     //Har lavet et array til at se alle checkpoints samlet
     private boolean[] checkpointsReadhed;
+
 
     public Player(@NotNull Board board, String color, @NotNull String name, @NotNull int id) {
         this.board = board;
