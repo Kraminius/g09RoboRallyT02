@@ -25,6 +25,7 @@ import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
 import dk.dtu.compute.se.pisd.roborally.view.ViewObserver;
+import dk.dtu.compute.se.pisd.roborally.view.WinnerDisplay;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -240,6 +241,7 @@ public class GameController {
     }
     // XXX: V2
     public void finishProgrammingPhase() {
+
         discardUnusedCards();
         //Checks who has priority
         antennaPriority();
@@ -848,6 +850,7 @@ public class GameController {
                 }
             }
         }
+        checkForWinner();
     }
 
     public void addDamageCard(Player player, Command type){
@@ -1154,6 +1157,22 @@ public class GameController {
 
         }
 
+    }
+
+    public void checkForWinner(){
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            Player playerTesting = board.getPlayer(i);
+            int checkpoints = board.getCheckPointSpaces().size();
+            if(playerTesting.getCheckpointReadhed()[checkpoints-1] == true){
+                System.out.println("We have a winner! Congratulations " + playerTesting.getName() + "!");
+
+                WinnerDisplay winnerDisplay = new WinnerDisplay();
+                winnerDisplay.createWindow(playerTesting);
+
+                //This ends the game, not very exiting
+                //Platform.exit();
+            }
+        }
     }
 
 
