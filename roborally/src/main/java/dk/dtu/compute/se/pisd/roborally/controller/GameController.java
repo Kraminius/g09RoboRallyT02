@@ -972,6 +972,14 @@ public class GameController {
         }
     }
 
+    public void tempUpgradeCards(int tempCardID){
+
+        switch (tempCardID){
+
+        }
+
+    }
+
 
 
 }
