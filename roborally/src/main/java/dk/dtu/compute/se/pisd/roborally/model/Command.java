@@ -53,8 +53,18 @@ public enum Command {
 
     TROJAN_HORSE("Trojan horse"),
 
-    VIRUS("Virus");
+    VIRUS("Virus"),
 
+    //SPECIAL PROGRAMMING CARDS
+
+    REPEAT("Repeat Routine"),
+    SPAM_FOLDER("Spam folder"),
+
+    SANDBOX("Sandbox Routine"),
+
+    WEASEL("Weasel routine"),
+    SPEED("Speed routine"),
+    ENERGY("Energy routine");
     // XXX Assignment P3
 
     final public String displayName;
