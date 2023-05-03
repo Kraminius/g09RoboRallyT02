@@ -127,7 +127,7 @@ public class GameController {
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
         Set<Command> validCommands = EnumSet.allOf(Command.class);
         validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT));
-
+        //Amount of the different cards.
         int[] counts = {6, 4, 3, 3, 2, 2, 1, 1};
         int index = 0;
         for(Command command : validCommands){
@@ -138,6 +138,28 @@ public class GameController {
             index++;
         }
         Collections.shuffle(playerDeck);
+    }
+
+    public void fillUpgradeCardDeck(@NotNull ArrayList<CommandCard> upgradeDeck){
+        Set<Command> upgradeCards = EnumSet.allOf(Command.class);
+        upgradeCards.removeAll(EnumSet.of(
+                Command.FORWARD,
+                Command.FAST_FORWARD,
+                Command.LEFT,
+                Command.RIGHT,
+                Command.SPRINT_FORWARD,
+                Command.BACK_UP,
+                Command.U_TURN,
+                Command.AGAIN,
+                Command.OPTION_LEFT_RIGHT,
+                Command.SPAM,
+                Command.WORM,
+                Command.TROJAN_HORSE,
+                Command.VIRUS));
+
+        for(Command command : upgradeCards){
+            upgradeDeck.add(new CommandCard(command));
+        }
     }
 
     /**
@@ -162,7 +184,7 @@ public class GameController {
      * @param player the player that draws a card.
      * @return the last element of the cardDeck array - the topCard.
      */
-    private CommandCard drawTopCard(Player player){
+    public CommandCard drawTopCard(Player player){
         ArrayList<CommandCard> cardDeck = player.getCardDeck();
         int i = cardDeck.size() - 1;
         if(i < 0){
@@ -447,6 +469,8 @@ public class GameController {
             case VIRUS:
                 this.playVirus(player);
                 return false;
+            case RAMMING_GEAR:
+
             default:
                 throw new RuntimeException("Should not happen");
         }

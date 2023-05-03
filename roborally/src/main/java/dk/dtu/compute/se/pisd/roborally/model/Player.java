@@ -22,7 +22,6 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
-import dk.dtu.compute.se.pisd.roborally.model.UpgradeCards.UpgradeCard;
 import dk.dtu.compute.se.pisd.roborally.view.PlayerView;
 import javafx.scene.control.Label;
 import org.jetbrains.annotations.NotNull;
@@ -70,8 +69,6 @@ public class Player extends Subject {
     //Har lavet et array til at se alle checkpoints samlet
     private boolean[] checkpointsReadhed;
 
-    private List<UpgradeCard> ownedUpgradeCards = new ArrayList<>();
-
 
     public Player(@NotNull Board board, String color, @NotNull String name, @NotNull int id) {
         this.board = board;
@@ -102,37 +99,6 @@ public class Player extends Subject {
         //Her gives spilleren antallet af checkpoints
         checkpointsReadhed = new boolean[board.getCheckPointSpaces().size()];
     }
-
-    public void applyUpgradeCard(int selectedIndex) {
-        if (selectedIndex >= 0 && selectedIndex < ownedUpgradeCards.size()) {
-            UpgradeCard selectedCard = ownedUpgradeCards.get(selectedIndex);
-            selectedCard.applyUpgrade(this);
-        } else {
-            System.out.println("Invalid card index: " + selectedIndex);
-        }
-    }
-
-    public void addUpgradeCard(UpgradeCard upgradeCard) {
-
-        int p = 0;
-        int t = 0;
-        for (int i = 0; i < ownedUpgradeCards.size(); i++) {
-            if(ownedUpgradeCards.get(p).isPermanent()){
-                p++;
-            }
-            if(!ownedUpgradeCards.get(p).isPermanent()){
-                t++;
-            }
-        }
-
-        if (p < 2 && upgradeCard.isPermanent()) {
-            ownedUpgradeCards.add(upgradeCard);
-        }
-        else if(t < 2 && !upgradeCard.isPermanent()){
-            ownedUpgradeCards.add(upgradeCard);
-        }
-    }
-
 
     public String getName() {
         return name;

@@ -53,7 +53,8 @@ public enum Command {
 
     TROJAN_HORSE("Trojan horse"),
 
-    VIRUS("Virus");
+    VIRUS("Virus"),
+    RAMMING_GEAR("Ramming Gear - text here");
 
     // XXX Assignment P3
 
