@@ -21,14 +21,19 @@
  */
 package dk.dtu.compute.se.pisd.roborally.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoader;
 import org.jetbrains.annotations.NotNull;
+import org.json.simple.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Phase.INITIALISATION;
+import static java.lang.Integer.parseInt;
 
 /**
  * ...
@@ -58,12 +63,6 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
-    private final int CHECKPOINTS = 3;
-
-    private Space[] checkpoints;
-
-    private Space rebootToken;
-
     Board board;
 
     private Space antenna;
@@ -75,11 +74,14 @@ public class Board extends Subject {
      *
      *
      */
-    public Board(String boardName){
-        if(!BoardLoader.getInstance().loadBoard(boardName, this)){
-            System.out.println("Board not found with the name [" + boardName+ "], loaded \"Dizzy Highway TESTBOARD\" instead.");
+    public Board(String boardName) {
+        if (!BoardLoader.getInstance().loadBoard(boardName, this)) {
+            System.out.println("Board not found with the name [" + boardName + "], loaded \"Dizzy Highway TESTBOARD\" instead.");
             BoardLoader.getInstance().loadBoard("board_0", this);
         }
+    }
+
+    public Board(){
     }
 
     public Integer getGameId() {
@@ -105,6 +107,11 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This method return the number of players in the game.
+     * @return the number of players in the game.
+     */
     public int getPlayersNumber() {
         return players.size();
     }

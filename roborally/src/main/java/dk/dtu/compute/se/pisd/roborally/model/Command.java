@@ -37,10 +37,10 @@ public enum Command {
 
     FORWARD("Move 1"),
     FAST_FORWARD("Move 2"),
-    SPRINT_FORWARD("Move 3"),
-    BACK_UP("Back up"),
     LEFT("Turn Left"),
     RIGHT("Turn Right"),
+    SPRINT_FORWARD("Move 3"),
+    BACK_UP("Back up"),
     U_TURN("U-turn"),
     AGAIN("Again"),
     OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT),

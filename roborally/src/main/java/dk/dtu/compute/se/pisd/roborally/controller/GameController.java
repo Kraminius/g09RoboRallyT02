@@ -23,6 +23,7 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -69,13 +70,13 @@ public class GameController {
         //     if the player is moved
 
     }
-
-    /**
-     * Prepares the game for the programming phase by clearing previous programming, setting the game state and give
-     * the players new cards
+    /** @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * Prepares the game for the programming phase by clearing previous programming, adding the previous programming cards to the players discard pile,
+     * setting the game state and give the players new cards from their deck.
      */
     // XXX: V2
     public void startProgrammingPhase() {
+        activateCheckpoints(); //Ser om nogen spiller har nået et checkpoint
         board.setPhase(Phase.PROGRAMMING);
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
@@ -86,6 +87,10 @@ public class GameController {
             if (player != null) {
                 for (int j = 0; j < Player.NO_REGISTERS; j++) {
                     CommandCardField field = player.getProgramField(j);
+                    CommandCard card = field.getCard();
+                    if(card != null) {
+                        discardCard(player, card);
+                    }
                     field.setCard(null);
                     field.setVisible(true);
                 }
@@ -99,6 +104,13 @@ public class GameController {
     }
 
     // XXX: V2
+
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * Creates new CommandCard object with a random command taken from an EnumSet containing all valid commands.
+     * Meaning that the damage cards has been removed.
+     * @return
+     */
     public CommandCard generateRandomCommandCard() {
         Set<Command> validCommands = EnumSet.allOf(Command.class);
         validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS));
@@ -107,6 +119,12 @@ public class GameController {
         return new CommandCard(randomCommand);
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This methods creates an EnumSet of all valid commands (damage cards removed), and then adds new CommandCard objects to the players card deck,
+     * with the valid enum. It has an int array that contains the value of how many cards of a type that exist in a player deck.
+     * @param playerDeck the ArrayList that holds the players cards.
+     */
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
         Set<Command> validCommands = EnumSet.allOf(Command.class);
         validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT));
@@ -123,34 +141,74 @@ public class GameController {
         Collections.shuffle(playerDeck);
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This method fetches a players two ArrayLists - discardPile & cardDeck.
+     * It then adds all the elements from the discardPile to the cardDeck array, removes the elements from the discardPile and shuffles the cardDeck.
+     * @param player the player whos discardPile should be shuffled into their cardDeck.
+     */
     private void shuffleDiscardPileToDeck(Player player){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         ArrayList<CommandCard> cardDeck = player.getCardDeck();
-        Collections.shuffle(discardPile);
         cardDeck.addAll(discardPile);
+        Collections.shuffle(cardDeck);
         discardPile.clear();
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This method fetches a players cardDeck arrayList.
+     * It then checks the size of the array, and if it is empty it calls the method that shuffles the dicardPile into the cardDeck.
+     * The method then removes the topCard - the last element in the array.
+     * @param player the player that draws a card.
+     * @return the last element of the cardDeck array - the topCard.
+     */
     private CommandCard drawTopCard(Player player){
         ArrayList<CommandCard> cardDeck = player.getCardDeck();
         int i = cardDeck.size() - 1;
         if(i < 0){
             shuffleDiscardPileToDeck(player);
             cardDeck = player.getCardDeck();
+            i = cardDeck.size() - 1;
         }
         CommandCard topCard = cardDeck.get(i);
         cardDeck.remove(i);
         return topCard;
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose s224286@dtu.dk
+     * This method adds a card to a players discardPile.
+     * @param player the player that owns the discardPile
+     * @param card the card that should be placed in the discardPile.
+     */
     private void discardCard(Player player, CommandCard card){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         discardPile.add(card);
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This method iterates over every player and all of their remaining cards in their cards array. (The ones that have not been placed in program fields).
+     * It then discards those cards, if there isn't any card in a field, it skips to the next.
+     */
+    private void discardUnusedCards(){
+        for (int i = 0; i < board.getPlayersNumber(); i++){
+            Player player = board.getPlayer(i);
+            for(int j = 0; j < Player.NO_CARDS; j++ ){
+                CommandCard card = player.getCardField(j).getCard();
+                if(card != null){
+                    discardCard(player, card);
+                    CommandCardField field = player.getCardField(j);
+                    field.setCard(null);
+                }
+            }
+        }
+    }
     // XXX: V2
     public void finishProgrammingPhase() {
         //Checks who has priority
+        discardUnusedCards();
         antennaPriority();
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
@@ -677,10 +735,10 @@ public class GameController {
                     if (spaceInFront == null) return;
 
                     if (spaceInFront.getElement().getBelt() == null) {
-                        movePlayerForward(player, 1, heading, false); //Can move players as this would be outside of belt.
+                        moveForward(player, 1, heading, false); //Can move players as this would be outside of belt.
                         moving = 0; //No longer moving on a belt so this is set to 0.
                     } else
-                        movePlayerForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
+                        moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
 
                     if (spaceInFront.getElement().getBelt().getTurn().equals("LEFT")) turnLeft(player);
                     else if (spaceInFront.getElement().getBelt().getTurn().equals("RIGHT")) turnRight(player);
