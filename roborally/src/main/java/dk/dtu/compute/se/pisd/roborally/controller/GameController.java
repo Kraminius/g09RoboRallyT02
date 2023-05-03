@@ -128,7 +128,7 @@ public class GameController {
         Set<Command> validCommands = EnumSet.allOf(Command.class);
         validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX, Command.SPAM_FOLDER, Command.ENERGY, Command.REPEAT));
 
-        int[] counts = {6, 4, 3, 3, 2, 2, 1, 1};
+        int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
         int index = 0;
         for(Command command : validCommands){
             int count = counts[index];
@@ -146,7 +146,7 @@ public class GameController {
      * It then adds all the elements from the discardPile to the cardDeck array, removes the elements from the discardPile and shuffles the cardDeck.
      * @param player the player whos discardPile should be shuffled into their cardDeck.
      */
-    private void shuffleDiscardPileToDeck(Player player){
+    protected void shuffleDiscardPileToDeck(Player player){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         ArrayList<CommandCard> cardDeck = player.getCardDeck();
         cardDeck.addAll(discardPile);
@@ -162,7 +162,7 @@ public class GameController {
      * @param player the player that draws a card.
      * @return the last element of the cardDeck array - the topCard.
      */
-    private CommandCard drawTopCard(Player player){
+    protected CommandCard drawTopCard(Player player){
         ArrayList<CommandCard> cardDeck = player.getCardDeck();
         int i = cardDeck.size() - 1;
         if(i < 0){
@@ -181,7 +181,7 @@ public class GameController {
      * @param player the player that owns the discardPile
      * @param card the card that should be placed in the discardPile.
      */
-    private void discardCard(Player player, CommandCard card){
+    protected void discardCard(Player player, CommandCard card){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         discardPile.add(card);
     }
@@ -191,7 +191,7 @@ public class GameController {
      * This method iterates over every player and all of their remaining cards in their cards array. (The ones that have not been placed in program fields).
      * It then discards those cards, if there isn't any card in a field, it skips to the next.
      */
-    private void discardUnusedCards(){
+    protected void discardUnusedCards(){
         for (int i = 0; i < board.getPlayersNumber(); i++){
             Player player = board.getPlayer(i);
             for(int j = 0; j < Player.NO_CARDS; j++ ){
@@ -422,18 +422,30 @@ public class GameController {
             case AGAIN:
                 int prevProgramStep = board.getStep() - 1;
                 if(prevProgramStep < 0){
+                    //Should not be able to happen.
                     return false;
                 } else {
                     CommandCard prevCommand = player.getProgramField(prevProgramStep).getCard();
                     if(prevCommand == null){
+                        //Should also not happen
                         return false;
                     } else if (prevCommand.command == Command.AGAIN) {
-                        return false; //For now
+                        prevCommand = player.getProgramField(prevProgramStep - 1).getCard();
+                        this.again(player, prevCommand.command);
+                    } else if(prevCommand.command == Command.SPAM || prevCommand.command == Command.VIRUS || prevCommand.command == Command.TROJAN_HORSE || prevCommand.command == Command.WORM){
+                        CommandCard topCard = drawTopCard(player);
+                        discardCard(player, player.getProgramField(board.getStep()).getCard());
+                        player.getProgramField(board.getStep()).setCard(topCard);
+                        this.again(player, topCard.command);
+                        return false;
                     } else {
                         this.again(player, prevCommand.command);
                         return false;
                     }
                 }
+            case POWER_UP:
+                this.powerUp(player, 1);
+                return false;
             case SPAM:
                 this.playSpam(player);
                 return false;
@@ -446,6 +458,24 @@ public class GameController {
                 return true;
             case VIRUS:
                 this.playVirus(player);
+                return false;
+            case REPEAT:
+                executeCommand(player, Command.AGAIN);
+                return false;
+            case SPEED:
+                try {
+                    this.sprintForward(player);
+                } catch (OutsideBoardException e){
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                    return true;
+                }
+                return false;
+            case SPAM_FOLDER:
+                this.playSpamFolder(player);
+                return false;
+            case ENERGY:
+                this.playEnergyRoutine(player);
                 return false;
             default:
                 throw new RuntimeException("Should not happen");
@@ -497,7 +527,7 @@ public class GameController {
             }
             if (playerToMove != null) { //Check if there is a player already on this field.
                 if (movePlayerForward(playerToMove, amount, heading, false)) {
-                    player.setSpace(space); //There is a player in front and they can move, so we move too.
+                    player.setSpace(space);//There is a player in front and they can move, so we move too.
                     return true;
                 } else return false; //There is a player there and they cannot move forward so no one moves.
             } else {
@@ -571,6 +601,7 @@ public class GameController {
     public void respawnPlayer(@NotNull Player player, @NotNull Heading heading){
         Player currentPlayer = player;
         player.setHeading(heading);
+        addDamageCard(player, Command.SPAM);
         addDamageCard(player, Command.SPAM);
         player.setRespawnStatus(false);
         for (int j = board.getStep(); j < Player.NO_REGISTERS; j++) {
@@ -678,6 +709,10 @@ public class GameController {
      */
     public void again(@NotNull Player player, @NotNull Command command){
         executeCommand(player,command);
+    }
+
+    public void powerUp(@NotNull Player player, int cubeAmount){
+        player.setEnergyCubes(cubeAmount);
     }
 
     /**@Author Freja Egelund Grønnemose s224286@dtu.dk
@@ -804,6 +839,22 @@ public class GameController {
         }
         playSpam(player);
     }
+
+    public void playSpamFolder(Player player){
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        for(int i = 0; i < discardPile.size(); i++){
+            CommandCard cardToRemove = discardPile.get(i);
+            if(cardToRemove.getName().equals(Command.SPAM.displayName)){
+                discardPile.remove(i);
+                break;
+            }
+        }
+    }
+
+    public void playEnergyRoutine(Player player){
+        powerUp(player, 1);
+    }
+
     /**
      * A method called when no corresponding controller operation is implemented yet. This
      * should eventually be removed.
@@ -1030,7 +1081,9 @@ public class GameController {
                             end = true;
                             //Deal damage to player
                             addDamageCard(start.getPlayer(), Command.SPAM);
-                        }}}
+                        }
+                    }
+                }
             }
         }
     }

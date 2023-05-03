@@ -43,6 +43,7 @@ public enum Command {
     BACK_UP("Back up"),
     U_TURN("U-turn"),
     AGAIN("Again"),
+    POWER_UP("Power up"),
     OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT),
 
     //SPAM CARDS
@@ -60,9 +61,9 @@ public enum Command {
     REPEAT("Repeat Routine"),
     SPAM_FOLDER("Spam folder"),
 
-    SANDBOX("Sandbox Routine"),
+    SANDBOX("Sandbox Routine", FORWARD, FAST_FORWARD, SPRINT_FORWARD, BACK_UP, LEFT, RIGHT, U_TURN),
 
-    WEASEL("Weasel routine"),
+    WEASEL("Weasel routine", LEFT, RIGHT, U_TURN),
     SPEED("Speed routine"),
     ENERGY("Energy routine");
     // XXX Assignment P3

@@ -193,10 +193,10 @@ public class PlayerView extends Tab implements ViewObserver {
             }
         }
 
-        top.getChildren().add(cardsLabel);
-        top.getChildren().add(cardsPane);
         top.getChildren().add(programLabel);
         top.getChildren().add(programPane);
+        top.getChildren().add(cardsLabel);
+        top.getChildren().add(cardsPane);
 
 
         if (player.board != null) {
