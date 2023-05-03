@@ -171,6 +171,7 @@ public class GameController {
         for(Command command : upgradeCards){
             upgradeDeck.add(new CommandCard(command));
         }
+        Collections.shuffle(upgradeDeck);
     }
 
     /**
