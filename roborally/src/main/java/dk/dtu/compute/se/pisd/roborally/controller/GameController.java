@@ -132,7 +132,7 @@ public class GameController {
      */
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
         Set<Command> validCommands = EnumSet.allOf(Command.class);
-        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX, Command.SPAM_FOLDER, Command.ENERGY, Command.REPEAT, Command.RAMMING_GEAR));
+        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX, Command.SPAM_FOLDER, Command.ENERGY, Command.REPEAT, Command.RAMMING_GEAR_PUPG, Command.SPAM_BLOCKER_TUPG, Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG));
 
         int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
         int index = 0;
@@ -510,7 +510,16 @@ public class GameController {
             case ENERGY:
                 this.playEnergyRoutine(player);
                 return false;
-            case RAMMING_GEAR:
+            case RAMMING_GEAR_PUPG:
+                return false;
+            case SPAM_BLOCKER_TUPG:
+                spamBlockerTemp(player);
+                return false;
+            case ENERGY_ROUTINE_TUPG:
+                CommandCard card = new CommandCard(Command.ENERGY);
+                this.discardCard(player, card);
+                return false;
+            case SPAM_FOLDER_TUPG:
 
             default:
                 throw new RuntimeException("Should not happen");
@@ -865,6 +874,21 @@ public class GameController {
             addDamageCard(player, Command.SPAM);
         }
         playSpam(player);
+    }
+
+    /**
+     * Method for the temp upgrade card: Spam Blocker "Replace Each SPAM damage card in your hand with a card from the
+     * top of your deck. Permanently discard the SPAM damage cards.
+     * @param player
+     */
+    public void spamBlockerTemp(Player player){
+        for (int i = 0; i< Player.NO_CARDS; i++){
+            if(player.getCardField(i).getCard().getName().equals("SPAM")){
+                player.getCardField(i).setCard(null);
+                player.getCardField(i).setCard(drawTopCard(player));
+            }
+
+        }
     }
 
     public void playVirus(Player player){

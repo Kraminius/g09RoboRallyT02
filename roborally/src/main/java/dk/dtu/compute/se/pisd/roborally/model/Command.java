@@ -56,13 +56,15 @@ public enum Command {
     TROJAN_HORSE("Trojan horse"),
 
     VIRUS("Virus"),
-    RAMMING_GEAR("Ramming Gear - text here"),
 
+    //UPGRADE CARDS
+    RAMMING_GEAR_PUPG("Ramming Gear - text here"),
+    SPAM_BLOCKER_TUPG("Spam Blocker \n Replace each SPAM damage card in your hand with a card from the top of your deck. Permanently discard the SPAM damage cards"),
+    ENERGY_ROUTINE_TUPG("Energy Routine \n Add the Energy Routine Programming card to your discard pile"),
+    SPAM_FOLDER_TUPG("Spam Folder Routine \n"),
     REPEAT("Repeat Routine"),
     SPAM_FOLDER("Spam folder"),
-
     SANDBOX("Sandbox Routine", FORWARD, FAST_FORWARD, SPRINT_FORWARD, BACK_UP, LEFT, RIGHT, U_TURN),
-
     WEASEL("Weasel routine", LEFT, RIGHT, U_TURN),
     SPEED("Speed routine"),
     ENERGY("Energy routine");

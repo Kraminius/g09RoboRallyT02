@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -46,7 +47,7 @@ class GameControllerTest {
     }*/
 
     @Test
-    void moveForward() {
+    void moveForward() throws OutsideBoardException {
         Board board = gameController.board;
         Player current = board.getCurrentPlayer();
 
@@ -108,7 +109,7 @@ class GameControllerTest {
     }
 
     @Test
-    void fastForward() {
+    void fastForward() throws OutsideBoardException {
         Board board = gameController.board;
         Player current = board.getCurrentPlayer();
 
@@ -142,7 +143,7 @@ class GameControllerTest {
     }
 
     @Test
-    void getSpaceAtTest(){
+    void getSpaceAtTest() throws OutsideBoardException {
         Board board = gameController.board;
         Player player0 = board.getPlayer(0);
         Player player1 = board.getPlayer(1);
@@ -161,7 +162,7 @@ class GameControllerTest {
     }
 
     @Test
-    void moveForwardTest(){
+    void moveForwardTest() throws OutsideBoardException {
         Board board = gameController.board;
         Player player0 = board.getPlayer(0);
         Player player1 = board.getPlayer(1);
@@ -183,7 +184,7 @@ class GameControllerTest {
     }
 
     @Test
-    void obstacleInSpaceTest(){
+    void obstacleInSpaceTest() throws OutsideBoardException {
         Board board = gameController.board;
         Player player0 = board.getPlayer(0);
         Player player1 = board.getPlayer(1);
