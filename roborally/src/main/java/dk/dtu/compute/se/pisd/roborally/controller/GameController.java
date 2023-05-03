@@ -206,10 +206,13 @@ public class GameController {
 
     // XXX: V2
     private void continuePrograms() {
+
         do {
             executeNextStep();
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
+
+
 
     // XXX: V2
     private void executeNextStep() {
@@ -255,6 +258,7 @@ public class GameController {
                         antennaPriority();
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                     } else {
+                        //Probably upgrade phase here?
                         startProgrammingPhase();
                     }
                 }else{
@@ -888,6 +892,9 @@ public class GameController {
 
         //Used for checking the position of each player
         for (int i = 0; i < board.getPlayersNumber(); i++) {
+            //Maybe set current player
+            //Space space = drop down menu;
+            //board.getPlayer(i).setSpace(space);
 
         }
 
@@ -895,6 +902,11 @@ public class GameController {
 
 
     }
+
+
+
+
+
 
 
     /**
