@@ -243,6 +243,6 @@ public class MovementTests {
         } catch (OutsideBoardException e) {
             Assertions.assertEquals("Outside board", e.getMessage());
         }
-
     }
+
 }

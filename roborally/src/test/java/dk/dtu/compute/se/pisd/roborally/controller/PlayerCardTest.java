@@ -56,7 +56,7 @@ class PlayerCardTest {
         Assertions.assertEquals(0, discardPile.size());
 
         gameController.fillStartDeck(playerDeck);
-        Assertions.assertEquals(22, playerDeck.size());
+        Assertions.assertEquals(20, playerDeck.size());
         Assertions.assertEquals(0, discardPile.size());
 
         int move1 = 0;
@@ -67,6 +67,7 @@ class PlayerCardTest {
         int right = 0;
         int u_turn = 0;
         int again = 0;
+        int power_up = 0;
         for(CommandCard card: playerDeck){
             if(Objects.equals(card.getName(), Command.FORWARD.displayName)){
                 move1++;
@@ -84,15 +85,19 @@ class PlayerCardTest {
                 u_turn++;
             } else if(Objects.equals(card.getName(), Command.AGAIN.displayName)){
                 again++;
+            } else if(Objects.equals(card.getName(), Command.POWER_UP.displayName)){
+                power_up++;
             }
         }
-        Assertions.assertEquals(6, move1);
-        Assertions.assertEquals(4, move2);
-        Assertions.assertEquals(2, move3);
-        Assertions.assertEquals(2, backUp);
+        Assertions.assertEquals(5, move1);
+        Assertions.assertEquals(3, move2);
+        Assertions.assertEquals(1, move3);
+        Assertions.assertEquals(1, backUp);
         Assertions.assertEquals(3, left);
         Assertions.assertEquals(3, right);
-        Assertions.assertEquals(1, again);
+        Assertions.assertEquals(2, again);
         Assertions.assertEquals(1, u_turn);
+        Assertions.assertEquals(1, power_up);
+
     }
 }
