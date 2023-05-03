@@ -126,7 +126,7 @@ public class GameController {
      */
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
         Set<Command> validCommands = EnumSet.allOf(Command.class);
-        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX, Command.SPAM_FOLDER, Command.ENERGY, Command.REPEAT));
+        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX, Command.SPAM_FOLDER, Command.ENERGY, Command.REPEAT, Command.RAMMING_GEAR));
 
         int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
         int index = 0;

@@ -43,6 +43,8 @@ public enum Command {
     BACK_UP("Back up"),
     U_TURN("U-turn"),
     AGAIN("Again"),
+
+    POWER_UP("Power up"),
     OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT),
 
     //SPAM CARDS
