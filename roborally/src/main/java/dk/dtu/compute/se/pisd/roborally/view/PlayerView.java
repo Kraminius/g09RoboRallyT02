@@ -273,7 +273,7 @@ public class PlayerView extends Tab implements ViewObserver {
                     programPane.add(playerInteractionPanel, Player.NO_REGISTERS, 0);
                 }
                 playerInteractionPanel.getChildren().clear();
-
+                System.out.println(player.board.getCurrentPlayer().getName() + " & " + player.getName());
                 if (player.board.getCurrentPlayer() == player) {
                     // TODO Assignment V3: these buttons should be shown only when there is
                     //      an interactive command card, and the buttons should represent

@@ -76,7 +76,6 @@ public class GameController {
      */
     // XXX: V2
     public void startProgrammingPhase() {
-        activateCheckpoints(); //Ser om nogen spiller har nået et checkpoint
         board.setPhase(Phase.PROGRAMMING);
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
@@ -207,8 +206,8 @@ public class GameController {
     }
     // XXX: V2
     public void finishProgrammingPhase() {
-        //Checks who has priority
         discardUnusedCards();
+        //Checks who has priority
         antennaPriority();
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
@@ -271,11 +270,7 @@ public class GameController {
 
     // XXX: V2
     private void executeNextStep() {
-
         int step = board.getStep();
-
-
-
         Player currentPlayer = board.getCurrentPlayer();
         sequence.remove(0);
         System.out.println("Curr: " + currentPlayer.getId());
@@ -319,8 +314,6 @@ public class GameController {
                     board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                 }
 
-
-
             } else {
                 // this should not happen
                 assert false;
@@ -340,27 +333,20 @@ public class GameController {
     public void executeCommandOptionAndContinue(@NotNull Command command){
         board.setPhase(Phase.ACTIVATION);
         Player currentPlayer = board.getCurrentPlayer();
-        boolean terminate = executeCommand(currentPlayer, command);
-
-        int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-        if (nextPlayerNumber < board.getPlayersNumber()) {
-            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
-            if(!board.isStepMode()){
-                continuePrograms();
-            }
-        } else {
+        executeCommand(currentPlayer, command);
+        if(sequence.size() == 0){
             int step = board.getStep();
             step++;
             if (step < Player.NO_REGISTERS) {
                 makeProgramFieldsVisible(step);
                 board.setStep(step);
-                board.setCurrentPlayer(board.getPlayer(0));
-                if(!board.isStepMode()){
-                    continuePrograms();
-                }
+                antennaPriority();
+                board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
             } else {
                 startProgrammingPhase();
             }
+        }else{
+            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
         }
     }
     // XXX: V2
@@ -390,6 +376,7 @@ public class GameController {
                     return false;
                 } catch (OutsideBoardException e){
                     player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case RIGHT:
@@ -404,6 +391,7 @@ public class GameController {
                     return false;
                 } catch (OutsideBoardException e){
                     player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case SPRINT_FORWARD:
@@ -412,6 +400,8 @@ public class GameController {
                     return false;
                 } catch (OutsideBoardException e){
                     player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                    return true;
                 }
             case U_TURN:
                 this.uTurn(player);
@@ -422,6 +412,7 @@ public class GameController {
                     return false;
                 } catch (OutsideBoardException e){
                     player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case AGAIN:
@@ -447,6 +438,7 @@ public class GameController {
                 return false;
             case WORM:
                 player.setSpace(board.getRespawnSpaces());
+                player.setRespawnStatus(true);
                 return true;
             case VIRUS:
                 this.playVirus(player);
@@ -569,7 +561,9 @@ public class GameController {
      */
     public void respawnPlayer(@NotNull Player player, @NotNull Heading heading){
         Player currentPlayer = player;
+        player.setHeading(heading);
         addDamageCard(player, Command.SPAM);
+        player.setRespawnStatus(false);
         for (int j = board.getStep(); j < Player.NO_REGISTERS; j++) {
             CommandCardField field = player.getProgramField(j);
             discardCard(player, field.getCard());
@@ -577,25 +571,19 @@ public class GameController {
             field.setVisible(true);
         }
         board.setPhase(Phase.ACTIVATION);
-        int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-        if (nextPlayerNumber < board.getPlayersNumber()) {
-            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
-            if(!board.isStepMode()){
-                continuePrograms();
-            }
-        } else {
+        if(sequence.size() == 0){
             int step = board.getStep();
             step++;
             if (step < Player.NO_REGISTERS) {
                 makeProgramFieldsVisible(step);
                 board.setStep(step);
-                board.setCurrentPlayer(board.getPlayer(0));
-                if(!board.isStepMode()){
-                    continuePrograms();
-                }
+                antennaPriority();
+                board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
             } else {
                 startProgrammingPhase();
             }
+        }else{
+            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
         }
     }
 
@@ -735,10 +723,10 @@ public class GameController {
                     if (spaceInFront == null) return;
 
                     if (spaceInFront.getElement().getBelt() == null) {
-                        moveForward(player, 1, heading, false); //Can move players as this would be outside of belt.
+                        movePlayerForward(player, 1, heading, false); //Can move players as this would be outside of belt.
                         moving = 0; //No longer moving on a belt so this is set to 0.
                     } else
-                        moveForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
+                        movePlayerForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
 
                     if (spaceInFront.getElement().getBelt().getTurn().equals("LEFT")) turnLeft(player);
                     else if (spaceInFront.getElement().getBelt().getTurn().equals("RIGHT")) turnRight(player);
