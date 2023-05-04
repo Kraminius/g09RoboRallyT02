@@ -147,13 +147,7 @@ public class GameController {
      * @param playerDeck the ArrayList that holds the players cards.
      */
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
-        Set<Command> validCommands = EnumSet.allOf(Command.class);
-        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE,
-                Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX,
-                Command.SPAM_FOLDER, Command.ENERGY, Command.RAMMING_GEAR_PUPG, Command.SPAM_BLOCKER_TUPG,
-                Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG, Command.RECOMPILE_TUPG, Command.HACK_TUPG, Command.RECHARGE_TUPG,
-                Command.ZOOP_TUPG, Command.DEFRAG_GIZMO_PUPG, Command.REPEAT_ROUTINE_TUPG, Command.REBOOT_TUPG, Command.DOUBLE_BARREL_LASER_PUGB, Command.BOINK_TUPG, Command.MOVELEFT, Command.MOVERIGHT));
-
+        Set<Command> validCommands = EnumSet.of(Command.FORWARD, Command.FAST_FORWARD, Command.LEFT, Command.RIGHT, Command.SPRINT_FORWARD, Command.BACK_UP, Command.U_TURN, Command.AGAIN, Command.POWER_UP);
 
         int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
         int index = 0;
