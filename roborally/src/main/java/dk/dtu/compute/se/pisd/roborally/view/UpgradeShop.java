@@ -430,10 +430,14 @@ public class UpgradeShop {
                 Command currentCommand = cards[i].getCard().command;
 
                 switch (currentCommand){
-                    case RAMMING_GEAR_PUPG -> player.getPowerUps().setRammingGear(true);
+                    case RAMMING_GEAR_PUPG:
+                        player.getPowerUps().setRammingGear(true);
+                        break;
+                    case DEFRAG_GIZMO_PUPG:
+                        boolean[] temp = {true, false};
+                        player.getPowerUps().setDefragGizmo(temp);
+
                 }
-
-
 
             }
 

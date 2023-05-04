@@ -137,7 +137,9 @@ public class GameController {
         validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE,
                 Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX,
                 Command.SPAM_FOLDER, Command.ENERGY, Command.RAMMING_GEAR_PUPG, Command.SPAM_BLOCKER_TUPG,
-                Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG, Command.RECOMPILE_TUPG, Command.HACK_TUPG, Command.RECHARGE_TUPG, Command.ZOOP_TUPG, Command.DEFRAG_GIZMO_PUPG, Command.REPEAT_ROUTINE_TUPG, Command.REBOOT_TUPG));
+                Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG, Command.RECOMPILE_TUPG, Command.HACK_TUPG,
+                Command.RECHARGE_TUPG, Command.ZOOP_TUPG, Command.DEFRAG_GIZMO_PUPG, Command.REPEAT_ROUTINE_TUPG,
+                Command.REBOOT_TUPG, Command.BOINK_TUPG, Command.MOVELEFT, Command.MOVERIGHT));
 
 
         int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
@@ -168,11 +170,13 @@ public class GameController {
                 Command.SPAM,
                 Command.WORM,
                 Command.TROJAN_HORSE,
-                Command.VIRUS));
+                Command.VIRUS,
+                Command.MOVERIGHT,
+                Command.MOVELEFT));
 
         for(Command command : upgradeCards){
             //upgradeDeck.add(new CommandCard(command));
-            upgradeDeck.add(new CommandCard(Command.RAMMING_GEAR_PUPG));
+            upgradeDeck.add(new CommandCard(Command.BOINK_TUPG));
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -423,7 +427,7 @@ public class GameController {
                 try {
                     this.moveForward(player);
                     return false;
-                } catch (OutsideBoardException e){
+                } catch (OutsideBoardException e) {
                     player.setSpace(board.getRespawnSpaces());
                     player.setRespawnStatus(true);
                     return true;
@@ -438,7 +442,7 @@ public class GameController {
                 try {
                     this.fastForward(player);
                     return false;
-                } catch (OutsideBoardException e){
+                } catch (OutsideBoardException e) {
                     player.setSpace(board.getRespawnSpaces());
                     player.setRespawnStatus(true);
                     return true;
@@ -447,7 +451,7 @@ public class GameController {
                 try {
                     this.sprintForward(player);
                     return false;
-                } catch (OutsideBoardException e){
+                } catch (OutsideBoardException e) {
                     player.setSpace(board.getRespawnSpaces());
                     player.setRespawnStatus(true);
                     return true;
@@ -459,25 +463,25 @@ public class GameController {
                 try {
                     this.backUp(player);
                     return false;
-                } catch (OutsideBoardException e){
+                } catch (OutsideBoardException e) {
                     player.setSpace(board.getRespawnSpaces());
                     player.setRespawnStatus(true);
                     return true;
                 }
             case AGAIN:
                 int prevProgramStep = board.getStep() - 1;
-                if(prevProgramStep < 0){
+                if (prevProgramStep < 0) {
                     //Should not be able to happen.
                     return false;
                 } else {
                     CommandCard prevCommand = player.getProgramField(prevProgramStep).getCard();
-                    if(prevCommand == null){
+                    if (prevCommand == null) {
                         //Should also not happen
                         return false;
                     } else if (prevCommand.command == Command.AGAIN) {
                         prevCommand = player.getProgramField(prevProgramStep - 1).getCard();
                         this.again(player, prevCommand.command);
-                    } else if(prevCommand.command == Command.SPAM || prevCommand.command == Command.VIRUS || prevCommand.command == Command.TROJAN_HORSE || prevCommand.command == Command.WORM){
+                    } else if (prevCommand.command == Command.SPAM || prevCommand.command == Command.VIRUS || prevCommand.command == Command.TROJAN_HORSE || prevCommand.command == Command.WORM) {
                         CommandCard topCard = drawTopCard(player);
                         discardCard(player, player.getProgramField(board.getStep()).getCard());
                         player.getProgramField(board.getStep()).setCard(topCard);
@@ -507,7 +511,7 @@ public class GameController {
             case SPEED:
                 try {
                     this.sprintForward(player);
-                } catch (OutsideBoardException e){
+                } catch (OutsideBoardException e) {
                     player.setSpace(board.getRespawnSpaces());
                     player.setRespawnStatus(true);
                     return true;
@@ -540,7 +544,7 @@ public class GameController {
             case HACK_TUPG:
                 hackUpgradeCard(player);
                 return false;
-                //This
+            //This
             case REBOOT_TUPG:
                 respawnPlayer(player, player.getHeading());
                 return false;
@@ -548,21 +552,39 @@ public class GameController {
                 CommandCard repeatRoutineTupgCard = new CommandCard(Command.AGAIN);
                 this.discardCard(player, repeatRoutineTupgCard);
                 return false;
-                //Prioritized permanent removal of one damage card, and adds a card from the top of the deck. This could be done more elegantly with a mouseclick event, that checks if the clicked card is a DAMAGE CARD. ISSUE maybe.
-            case DEFRAG_GIZMO_PUPG:
-                for (int i = 0; i<Player.NO_CARDS; i++){
-                 if(player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM"){
-                     player.getCardField(i).setCard(null);
-                     player.getCardField(i).setCard(drawTopCard(player));
-                     break;
-                 }
-                }
-                return false;
 
-                //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
+            //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
             case ZOOP_TUPG:
                 executeCommand(player, Command.ZOOP_TUPG);
                 return true;
+
+            case BOINK_TUPG:
+                return true;
+
+            case MOVELEFT:
+                turnLeft(player);
+                try {
+                    moveForward(player);
+                    turnRight(player);
+                    return false;
+                } catch (OutsideBoardException e) {
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                    return true;
+                }
+
+            case MOVERIGHT:
+                turnRight(player);
+                try {
+                    moveForward(player);
+                    turnLeft(player);
+                    return false;
+                } catch (OutsideBoardException e) {
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                    return true;
+                }
+
 
             default:
                 throw new RuntimeException("Should not happen");
@@ -996,6 +1018,26 @@ public class GameController {
     public void notImplemented() {
         // XXX just for now to indicate that the actual method is not yet implemented
         assert false;
+    }
+
+    /** defragGizmo perm upgrade card functionality. Removes a prioritized damage card. Could be implemented better with GUI options. Not in this scope. ISSUE Maybe
+     *
+     * @param player
+     */
+    public void defragGizmoFunctionality(Player player) {
+        if(player.getPowerUps().getDefragGizmo()[0]){
+            if(board.getPhase() == Phase.PROGRAMMING && player.getPowerUps().getDefragGizmo()[1])
+
+                for (int i = 0; i < Player.NO_CARDS; i++) {
+                    if (player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM") {
+                        player.getCardField(i).setCard(null);
+                        player.getCardField(i).setCard(drawTopCard(player));
+                        player.getPowerUps().setDefragGizmo()[0];
+                        break;
+        }
+
+            }
+        }
     }
 
     /**
