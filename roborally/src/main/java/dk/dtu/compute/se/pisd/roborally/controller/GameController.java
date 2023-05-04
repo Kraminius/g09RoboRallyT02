@@ -23,6 +23,7 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
 import dk.dtu.compute.se.pisd.roborally.view.ViewObserver;
 import dk.dtu.compute.se.pisd.roborally.view.WinnerDisplay;
@@ -418,19 +419,59 @@ public class GameController {
     }
     // XXX: V2
 
-    public boolean executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
-        if(card.getCard() == null) return false; //No card at that spot, so nothing happens.
-        Command command = card.getCard().command;
-        boolean isPermanent = UpgradeCardInfo.getPermanent(command);
-        boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
+    /**
+     * @Author Mikkel Jürs, Tobias Pedersen Gørlyk s224279, s224271.
+     * @param player
+     * @param card
+     */
+    public void executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
+        if(card.getCard() != null){
+            Command command = card.getCard().command;
+            boolean isPermanent = UpgradeCardInfo.getPermanent(command);
+            boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
+
+            switch (command){
+                case BOINK_TUPG:
+                    String[] options = new String[4];
+                    options[0] = "Forward";
+                    options[1] = "Backwards";
+                    options[2] = "Left";
+                    options[3] = "Right";
+                    Option option = new Option();
+                    switch (option.getAnswer("Move to an adjacent space. Do not change direction.", options)) {
+                        case "Forward":
+                            try {
+                                this.moveForward(player);
+                            } catch (OutsideBoardException e) {
+                                player.setSpace(board.getRespawnSpaces());
+                                player.setRespawnStatus(true);
+                            }
+                            break;
+                        case "Backwards":
+                            try {
+                                this.backUp(player);
+                            } catch (OutsideBoardException e) {
+                                player.setSpace(board.getRespawnSpaces());
+                                player.setRespawnStatus(true);
+                            }
+                            break;
+                        case "Left":
+                            moveToLeftSpace(player);
+                            break;
+                        case "Right":
+                            moveToRightSpace(player);
+                            break;
+                    }
+                break;
+            }
 
 
 
+            if(!isPermanent && cardCouldBeUsed){
+                upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
+            }
 
-        if(!isPermanent && cardCouldBeUsed){
-            upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
-        }
-        return true;
+        } //No card at that spot, so nothing happens.
     }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
@@ -588,8 +629,37 @@ public class GameController {
                 return true;
 
             case BOINK_TUPG:
-                executeCommand(player, Command.BOINK_TUPG);
-                return true;
+                String[] options = new String[4];
+                options[0] = "Forward";
+                options[1] = "Backwards";
+                options[2] = "Left";
+                options[3] = "Right";
+                Option option = new Option();
+                switch (option.getAnswer("Move to an adjacent space. Do not change direction.", options)){
+                    case "Forward":
+                        try {
+                            this.moveForward(player);
+                            return false;
+                        } catch (OutsideBoardException e){
+                            player.setSpace(board.getRespawnSpaces());
+                            player.setRespawnStatus(true);
+                            return true;
+                        }
+                    case "Backwards":
+                        try {
+                            this.backUp(player);
+                            return false;
+                        } catch (OutsideBoardException e){
+                            player.setSpace(board.getRespawnSpaces());
+                            player.setRespawnStatus(true);
+                            return true;
+                        }
+                    case "Left":
+                        moveToLeftSpace(player);
+                    case "Right":
+                        moveToRightSpace(player);
+                }
+                return false;
 
             case MOVELEFT:
                 moveToLeftSpace(player);
@@ -1232,12 +1302,15 @@ public class GameController {
      * @param players an array with all the players, this should be available through board.
      */
     public void playerLaserActivate(Player[] players){
+
         for(int i = 0; i < players.length; i++){
             Space start = players[i].getSpace();
+            if (start.getWallHeading() != null) {
             Heading direction = players[i].getHeading();
             Heading directOpposite;
             int move;
             boolean end = false;
+
             switch (direction){
                 case SOUTH:
                     move = -1; //y
@@ -1298,6 +1371,7 @@ public class GameController {
                             //Deal damage to player
                             addDamageCard(start.getPlayer(), Command.SPAM);
                         }
+                    }
                     }
                 }
             }
