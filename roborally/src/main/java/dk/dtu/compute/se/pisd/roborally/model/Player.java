@@ -70,6 +70,7 @@ public class Player extends Subject {
     //Har lavet et array til at se alle checkpoints samlet
     private boolean[] checkpointsReadhed;
 
+    private PowerUps powerUps;
 
     public Player(@NotNull Board board, String color, @NotNull String name, @NotNull int id) {
         this.board = board;
@@ -99,6 +100,9 @@ public class Player extends Subject {
         }
         //Her gives spilleren antallet af checkpoints
         checkpointsReadhed = new boolean[board.getCheckPointSpaces().size()];
+
+        this.powerUps = new PowerUps();
+
     }
 
     public String getName() {
@@ -265,5 +269,13 @@ public class Player extends Subject {
             upgradeCards[i].setCard(tempArray[i].getCard());
         }
         setEnergyCubes(energyCubes);
+    }
+
+    public PowerUps getPowerUps() {
+        return powerUps;
+    }
+
+    public void setPowerUps(PowerUps powerUps) {
+        this.powerUps = powerUps;
     }
 }

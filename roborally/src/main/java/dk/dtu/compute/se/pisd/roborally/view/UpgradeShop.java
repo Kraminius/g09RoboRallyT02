@@ -408,6 +408,11 @@ public class UpgradeShop {
                 currentPlayer.updateUpgradeCardView();
                 out.add(cardFieldView.getField().getCard());
                 cardFieldView.getField().setCard(null);
+
+                updatePowerUps(currentPlayer);
+
+                System.out.println();
+
                 switchToNextPlayer();
             }
             else messageLabel.setText("You cannot afford this item");
@@ -417,4 +422,29 @@ public class UpgradeShop {
         }
     }
 
+
+    public void updatePowerUps(Player player){
+        CommandCardField[] cards = player.getUpgradeCards();
+        for(int i = 0; i < cards.length; i++){
+
+            if(cards[i].getCard() != null){
+                Command currentCommand = cards[i].getCard().command;
+
+                switch (currentCommand){
+                    case RAMMING_GEAR_PUPG -> player.getPowerUps().setRammingGear(true);
+                }
+
+
+
+            }
+
+
+
+
+        }
+    }
+
 }
+
+
+
