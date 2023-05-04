@@ -591,10 +591,24 @@ public class GameController {
                 }
                 return false;
 
-                //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
+            //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
             case ZOOP_TUPG:
                 executeCommand(player, Command.ZOOP_TUPG);
                 return true;
+
+            case BOINK_TUPG:
+                executeCommand(player, Command.BOINK_TUPG);
+                return true;
+
+            case MOVELEFT:
+                moveToLeftSpace(player);
+
+            case MOVERIGHT:
+                moveToRightSpace(player);
+
+            case DEFRAG_GIZMO_PUPG:
+                defragGizmoFunctionality(player);
+                return false;
 
             default:
                 throw new RuntimeException("Should not happen");
