@@ -404,6 +404,19 @@ public class GameController {
     }
     // XXX: V2
 
+    public boolean executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
+        Command command = card.getCard().command;
+        boolean isPermanent = UpgradeCardInfo.getPermanent(command);
+        boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
+
+
+
+
+        if(!isPermanent && cardCouldBeUsed){
+            upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
+        }
+        return true;
+    }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
      * if the given commandcard is an interactive card the methods returns true.

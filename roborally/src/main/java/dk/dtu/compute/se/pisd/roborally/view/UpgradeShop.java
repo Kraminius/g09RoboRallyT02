@@ -37,7 +37,6 @@ public class UpgradeShop {
     private ArrayList<CommandCard> discarded;
     private ArrayList<CommandCard> out;
 
-    private UpgradeCardInfo info = new UpgradeCardInfo();
 
     /**
      * @author Tobias - s224271@dtu.dk
@@ -188,7 +187,7 @@ public class UpgradeShop {
                 button.setPrefSize(65, 20);
                 button.setStyle("-fx-border-color: #6969d3;");
                 final CardFieldView cardFieldView =  playerCards[i];
-                button.setOnAction(e -> discardCard(cardFieldView));
+                button.setOnAction(e -> discardCard(cardFieldView.getField()));
                 card.getChildren().add(button);
                 cardHolder.getChildren().add(card);
             }
@@ -322,12 +321,12 @@ public class UpgradeShop {
     /**
      * @author Tobias - s224271@dtu.dk
      * discards a specific card, by nulling it from the view and adding it to the discarded pile.
-     * @param cardFieldView the card that needs to be discarded.
+     * @param cardField the card that needs to be discarded.
      */
-    private void discardCard(CardFieldView cardFieldView){
-        CommandCard card = cardFieldView.getField().getCard();
+    public void discardCard(CommandCardField cardField){
+        CommandCard card = cardField.getCard();
         discarded.add(card);
-        cardFieldView.getField().setCard(null);
+        cardField.setCard(null);
         playerOrder--;
         switchToNextPlayer();
     }
@@ -348,7 +347,7 @@ public class UpgradeShop {
      * @return if it is permanent or not
      */
     private boolean getPermanent(Command command){
-        return info.getPermanent(command);
+        return UpgradeCardInfo.getPermanent(command);
     }
     /**
      * @author Tobias - s224271@dtu.dk
@@ -358,7 +357,7 @@ public class UpgradeShop {
      * @return the price
      */
     private int getPrice(Command command){
-        return info.getPrice(command);
+        return UpgradeCardInfo.getPrice(command);
     }
     /**
      * @author Tobias - s224271@dtu.dk
@@ -443,6 +442,7 @@ public class UpgradeShop {
 
         }
     }
+
 
 }
 

@@ -167,7 +167,7 @@ public class PlayerView extends Tab implements ViewObserver {
             if (cardField != null) {
                 Button button = new Button("Use");
                 final int at = i;
-                button.setOnAction(e -> gameController.board.useCard( upgradeCardView[at].getField().getCard().command, player));
+                button.setOnAction(e -> gameController.executeUpgradeCommand(player, upgradeCardView[at].getField()));
                 button.setStyle("-fx-border-color: #6969d3");
                 button.setPrefWidth(65);
                 useButtons.getChildren().add(button);
