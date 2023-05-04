@@ -1123,52 +1123,55 @@ public class GameController {
         }
     }
 
+    /
     public void defragGizmoFunctionality(Player player) {
         boolean[] cardUsed = {true, true};
         System.out.println(player.getPowerUps().getDefragGizmo()[0]);
         if (player.getPowerUps().getDefragGizmo()[0]) {
-            {
+            if (board.getPhase() == Phase.PROGRAMMING && !(player.getPowerUps().getDefragGizmo()[1])) {
                 String[] defragOptions = getUniqueCardOptions(player);
                 Option defragOption = new Option("Choose a damage card type to discard permanently");
 
+                switchBlock:
                 switch (defragOption.getChoice(defragOptions)) {
-                    case "Spam":
+                    case "SPAM":
                         for (int i = 0; i < Player.NO_CARDS; i++) {
                             if (player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")) {
                                 player.getCardField(i).setCard(null);
                                 player.getCardField(i).setCard(drawTopCard(player));
                                 player.getPowerUps().setDefragGizmo(cardUsed);
-                                break;
+                                break switchBlock;
                             }
                         }
                         break;
                     case "TROJAN HORSE":
                         for (int i = 0; i < Player.NO_CARDS; i++) {
-                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("TROJAN HORSE")) {
+                            System.out.println(player.getCardField(i).getCard().getName());
+                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("trojan horse")) {
                                 player.getCardField(i).setCard(null);
                                 player.getCardField(i).setCard(drawTopCard(player));
                                 player.getPowerUps().setDefragGizmo(cardUsed);
-                                break;
+                                break switchBlock;
                             }
                         }
                         break;
                     case "VIRUS":
                         for (int i = 0; i < Player.NO_CARDS; i++) {
-                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("VIRUS")) {
+                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("virus")) {
                                 player.getCardField(i).setCard(null);
                                 player.getCardField(i).setCard(drawTopCard(player));
                                 player.getPowerUps().setDefragGizmo(cardUsed);
-                                break;
+                                break switchBlock;
                             }
                         }
                         break;
                     case "WORM":
                         for (int i = 0; i < Player.NO_CARDS; i++) {
-                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("WORM")) {
+                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("worm")) {
                                 player.getCardField(i).setCard(null);
                                 player.getCardField(i).setCard(drawTopCard(player));
                                 player.getPowerUps().setDefragGizmo(cardUsed);
-                                break;
+                                break switchBlock;
                             }
                         }
                         break;
@@ -1186,18 +1189,13 @@ public class GameController {
         Set<String> uniqueCards = new HashSet<>();
 
         for (int i = 0; i < Player.NO_CARDS; i++) {
-            String cardName = player.getCardField(i).getCard().getName();
-            System.out.println(cardName);
-            if (cardName.equalsIgnoreCase("TROJAN HORSE") || cardName.equalsIgnoreCase("VIRUS") || cardName.equalsIgnoreCase("WORM") || cardName.equalsIgnoreCase("SPAM")) {
+            String cardName = player.getCardField(i).getCard().getName().toUpperCase();
+            if (cardName.equals("TROJAN HORSE") || cardName.equals("VIRUS") || cardName.equals("WORM") || cardName.equals("SPAM")) {
                 uniqueCards.add(cardName);
             }
-
-
         }
-        String[] uniqueCardOptions = uniqueCards.toArray(new String[0]);
-        System.out.println(Arrays.toString(uniqueCardOptions));
 
-        return uniqueCardOptions;
+        return uniqueCards.toArray(new String[0]);
     }
 
     public void playEnergyRoutine(Player player){

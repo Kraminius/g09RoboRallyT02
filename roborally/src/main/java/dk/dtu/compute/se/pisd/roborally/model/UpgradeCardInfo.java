@@ -11,6 +11,8 @@ public class UpgradeCardInfo {
      */
     public static boolean getPermanent(Command command){
         switch(command){
+            case DEFRAG_GIZMO_PUPG:
+                return true;
 
             default: return false;
         }
@@ -23,7 +25,8 @@ public class UpgradeCardInfo {
      */
     public static int getPrice(Command command){
         switch(command){
-
+            case DEFRAG_GIZMO_PUPG:
+                return 5;
             default: return 1;
         }
     }

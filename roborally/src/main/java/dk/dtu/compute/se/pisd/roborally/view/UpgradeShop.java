@@ -436,13 +436,7 @@ public class UpgradeShop {
                     case DOUBLE_BARREL_LASER_PUGB -> player.getPowerUps().setBarrelLaser(true);
                 }
 
-
-
             }
-
-
-
-
         }
     }
 
