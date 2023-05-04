@@ -812,7 +812,6 @@ public class GameController {
             }
         }else{
             board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
-
         }
     }
 
@@ -1293,6 +1292,7 @@ public class GameController {
                         end = true;
                         //Deal damage to player
                         addDamageCard(start.getPlayer(), Command.SPAM);
+                        barrelLaserFunctionality(players[i], start.getPlayer());
                     }
                 }
                 //We are moving horisontaly
@@ -1353,6 +1353,12 @@ public class GameController {
     public void rammingGearFunctionality(Player player, Player playerToMove){
         if(player.getPowerUps().isRammingGear()){
             addDamageCard(playerToMove, Command.SPAM);
+        }
+    }
+
+    public void barrelLaserFunctionality(Player player, Player playerToShoot){
+        if(player.getPowerUps().isBarrelLaser()){
+            addDamageCard(playerToShoot, Command.SPAM);
         }
     }
 
