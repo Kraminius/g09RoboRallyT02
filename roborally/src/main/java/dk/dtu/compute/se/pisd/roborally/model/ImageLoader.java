@@ -26,6 +26,7 @@ public class ImageLoader {
     public Image[] blueBelts;
     public Image[] gear;
     public Image[] push;
+    public Image[] players;
     public Image winner;
 
     private static ImageLoader loader;
@@ -53,6 +54,13 @@ public class ImageLoader {
         startField = loadImage("startField.png");
         wall = loadImage("wall.png");
         energyCube = loadImage("energyCube.png");
+        players = new Image[6];
+        players[0] = loadImage("r1.png");
+        players[1] = loadImage("r2.png");
+        players[2] = loadImage("r3.png");
+        players[3] = loadImage("r4.png");
+        players[4] = loadImage("r5.png");
+        players[5] = loadImage("r6.png");
         checkpoints = new Image[8];
         checkpoints[0] = loadImage("1.png");
         checkpoints[1] = loadImage("2.png");

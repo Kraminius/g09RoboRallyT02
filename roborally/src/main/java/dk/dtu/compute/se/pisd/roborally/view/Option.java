@@ -95,6 +95,8 @@ public class Option {
             answer = textField.getText();
             close();
         });
+        panel.getChildren().add(okButton);
+        window.getChildren().add(panel);
         show();
         return answer;
     }

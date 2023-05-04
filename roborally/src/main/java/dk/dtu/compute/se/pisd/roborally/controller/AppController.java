@@ -27,8 +27,10 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoadWindow;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameSave;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 
+import dk.dtu.compute.se.pisd.roborally.view.Option;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -112,6 +114,20 @@ public class AppController implements Observer {
 
     public void saveGame() {
         // XXX needs to be implemented eventually
+        String saveName = "";
+        boolean nameChecksOut;
+        do{
+            Option option = new Option("Write the name of the save.");
+            saveName = option.getPromptedAnswer("eg. mySaveFile");
+            if(saveName.equals("")) nameChecksOut = false;
+            else nameChecksOut = true;
+        }while(!nameChecksOut);
+
+        System.out.println("Saving game under name: " + saveName);
+
+        GameSave gameSave = new GameSave();
+        gameSave.saveGame(this.gameController, saveName);
+
     }
 
     public void loadGame() {
