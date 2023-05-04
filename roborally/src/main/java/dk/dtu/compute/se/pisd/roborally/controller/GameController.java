@@ -84,10 +84,12 @@ public class GameController {
     }
 
     public void startProgrammingPhase() {
+
         board.setPhase(Phase.PROGRAMMING);
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
+        setGameStateUpgradeCards();
 
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -101,12 +103,29 @@ public class GameController {
                     field.setCard(null);
                     field.setVisible(true);
                 }
-                for (int j = 0; j < Player.NO_CARDS; j++) {
-                    CommandCardField field = player.getCardField(j);
-                    field.setCard(drawTopCard(player));
-                    field.setVisible(true);
-                }
+
             }
+
+        }
+    }
+
+    /**
+     * @Author Mikkel Jürs s224279@dtu.dk
+     *
+     * We have some upgrade cards, that needs a state-reset at the beginning of the programming phase, as they are permament single round-use.
+     * This method sets the state of each of these cards back, so they can be used again.
+     */
+    public void setGameStateUpgradeCards(){
+        //First index is if they have the card, second index is if card has been used.
+        boolean[] newPhase = {true, false};
+
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+        Player player = board.getPlayer(i);
+        if(player != null){
+            if (player.getPowerUps().getDefragGizmo()[0]){
+                player.getPowerUps().setDefragGizmo(newPhase);
+            }
+        }
         }
     }
 
@@ -580,28 +599,14 @@ public class GameController {
                 return true;
 
             case MOVELEFT:
-                turnLeft(player);
-                try {
-                    moveForward(player);
-                    turnRight(player);
-                    return false;
-                } catch (OutsideBoardException e) {
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
-                    return true;
-                }
+                moveToLeftSpace(player);
 
             case MOVERIGHT:
-                turnRight(player);
-                try {
-                    moveForward(player);
-                    turnLeft(player);
-                    return false;
-                } catch (OutsideBoardException e) {
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
-                    return true;
-                }
+                moveToRightSpace(player);
+
+            case DEFRAG_GIZMO_PUPG:
+                defragGizmoFunctionality(player);
+                return false;
 
 
             default:
@@ -626,6 +631,33 @@ public class GameController {
                     board.setPhase(Phase.PLAYER_INTERACTION);
                 }
             }
+        }
+    }
+
+
+    private boolean moveToLeftSpace(Player player){
+        turnLeft(player);
+        try {
+            moveForward(player);
+            turnRight(player);
+            return false;
+        } catch (OutsideBoardException e) {
+            player.setSpace(board.getRespawnSpaces());
+            player.setRespawnStatus(true);
+            return true;
+        }
+    }
+
+    private boolean moveToRightSpace(Player player){
+        turnRight(player);
+        try {
+            moveForward(player);
+            turnLeft(player);
+            return false;
+        } catch (OutsideBoardException e) {
+            player.setSpace(board.getRespawnSpaces());
+            player.setRespawnStatus(true);
+            return true;
         }
     }
 
@@ -1046,6 +1078,7 @@ public class GameController {
      * @param player
      */
     public void defragGizmoFunctionality(Player player) {
+        boolean[] cardUsed = {true, true};
         if(player.getPowerUps().getDefragGizmo()[0]){
             if(board.getPhase() == Phase.PROGRAMMING && player.getPowerUps().getDefragGizmo()[1])
 
@@ -1053,10 +1086,9 @@ public class GameController {
                     if (player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM") {
                         player.getCardField(i).setCard(null);
                         player.getCardField(i).setCard(drawTopCard(player));
-                        player.getPowerUps().setDefragGizmo()[0];
+                        player.getPowerUps().setDefragGizmo(cardUsed);
                         break;
         }
-
             }
         }
     }
