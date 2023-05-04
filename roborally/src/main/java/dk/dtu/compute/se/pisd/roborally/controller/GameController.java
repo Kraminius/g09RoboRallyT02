@@ -46,6 +46,7 @@ import static dk.dtu.compute.se.pisd.roborally.model.Heading.WEST;
 public class GameController {
 
     final public Board board;
+    private UpgradeShop upgradeShop;
 
    private List<Player> sequence;
 
@@ -175,7 +176,7 @@ public class GameController {
         Collections.shuffle(upgradeDeck);
     }
     public void openUpgradeShop(){
-        UpgradeShop upgradeShop = new UpgradeShop();
+        if(upgradeShop == null) upgradeShop = new UpgradeShop();
         upgradeShop.openShop(board, this);
         startProgrammingPhase();
     }
