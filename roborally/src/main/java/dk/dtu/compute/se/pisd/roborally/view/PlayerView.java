@@ -127,11 +127,11 @@ public class PlayerView extends Tab implements ViewObserver {
 
         bottomBar = new VBox();
         bottomBar.setAlignment(Pos.CENTER_RIGHT);
-        bottomBar.setMinWidth(1020);
+        bottomBar.setMinWidth(450);
         valuesWindow = new VBox();
         valuesWindow.setPrefSize(200, 250);
         valuesWindow.setMaxWidth(200);
-        valuesWindow.setSpacing(23);
+        valuesWindow.setSpacing(10);
         energyCubes = new HBox();
         energyCubes.setAlignment(Pos.CENTER_RIGHT);
         energyCubes.setSpacing(20);
@@ -167,7 +167,7 @@ public class PlayerView extends Tab implements ViewObserver {
             if (cardField != null) {
                 Button button = new Button("Use");
                 final int at = i;
-                button.setOnAction(e -> gameController.board.useCard( upgradeCardView[at].getField().getCard().command, player));
+                button.setOnAction(e -> gameController.executeUpgradeCommand(player, upgradeCardView[at].getField()));
                 button.setStyle("-fx-border-color: #6969d3");
                 button.setPrefWidth(65);
                 useButtons.getChildren().add(button);
@@ -178,22 +178,21 @@ public class PlayerView extends Tab implements ViewObserver {
         }
 
 
+
         Label upgradeCardsLabel = new Label("Upgrade Cards");
-        upgradeCardsLabel.setStyle("-fx-font-weight: bold");
-        upgradeCardsLabel.setScaleX(1.5);
-        upgradeCardsLabel.setScaleY(1.5);
+        upgradeCardsLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
         Label upgradeCardsTempOrPerm = new Label("Permanent Cards                                    Tempoary Cards");
+        upgradeCardsTempOrPerm.setStyle("-fx-font-weight: bold");
         energyCubeWindow.getChildren().add(upgradeCardsLabel);
         energyCubeWindow.getChildren().add(upgradeCardsTempOrPerm);
         energyCubeWindow.getChildren().add(useButtons);
         energyCubeWindow.getChildren().add(upgradeCards);
         valuesWindow.getChildren().add(energyCubeWindow);
-
-
-
         bottomBar.getChildren().add(valuesWindow);
-        stackPane.getChildren().add(bottomBar);
-        stackPane.getChildren().add(top);
+        HBox sideBySide = new HBox();
+        sideBySide.getChildren().add(top);
+        sideBySide.getChildren().add(bottomBar);
+        stackPane.getChildren().add(sideBySide);
 
 
 

@@ -88,6 +88,7 @@ public class GameController {
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
+        setGameStateUpgradeCards();
 
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -110,7 +111,19 @@ public class GameController {
         }
     }
 
-    // XXX: V2
+    public void setGameStateUpgradeCards(){
+        //First index is if they have the card, second index is if card has been used.
+        boolean[] newPhase = {true, false};
+
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player player = board.getPlayer(i);
+            if(player != null){
+                if (player.getPowerUps().getDefragGizmo()[0]){
+                    player.getPowerUps().setDefragGizmo(newPhase);
+                }
+            }
+        }
+    }
 
     /**
      * @Author Freja Egelund Grønnemose s224286@dtu.dk
@@ -137,7 +150,8 @@ public class GameController {
         validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE,
                 Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX,
                 Command.SPAM_FOLDER, Command.ENERGY, Command.RAMMING_GEAR_PUPG, Command.SPAM_BLOCKER_TUPG,
-                Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG, Command.RECOMPILE_TUPG, Command.HACK_TUPG, Command.RECHARGE_TUPG, Command.ZOOP_TUPG, Command.DEFRAG_GIZMO_PUPG, Command.REPEAT_ROUTINE_TUPG, Command.REBOOT_TUPG));
+                Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG, Command.RECOMPILE_TUPG, Command.HACK_TUPG, Command.RECHARGE_TUPG,
+                Command.ZOOP_TUPG, Command.DEFRAG_GIZMO_PUPG, Command.REPEAT_ROUTINE_TUPG, Command.REBOOT_TUPG, Command.DOUBLE_BARREL_LASER_PUGB, Command.BOINK_TUPG, Command.MOVELEFT, Command.MOVERIGHT));
 
 
         int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
@@ -171,7 +185,8 @@ public class GameController {
                 Command.VIRUS));
 
         for(Command command : upgradeCards){
-            upgradeDeck.add(new CommandCard(command));
+            //upgradeDeck.add(new CommandCard(command));
+            upgradeDeck.add(new CommandCard(Command.BOINK_TUPG));
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -357,6 +372,8 @@ public class GameController {
                         board.setStep(step);
                         antennaPriority();
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                        Activator.getInstance().activateBoard(board, this);
+
                     } else {
                         //Probably upgrade phase here?
                         startUpgradePhase();
@@ -393,6 +410,8 @@ public class GameController {
                 board.setStep(step);
                 antennaPriority();
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                Activator.getInstance().activateBoard(board, this);
+
             } else {
                 startUpgradePhase();
             }
@@ -402,6 +421,20 @@ public class GameController {
     }
     // XXX: V2
 
+    public boolean executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
+        if(card.getCard() == null) return false; //No card at that spot, so nothing happens.
+        Command command = card.getCard().command;
+        boolean isPermanent = UpgradeCardInfo.getPermanent(command);
+        boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
+
+
+
+
+        if(!isPermanent && cardCouldBeUsed){
+            upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
+        }
+        return true;
+    }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
      * if the given commandcard is an interactive card the methods returns true.
@@ -557,20 +590,25 @@ public class GameController {
                 this.discardCard(player, repeatRoutineTupgCard);
                 return false;
                 //Prioritized permanent removal of one damage card, and adds a card from the top of the deck. This could be done more elegantly with a mouseclick event, that checks if the clicked card is a DAMAGE CARD. ISSUE maybe.
-            case DEFRAG_GIZMO_PUPG:
-                for (int i = 0; i<Player.NO_CARDS; i++){
-                 if(player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM"){
-                     player.getCardField(i).setCard(null);
-                     player.getCardField(i).setCard(drawTopCard(player));
-                     break;
-                 }
-                }
-                return false;
 
-                //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
+            //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
             case ZOOP_TUPG:
                 executeCommand(player, Command.ZOOP_TUPG);
                 return true;
+
+            case BOINK_TUPG:
+                executeCommand(player, Command.BOINK_TUPG);
+                return true;
+
+            case MOVELEFT:
+                moveToLeftSpace(player);
+
+            case MOVERIGHT:
+                moveToRightSpace(player);
+
+            case DEFRAG_GIZMO_PUPG:
+                defragGizmoFunctionality(player);
+                return false;
 
             default:
                 throw new RuntimeException("Should not happen");
@@ -594,6 +632,32 @@ public class GameController {
                     board.setPhase(Phase.PLAYER_INTERACTION);
                 }
             }
+        }
+    }
+
+    private boolean moveToLeftSpace(Player player){
+        turnLeft(player);
+        try {
+            moveForward(player);
+            turnRight(player);
+            return false;
+        } catch (OutsideBoardException e) {
+            player.setSpace(board.getRespawnSpaces());
+            player.setRespawnStatus(true);
+            return true;
+        }
+    }
+
+    private boolean moveToRightSpace(Player player){
+        turnRight(player);
+        try {
+            moveForward(player);
+            turnLeft(player);
+            return false;
+        } catch (OutsideBoardException e) {
+            player.setSpace(board.getRespawnSpaces());
+            player.setRespawnStatus(true);
+            return true;
         }
     }
 
@@ -643,6 +707,7 @@ public class GameController {
             if (playerToMove != null) { //Check if there is a player already on this field.
                 if (movePlayerForward(playerToMove, amount, heading, false)) {
                     player.setSpace(space);//There is a player in front and they can move, so we move too.
+                    rammingGearFunctionality(player, playerToMove);
                     return true;
                 } else return false; //There is a player there and they cannot move forward so no one moves.
             } else {
@@ -740,6 +805,8 @@ public class GameController {
                 board.setStep(step);
                 antennaPriority();
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                Activator.getInstance().activateBoard(board, this);
+
             } else {
                 startUpgradePhase();
             }
@@ -992,6 +1059,22 @@ public class GameController {
         }
     }
 
+    public void defragGizmoFunctionality(Player player) {
+        boolean[] cardUsed = {true, true};
+        if(player.getPowerUps().getDefragGizmo()[0]){
+            if(board.getPhase() == Phase.PROGRAMMING && player.getPowerUps().getDefragGizmo()[1])
+
+                for (int i = 0; i < Player.NO_CARDS; i++) {
+                    if (player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM") {
+                        player.getCardField(i).setCard(null);
+                        player.getCardField(i).setCard(drawTopCard(player));
+                        player.getPowerUps().setDefragGizmo(cardUsed);
+                        break;
+                    }
+                }
+        }
+    }
+
     public void playEnergyRoutine(Player player){
         powerUp(player, 1);
     }
@@ -1161,25 +1244,25 @@ public class GameController {
         for(int i = 0; i < players.length; i++){
             Space start = players[i].getSpace();
             Heading direction = players[i].getHeading();
-            Heading directOposite;
+            Heading directOpposite;
             int move;
             boolean end = false;
             switch (direction){
                 case SOUTH:
                     move = -1; //y
-                    directOposite = NORTH;
+                    directOpposite = NORTH;
                     break;
                 case NORTH:
                     move = 1; //y
-                    directOposite = SOUTH;
+                    directOpposite = SOUTH;
                     break;
                 case WEST:
                     move = -1; //x
-                    directOposite = EAST;
+                    directOpposite = EAST;
                     break;
                 case EAST:
                     move = 1; //x
-                    directOposite = WEST;
+                    directOpposite = WEST;
                     break;
                 default:
                     throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
@@ -1197,7 +1280,7 @@ public class GameController {
                     }
                     else{start = board.getSpace(start.x,(start.y + move));}
                     //are we hitting a wall
-                    if(start.getWallHeading().contains(directOposite)){
+                    if(start.getWallHeading().contains(directOpposite)){
                         end = true;
                     }
                     //Are we moving into a player?
@@ -1205,6 +1288,7 @@ public class GameController {
                         end = true;
                         //Deal damage to player
                         addDamageCard(start.getPlayer(), Command.SPAM);
+                        barrelLaserFunctionality(players[i], start.getPlayer());
                     }
                 }
                 //We are moving horisontaly
@@ -1214,7 +1298,7 @@ public class GameController {
                     }
                     else{start = board.getSpace((start.x + move), start.y);
                         //are we hitting a wall
-                        if(start.getWallHeading().contains(directOposite)){
+                        if(start.getWallHeading().contains(directOpposite)){
                             end = true;
                         }
                         //Are we moving into a player?
@@ -1262,5 +1346,16 @@ public class GameController {
     }
 
 
+    public void rammingGearFunctionality(Player player, Player playerToMove){
+        if(player.getPowerUps().isRammingGear()){
+            addDamageCard(playerToMove, Command.SPAM);
+        }
+    }
+
+    public void barrelLaserFunctionality(Player player, Player playerToShoot){
+        if(player.getPowerUps().isBarrelLaser()){
+            addDamageCard(playerToShoot, Command.SPAM);
+        }
+    }
 
 }
