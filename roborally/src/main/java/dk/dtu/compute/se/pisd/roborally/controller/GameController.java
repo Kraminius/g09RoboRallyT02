@@ -596,6 +596,7 @@ public class GameController {
                 return true;
 
             case BOINK_TUPG:
+                executeCommand(player, Command.BOINK_TUPG);
                 return true;
 
             case MOVELEFT:
