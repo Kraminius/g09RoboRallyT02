@@ -814,7 +814,7 @@ public class GameController {
 
         if (toSpace.getWallHeading() != null && directionHeadingTo != null) {
             for (int i = 0; i < toSpace.getWallHeading().size(); i++) {
-                if (toSpace.getWallHeading().get(i) == directionHeadingTo) {
+                if (toSpace.getWallHeading().get(i) == directionHeadingFrom) {
                     obstacle = true;
                 }
             }
@@ -822,7 +822,7 @@ public class GameController {
 
         if (fromSpace.getWallHeading() != null && directionHeadingFrom != null) {
             for (int i = 0; i < fromSpace.getWallHeading().size(); i++) {
-                if (fromSpace.getWallHeading().get(i) == directionHeadingFrom) {
+                if (fromSpace.getWallHeading().get(i) == directionHeadingTo) {
                     obstacle = true;
                 }
             }
