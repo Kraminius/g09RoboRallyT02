@@ -73,8 +73,10 @@ public enum Command {
     ZOOP_TUPG("Zoop \n Rotate to face any direction", LEFT, RIGHT, U_TURN),
     REBOOT_TUPG("Reboot \n Reboot your robot, but take no damage"),
     REPEAT_ROUTINE_TUPG("Repeat Routine \n Add the Repeat Routine Programming card to your discard pile"),
-    DEFRAG_GIZMO_PUPG("Defrag Gizmo \n Permanently discards a damage card from your hand");
+    DEFRAG_GIZMO_PUPG("Defrag Gizmo \n Permanently discards a damage card from your hand"),
+    DOUBLE_BARREL_LASER_PUGB("Double Barrel Laser \n Deal one additional SPAM damage card to any robot you shoot.");
     // XXX Assignment P3
+
 
     final public String displayName;
 
