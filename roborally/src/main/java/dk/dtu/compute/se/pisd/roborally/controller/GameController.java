@@ -1123,7 +1123,6 @@ public class GameController {
         }
     }
 
-    /
     public void defragGizmoFunctionality(Player player) {
         boolean[] cardUsed = {true, true};
         System.out.println(player.getPowerUps().getDefragGizmo()[0]);
