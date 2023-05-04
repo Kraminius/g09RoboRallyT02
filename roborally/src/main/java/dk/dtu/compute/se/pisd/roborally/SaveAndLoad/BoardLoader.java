@@ -32,7 +32,7 @@ public class BoardLoader {
      * @return the board that is saved with the id
      */
     public boolean loadBoard(String name, Board board){
-        JSONObject obj = json.load(name);
+        JSONObject obj = json.load(name, "board");
         if(obj == null) return false;
         board.width = parseInt((String) obj.get("width"));
         board.height = parseInt((String) obj.get("height"));
@@ -74,7 +74,7 @@ public class BoardLoader {
                         wall.getWallHeadings().add(getHeading(values[j]));
                         b.spaces[x][y].getElement().setWall(wall);
                     }
-                    }
+                }
                 break;
             case "belt":
                 ArrayList<String> belts = getList((JSONArray) value);

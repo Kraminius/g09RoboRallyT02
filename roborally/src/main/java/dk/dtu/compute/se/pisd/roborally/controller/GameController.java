@@ -23,7 +23,6 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
-import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
 import dk.dtu.compute.se.pisd.roborally.view.ViewObserver;
 import dk.dtu.compute.se.pisd.roborally.view.WinnerDisplay;
@@ -47,7 +46,7 @@ import static dk.dtu.compute.se.pisd.roborally.model.Heading.WEST;
 public class GameController {
 
     final public Board board;
-    private UpgradeShop upgradeShop;
+    public UpgradeShop upgradeShop;
 
    private List<Player> sequence;
 
@@ -89,7 +88,6 @@ public class GameController {
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
-        setGameStateUpgradeCards();
 
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -222,9 +220,6 @@ public class GameController {
             shuffleDiscardPileToDeck(player);
             cardDeck = player.getCardDeck();
             i = cardDeck.size() - 1;
-            if(i < 0){
-                return null;
-            }
         }
         CommandCard topCard = cardDeck.get(i);
         cardDeck.remove(i);
@@ -341,11 +336,25 @@ public class GameController {
                 if (card != null) {
                     Command command = card.command;
                     boolean terminate = executeCommand(currentPlayer, command);
-                    if (terminate) {
+                    if (terminate){
                         board.setPhase(Phase.PLAYER_INTERACTION);
                         return;
                     }
                 }
+                //int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+                /*if (nextPlayerNumber < board.getPlayersNumber()) {
+                    board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+                } else {
+                    step++;
+                    if (step < Player.NO_REGISTERS) {
+                        makeProgramFieldsVisible(step);
+                        board.setStep(step);
+                        board.setCurrentPlayer(board.getPlayer(0));
+                    } else {
+                        startProgrammingPhase();
+                    }
+                }*/
+
                 if(sequence.size() == 0){
                     step++;
                     if (step < Player.NO_REGISTERS) {
@@ -370,25 +379,6 @@ public class GameController {
         } else {
             // this should not happen
             assert false;
-        }
-    }
-
-    private void switchCurrentPlayer(){
-        int step = board.getStep();
-        if(sequence.size() == 0){
-            step++;
-            if (step < Player.NO_REGISTERS) {
-                makeProgramFieldsVisible(step);
-                board.setStep(step);
-                antennaPriority();
-                board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
-            } else {
-                //Probably upgrade phase here?
-                startUpgradePhase();
-            }
-        }else{
-            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
-            Activator.getInstance().activateBoard(board, this);
         }
     }
 
@@ -421,59 +411,19 @@ public class GameController {
     }
     // XXX: V2
 
-    /**
-     * @Author Mikkel Jürs, Tobias Pedersen Gørlyk s224279, s224271.
-     * @param player
-     * @param card
-     */
-    public void executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
-        if(card.getCard() != null){
-            Command command = card.getCard().command;
-            boolean isPermanent = UpgradeCardInfo.getPermanent(command);
-            boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
-
-            switch (command){
-                case BOINK_TUPG:
-                    String[] options = new String[4];
-                    options[0] = "Forward";
-                    options[1] = "Backwards";
-                    options[2] = "Left";
-                    options[3] = "Right";
-                    Option option = new Option();
-                    switch (option.getAnswer("Move to an adjacent space. Do not change direction.", options)) {
-                        case "Forward":
-                            try {
-                                this.moveForward(player);
-                            } catch (OutsideBoardException e) {
-                                player.setSpace(board.getRespawnSpaces());
-                                player.setRespawnStatus(true);
-                            }
-                            break;
-                        case "Backwards":
-                            try {
-                                this.backUp(player);
-                            } catch (OutsideBoardException e) {
-                                player.setSpace(board.getRespawnSpaces());
-                                player.setRespawnStatus(true);
-                            }
-                            break;
-                        case "Left":
-                            moveToLeftSpace(player);
-                            break;
-                        case "Right":
-                            moveToRightSpace(player);
-                            break;
-                    }
-                break;
-            }
+    public boolean executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
+        if(card.getCard() == null) return false; //No card at that spot, so nothing happens.
+        Command command = card.getCard().command;
+        boolean isPermanent = UpgradeCardInfo.getPermanent(command);
+        boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
 
 
 
-            if(!isPermanent && cardCouldBeUsed){
-                upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
-            }
 
-        } //No card at that spot, so nothing happens.
+        if(!isPermanent && cardCouldBeUsed){
+            upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
+        }
+        return true;
     }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
@@ -482,7 +432,7 @@ public class GameController {
      * @param command
      * @return true if the player interaction mode is enabled.
      */
-    protected boolean executeCommand(@NotNull Player player, @NotNull Command command) {
+    private boolean executeCommand(@NotNull Player player, @NotNull Command command) {
         if (player.board != board) {
             throw new RuntimeException("Player board different from current board");
         }
@@ -499,13 +449,8 @@ public class GameController {
                     this.moveForward(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    board.getCurrentPlayer().setRespawnStatus(true);
-                    movePlayerToRespawn(board.getCurrentPlayer(), null);
-                    if(player == board.getCurrentPlayer()){
-                        return true;
-                    } else {
-                      executeCommand(player, command);
-                    }
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case RIGHT:
@@ -519,8 +464,8 @@ public class GameController {
                     this.fastForward(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    board.getCurrentPlayer().setSpace(board.getRespawnSpaces());
-                    board.getCurrentPlayer().setRespawnStatus(true);
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case SPRINT_FORWARD:
@@ -528,8 +473,8 @@ public class GameController {
                     this.sprintForward(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    board.getCurrentPlayer().setSpace(board.getRespawnSpaces());
-                    board.getCurrentPlayer().setRespawnStatus(true);
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case U_TURN:
@@ -540,8 +485,8 @@ public class GameController {
                     this.backUp(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    board.getCurrentPlayer().setSpace(board.getRespawnSpaces());
-                    board.getCurrentPlayer().setRespawnStatus(true);
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
             case AGAIN:
@@ -555,14 +500,8 @@ public class GameController {
                         //Should also not happen
                         return false;
                     } else if (prevCommand.command == Command.AGAIN) {
-                        prevProgramStep -= 1;
-                        if(prevProgramStep < 0){
-                            return false;
-                        } else {
-                            prevCommand = player.getProgramField(prevProgramStep).getCard();
-                            this.again(player, prevCommand.command);
-                        }
-                        return false;
+                        prevCommand = player.getProgramField(prevProgramStep - 1).getCard();
+                        this.again(player, prevCommand.command);
                     } else if(prevCommand.command == Command.SPAM || prevCommand.command == Command.VIRUS || prevCommand.command == Command.TROJAN_HORSE || prevCommand.command == Command.WORM){
                         CommandCard topCard = drawTopCard(player);
                         discardCard(player, player.getProgramField(board.getStep()).getCard());
@@ -594,8 +533,8 @@ public class GameController {
                 try {
                     this.sprintForward(player);
                 } catch (OutsideBoardException e){
-                    board.getCurrentPlayer().setSpace(board.getRespawnSpaces());
-                    board.getCurrentPlayer().setRespawnStatus(true);
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
                     return true;
                 }
                 return false;
@@ -635,54 +574,20 @@ public class GameController {
                 this.discardCard(player, repeatRoutineTupgCard);
                 return false;
                 //Prioritized permanent removal of one damage card, and adds a card from the top of the deck. This could be done more elegantly with a mouseclick event, that checks if the clicked card is a DAMAGE CARD. ISSUE maybe.
-
-            //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
-            case ZOOP_TUPG:
-                executeCommand(player, Command.ZOOP_TUPG);
-                return true;
-
-            case BOINK_TUPG:
-                String[] options = new String[4];
-                options[0] = "Forward";
-                options[1] = "Backwards";
-                options[2] = "Left";
-                options[3] = "Right";
-                Option option = new Option();
-                switch (option.getAnswer("Move to an adjacent space. Do not change direction.", options)){
-                    case "Forward":
-                        try {
-                            this.moveForward(player);
-                            return false;
-                        } catch (OutsideBoardException e){
-                            player.setSpace(board.getRespawnSpaces());
-                            player.setRespawnStatus(true);
-                            return true;
-                        }
-                    case "Backwards":
-                        try {
-                            this.backUp(player);
-                            return false;
-                        } catch (OutsideBoardException e){
-                            player.setSpace(board.getRespawnSpaces());
-                            player.setRespawnStatus(true);
-                            return true;
-                        }
-                    case "Left":
-                        moveToLeftSpace(player);
-                    case "Right":
-                        moveToRightSpace(player);
+            case DEFRAG_GIZMO_PUPG:
+                for (int i = 0; i<Player.NO_CARDS; i++){
+                 if(player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM"){
+                     player.getCardField(i).setCard(null);
+                     player.getCardField(i).setCard(drawTopCard(player));
+                     break;
+                 }
                 }
                 return false;
 
-            case MOVELEFT:
-                moveToLeftSpace(player);
-
-            case MOVERIGHT:
-                moveToRightSpace(player);
-
-            case DEFRAG_GIZMO_PUPG:
-                defragGizmoFunctionality(player);
-                return false;
+                //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
+            case ZOOP_TUPG:
+                executeCommand(player, Command.ZOOP_TUPG);
+                return true;
 
             default:
                 throw new RuntimeException("Should not happen");
@@ -706,32 +611,6 @@ public class GameController {
                     board.setPhase(Phase.PLAYER_INTERACTION);
                 }
             }
-        }
-    }
-
-    private boolean moveToLeftSpace(Player player){
-        turnLeft(player);
-        try {
-            moveForward(player);
-            turnRight(player);
-            return false;
-        } catch (OutsideBoardException e) {
-            player.setSpace(board.getRespawnSpaces());
-            player.setRespawnStatus(true);
-            return true;
-        }
-    }
-
-    private boolean moveToRightSpace(Player player){
-        turnRight(player);
-        try {
-            moveForward(player);
-            turnLeft(player);
-            return false;
-        } catch (OutsideBoardException e) {
-            player.setSpace(board.getRespawnSpaces());
-            player.setRespawnStatus(true);
-            return true;
         }
     }
 
@@ -779,16 +658,11 @@ public class GameController {
                 return true;
             }
             if (playerToMove != null) { //Check if there is a player already on this field.
-                try {
-                    if (movePlayerForward(playerToMove, amount, heading, false)) {
-                        player.setSpace(space);//There is a player in front and they can move, so we move too.
-                        rammingGearFunctionality(player, playerToMove);
-                        return true;
-                    } else return false; //There is a player there and they cannot move forward so no one moves.
-                } catch (OutsideBoardException e){
-                    board.setCurrentPlayer(playerToMove);
-                    throw new OutsideBoardException();
-                }
+                if (movePlayerForward(playerToMove, amount, heading, false)) {
+                    player.setSpace(space);//There is a player in front and they can move, so we move too.
+                    rammingGearFunctionality(player, playerToMove);
+                    return true;
+                } else return false; //There is a player there and they cannot move forward so no one moves.
             } else {
                 player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
                 return true;
@@ -811,7 +685,7 @@ public class GameController {
      * @return the target space
      * @throws OutsideBoardException if player ends up outside of board
      */
-    protected Space getSpaceAt(int amount, Heading heading, int x, int y) throws OutsideBoardException {
+    private Space getSpaceAt(int amount, Heading heading, int x, int y) throws OutsideBoardException {
         Space space = null;
             switch (heading) {
                 case NORTH:
@@ -825,7 +699,7 @@ public class GameController {
                     break;
                 case EAST:
                     if (amount < 0 && x > 0) {
-                        space = board.getSpace(x - Math.abs(amount), y);
+                        space = board.getSpace(x + Math.abs(amount), y);
                     } else if (x < board.width - amount && amount >= 0) {
                         space = board.getSpace(x + amount, y);
                     } else {
@@ -834,7 +708,7 @@ public class GameController {
                     break;
                 case WEST:
                     if (amount < 0 && x < board.width - 1) {
-                        space = board.getSpace(x + Math.abs(amount), y);
+                        space = board.getSpace(x - Math.abs(amount), y);
                     } else if (x >= amount && amount > 0) {
                         space = board.getSpace(x - amount, y);
                     } else {
@@ -858,27 +732,7 @@ public class GameController {
             }
             return space;
         }
-    private void movePlayerToRespawn(@NotNull Player player, Heading heading){
-        Player playerToMove = board.getRespawnSpaces().getPlayer();
-        if(playerToMove != null){
-            try{
-                if(heading == null){
-                    heading = playerToMove.getHeading();
-                }
-                Space space = getSpaceAt(1, heading, playerToMove.getSpace().getX(), playerToMove.getSpace().getY());
-                if(obstacleInSpace(board.getRespawnSpaces(), space)){
-                    movePlayerToRespawn(player, playerToMove.getHeading().next());
-                } else {
-                    playerToMove.setSpace(space);
-                    player.setSpace(board.getRespawnSpaces());
-                }
-            } catch (OutsideBoardException e){
-                movePlayerToRespawn(player, playerToMove.getHeading().next());
-            }
-        } else {
-            player.setSpace(board.getRespawnSpaces());
-        }
-    }
+
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * This methods set the players space to the space of the rebootToken. At some point the method should cover more than 1 reboot token.
      * The method also removes ALL the players remaining program cards.
@@ -942,7 +796,7 @@ public class GameController {
 
         if (toSpace.getWallHeading() != null && directionHeadingTo != null) {
             for (int i = 0; i < toSpace.getWallHeading().size(); i++) {
-                if (toSpace.getWallHeading().get(i) == directionHeadingFrom) {
+                if (toSpace.getWallHeading().get(i) == directionHeadingTo) {
                     obstacle = true;
                 }
             }
@@ -950,7 +804,7 @@ public class GameController {
 
         if (fromSpace.getWallHeading() != null && directionHeadingFrom != null) {
             for (int i = 0; i < fromSpace.getWallHeading().size(); i++) {
-                if (fromSpace.getWallHeading().get(i) == directionHeadingTo) {
+                if (fromSpace.getWallHeading().get(i) == directionHeadingFrom) {
                     obstacle = true;
                 }
             }
@@ -1158,22 +1012,6 @@ public class GameController {
         }
     }
 
-    public void defragGizmoFunctionality(Player player) {
-        boolean[] cardUsed = {true, true};
-        if(player.getPowerUps().getDefragGizmo()[0]){
-            if(board.getPhase() == Phase.PROGRAMMING && player.getPowerUps().getDefragGizmo()[1])
-
-                for (int i = 0; i < Player.NO_CARDS; i++) {
-                    if (player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM") {
-                        player.getCardField(i).setCard(null);
-                        player.getCardField(i).setCard(drawTopCard(player));
-                        player.getPowerUps().setDefragGizmo(cardUsed);
-                        break;
-                    }
-                }
-        }
-    }
-
     public void playEnergyRoutine(Player player){
         powerUp(player, 1);
     }
@@ -1340,15 +1178,12 @@ public class GameController {
      * @param players an array with all the players, this should be available through board.
      */
     public void playerLaserActivate(Player[] players){
-
         for(int i = 0; i < players.length; i++){
             Space start = players[i].getSpace();
-            if (start.getWallHeading() != null) {
             Heading direction = players[i].getHeading();
             Heading directOpposite;
             int move;
             boolean end = false;
-
             switch (direction){
                 case SOUTH:
                     move = -1; //y
@@ -1409,7 +1244,6 @@ public class GameController {
                             //Deal damage to player
                             addDamageCard(start.getPlayer(), Command.SPAM);
                         }
-                    }
                     }
                 }
             }
