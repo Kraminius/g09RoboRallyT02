@@ -177,11 +177,13 @@ public class GameController {
                 Command.SPAM,
                 Command.WORM,
                 Command.TROJAN_HORSE,
-                Command.VIRUS));
+                Command.VIRUS,
+                Command.MOVELEFT,
+                Command.MOVERIGHT,
+                Command.POWER_UP));
 
         for(Command command : upgradeCards){
-            //upgradeDeck.add(new CommandCard(command));
-            upgradeDeck.add(new CommandCard(Command.DEFRAG_GIZMO_PUPG));
+            upgradeDeck.add(new CommandCard(command));
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -434,38 +436,14 @@ public class GameController {
 
             switch (command){
                 case BOINK_TUPG:
-                    String[] options = new String[4];
-                    options[0] = "Forward";
-                    options[1] = "Backwards";
-                    options[2] = "Left";
-                    options[3] = "Right";
-                    Option option = new Option("Move to an adjacent space. Do not change direction.");
-                    switch (option.getChoice(options)) {
-                        case "Forward":
-                            try {
-                                this.moveForward(player);
-                            } catch (OutsideBoardException e) {
-                                player.setSpace(board.getRespawnSpaces());
-                                player.setRespawnStatus(true);
-                            }
-                            break;
-                        case "Backwards":
-                            try {
-                                this.backUp(player);
-                            } catch (OutsideBoardException e) {
-                                player.setSpace(board.getRespawnSpaces());
-                                player.setRespawnStatus(true);
-                            }
-                            break;
-                        case "Left":
-                            moveToLeftSpace(player);
-                            break;
-                        case "Right":
-                            moveToRightSpace(player);
-                            break;
-                    }
+                    boinkFunctionality(player);
+                    break;
+
                 case DEFRAG_GIZMO_PUPG:
                     defragGizmoFunctionality(player);
+                    break;
+                case SPAM_BLOCKER_TUPG:
+                    spamBlockerTemp(player);
                     break;
             }
 
@@ -608,9 +586,6 @@ public class GameController {
                 this.playEnergyRoutine(player);
                 return false;
             case RAMMING_GEAR_PUPG:
-                return false;
-            case SPAM_BLOCKER_TUPG:
-                spamBlockerTemp(player);
                 return false;
             case ENERGY_ROUTINE_TUPG:
                 CommandCard card = new CommandCard(Command.ENERGY);
@@ -1089,14 +1064,14 @@ public class GameController {
         player.setEnergyCubes(player.getEnergyCubes()+3);
     }
 
-    /**
+    /** @author Mikkel Jürs, s224279@student.dtu.dk
      * Method for the temp upgrade card: Spam Blocker "Replace Each SPAM damage card in your hand with a card from the
      * top of your deck. Permanently discard the SPAM damage cards.
      * @param player
      */
     public void spamBlockerTemp(Player player){
         for (int i = 0; i< Player.NO_CARDS; i++){
-            if(player.getCardField(i).getCard().getName().equals("SPAM")){
+            if(player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")){
                 player.getCardField(i).setCard(null);
                 player.getCardField(i).setCard(drawTopCard(player));
             }
@@ -1123,14 +1098,22 @@ public class GameController {
         }
     }
 
+    /** @Author Mikkel Jürs, s224279@student.dtu.dk
+     * This method is the functionality of the defragGizmoCard.
+     * It uses a couple of methods to determine what choice it should present to user.
+     * First it have a cardUsed array {true,true}, that sets the player.GetPowerUps().setDefragGizmo 2nd index to true, so it can't be used again.
+     * This is then set to false in the "SetGameStateUpgradeCards" method called at the beginning of each programming phase so it can be used in next round.
+     * For each type of damage card you have in your hand it presents
+     * @param player
+     */
     public void defragGizmoFunctionality(Player player) {
         boolean[] cardUsed = {true, true};
         System.out.println(player.getPowerUps().getDefragGizmo()[0]);
         if (player.getPowerUps().getDefragGizmo()[0]) {
             if (board.getPhase() == Phase.PROGRAMMING && !(player.getPowerUps().getDefragGizmo()[1])) {
                 String[] defragOptions = getUniqueCardOptions(player);
+                if (defragOptions.length > 0){
                 Option defragOption = new Option("Choose a damage card type to discard permanently");
-
                 switchBlock:
                 switch (defragOption.getChoice(defragOptions)) {
                     case "SPAM":
@@ -1175,7 +1158,41 @@ public class GameController {
                         }
                         break;
                 }
+                }
             }
+        }
+    }
+
+    public void boinkFunctionality(Player player){
+        String[] options = new String[4];
+        options[0] = "Forward";
+        options[1] = "Backwards";
+        options[2] = "Left";
+        options[3] = "Right";
+        Option option = new Option("Move to an adjacent space. Do not change direction.");
+        switch (option.getChoice(options)) {
+            case "Forward":
+                try {
+                    this.moveForward(player);
+                } catch (OutsideBoardException e) {
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                }
+                break;
+            case "Backwards":
+                try {
+                    this.backUp(player);
+                } catch (OutsideBoardException e) {
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                }
+                break;
+            case "Left":
+                moveToLeftSpace(player);
+                break;
+            case "Right":
+                moveToRightSpace(player);
+                break;
         }
     }
 
