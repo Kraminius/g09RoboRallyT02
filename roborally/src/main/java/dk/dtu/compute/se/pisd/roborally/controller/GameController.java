@@ -356,6 +356,7 @@ public class GameController {
                         antennaPriority();
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                         Activator.getInstance().activateBoard(board, this);
+
                     } else {
                         //Probably upgrade phase here?
                         startUpgradePhase();
@@ -393,6 +394,7 @@ public class GameController {
                 antennaPriority();
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                 Activator.getInstance().activateBoard(board, this);
+
             } else {
                 startUpgradePhase();
             }
@@ -402,6 +404,20 @@ public class GameController {
     }
     // XXX: V2
 
+    public boolean executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
+        if(card.getCard() == null) return false; //No card at that spot, so nothing happens.
+        Command command = card.getCard().command;
+        boolean isPermanent = UpgradeCardInfo.getPermanent(command);
+        boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
+
+
+
+
+        if(!isPermanent && cardCouldBeUsed){
+            upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
+        }
+        return true;
+    }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
      * if the given commandcard is an interactive card the methods returns true.
@@ -736,6 +752,7 @@ public class GameController {
                 antennaPriority();
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                 Activator.getInstance().activateBoard(board, this);
+
             } else {
                 startUpgradePhase();
             }
@@ -1155,47 +1172,63 @@ public class GameController {
      */
     public void playerLaserActivate(Player[] players){
         for(int i = 0; i < players.length; i++){
-
             Space start = players[i].getSpace();
-            if(start.getWallHeading() != null){
-                Heading direction = players[i].getHeading();
-                Heading directOposite;
-                int move;
-                boolean end = false;
-                switch (direction){
-                    case SOUTH:
-                        move = -1; //y
-                        directOposite = NORTH;
-                        break;
-                    case NORTH:
-                        move = 1; //y
-                        directOposite = SOUTH;
-                        break;
-                    case WEST:
-                        move = -1; //x
-                        directOposite = EAST;
-                        break;
-                    case EAST:
-                        move = 1; //x
-                        directOposite = WEST;
-                        break;
-                    default:
-                        throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
+            Heading direction = players[i].getHeading();
+            Heading directOpposite;
+            int move;
+            boolean end = false;
+            switch (direction){
+                case SOUTH:
+                    move = -1; //y
+                    directOpposite = NORTH;
+                    break;
+                case NORTH:
+                    move = 1; //y
+                    directOpposite = SOUTH;
+                    break;
+                case WEST:
+                    move = -1; //x
+                    directOpposite = EAST;
+                    break;
+                case EAST:
+                    move = 1; //x
+                    directOpposite = WEST;
+                    break;
+                default:
+                    throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
+            }
+            //Maybe a Do while
+            while(end == false){
+                //Are we moving into a wall?
+                if(start.getWallHeading().contains(direction)){
+                    end = true;
                 }
-                //Maybe a Do while
-                while(end == false){
-                    //Are we moving into a wall?
-                    if(start.getWallHeading().contains(direction)){
+                //We are moving verticaly
+                if(direction == SOUTH || direction == NORTH){
+                    if(start.y <= 0 || start.y >= board.height){
                         end = true;
                     }
-                    //We are moving verticaly
-                    if(direction == SOUTH || direction == NORTH){
-                        if(start.y <= 0 || start.y >= board.height){
-                            end = true;
-                        }
-                        else{start = board.getSpace(start.x,(start.y + move));}
+                    else{start = board.getSpace(start.x,(start.y + move));}
+                    //are we hitting a wall
+                    if(start.getWallHeading().contains(directOpposite)){
+                        end = true;
+                    }
+                    //Are we moving into a player?
+                    else if(start.getPlayer() != null){
+                        end = true;
+                        //Deal damage to player
+                        addDamageCard(start.getPlayer(), Command.SPAM);
+                        barrelLaserFunctionality(players[i], start.getPlayer());
+                    }
+                }
+                //We are moving horisontaly
+                if(direction == EAST || direction == WEST){
+                    if(start.x < 0 || start.x > board.width){
+                        end = true;
+                    }
+                    else{start = board.getSpace((start.x + move), start.y);
                         //are we hitting a wall
-                        if(start.getWallHeading().contains(directOposite)){
+                        if(start.getWallHeading().contains(directOpposite)){
                             end = true;
                         }
                         //Are we moving into a player?
@@ -1203,31 +1236,10 @@ public class GameController {
                             end = true;
                             //Deal damage to player
                             addDamageCard(start.getPlayer(), Command.SPAM);
-                            barrelLaserFunctionality(players[i], start.getPlayer());
-
-                        }
-                    }
-                    //We are moving horisontaly
-                    if(direction == EAST || direction == WEST){
-                        if(start.x < 0 || start.x > board.width){
-                            end = true;
-                        }
-                        else{start = board.getSpace((start.x + move), start.y);
-                            //are we hitting a wall
-                            if(start.getWallHeading().contains(directOposite)){
-                                end = true;
-                            }
-                            //Are we moving into a player?
-                            else if(start.getPlayer() != null){
-                                end = true;
-                                //Deal damage to player
-                                addDamageCard(start.getPlayer(), Command.SPAM);
-                            }
                         }
                     }
                 }
             }
-
         }
     }
 
