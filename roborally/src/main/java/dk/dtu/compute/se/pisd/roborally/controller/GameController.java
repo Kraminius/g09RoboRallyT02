@@ -151,7 +151,7 @@ public class GameController {
                 Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX,
                 Command.SPAM_FOLDER, Command.ENERGY, Command.RAMMING_GEAR_PUPG, Command.SPAM_BLOCKER_TUPG,
                 Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG, Command.RECOMPILE_TUPG, Command.HACK_TUPG, Command.RECHARGE_TUPG,
-                Command.ZOOP_TUPG, Command.DEFRAG_GIZMO_PUPG, Command.REPEAT_ROUTINE_TUPG, Command.REBOOT_TUPG, Command.DOUBLE_BARREL_LASER_PUGB, Command.BOINK_TUPG));
+                Command.ZOOP_TUPG, Command.DEFRAG_GIZMO_PUPG, Command.REPEAT_ROUTINE_TUPG, Command.REBOOT_TUPG, Command.DOUBLE_BARREL_LASER_PUGB, Command.BOINK_TUPG, Command.MOVELEFT, Command.MOVERIGHT));
 
 
         int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
