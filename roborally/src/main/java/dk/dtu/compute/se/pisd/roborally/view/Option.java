@@ -21,11 +21,14 @@ public class Option {
         stage = new Stage();
         window  = new VBox();
         window.setAlignment(Pos.CENTER);
-        window.setPadding(new Insets(20, 20 ,20, 20));
-        window.setSpacing(30);
+        VBox top = new VBox();
+        top.setAlignment(Pos.CENTER);
+        top.setPadding(new Insets(10, 10 ,10, 10));
+        top.setStyle("-fx-background-color: #491886");
         Label textLabel = new Label(text);
-        textLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
+        textLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: #eeeeee");
         HBox optionsPanel = new HBox();
+        optionsPanel.setPadding(new Insets(20, 20 ,20, 20));
         optionsPanel.setSpacing(5);
         for(int i = 0; i < options.length; i++){
             Button option = new Button(options[i]);
@@ -36,7 +39,8 @@ public class Option {
             });
             optionsPanel.getChildren().add(option);
         }
-        window.getChildren().add(textLabel);
+        top.getChildren().add(textLabel);
+        window.getChildren().add(top);
         window.getChildren().add(optionsPanel);
         Scene scene = new Scene(window);
         stage.setScene(scene);
