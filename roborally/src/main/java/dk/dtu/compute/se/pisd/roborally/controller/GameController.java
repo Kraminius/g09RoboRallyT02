@@ -635,6 +635,32 @@ public class GameController {
         }
     }
 
+    private boolean moveToLeftSpace(Player player){
+        turnLeft(player);
+        try {
+            moveForward(player);
+            turnRight(player);
+            return false;
+        } catch (OutsideBoardException e) {
+            player.setSpace(board.getRespawnSpaces());
+            player.setRespawnStatus(true);
+            return true;
+        }
+    }
+
+    private boolean moveToRightSpace(Player player){
+        turnRight(player);
+        try {
+            moveForward(player);
+            turnLeft(player);
+            return false;
+        } catch (OutsideBoardException e) {
+            player.setSpace(board.getRespawnSpaces());
+            player.setRespawnStatus(true);
+            return true;
+        }
+    }
+
     // TODO Assignment V2
     public void moveForward(@NotNull Player player) throws OutsideBoardException {
         movePlayerForward(player, 1, null, false);
