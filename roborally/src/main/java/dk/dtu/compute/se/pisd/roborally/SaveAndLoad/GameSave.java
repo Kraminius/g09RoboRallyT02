@@ -35,7 +35,7 @@ public class GameSave {
         else return "FALSE";
     }
 
-    public boolean saveGame(GameController controller){
+    public boolean saveGame(GameController controller, String name){
         JSONObject obj = new JSONObject();
         Board board = controller.board;
         obj.put("board", board.boardName); //String
@@ -68,16 +68,17 @@ public class GameSave {
             CommandCardField[] upgradeCards = player.getUpgradeCards();
             ArrayList<CommandCard> discardPile = player.getDiscardPile();
             for(int j = 0; j < program.length; j++){
-                playersProgram.add(program[j].getCard().command.toString());
+
+                if(program[i].getCard() != null) playersProgram.add(program[j].getCard().command.toString());
             }
             for(int j = 0; j < card.length; j++){
-                playersProgrammingDeck.add(card[j].getCard().command.toString());
+                if(card[i].getCard() != null) playersProgrammingDeck.add(card[j].getCard().command.toString());
             }
             for(int j = 0; j < upgradeCards.length; j++){
-                playerUpgradeCards.add(upgradeCards[j].getCard().command.toString());
+                if(upgradeCards[i].getCard() != null) playerUpgradeCards.add(upgradeCards[j].getCard().command.toString());
             }
             for(int j = 0; j < discardPile.size(); j++){
-                playersDiscardCards.add(discardPile.get(j).command.toString());
+                if(discardPile.get(i) != null) playersDiscardCards.add(discardPile.get(j).command.toString());
             }
         }
         ArrayList<CommandCard> outUpgradeCards = controller.upgradeShop.getOut();
@@ -88,13 +89,13 @@ public class GameSave {
         JSONArray upgradeOutDeck = new JSONArray();
 
         for(CommandCard c : outUpgradeCards){
-            upgradeCardsDeck.add(c.command.toString());
+            upgradeOutDeck.add(c.command.toString());
         }
         for(CommandCard c : discardUpgradeCards){
             upgradeDiscardDeck.add(c.command.toString());
         }
         for(CommandCard c : upgradeDeck){
-            upgradeOutDeck.add(c.command.toString());
+            upgradeCardsDeck.add(c.command.toString());
         }
 
         obj.put("playersName", playersName);
@@ -111,7 +112,7 @@ public class GameSave {
         obj.put("upgradeDiscardDeck", upgradeDiscardDeck);
         obj.put("upgradeOutDeck", upgradeOutDeck);
 
-        json.save("test1", obj, "game");
+        json.save(name, obj, "game");
         return true;
     }
     private int getCheckpointReached(boolean[] arr){
