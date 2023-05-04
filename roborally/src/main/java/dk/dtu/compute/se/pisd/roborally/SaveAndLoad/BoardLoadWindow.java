@@ -32,7 +32,7 @@ public class BoardLoadWindow {
      * @param box the combobox to add the files to
      */
     private void addFiles(ComboBox<String> box){
-        File folder = new File("roborally/src/main/resources/boards");
+        File folder = new File("roborally/src/main/resources/files");
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {

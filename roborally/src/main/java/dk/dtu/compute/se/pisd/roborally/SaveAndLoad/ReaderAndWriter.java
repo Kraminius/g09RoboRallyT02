@@ -13,14 +13,8 @@ public class ReaderAndWriter {
      * @param name name of the file
      * @return returns the file if exists, otherwise null.
      */
-    public File getFile(String name, String type){
-        File directory = null;
-        if(type.equals( "board")) directory = new File("roborally/src/main/resources/boards/");
-        if(type.equals("game")) directory = new File("roborally/src/main/resources/games/");
-        if(directory == null) {
-            System.out.println("No such type");
-            return null;
-        }
+    public File getFile(String name){
+        File directory = new File("roborally/src/main/resources/files/");
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -34,15 +28,9 @@ public class ReaderAndWriter {
      * @param name the name of the file
      * @return a File under that name, null if there is an error in creating it.
      */
-    public File createIfNonExistingJSON(String name, String type) {
+    public File createIfNonExistingJSON(String name) {
         try {
-            File directory = null;
-            if(type.equals( "board")) directory = new File("roborally/src/main/resources/boards/");
-            if(type.equals("game")) directory = new File("roborally/src/main/resources/games/");
-            if(directory == null) {
-                System.out.println("No such type");
-                return null;
-            }
+            File directory = new File("roborally/src/main/resources/files/");
             if (!directory.exists()) {
                 directory.mkdirs();
             }
@@ -71,8 +59,8 @@ public class ReaderAndWriter {
      * @param name name of file
      * @param jsonObject the object to save
      */
-    public void writeJSON(String name, JSONObject jsonObject, String type){
-        File file = createIfNonExistingJSON(name, type);
+    public void writeJSON(String name, JSONObject jsonObject){
+        File file = createIfNonExistingJSON(name);
         if(file == null){
             System.out.println("Cannot save json " + name + ". unable to find or create file.");
             return;
@@ -91,9 +79,9 @@ public class ReaderAndWriter {
      * @param name reads a file under the name
      * @return JSONObject that contains the data from the file, null if there is an error.
      */
-    public JSONObject readJSON(String name, String type) {
+    public JSONObject readJSON(String name) {
         try {
-            File file = getFile(name, type);
+            File file = getFile(name);
             if (file != null) {
                 FileInputStream inputStream = new FileInputStream(file);
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);

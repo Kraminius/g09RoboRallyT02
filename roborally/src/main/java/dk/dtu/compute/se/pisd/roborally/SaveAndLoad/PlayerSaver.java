@@ -56,12 +56,12 @@ public class PlayerSaver {
             String unlocked = getBoolean(player.getCheckpointReadhed()[i]);
             cards.add(unlocked);
         }
-        obj.put("checkpointsReached", checkpoints);
+        obj.put("checkpointsReadhed", checkpoints);
 
-        raw.writeJSON(name, obj, "player");
+        raw.writeJSON(name, obj);
 
         //Tester
-        JSONObject obj2 = json.load(name, "player");
+        JSONObject obj2 = json.load(name);
         if(obj == null) return false;
         return true;
     }

@@ -27,7 +27,7 @@ public class PlayerLoader {
      * @return the Player that is saved with the id
      */
     public boolean loadPlayer(String name, Player player){
-        JSONObject obj = json.load(name, "player");
+        JSONObject obj = json.load(name);
         if(obj == null) return false;
         Board board = player.board;
         for(Object key : obj.keySet()){
@@ -103,7 +103,7 @@ public class PlayerLoader {
                     p.getCardField(i).setVisible(getBoolean((String)values[0]));
                 }
                 break;
-            case "checkpointsReached":
+            case "checkpointsReadhed":
                 ArrayList<String> checkpoints = getList((JSONArray) value);
                 for(int i = 0; i < checkpoints.size(); i++){
                     boolean check = getBoolean(checkpoints.get(i));

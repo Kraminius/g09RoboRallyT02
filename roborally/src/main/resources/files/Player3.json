@@ -5,5 +5,5 @@
   "heading": "SOUTH",
   "program":["true;FORWARD","true;FORWARD","true;U_TURN","true;U_TURN","true;FORWARD"],
   "cards":["true;FORWARD","true;FORWARD","true;U_TURN","true;U_TURN","true;FORWARD","true;FORWARD","true;FORWARD","true;U_TURN"],
-"checkpointsReached": ["true","true","false"]
+"checkpointsReadhed": ["true","true","false"]
 }

@@ -265,7 +265,7 @@ public class UpgradeShop {
      *
      * @return the deck of cards
      */
-    public ArrayList<CommandCard> getDeck(){
+    private ArrayList<CommandCard> getDeck(){
         if(deck == null){
             deck = new ArrayList<>();
             discarded = new ArrayList<>();
@@ -444,25 +444,7 @@ public class UpgradeShop {
         }
     }
 
-    public void setDeck(ArrayList<CommandCard> deck) {
-        this.deck = deck;
-    }
 
-    public ArrayList<CommandCard> getDiscarded() {
-        return discarded;
-    }
-
-    public void setDiscarded(ArrayList<CommandCard> discarded) {
-        this.discarded = discarded;
-    }
-
-    public ArrayList<CommandCard> getOut() {
-        return out;
-    }
-
-    public void setOut(ArrayList<CommandCard> out) {
-        this.out = out;
-    }
 }
 
 
