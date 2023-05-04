@@ -91,6 +91,7 @@ public class AppController implements Observer {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i+1);
                 gameController.fillStartDeck(player.getCardDeck());
                 board.addPlayer(player);
+
                 //player.setSpace(board.getSpace(i % board.width, i));
             }
 
@@ -103,6 +104,7 @@ public class AppController implements Observer {
             positionWindow.getStartSpaces(board);
 
             gameController.startUpgradePhase();
+            board.getPlayer(1).setEnergyCubes(10);
 
         }
     }

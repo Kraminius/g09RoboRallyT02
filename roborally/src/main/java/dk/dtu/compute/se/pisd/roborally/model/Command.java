@@ -62,12 +62,18 @@ public enum Command {
     SPAM_BLOCKER_TUPG("Spam Blocker \n Replace each SPAM damage card in your hand with a card from the top of your deck. Permanently discard the SPAM damage cards"),
     ENERGY_ROUTINE_TUPG("Energy Routine \n Add the Energy Routine Programming card to your discard pile"),
     SPAM_FOLDER_TUPG("Spam Folder Routine \n"),
-    REPEAT("Repeat Routine"),
     SPAM_FOLDER("Spam folder"),
     SANDBOX("Sandbox Routine", FORWARD, FAST_FORWARD, SPRINT_FORWARD, BACK_UP, LEFT, RIGHT, U_TURN),
     WEASEL("Weasel routine", LEFT, RIGHT, U_TURN),
     SPEED("Speed routine"),
-    ENERGY("Energy routine");
+    ENERGY("Energy routine"),
+    RECOMPILE_TUPG("Recompile \n Discard your entire hand. Draw a new one"),
+    RECHARGE_TUPG("Recharge \n Gain three energy"),
+    HACK_TUPG("Hack \n Execute the programming in your current register again"),
+    ZOOP_TUPG("Zoop \n Rotate to face any direction", LEFT, RIGHT, U_TURN),
+    REBOOT_TUPG("Reboot \n Reboot your robot, but take no damage"),
+    REPEAT_ROUTINE_TUPG("Repeat Routine \n Add the Repeat Routine Programming card to your discard pile"),
+    DEFRAG_GIZMO_PUPG("Defrag Gizmo \n Permanently discards a damage card from your hand");
     // XXX Assignment P3
 
     final public String displayName;
