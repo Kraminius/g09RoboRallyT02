@@ -171,7 +171,8 @@ public class GameController {
                 Command.VIRUS));
 
         for(Command command : upgradeCards){
-            upgradeDeck.add(new CommandCard(command));
+            //upgradeDeck.add(new CommandCard(command));
+            upgradeDeck.add(new CommandCard(Command.RAMMING_GEAR_PUPG));
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -634,6 +635,7 @@ public class GameController {
             if (playerToMove != null) { //Check if there is a player already on this field.
                 if (movePlayerForward(playerToMove, amount, heading, false)) {
                     player.setSpace(space);//There is a player in front and they can move, so we move too.
+                    rammingGearFunctionality(player, playerToMove);
                     return true;
                 } else return false; //There is a player there and they cannot move forward so no one moves.
             } else {
@@ -1253,5 +1255,10 @@ public class GameController {
     }
 
 
+    public void rammingGearFunctionality(Player player, Player playerToMove){
+        if(player.getPowerUps().isRammingGear()){
+            addDamageCard(playerToMove, Command.SPAM);
+        }
+    }
 
 }
