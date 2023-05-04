@@ -428,8 +428,10 @@ public class UpgradeShop {
 
             if(cards[i].getCard() != null){
                 Command currentCommand = cards[i].getCard().command;
+                boolean[] boughtUpgrade = {true, false};
 
                 switch (currentCommand){
+                    case DEFRAG_GIZMO_PUPG -> player.getPowerUps().setDefragGizmo(boughtUpgrade);
                     case RAMMING_GEAR_PUPG -> player.getPowerUps().setRammingGear(true);
                     case DOUBLE_BARREL_LASER_PUGB -> player.getPowerUps().setBarrelLaser(true);
                 }

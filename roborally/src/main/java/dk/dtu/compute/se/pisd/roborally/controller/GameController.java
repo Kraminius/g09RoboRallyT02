@@ -147,9 +147,9 @@ public class GameController {
      * @param playerDeck the ArrayList that holds the players cards.
      */
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
-        Set<Command> validCommands = EnumSet.of(Command.FORWARD, Command.FAST_FORWARD, Command.LEFT, Command.RIGHT, Command.SPRINT_FORWARD, Command.BACK_UP, Command.U_TURN, Command.AGAIN, Command.POWER_UP);
+        Set<Command> validCommands = EnumSet.of(Command.FORWARD, Command.FAST_FORWARD, Command.LEFT, Command.RIGHT, Command.SPRINT_FORWARD, Command.BACK_UP, Command.U_TURN, Command.AGAIN, Command.POWER_UP, Command.SPAM, Command.TROJAN_HORSE);
 
-        int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
+        int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1, 10, 10};
         int index = 0;
         System.out.println(validCommands);
         for(Command command : validCommands){
@@ -181,7 +181,7 @@ public class GameController {
 
         for(Command command : upgradeCards){
             //upgradeDeck.add(new CommandCard(command));
-            upgradeDeck.add(new CommandCard(Command.BOINK_TUPG));
+            upgradeDeck.add(new CommandCard(Command.DEFRAG_GIZMO_PUPG));
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -464,7 +464,9 @@ public class GameController {
                             moveToRightSpace(player);
                             break;
                     }
-                break;
+                case DEFRAG_GIZMO_PUPG:
+                    defragGizmoFunctionality(player);
+                    break;
             }
 
 
@@ -646,10 +648,6 @@ public class GameController {
 
             case MOVERIGHT:
                 moveToRightSpace(player);
-
-            case DEFRAG_GIZMO_PUPG:
-                defragGizmoFunctionality(player);
-                return false;
 
             default:
                 throw new RuntimeException("Should not happen");
@@ -1127,18 +1125,79 @@ public class GameController {
 
     public void defragGizmoFunctionality(Player player) {
         boolean[] cardUsed = {true, true};
-        if(player.getPowerUps().getDefragGizmo()[0]){
-            if(board.getPhase() == Phase.PROGRAMMING && player.getPowerUps().getDefragGizmo()[1])
+        System.out.println(player.getPowerUps().getDefragGizmo()[0]);
+        if (player.getPowerUps().getDefragGizmo()[0]) {
+            {
+                String[] defragOptions = getUniqueCardOptions(player);
+                Option defragOption = new Option("Choose a damage card type to discard permanently");
 
-                for (int i = 0; i < Player.NO_CARDS; i++) {
-                    if (player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM") {
-                        player.getCardField(i).setCard(null);
-                        player.getCardField(i).setCard(drawTopCard(player));
-                        player.getPowerUps().setDefragGizmo(cardUsed);
+                switch (defragOption.getChoice(defragOptions)) {
+                    case "Spam":
+                        for (int i = 0; i < Player.NO_CARDS; i++) {
+                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")) {
+                                player.getCardField(i).setCard(null);
+                                player.getCardField(i).setCard(drawTopCard(player));
+                                player.getPowerUps().setDefragGizmo(cardUsed);
+                                break;
+                            }
+                        }
                         break;
-                    }
+                    case "TROJAN HORSE":
+                        for (int i = 0; i < Player.NO_CARDS; i++) {
+                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("TROJAN HORSE")) {
+                                player.getCardField(i).setCard(null);
+                                player.getCardField(i).setCard(drawTopCard(player));
+                                player.getPowerUps().setDefragGizmo(cardUsed);
+                                break;
+                            }
+                        }
+                        break;
+                    case "VIRUS":
+                        for (int i = 0; i < Player.NO_CARDS; i++) {
+                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("VIRUS")) {
+                                player.getCardField(i).setCard(null);
+                                player.getCardField(i).setCard(drawTopCard(player));
+                                player.getPowerUps().setDefragGizmo(cardUsed);
+                                break;
+                            }
+                        }
+                        break;
+                    case "WORM":
+                        for (int i = 0; i < Player.NO_CARDS; i++) {
+                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("WORM")) {
+                                player.getCardField(i).setCard(null);
+                                player.getCardField(i).setCard(drawTopCard(player));
+                                player.getPowerUps().setDefragGizmo(cardUsed);
+                                break;
+                            }
+                        }
+                        break;
                 }
+            }
         }
+    }
+
+    /**
+     * @author Mikkel Jürs, s224279@student.dtu.dk
+     * @param player
+     * @return
+     */
+    private String[] getUniqueCardOptions(Player player) {
+        Set<String> uniqueCards = new HashSet<>();
+
+        for (int i = 0; i < Player.NO_CARDS; i++) {
+            String cardName = player.getCardField(i).getCard().getName();
+            System.out.println(cardName);
+            if (cardName.equalsIgnoreCase("TROJAN HORSE") || cardName.equalsIgnoreCase("VIRUS") || cardName.equalsIgnoreCase("WORM") || cardName.equalsIgnoreCase("SPAM")) {
+                uniqueCards.add(cardName);
+            }
+
+
+        }
+        String[] uniqueCardOptions = uniqueCards.toArray(new String[0]);
+        System.out.println(Arrays.toString(uniqueCardOptions));
+
+        return uniqueCardOptions;
     }
 
     public void playEnergyRoutine(Player player){
