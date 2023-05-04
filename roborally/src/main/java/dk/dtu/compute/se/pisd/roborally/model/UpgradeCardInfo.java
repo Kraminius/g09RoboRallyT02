@@ -9,7 +9,7 @@ public class UpgradeCardInfo {
      * @param command the command for the card you want to check if it is a permanent upgrade card.
      * @return if it is a permanent upgrade card or not.
      */
-    public boolean getPermanent(Command command){
+    public static boolean getPermanent(Command command){
         switch(command){
 
             default: return false;
@@ -21,7 +21,7 @@ public class UpgradeCardInfo {
      * @param command the command for the card you want to get the price of.
      * @return The price of the card.
      */
-    public int getPrice(Command command){
+    public static int getPrice(Command command){
         switch(command){
 
             default: return 1;

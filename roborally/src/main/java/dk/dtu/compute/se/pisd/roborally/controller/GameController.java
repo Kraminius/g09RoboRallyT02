@@ -359,6 +359,8 @@ public class GameController {
                         board.setStep(step);
                         antennaPriority();
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                        Activator.getInstance().activateBoard(board, this);
+
                     } else {
                         //Probably upgrade phase here?
                         startUpgradePhase();
@@ -395,6 +397,8 @@ public class GameController {
                 board.setStep(step);
                 antennaPriority();
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                Activator.getInstance().activateBoard(board, this);
+
             } else {
                 startUpgradePhase();
             }
@@ -404,6 +408,20 @@ public class GameController {
     }
     // XXX: V2
 
+    public boolean executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
+        if(card.getCard() == null) return false; //No card at that spot, so nothing happens.
+        Command command = card.getCard().command;
+        boolean isPermanent = UpgradeCardInfo.getPermanent(command);
+        boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
+
+
+
+
+        if(!isPermanent && cardCouldBeUsed){
+            upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
+        }
+        return true;
+    }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
      * if the given commandcard is an interactive card the methods returns true.
@@ -755,11 +773,14 @@ public class GameController {
                 board.setStep(step);
                 antennaPriority();
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                Activator.getInstance().activateBoard(board, this);
+
             } else {
                 startUpgradePhase();
             }
         }else{
             board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+
         }
     }
 
@@ -1196,25 +1217,25 @@ public class GameController {
         for(int i = 0; i < players.length; i++){
             Space start = players[i].getSpace();
             Heading direction = players[i].getHeading();
-            Heading directOposite;
+            Heading directOpposite;
             int move;
             boolean end = false;
             switch (direction){
                 case SOUTH:
                     move = -1; //y
-                    directOposite = NORTH;
+                    directOpposite = NORTH;
                     break;
                 case NORTH:
                     move = 1; //y
-                    directOposite = SOUTH;
+                    directOpposite = SOUTH;
                     break;
                 case WEST:
                     move = -1; //x
-                    directOposite = EAST;
+                    directOpposite = EAST;
                     break;
                 case EAST:
                     move = 1; //x
-                    directOposite = WEST;
+                    directOpposite = WEST;
                     break;
                 default:
                     throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
@@ -1232,7 +1253,7 @@ public class GameController {
                     }
                     else{start = board.getSpace(start.x,(start.y + move));}
                     //are we hitting a wall
-                    if(start.getWallHeading().contains(directOposite)){
+                    if(start.getWallHeading().contains(directOpposite)){
                         end = true;
                     }
                     //Are we moving into a player?
@@ -1249,7 +1270,7 @@ public class GameController {
                     }
                     else{start = board.getSpace((start.x + move), start.y);
                         //are we hitting a wall
-                        if(start.getWallHeading().contains(directOposite)){
+                        if(start.getWallHeading().contains(directOpposite)){
                             end = true;
                         }
                         //Are we moving into a player?

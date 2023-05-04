@@ -37,7 +37,6 @@ public class UpgradeShop {
     private ArrayList<CommandCard> discarded;
     private ArrayList<CommandCard> out;
 
-    private UpgradeCardInfo info = new UpgradeCardInfo();
 
     /**
      * @author Tobias - s224271@dtu.dk
@@ -47,6 +46,9 @@ public class UpgradeShop {
      * @param controller the controller we are using currently.
      */
     public void openShop(Board board, GameController controller){
+        for(int i = 0; i < board.getPlayersNumber(); i++){ //This should be removed, it is only to give some cubes to start with to test shop.
+            board.getPlayer(i).setEnergyCubes(10);
+        }
         this.board = board;
         this.controller = controller;
         createWindow();
@@ -167,7 +169,6 @@ public class UpgradeShop {
      */
     private void showForPlayer(Player player){
         currentPlayer = player;
-        currentPlayer.setEnergyCubes(10);
         playerInfo.getChildren().clear();
         Label name = new Label(player.getName());
         name.setStyle("-fx-font-size: 32; -fx-font-weight: bold");
@@ -186,7 +187,7 @@ public class UpgradeShop {
                 button.setPrefSize(65, 20);
                 button.setStyle("-fx-border-color: #6969d3;");
                 final CardFieldView cardFieldView =  playerCards[i];
-                button.setOnAction(e -> discardCard(cardFieldView));
+                button.setOnAction(e -> discardCard(cardFieldView.getField()));
                 card.getChildren().add(button);
                 cardHolder.getChildren().add(card);
             }
@@ -320,12 +321,12 @@ public class UpgradeShop {
     /**
      * @author Tobias - s224271@dtu.dk
      * discards a specific card, by nulling it from the view and adding it to the discarded pile.
-     * @param cardFieldView the card that needs to be discarded.
+     * @param cardField the card that needs to be discarded.
      */
-    private void discardCard(CardFieldView cardFieldView){
-        CommandCard card = cardFieldView.getField().getCard();
+    public void discardCard(CommandCardField cardField){
+        CommandCard card = cardField.getCard();
         discarded.add(card);
-        cardFieldView.getField().setCard(null);
+        cardField.setCard(null);
         playerOrder--;
         switchToNextPlayer();
     }
@@ -346,7 +347,7 @@ public class UpgradeShop {
      * @return if it is permanent or not
      */
     private boolean getPermanent(Command command){
-        return info.getPermanent(command);
+        return UpgradeCardInfo.getPermanent(command);
     }
     /**
      * @author Tobias - s224271@dtu.dk
@@ -356,7 +357,7 @@ public class UpgradeShop {
      * @return the price
      */
     private int getPrice(Command command){
-        return info.getPrice(command);
+        return UpgradeCardInfo.getPrice(command);
     }
     /**
      * @author Tobias - s224271@dtu.dk
@@ -414,7 +415,6 @@ public class UpgradeShop {
                 switchToNextPlayer();
             }
             else messageLabel.setText("You cannot afford this item");
-
         }
         else{
             messageLabel.setText("You dont have space for any more cards, you must first discard one.");
@@ -446,6 +446,7 @@ public class UpgradeShop {
 
         }
     }
+
 
 }
 
