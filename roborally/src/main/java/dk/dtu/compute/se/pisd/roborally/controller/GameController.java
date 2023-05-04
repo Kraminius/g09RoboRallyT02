@@ -1059,6 +1059,22 @@ public class GameController {
         }
     }
 
+    public void defragGizmoFunctionality(Player player) {
+        boolean[] cardUsed = {true, true};
+        if(player.getPowerUps().getDefragGizmo()[0]){
+            if(board.getPhase() == Phase.PROGRAMMING && player.getPowerUps().getDefragGizmo()[1])
+
+                for (int i = 0; i < Player.NO_CARDS; i++) {
+                    if (player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM") {
+                        player.getCardField(i).setCard(null);
+                        player.getCardField(i).setCard(drawTopCard(player));
+                        player.getPowerUps().setDefragGizmo(cardUsed);
+                        break;
+                    }
+                }
+        }
+    }
+
     public void playEnergyRoutine(Player player){
         powerUp(player, 1);
     }
