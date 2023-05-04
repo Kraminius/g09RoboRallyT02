@@ -431,6 +431,7 @@ public class UpgradeShop {
 
                 switch (currentCommand){
                     case RAMMING_GEAR_PUPG -> player.getPowerUps().setRammingGear(true);
+                    case DOUBLE_BARREL_LASER_PUGB -> player.getPowerUps().setBarrelLaser(true);
                 }
 
 

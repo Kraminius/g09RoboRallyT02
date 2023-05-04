@@ -49,7 +49,7 @@ class PriorityTest {
         gameController = new GameController(board);
 
         for (int i = 0; i < 6; i++) {
-            Player player = new Player(board, null, "Player " + i, i);
+            Player player = new Player(board, null, "Player " + (i+1), i);
             board.addPlayer(player);
             player.setSpace(board.getSpace(2+i, 2+i));
             //Assertions.assertEquals(player, board.getSpace(i, i).getPlayer(), "Player " + player.getName() + " should be at Space (" + i + "," + i + ")!");
@@ -84,17 +84,120 @@ class PriorityTest {
         sixth.setSpace(board.getSpace(5,5)); //6
         gameController.antennaPriority();
         Assertions.assertEquals(fourth, gameController.getSequence().get(0), "The highest prioritised player should be" +
-                "Player " + fourth.getName() );
+                "Player " + fourth.getName() + "but is: " + gameController.getSequence().get(0).getName()  );
         Assertions.assertEquals(second, gameController.getSequence().get(1), "The 2nd prioritised player should be" +
-                "Player " + second.getName() );
+                "Player " + second.getName() + "but is: " + gameController.getSequence().get(1).getName()  );
         Assertions.assertEquals(third, gameController.getSequence().get(2), "The 3th prioritised player should be" +
-                "Player " + third.getName() );
+                "Player " + third.getName() + "but is: " + gameController.getSequence().get(2).getName()  );
         Assertions.assertEquals(current, gameController.getSequence().get(3), "The 4th prioritised player should be" +
-                "Player " + current.getName() );
+                "Player " + current.getName() + "but is: " + gameController.getSequence().get(3).getName()  );
         Assertions.assertEquals(fifth, gameController.getSequence().get(4), "The 5th prioritised player should be" +
-                "Player " + fifth.getName() );
+                "Player " + fifth.getName() + "but is: " + gameController.getSequence().get(4).getName()  );
         Assertions.assertEquals(sixth, gameController.getSequence().get(5), "The lowest prioritised player should be" +
-                "Player " + sixth.getName() );
+                "Player " + sixth.getName() + "but is: " + gameController.getSequence().get(5).getName()  );
+
+    }
+
+    @Test
+    void  SimplePriority2() {
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+        Player fourth = board.getPlayer(3);
+        Player fifth = board.getPlayer(4);
+        Player sixth = board.getPlayer(5);
+
+        //Sets players at different distances
+        second.setSpace(board.getSpace(0,0)); //2 closest and behind radar
+        fourth.setSpace(board.getSpace(2,3)); //4
+        third.setSpace(board.getSpace(3,3)); //3
+        current.setSpace(board.getSpace(3,4)); //1
+        fifth.setSpace(board.getSpace(4,4)); //5
+        sixth.setSpace(board.getSpace(5,5)); //6
+        gameController.antennaPriority();
+        Assertions.assertEquals(second, gameController.getSequence().get(0), "The highest prioritised player should be" +
+                "Player " + second.getName() + "but is: " + gameController.getSequence().get(0).getName()  );
+        Assertions.assertEquals(fourth, gameController.getSequence().get(1), "The 2nd prioritised player should be" +
+                "Player " + fourth.getName() + "but is: " + gameController.getSequence().get(1).getName()  );
+        Assertions.assertEquals(third, gameController.getSequence().get(2), "The 3th prioritised player should be" +
+                "Player " + third.getName() + "but is: " + gameController.getSequence().get(2).getName()  );
+        Assertions.assertEquals(current, gameController.getSequence().get(3), "The 4th prioritised player should be" +
+                "Player " + current.getName() + "but is: " + gameController.getSequence().get(3).getName()  );
+        Assertions.assertEquals(fifth, gameController.getSequence().get(4), "The 5th prioritised player should be" +
+                "Player " + fifth.getName() + "but is: " + gameController.getSequence().get(4).getName()  );
+        Assertions.assertEquals(sixth, gameController.getSequence().get(5), "The lowest prioritised player should be" +
+                "Player " + sixth.getName() + "but is: " + gameController.getSequence().get(5).getName()  );
+
+    }
+
+    @Test
+    void  ComplexPriority() {
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+        Player fourth = board.getPlayer(3);
+        Player fifth = board.getPlayer(4);
+        Player sixth = board.getPlayer(5);
+
+        //Sets players at different distances
+        //4 and 2 is equally cloth, but radar should catch 4 with its sweep
+        fourth.setSpace(board.getSpace(2,2)); //4 is closest
+        second.setSpace(board.getSpace(0,0)); //2
+
+        third.setSpace(board.getSpace(3,3)); //3
+        current.setSpace(board.getSpace(3,4)); //1
+        fifth.setSpace(board.getSpace(4,4)); //5
+        sixth.setSpace(board.getSpace(5,5)); //6
+        gameController.antennaPriority();
+        Assertions.assertEquals(fourth, gameController.getSequence().get(0), "The highest prioritised player should be" +
+                "Player " + fourth.getName() + "but is: " + gameController.getSequence().get(0).getName() );
+        Assertions.assertEquals(second, gameController.getSequence().get(1), "The 2nd prioritised player should be" +
+                "Player " + second.getName() + "but is: " + gameController.getSequence().get(1).getName()  );
+        Assertions.assertEquals(third, gameController.getSequence().get(2), "The 3th prioritised player should be" +
+                "Player " + third.getName() + "but is: " + gameController.getSequence().get(2).getName()  );
+        Assertions.assertEquals(current, gameController.getSequence().get(3), "The 4th prioritised player should be" +
+                "Player " + current.getName() + "but is: " + gameController.getSequence().get(3).getName()  );
+        Assertions.assertEquals(fifth, gameController.getSequence().get(4), "The 5th prioritised player should be" +
+                "Player " + fifth.getName() + "but is: " + gameController.getSequence().get(4).getName()  );
+        Assertions.assertEquals(sixth, gameController.getSequence().get(5), "The lowest prioritised player should be" +
+                "Player " + sixth.getName() + "but is: " + gameController.getSequence().get(5).getName()  );
+
+    }
+
+    @Test
+    void  ComplexPriority2() {
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+        Player fourth = board.getPlayer(3);
+        Player fifth = board.getPlayer(4);
+        Player sixth = board.getPlayer(5);
+
+        //Sets players at different distances
+        //4 and 2 is equally close, but radar should catch 2 with its sweep
+        fourth.setSpace(board.getSpace(1,2)); //4
+        second.setSpace(board.getSpace(2,1)); //2 is closest
+        //1 and 6 is equally close, but sweep 1 first
+        current.setSpace(board.getSpace(5,2)); //1
+        sixth.setSpace(board.getSpace(2,5)); //6
+        fifth.setSpace(board.getSpace(6,6)); //5
+        third.setSpace(board.getSpace(7,7)); //3
+        gameController.antennaPriority();
+        Assertions.assertEquals(second, gameController.getSequence().get(0), "The highest prioritised player should be" +
+                "Player " + second.getName() + "but is: " + gameController.getSequence().get(0).getName() );
+        Assertions.assertEquals(fourth, gameController.getSequence().get(1), "The 2nd prioritised player should be" +
+                "Player " + fourth.getName() + "but is: " + gameController.getSequence().get(1).getName()  );
+        Assertions.assertEquals(current, gameController.getSequence().get(2), "The 3th prioritised player should be" +
+                "Player " + current.getName() + "but is: " + gameController.getSequence().get(2).getName()  );
+        Assertions.assertEquals(sixth, gameController.getSequence().get(3), "The 4th prioritised player should be" +
+                "Player " + sixth.getName() + "but is: " + gameController.getSequence().get(3).getName()  );
+        Assertions.assertEquals(fifth, gameController.getSequence().get(4), "The 5th prioritised player should be" +
+                "Player " + fifth.getName() + "but is: " + gameController.getSequence().get(4).getName()  );
+        Assertions.assertEquals(third, gameController.getSequence().get(5), "The lowest prioritised player should be" +
+                "Player " + third.getName() + "but is: " + gameController.getSequence().get(5).getName()  );
 
     }
 }
