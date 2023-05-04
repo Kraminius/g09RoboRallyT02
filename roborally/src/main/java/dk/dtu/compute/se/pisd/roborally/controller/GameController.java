@@ -718,17 +718,13 @@ public class GameController {
                 try {
                     if (movePlayerForward(playerToMove, amount, heading, false)) {
                         player.setSpace(space);//There is a player in front and they can move, so we move too.
+                        rammingGearFunctionality(player, playerToMove);
                         return true;
                     } else return false; //There is a player there and they cannot move forward so no one moves.
                 } catch (OutsideBoardException e){
                     board.setCurrentPlayer(playerToMove);
                     throw new OutsideBoardException();
                 }
-                if (movePlayerForward(playerToMove, amount, heading, false)) {
-                    player.setSpace(space);//There is a player in front and they can move, so we move too.
-                    rammingGearFunctionality(player, playerToMove);
-                    return true;
-                } else return false; //There is a player there and they cannot move forward so no one moves.
             } else {
                 player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
                 return true;
