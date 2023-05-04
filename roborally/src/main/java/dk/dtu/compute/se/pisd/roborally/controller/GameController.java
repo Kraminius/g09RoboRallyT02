@@ -581,15 +581,6 @@ public class GameController {
                 this.discardCard(player, repeatRoutineTupgCard);
                 return false;
                 //Prioritized permanent removal of one damage card, and adds a card from the top of the deck. This could be done more elegantly with a mouseclick event, that checks if the clicked card is a DAMAGE CARD. ISSUE maybe.
-            case DEFRAG_GIZMO_PUPG:
-                for (int i = 0; i<Player.NO_CARDS; i++){
-                 if(player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM"){
-                     player.getCardField(i).setCard(null);
-                     player.getCardField(i).setCard(drawTopCard(player));
-                     break;
-                 }
-                }
-                return false;
 
             //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
             case ZOOP_TUPG:
