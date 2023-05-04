@@ -212,6 +212,9 @@ public class GameController {
             shuffleDiscardPileToDeck(player);
             cardDeck = player.getCardDeck();
             i = cardDeck.size() - 1;
+            if(i < 0){
+                return null;
+            }
         }
         CommandCard topCard = cardDeck.get(i);
         cardDeck.remove(i);
@@ -406,7 +409,7 @@ public class GameController {
      * @param command
      * @return true if the player interaction mode is enabled.
      */
-    private boolean executeCommand(@NotNull Player player, @NotNull Command command) {
+    protected boolean executeCommand(@NotNull Player player, @NotNull Command command) {
         if (player.board != board) {
             throw new RuntimeException("Player board different from current board");
         }
@@ -474,8 +477,14 @@ public class GameController {
                         //Should also not happen
                         return false;
                     } else if (prevCommand.command == Command.AGAIN) {
-                        prevCommand = player.getProgramField(prevProgramStep - 1).getCard();
-                        this.again(player, prevCommand.command);
+                        prevProgramStep -= 1;
+                        if(prevProgramStep < 0){
+                            return false;
+                        } else {
+                            prevCommand = player.getProgramField(prevProgramStep).getCard();
+                            this.again(player, prevCommand.command);
+                        }
+                        return false;
                     } else if(prevCommand.command == Command.SPAM || prevCommand.command == Command.VIRUS || prevCommand.command == Command.TROJAN_HORSE || prevCommand.command == Command.WORM){
                         CommandCard topCard = drawTopCard(player);
                         discardCard(player, player.getProgramField(board.getStep()).getCard());
