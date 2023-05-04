@@ -180,10 +180,11 @@ public class GameController {
                 Command.VIRUS,
                 Command.MOVELEFT,
                 Command.MOVERIGHT,
-                Command.POWER_UP));
+                Command.POWER_UP,
+                Command.SPAM_FOLDER));
 
         for(Command command : upgradeCards){
-            upgradeDeck.add(new CommandCard(command));
+            upgradeDeck.add(new CommandCard(Command.SPAM_FOLDER_TUPG));
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -445,6 +446,41 @@ public class GameController {
                 case SPAM_BLOCKER_TUPG:
                     spamBlockerTemp(player);
                     break;
+
+                case ENERGY:
+                    this.playEnergyRoutine(player);
+                    break;
+                case RAMMING_GEAR_PUPG:
+                    break;
+                case ENERGY_ROUTINE_TUPG:
+                    CommandCard cardEnergy = new CommandCard(Command.ENERGY);
+                    this.discardCard(player, cardEnergy);
+                    break;
+                case SPAM_FOLDER_TUPG:
+                    CommandCard cardSpam = new CommandCard(Command.SPAM_FOLDER);
+                    discardCard(player, cardSpam);
+                    break;
+                case RECOMPILE_TUPG:
+                    recompileUpgradeCard(player);
+                    break;
+                case RECHARGE_TUPG:
+                    rechargeUpgradeCard(player);
+                    break;
+                case HACK_TUPG:
+                    hackUpgradeCard(player);
+                    break;
+
+                case REBOOT_TUPG:
+                    respawnPlayer(player, player.getHeading());
+                    break;
+                case REPEAT_ROUTINE_TUPG:
+                    CommandCard repeatRoutineTupgCard = new CommandCard(Command.AGAIN);
+                    this.discardCard(player, repeatRoutineTupgCard);
+                    break;
+                //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
+                case ZOOP_TUPG:
+                    zoopFunctionality(player);
+                    break;
             }
 
 
@@ -455,6 +491,19 @@ public class GameController {
 
         } //No card at that spot, so nothing happens.
     }
+    public void spamFolderCard(Player player) {
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        Iterator<CommandCard> iterator = discardPile.iterator();
+
+        while (iterator.hasNext()) {
+            CommandCard card = iterator.next();
+            if (card.getName().equalsIgnoreCase("spam")) {
+                iterator.remove(); // Remove the current card from the ArrayList
+                break; // Exit the loop after removing the first matching card
+            }
+        }
+    }
+
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
      * if the given commandcard is an interactive card the methods returns true.
@@ -580,43 +629,8 @@ public class GameController {
                 }
                 return false;
             case SPAM_FOLDER:
-                this.playSpamFolder(player);
+                spamFolderCard(player);
                 return false;
-            case ENERGY:
-                this.playEnergyRoutine(player);
-                return false;
-            case RAMMING_GEAR_PUPG:
-                return false;
-            case ENERGY_ROUTINE_TUPG:
-                CommandCard card = new CommandCard(Command.ENERGY);
-                this.discardCard(player, card);
-                return false;
-            case SPAM_FOLDER_TUPG:
-                //add method for SPAM FOLDER
-                return false;
-            case RECOMPILE_TUPG:
-                recompileUpgradeCard(player);
-                return false;
-            case RECHARGE_TUPG:
-                rechargeUpgradeCard(player);
-                return false;
-            case HACK_TUPG:
-                hackUpgradeCard(player);
-                return false;
-                //This
-            case REBOOT_TUPG:
-                respawnPlayer(player, player.getHeading());
-                return false;
-            case REPEAT_ROUTINE_TUPG:
-                CommandCard repeatRoutineTupgCard = new CommandCard(Command.AGAIN);
-                this.discardCard(player, repeatRoutineTupgCard);
-                return false;
-                //Prioritized permanent removal of one damage card, and adds a card from the top of the deck. This could be done more elegantly with a mouseclick event, that checks if the clicked card is a DAMAGE CARD. ISSUE maybe.
-
-            //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
-            case ZOOP_TUPG:
-                executeCommand(player, Command.ZOOP_TUPG);
-                return true;
 
             case MOVELEFT:
                 moveToLeftSpace(player);
@@ -1192,6 +1206,29 @@ public class GameController {
                 break;
             case "Right":
                 moveToRightSpace(player);
+                break;
+        }
+    }
+
+    public void zoopFunctionality(Player player){
+        String[] options = new String[4];
+        options[0] = "North";
+        options[1] = "South";
+        options[2] = "East";
+        options[3] = "West";
+        Option option = new Option("Rotate to face any direction");
+        switch (option.getChoice(options)) {
+            case "North":
+                player.setHeading(NORTH);
+                break;
+            case "South":
+                player.setHeading(SOUTH);
+                break;
+            case "East":
+                player.setHeading(EAST);
+                break;
+            case "West":
+                player.setHeading(WEST);
                 break;
         }
     }
