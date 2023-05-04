@@ -110,7 +110,19 @@ public class GameController {
         }
     }
 
-    // XXX: V2
+    public void setGameStateUpgradeCards(){
+        //First index is if they have the card, second index is if card has been used.
+        boolean[] newPhase = {true, false};
+
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player player = board.getPlayer(i);
+            if(player != null){
+                if (player.getPowerUps().getDefragGizmo()[0]){
+                    player.getPowerUps().setDefragGizmo(newPhase);
+                }
+            }
+        }
+    }
 
     /**
      * @Author Freja Egelund Grønnemose s224286@dtu.dk
