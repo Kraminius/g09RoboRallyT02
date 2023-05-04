@@ -58,8 +58,8 @@ import java.util.Stack;
  */
 public class SpaceView extends StackPane implements ViewObserver {
 
-    final public static int SPACE_HEIGHT = 50; // 60; // 75;
-    final public static int SPACE_WIDTH = 50;  // 60; // 75;
+    final public static int SPACE_HEIGHT = 60; // 60; // 75;
+    final public static int SPACE_WIDTH = 60;  // 60; // 75;
 
     public final Space space;
 
@@ -279,20 +279,33 @@ public class SpaceView extends StackPane implements ViewObserver {
 
     private void updatePlayer() {
         playerLayer.getChildren().clear();
+        StackPane stackPane = new StackPane();
 
         Player player = space.getPlayer();
         if (player != null) {
             Polygon arrow = new Polygon(0.0, 0.0,
-                    10.0, 20.0,
-                    20.0, 0.0 );
+                    8.0, 16.0,
+                    16.0, 0.0 );
+            Polygon backArrow = new Polygon(0.0, 0.0,
+                    10.0, 18.0,
+                    18.0, 0.0 );
+            backArrow.setFill(Color.BLACK);
             try {
                 arrow.setFill(Color.valueOf(player.getColor()));
             } catch (Exception e) {
                 arrow.setFill(Color.MEDIUMPURPLE);
             }
-
+            ImageView robot = new ImageView(ImageLoader.get().players[player.getId()-1]);
+            robot.setFitHeight(SPACE_HEIGHT/5*4);
+            robot.setFitWidth(SPACE_WIDTH/5*4);
+            robot.setRotate((90*player.getHeading().ordinal())%360);
             arrow.setRotate((90*player.getHeading().ordinal())%360);
-            playerLayer.getChildren().add(arrow);
+            backArrow.setRotate((90*player.getHeading().ordinal())%360);
+
+            stackPane.getChildren().add(robot);
+            stackPane.getChildren().add(backArrow);
+            stackPane.getChildren().add(arrow);
+            playerLayer.getChildren().add(stackPane);
         }
     }
 
