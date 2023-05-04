@@ -66,9 +66,11 @@ public class Player extends Subject {
     private ArrayList<CommandCard> cardDeck;
 
     private ArrayList<CommandCard> discardPile;
+    private UpgradeCardInfo info = new UpgradeCardInfo();
     //Har lavet et array til at se alle checkpoints samlet
     private boolean[] checkpointsReadhed;
 
+    private PowerUps powerUps;
 
     public Player(@NotNull Board board, String color, @NotNull String name, @NotNull int id) {
         this.board = board;
@@ -98,6 +100,9 @@ public class Player extends Subject {
         }
         //Her gives spilleren antallet af checkpoints
         checkpointsReadhed = new boolean[board.getCheckPointSpaces().size()];
+
+        this.powerUps = new PowerUps();
+
     }
 
     public String getName() {
@@ -239,5 +244,37 @@ public class Player extends Subject {
     }
     public void setEnergyCubeLabel(Label label){
         energyCubeLabel = label;
+    }
+    public void updateUpgradeCardView(){
+        CommandCardField[] tempArray = new CommandCardField[NO_UPGRADE_CARDS];
+        int perm = 0;
+        int nonPerm = 3;
+        for(int i = 0; i < tempArray.length; i++){
+            tempArray[i] = new CommandCardField(this);
+        }
+        for(int i = 0; i < tempArray.length; i++){
+            if(upgradeCards[i].getCard() != null){
+                if(info.getPermanent(upgradeCards[i].getCard().command)){
+                    tempArray[perm].setCard(upgradeCards[i].getCard());
+                    perm++;
+                }
+                else{
+                    tempArray[nonPerm].setCard(upgradeCards[i].getCard());
+                    nonPerm++;
+                }
+            }
+        }
+        for(int i = 0; i < upgradeCards.length; i++){
+            upgradeCards[i].setCard(tempArray[i].getCard());
+        }
+        energyCubeLabel.setText(energyCubes + "");
+    }
+
+    public PowerUps getPowerUps() {
+        return powerUps;
+    }
+
+    public void setPowerUps(PowerUps powerUps) {
+        this.powerUps = powerUps;
     }
 }

@@ -25,6 +25,7 @@ import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
 import dk.dtu.compute.se.pisd.roborally.view.ViewObserver;
+import dk.dtu.compute.se.pisd.roborally.view.WinnerDisplay;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,8 +46,9 @@ import static dk.dtu.compute.se.pisd.roborally.model.Heading.WEST;
 public class GameController {
 
     final public Board board;
+    private UpgradeShop upgradeShop;
 
-    private List<Player> sequence;
+   private List<Player> sequence;
 
     /**
      * @param board the board which the game is played on
@@ -126,16 +128,21 @@ public class GameController {
 
     /**
      * @Author Freja Egelund Grønnemose s224286@dtu.dk
-     * This methods creates an EnumSet of all valid commands (damage cards removed), and then adds new CommandCard objects to the players card deck,
+     * These methods creates an EnumSet of all valid commands (damage cards removed), and then adds new CommandCard objects to the players card deck,
      * with the valid enum. It has an int array that contains the value of how many cards of a type that exist in a player deck.
      * @param playerDeck the ArrayList that holds the players cards.
      */
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
         Set<Command> validCommands = EnumSet.allOf(Command.class);
-        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE, Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX, Command.SPAM_FOLDER, Command.ENERGY, Command.REPEAT, Command.RAMMING_GEAR_PUPG, Command.SPAM_BLOCKER_TUPG, Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG));
+        validCommands.removeAll(EnumSet.of(Command.SPAM, Command.TROJAN_HORSE,
+                Command.WORM, Command.VIRUS, Command.OPTION_LEFT_RIGHT, Command.SPEED, Command.WEASEL, Command.SANDBOX,
+                Command.SPAM_FOLDER, Command.ENERGY, Command.RAMMING_GEAR_PUPG, Command.SPAM_BLOCKER_TUPG,
+                Command.ENERGY_ROUTINE_TUPG, Command.SPAM_FOLDER_TUPG, Command.RECOMPILE_TUPG, Command.HACK_TUPG, Command.RECHARGE_TUPG, Command.ZOOP_TUPG, Command.DEFRAG_GIZMO_PUPG, Command.REPEAT_ROUTINE_TUPG, Command.REBOOT_TUPG));
+
 
         int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
         int index = 0;
+        System.out.println(validCommands);
         for(Command command : validCommands){
             int count = counts[index];
             for(int i = 0; i < count; i++){
@@ -144,11 +151,6 @@ public class GameController {
             index++;
         }
         Collections.shuffle(playerDeck);
-    }
-    public void openUpgradeShop(){
-        UpgradeShop upgradeShop = new UpgradeShop();
-        upgradeShop.openShop(board, this);
-        startProgrammingPhase();
     }
 
     public void fillUpgradeCardDeck(@NotNull ArrayList<CommandCard> upgradeDeck){
@@ -169,10 +171,18 @@ public class GameController {
                 Command.VIRUS));
 
         for(Command command : upgradeCards){
-            upgradeDeck.add(new CommandCard(command));
+            //upgradeDeck.add(new CommandCard(command));
+            upgradeDeck.add(new CommandCard(Command.RAMMING_GEAR_PUPG));
         }
         Collections.shuffle(upgradeDeck);
     }
+    public void openUpgradeShop(){
+        if(upgradeShop == null) upgradeShop = new UpgradeShop();
+        upgradeShop.openShop(board, this);
+        startProgrammingPhase();
+    }
+
+
 
     /**
      * @Author Freja Egelund Grønnemose s224286@dtu.dk
@@ -240,8 +250,9 @@ public class GameController {
     }
     // XXX: V2
     public void finishProgrammingPhase() {
+
         discardUnusedCards();
-        //Checks who has priority
+        //Checks who have priority
         antennaPriority();
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
@@ -346,7 +357,7 @@ public class GameController {
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                     } else {
                         //Probably upgrade phase here?
-                        startProgrammingPhase();
+                        startUpgradePhase();
                     }
                 }else{
                     board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
@@ -493,9 +504,6 @@ public class GameController {
             case VIRUS:
                 this.playVirus(player);
                 return false;
-            case REPEAT:
-                executeCommand(player, Command.AGAIN);
-                return false;
             case SPEED:
                 try {
                     this.sprintForward(player);
@@ -521,9 +529,63 @@ public class GameController {
                 this.discardCard(player, card);
                 return false;
             case SPAM_FOLDER_TUPG:
+                //add method for SPAM FOLDER
+                return false;
+            case RECOMPILE_TUPG:
+                recompileUpgradeCard(player);
+                return false;
+            case RECHARGE_TUPG:
+                rechargeUpgradeCard(player);
+                return false;
+            case HACK_TUPG:
+                hackUpgradeCard(player);
+                return false;
+                //This
+            case REBOOT_TUPG:
+                respawnPlayer(player, player.getHeading());
+                return false;
+            case REPEAT_ROUTINE_TUPG:
+                CommandCard repeatRoutineTupgCard = new CommandCard(Command.AGAIN);
+                this.discardCard(player, repeatRoutineTupgCard);
+                return false;
+                //Prioritized permanent removal of one damage card, and adds a card from the top of the deck. This could be done more elegantly with a mouseclick event, that checks if the clicked card is a DAMAGE CARD. ISSUE maybe.
+            case DEFRAG_GIZMO_PUPG:
+                for (int i = 0; i<Player.NO_CARDS; i++){
+                 if(player.getCardField(i).getCard().getName() == "TROJAN HORSE" || player.getCardField(i).getCard().getName() == "VIRUS" || player.getCardField(i).getCard().getName() == "WORM" || player.getCardField(i).getCard().getName() == "SPAM"){
+                     player.getCardField(i).setCard(null);
+                     player.getCardField(i).setCard(drawTopCard(player));
+                     break;
+                 }
+                }
+                return false;
+
+                //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
+            case ZOOP_TUPG:
+                executeCommand(player, Command.ZOOP_TUPG);
+                return true;
 
             default:
                 throw new RuntimeException("Should not happen");
+        }
+    }
+
+    /**
+     * Can't test if this works yet, as the "use" button doesn't work. ISSUE
+     * Find current register, and execute it again for the player.
+     * @param player
+     */
+    protected void hackUpgradeCard(Player player) {
+        int currentStep = board.getStep();
+        Player currentPlayer = board.getCurrentPlayer();
+        if (currentStep >= 0 && currentStep < Player.NO_REGISTERS) {
+            CommandCard card = currentPlayer.getProgramField(currentStep).getCard();
+            if (card != null) {
+                Command command = card.command;
+                boolean terminate = executeCommand(currentPlayer, command);
+                if (terminate) {
+                    board.setPhase(Phase.PLAYER_INTERACTION);
+                }
+            }
         }
     }
 
@@ -573,12 +635,20 @@ public class GameController {
             if (playerToMove != null) { //Check if there is a player already on this field.
                 if (movePlayerForward(playerToMove, amount, heading, false)) {
                     player.setSpace(space);//There is a player in front and they can move, so we move too.
+                    rammingGearFunctionality(player, playerToMove);
                     return true;
                 } else return false; //There is a player there and they cannot move forward so no one moves.
             } else {
                 player.setSpace(space); //There is no player or obstacle in front and we will therefore move there.
                 return true;
             }
+    }
+
+    protected void recompileUpgradeCard(Player player){
+        for(int i = 0; i<Player.NO_CARDS; i++){
+            player.getCardField(i).setCard(null);
+            player.getCardField(i).setCard(drawTopCard(player));
+        }
     }
 
     /**
@@ -644,7 +714,6 @@ public class GameController {
      * @param player the player that should be respawned
      */
     public void respawnPlayer(@NotNull Player player, @NotNull Heading heading){
-        Player currentPlayer = player;
         player.setHeading(heading);
         addDamageCard(player, Command.SPAM);
         addDamageCard(player, Command.SPAM);
@@ -848,6 +917,7 @@ public class GameController {
                 }
             }
         }
+        checkForWinner();
     }
 
     public void addDamageCard(Player player, Command type){
@@ -875,6 +945,10 @@ public class GameController {
             addDamageCard(player, Command.SPAM);
         }
         playSpam(player);
+    }
+
+    protected void rechargeUpgradeCard(Player player){
+        player.setEnergyCubes(player.getEnergyCubes()+3);
     }
 
     /**
@@ -1156,6 +1230,35 @@ public class GameController {
 
     }
 
+    public void checkForWinner(){
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            Player playerTesting = board.getPlayer(i);
+            int checkpoints = board.getCheckPointSpaces().size();
+            if(playerTesting.getCheckpointReadhed()[checkpoints-1] == true){
+                System.out.println("We have a winner! Congratulations " + playerTesting.getName() + "!");
 
+                WinnerDisplay winnerDisplay = new WinnerDisplay();
+                winnerDisplay.createWindow(playerTesting);
+
+                //This ends the game, not very exiting
+                //Platform.exit();
+            }
+        }
+    }
+
+    public List<Player> getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(List<Player> sequence) {
+        this.sequence = sequence;
+    }
+
+
+    public void rammingGearFunctionality(Player player, Player playerToMove){
+        if(player.getPowerUps().isRammingGear()){
+            addDamageCard(playerToMove, Command.SPAM);
+        }
+    }
 
 }
