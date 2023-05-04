@@ -47,6 +47,9 @@ public class UpgradeShop {
      * @param controller the controller we are using currently.
      */
     public void openShop(Board board, GameController controller){
+        for(int i = 0; i < board.getPlayersNumber(); i++){ //This should be removed, it is only to give some cubes to start with to test shop.
+            board.getPlayer(i).setEnergyCubes(10);
+        }
         this.board = board;
         this.controller = controller;
         createWindow();
@@ -167,7 +170,6 @@ public class UpgradeShop {
      */
     private void showForPlayer(Player player){
         currentPlayer = player;
-        currentPlayer.setEnergyCubes(10);
         playerInfo.getChildren().clear();
         Label name = new Label(player.getName());
         name.setStyle("-fx-font-size: 32; -fx-font-weight: bold");
@@ -409,7 +411,6 @@ public class UpgradeShop {
                 switchToNextPlayer();
             }
             else messageLabel.setText("You cannot afford this item");
-
         }
         else{
             messageLabel.setText("You dont have space for any more cards, you must first discard one.");

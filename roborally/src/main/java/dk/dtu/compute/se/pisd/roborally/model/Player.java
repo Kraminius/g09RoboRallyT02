@@ -185,6 +185,7 @@ public class Player extends Subject {
         return this.upgradeCards;
     }
 
+
     public void setUpgradeCards(CommandCardField[] upgradeCards) {
         this.upgradeCards = upgradeCards;
     }
@@ -263,6 +264,6 @@ public class Player extends Subject {
         for(int i = 0; i < upgradeCards.length; i++){
             upgradeCards[i].setCard(tempArray[i].getCard());
         }
-        energyCubeLabel.setText(energyCubes + "");
+        setEnergyCubes(energyCubes);
     }
 }

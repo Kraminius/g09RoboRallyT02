@@ -354,6 +354,8 @@ public class GameController {
                         board.setStep(step);
                         antennaPriority();
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                        Activator.getInstance().activateBoard(board, this);
+
                     } else {
                         //Probably upgrade phase here?
                         startUpgradePhase();
@@ -390,6 +392,8 @@ public class GameController {
                 board.setStep(step);
                 antennaPriority();
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                Activator.getInstance().activateBoard(board, this);
+
             } else {
                 startUpgradePhase();
             }
@@ -731,11 +735,14 @@ public class GameController {
                 board.setStep(step);
                 antennaPriority();
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+                Activator.getInstance().activateBoard(board, this);
+
             } else {
                 startUpgradePhase();
             }
         }else{
             board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+
         }
     }
 
@@ -1152,25 +1159,25 @@ public class GameController {
         for(int i = 0; i < players.length; i++){
             Space start = players[i].getSpace();
             Heading direction = players[i].getHeading();
-            Heading directOposite;
+            Heading directOpposite;
             int move;
             boolean end = false;
             switch (direction){
                 case SOUTH:
                     move = -1; //y
-                    directOposite = NORTH;
+                    directOpposite = NORTH;
                     break;
                 case NORTH:
                     move = 1; //y
-                    directOposite = SOUTH;
+                    directOpposite = SOUTH;
                     break;
                 case WEST:
                     move = -1; //x
-                    directOposite = EAST;
+                    directOpposite = EAST;
                     break;
                 case EAST:
                     move = 1; //x
-                    directOposite = WEST;
+                    directOpposite = WEST;
                     break;
                 default:
                     throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
@@ -1188,7 +1195,7 @@ public class GameController {
                     }
                     else{start = board.getSpace(start.x,(start.y + move));}
                     //are we hitting a wall
-                    if(start.getWallHeading().contains(directOposite)){
+                    if(start.getWallHeading().contains(directOpposite)){
                         end = true;
                     }
                     //Are we moving into a player?
@@ -1205,7 +1212,7 @@ public class GameController {
                     }
                     else{start = board.getSpace((start.x + move), start.y);
                         //are we hitting a wall
-                        if(start.getWallHeading().contains(directOposite)){
+                        if(start.getWallHeading().contains(directOpposite)){
                             end = true;
                         }
                         //Are we moving into a player?
