@@ -346,25 +346,11 @@ public class GameController {
                 if (card != null) {
                     Command command = card.command;
                     boolean terminate = executeCommand(currentPlayer, command);
-                    if (terminate){
+                    if (terminate) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
                         return;
                     }
                 }
-                //int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-                /*if (nextPlayerNumber < board.getPlayersNumber()) {
-                    board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
-                } else {
-                    step++;
-                    if (step < Player.NO_REGISTERS) {
-                        makeProgramFieldsVisible(step);
-                        board.setStep(step);
-                        board.setCurrentPlayer(board.getPlayer(0));
-                    } else {
-                        startProgrammingPhase();
-                    }
-                }*/
-
                 if(sequence.size() == 0){
                     step++;
                     if (step < Player.NO_REGISTERS) {
@@ -389,6 +375,25 @@ public class GameController {
         } else {
             // this should not happen
             assert false;
+        }
+    }
+
+    private void switchCurrentPlayer(){
+        int step = board.getStep();
+        if(sequence.size() == 0){
+            step++;
+            if (step < Player.NO_REGISTERS) {
+                makeProgramFieldsVisible(step);
+                board.setStep(step);
+                antennaPriority();
+                board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+            } else {
+                //Probably upgrade phase here?
+                startUpgradePhase();
+            }
+        }else{
+            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+            Activator.getInstance().activateBoard(board, this);
         }
     }
 
@@ -459,8 +464,13 @@ public class GameController {
                     this.moveForward(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
+                    board.getCurrentPlayer().setRespawnStatus(true);
+                    movePlayerToRespawn(board.getCurrentPlayer(), null);
+                    if(player == board.getCurrentPlayer()){
+                        return true;
+                    } else {
+                      executeCommand(player, command);
+                    }
                     return true;
                 }
             case RIGHT:
@@ -474,8 +484,8 @@ public class GameController {
                     this.fastForward(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
+                    board.getCurrentPlayer().setSpace(board.getRespawnSpaces());
+                    board.getCurrentPlayer().setRespawnStatus(true);
                     return true;
                 }
             case SPRINT_FORWARD:
@@ -483,8 +493,8 @@ public class GameController {
                     this.sprintForward(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
+                    board.getCurrentPlayer().setSpace(board.getRespawnSpaces());
+                    board.getCurrentPlayer().setRespawnStatus(true);
                     return true;
                 }
             case U_TURN:
@@ -495,8 +505,8 @@ public class GameController {
                     this.backUp(player);
                     return false;
                 } catch (OutsideBoardException e){
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
+                    board.getCurrentPlayer().setSpace(board.getRespawnSpaces());
+                    board.getCurrentPlayer().setRespawnStatus(true);
                     return true;
                 }
             case AGAIN:
@@ -549,8 +559,8 @@ public class GameController {
                 try {
                     this.sprintForward(player);
                 } catch (OutsideBoardException e){
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
+                    board.getCurrentPlayer().setSpace(board.getRespawnSpaces());
+                    board.getCurrentPlayer().setRespawnStatus(true);
                     return true;
                 }
                 return false;
@@ -705,6 +715,15 @@ public class GameController {
                 return true;
             }
             if (playerToMove != null) { //Check if there is a player already on this field.
+                try {
+                    if (movePlayerForward(playerToMove, amount, heading, false)) {
+                        player.setSpace(space);//There is a player in front and they can move, so we move too.
+                        return true;
+                    } else return false; //There is a player there and they cannot move forward so no one moves.
+                } catch (OutsideBoardException e){
+                    board.setCurrentPlayer(playerToMove);
+                    throw new OutsideBoardException();
+                }
                 if (movePlayerForward(playerToMove, amount, heading, false)) {
                     player.setSpace(space);//There is a player in front and they can move, so we move too.
                     rammingGearFunctionality(player, playerToMove);
@@ -732,7 +751,7 @@ public class GameController {
      * @return the target space
      * @throws OutsideBoardException if player ends up outside of board
      */
-    private Space getSpaceAt(int amount, Heading heading, int x, int y) throws OutsideBoardException {
+    protected Space getSpaceAt(int amount, Heading heading, int x, int y) throws OutsideBoardException {
         Space space = null;
             switch (heading) {
                 case NORTH:
@@ -746,7 +765,7 @@ public class GameController {
                     break;
                 case EAST:
                     if (amount < 0 && x > 0) {
-                        space = board.getSpace(x + Math.abs(amount), y);
+                        space = board.getSpace(x - Math.abs(amount), y);
                     } else if (x < board.width - amount && amount >= 0) {
                         space = board.getSpace(x + amount, y);
                     } else {
@@ -755,7 +774,7 @@ public class GameController {
                     break;
                 case WEST:
                     if (amount < 0 && x < board.width - 1) {
-                        space = board.getSpace(x - Math.abs(amount), y);
+                        space = board.getSpace(x + Math.abs(amount), y);
                     } else if (x >= amount && amount > 0) {
                         space = board.getSpace(x - amount, y);
                     } else {
@@ -779,7 +798,27 @@ public class GameController {
             }
             return space;
         }
-
+    private void movePlayerToRespawn(@NotNull Player player, Heading heading){
+        Player playerToMove = board.getRespawnSpaces().getPlayer();
+        if(playerToMove != null){
+            try{
+                if(heading == null){
+                    heading = playerToMove.getHeading();
+                }
+                Space space = getSpaceAt(1, heading, playerToMove.getSpace().getX(), playerToMove.getSpace().getY());
+                if(obstacleInSpace(board.getRespawnSpaces(), space)){
+                    movePlayerToRespawn(player, playerToMove.getHeading().next());
+                } else {
+                    playerToMove.setSpace(space);
+                    player.setSpace(board.getRespawnSpaces());
+                }
+            } catch (OutsideBoardException e){
+                movePlayerToRespawn(player, playerToMove.getHeading().next());
+            }
+        } else {
+            player.setSpace(board.getRespawnSpaces());
+        }
+    }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * This methods set the players space to the space of the rebootToken. At some point the method should cover more than 1 reboot token.
      * The method also removes ALL the players remaining program cards.
@@ -843,7 +882,7 @@ public class GameController {
 
         if (toSpace.getWallHeading() != null && directionHeadingTo != null) {
             for (int i = 0; i < toSpace.getWallHeading().size(); i++) {
-                if (toSpace.getWallHeading().get(i) == directionHeadingTo) {
+                if (toSpace.getWallHeading().get(i) == directionHeadingFrom) {
                     obstacle = true;
                 }
             }
@@ -851,7 +890,7 @@ public class GameController {
 
         if (fromSpace.getWallHeading() != null && directionHeadingFrom != null) {
             for (int i = 0; i < fromSpace.getWallHeading().size(); i++) {
-                if (fromSpace.getWallHeading().get(i) == directionHeadingFrom) {
+                if (fromSpace.getWallHeading().get(i) == directionHeadingTo) {
                     obstacle = true;
                 }
             }
