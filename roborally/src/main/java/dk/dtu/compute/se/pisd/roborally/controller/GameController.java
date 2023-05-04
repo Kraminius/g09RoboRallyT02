@@ -147,9 +147,9 @@ public class GameController {
      * @param playerDeck the ArrayList that holds the players cards.
      */
     public void fillStartDeck(@NotNull ArrayList<CommandCard> playerDeck){
-        Set<Command> validCommands = EnumSet.of(Command.FORWARD, Command.FAST_FORWARD, Command.LEFT, Command.RIGHT, Command.SPRINT_FORWARD, Command.BACK_UP, Command.U_TURN, Command.AGAIN, Command.POWER_UP, Command.SPAM, Command.TROJAN_HORSE);
+        Set<Command> validCommands = EnumSet.of(Command.FORWARD, Command.FAST_FORWARD, Command.LEFT, Command.RIGHT, Command.SPRINT_FORWARD, Command.BACK_UP, Command.U_TURN, Command.AGAIN, Command.POWER_UP);
 
-        int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1, 10, 10};
+        int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
         int index = 0;
         System.out.println(validCommands);
         for(Command command : validCommands){
