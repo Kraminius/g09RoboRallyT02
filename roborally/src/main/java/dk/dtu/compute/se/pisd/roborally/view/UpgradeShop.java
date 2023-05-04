@@ -98,8 +98,8 @@ public class UpgradeShop {
         cardHolder.setAlignment(Pos.CENTER);
         buyCards = new FlowPane();
         buyCards.setPadding(new Insets(100, 10, 100, 10));
-        buyCards.setHgap(60);
-        buyCards.setVgap(100);
+        buyCards.setHgap(80);
+        buyCards.setVgap(130);
         buyCards.setAlignment(Pos.TOP_CENTER);
         cardsToBuy = new CardFieldView[board.getPlayersNumber()];
         for(int i = 0; i < board.getPlayersNumber(); i++){
