@@ -405,6 +405,7 @@ public class GameController {
     // XXX: V2
 
     public boolean executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
+        if(card.getCard() == null) return false; //No card at that spot, so nothing happens.
         Command command = card.getCard().command;
         boolean isPermanent = UpgradeCardInfo.getPermanent(command);
         boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
