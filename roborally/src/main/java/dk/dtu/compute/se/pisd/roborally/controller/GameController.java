@@ -47,7 +47,7 @@ import static dk.dtu.compute.se.pisd.roborally.model.Heading.WEST;
 public class GameController {
 
     final public Board board;
-    private UpgradeShop upgradeShop;
+    public UpgradeShop upgradeShop;
 
    private List<Player> sequence;
 
@@ -439,8 +439,8 @@ public class GameController {
                     options[1] = "Backwards";
                     options[2] = "Left";
                     options[3] = "Right";
-                    Option option = new Option();
-                    switch (option.getAnswer("Move to an adjacent space. Do not change direction.", options)) {
+                    Option option = new Option("Move to an adjacent space. Do not change direction.");
+                    switch (option.getChoice(options)) {
                         case "Forward":
                             try {
                                 this.moveForward(player);
@@ -640,39 +640,6 @@ public class GameController {
             case ZOOP_TUPG:
                 executeCommand(player, Command.ZOOP_TUPG);
                 return true;
-
-            case BOINK_TUPG:
-                String[] options = new String[4];
-                options[0] = "Forward";
-                options[1] = "Backwards";
-                options[2] = "Left";
-                options[3] = "Right";
-                Option option = new Option();
-                switch (option.getAnswer("Move to an adjacent space. Do not change direction.", options)){
-                    case "Forward":
-                        try {
-                            this.moveForward(player);
-                            return false;
-                        } catch (OutsideBoardException e){
-                            player.setSpace(board.getRespawnSpaces());
-                            player.setRespawnStatus(true);
-                            return true;
-                        }
-                    case "Backwards":
-                        try {
-                            this.backUp(player);
-                            return false;
-                        } catch (OutsideBoardException e){
-                            player.setSpace(board.getRespawnSpaces());
-                            player.setRespawnStatus(true);
-                            return true;
-                        }
-                    case "Left":
-                        moveToLeftSpace(player);
-                    case "Right":
-                        moveToRightSpace(player);
-                }
-                return false;
 
             case MOVELEFT:
                 moveToLeftSpace(player);

@@ -1,4 +1,4 @@
-    package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
+package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -18,16 +18,16 @@ public class JSONHandler {
         jsonArray.add("orange");
         jsonObject.put("fruits", jsonArray);
 
-        raw.writeJSON("test",jsonObject);
-        printJSON("test");
+        raw.writeJSON("test", jsonObject, "board");
+        printJSON("test", "board");
     }
     /**@Author Tobias Gørlyk - s224271@dtu.dk
      * Loads a json file and recieves a JSON object.
      * @param name the name of the file it should look for
      * @return an JSONObject if the file is found, if not it returns null.
      */
-    public JSONObject load(String name){
-        return raw.readJSON(name);
+    public JSONObject load(String name, String type){
+        return raw.readJSON(name, type);
     }
     /**@Author Tobias Gørlyk - s224271@dtu.dk
      * Saves a json object under a name into a file in the directory.
@@ -35,11 +35,11 @@ public class JSONHandler {
      * @param json the json Object that needs to be saved
      * @param name the name the file should be saved under or overwrite
      */
-    public void save(String name, JSONObject json){
-        raw.writeJSON(name, json);
+    public void save(String name, JSONObject json, String type){
+        raw.writeJSON(name, json, type);
     }
-    public void printJSON(String name) {
-        JSONObject jsonObject = raw.readJSON(name);
+    public void printJSON(String name, String type) {
+        JSONObject jsonObject = raw.readJSON(name, type);
         for (Object key : jsonObject.keySet()) {
             String keyStr = (String) key;
             Object keyVal = jsonObject.get(keyStr);

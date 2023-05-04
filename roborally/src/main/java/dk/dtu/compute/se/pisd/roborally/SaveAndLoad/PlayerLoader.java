@@ -27,7 +27,7 @@ public class PlayerLoader {
      * @return the Player that is saved with the id
      */
     public boolean loadPlayer(String name, Player player){
-        JSONObject obj = json.load(name);
+        JSONObject obj = json.load(name, "player");
         if(obj == null) return false;
         Board board = player.board;
         for(Object key : obj.keySet()){

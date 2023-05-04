@@ -27,7 +27,6 @@ import javafx.scene.control.Label;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
 
@@ -68,7 +67,7 @@ public class Player extends Subject {
     private ArrayList<CommandCard> discardPile;
     private UpgradeCardInfo info = new UpgradeCardInfo();
     //Har lavet et array til at se alle checkpoints samlet
-    private boolean[] checkpointsReadhed;
+    private boolean[] checkpointsReached;
 
     private PowerUps powerUps;
 
@@ -99,7 +98,7 @@ public class Player extends Subject {
             upgradeCards[i] = new CommandCardField(this);
         }
         //Her gives spilleren antallet af checkpoints
-        checkpointsReadhed = new boolean[board.getCheckPointSpaces().size()];
+        checkpointsReached = new boolean[board.getCheckPointSpaces().size()];
 
         this.powerUps = new PowerUps();
 
@@ -212,11 +211,11 @@ public class Player extends Subject {
     }
     //Method to get their checkpoints reached
     public boolean[] getCheckpointReadhed() {
-        return checkpointsReadhed;
+        return checkpointsReached;
     }
     //Method to change their checkpoints reached
     public void setCheckpointReadhed(int Checkpoint, boolean state) {
-        checkpointsReadhed[Checkpoint] = state;
+        checkpointsReached[Checkpoint] = state;
     }
 
 
@@ -278,4 +277,21 @@ public class Player extends Subject {
     public void setPowerUps(PowerUps powerUps) {
         this.powerUps = powerUps;
     }
+
+    public CommandCardField[] getProgram() {
+        return program;
+    }
+
+    public void setProgram(CommandCardField[] program) {
+        this.program = program;
+    }
+
+    public CommandCardField[] getCards() {
+        return cards;
+    }
+
+    public void setCards(CommandCardField[] cards) {
+        this.cards = cards;
+    }
+
 }
