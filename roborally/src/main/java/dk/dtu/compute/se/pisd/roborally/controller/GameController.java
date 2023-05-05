@@ -189,8 +189,11 @@ public class GameController {
                 Command.POWER_UP,
                 Command.SPAM_FOLDER));
 
+        //Adding 5 of each card. Will implement a discard upgradeCards pile in next Scope. Planned in next PI.
         for(Command command : upgradeCards){
-            upgradeDeck.add(new CommandCard(Command.HACK_TUPG));
+            for (int i=0;i<5;i++) {
+                upgradeDeck.add(new CommandCard(command));
+            }
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -1296,10 +1299,17 @@ public class GameController {
                 case HACK_TUPG:
                     hackUpgradeCard(player);
                     break;
+                case SPEED_TUPG:
+                    CommandCard speedCard = new CommandCard(Command.SPEED);
+                    discardCard(player, speedCard);
+                    break;
 
+                /* Removing from this scope. Not working as intended. ISSUE.
                 case REBOOT_TUPG:
+
                     respawnPlayer(player, player.getHeading());
                     break;
+                     */
                 case REPEAT_ROUTINE_TUPG:
                     CommandCard repeatRoutineTupgCard = new CommandCard(Command.AGAIN);
                     this.discardCard(player, repeatRoutineTupgCard);
@@ -1406,6 +1416,11 @@ public class GameController {
         }
     }
 
+    /**
+     * @Author Mikkel Jürs, s224279@dtu.dk
+     * Creates an Options window and executes the command picked.
+     * @param player
+     */
     public void boinkFunctionality(Player player){
         String[] options = new String[4];
         options[0] = "Forward";

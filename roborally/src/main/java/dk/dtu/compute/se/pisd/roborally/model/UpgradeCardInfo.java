@@ -25,6 +25,18 @@ public class UpgradeCardInfo {
                 return false;
             case RECHARGE_TUPG:
                 return false;
+            case HACK_TUPG:
+                return false;
+            case ZOOP_TUPG:
+                return false;
+            case SPEED_TUPG:
+                return false;
+            case REPEAT_ROUTINE_TUPG:
+                return false;
+            case BOINK_TUPG:
+                return false;
+            case DOUBLE_BARREL_LASER_PUGB:
+                return true;
 
             default: return false;
         }
@@ -51,6 +63,18 @@ public class UpgradeCardInfo {
                 return 1;
             case RECHARGE_TUPG:
                 return 0;
+            case HACK_TUPG:
+                return 1;
+            case ZOOP_TUPG:
+                return 1;
+            case SPEED_TUPG:
+                return 3;
+            case REPEAT_ROUTINE_TUPG:
+                return 3;
+            case BOINK_TUPG:
+                return 1;
+            case DOUBLE_BARREL_LASER_PUGB:
+                return 2;
             default: return 1;
         }
     }
