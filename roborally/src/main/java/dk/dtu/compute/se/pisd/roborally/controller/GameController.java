@@ -1464,7 +1464,7 @@ public class GameController {
                         end = true;
                     }
                     //Are we moving into a player?
-                    else if(start.getPlayer() != null){
+                    else if(start.getPlayer() != null && end == false){
                         end = true;
                         //Deal damage to player
                         addDamageCard(start.getPlayer(), Command.SPAM);
@@ -1483,7 +1483,7 @@ public class GameController {
                             end = true;
                         }
                         //Are we moving into a player?
-                        else if(start.getPlayer() != null){
+                        else if(start.getPlayer() != null && end == false){
                             end = true;
                             //Deal damage to player
                             addDamageCard(start.getPlayer(), Command.SPAM);
