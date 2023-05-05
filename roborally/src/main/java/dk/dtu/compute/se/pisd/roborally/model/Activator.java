@@ -73,7 +73,12 @@ public class Activator {
         for(int i = 0; i < spaces.size(); i++){
             if(spaces.get(i).getPlayer() != null){
                 Player player = spaces.get(i).getPlayer();
-                Laser laser = spaces.get(i).getElement().getLaser();
+                    int amount = spaces.get(i).getElement().getLaser().getDamage();
+                    //Deal damage for the amount
+                    for(int j = 0; j < amount; j++) {
+                        controller.addDamageCard(player, Command.SPAM);
+                }
+                //Laser laser = spaces.get(i).getElement().getLaser();
             }
         }
     }
