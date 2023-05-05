@@ -5,13 +5,16 @@ import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Checkpoint;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Laser;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.SpaceElement;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
-import static dk.dtu.compute.se.pisd.roborally.model.Heading.WEST;
+import java.util.ArrayList;
+import java.util.List;
+
+import static dk.dtu.compute.se.pisd.roborally.model.Heading.*;
 
 class LaserTest {
 
@@ -35,14 +38,30 @@ class LaserTest {
                 board.spaces[x][y] = new Space(board, x, y);
             }
         }
+
+        //Giving it checkpoints
+        for(int i = 0; i < 3; i++){
+            SpaceElement checkpointSpace = new SpaceElement();
+            Checkpoint checkpoint = new Checkpoint();
+            checkpoint.setNumber(i+1);
+            checkpointSpace.setCheckpoint(checkpoint);
+            board.getSpace(5+i,0+i).setElement(checkpointSpace);
+        }
+
         //Giving it lasers
         for(int i = 0; i < 2; i++){
             SpaceElement laserSpace = new SpaceElement();
+            SpaceElement wallSpace = new SpaceElement();
             Laser laser = new Laser();
+            Wall wall = new Wall();
             laser.setHeading(WEST);
             laser.setDamage(1);
+            ArrayList<Heading> wallHead = new ArrayList<>();
+            wallHead.add(EAST);
+            wall.setWallHeadings(wallHead);
             laserSpace.setLaser(laser);
             board.getSpace(4+i,4+i).setElement(laserSpace);
+            board.getSpace(4+i,1+i).setElement(wallSpace);
         }
 
         //Double laser
@@ -108,8 +127,8 @@ class LaserTest {
         }
 
         Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
-        Assertions.assertEquals(spamFound2, 1, "Expect player "+current.getName()+" to get take 1 damage");
-        Assertions.assertEquals(spamFound3, 0, "Dont expect player "+current.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 1, "Expect player "+second.getName()+" to get take 1 damage");
+        Assertions.assertEquals(spamFound3, 0, "Dont expect player "+third.getName()+" to get any damage");
 
     }
 
