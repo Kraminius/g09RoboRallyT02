@@ -162,6 +162,12 @@ public class GameController {
         Collections.shuffle(playerDeck);
     }
 
+    /**
+     * @Author Mikkel Jürs, s224279@student.dtu.dk
+     * Method for filling the UpgradeCardDeck.
+     * @param upgradeDeck ArrayList of CommandCards that holds all upgradeCards, with all the Unems from Command without
+     *                    the non-upgradeable ones.
+     */
     public void fillUpgradeCardDeck(@NotNull ArrayList<CommandCard> upgradeDeck){
         Set<Command> upgradeCards = EnumSet.allOf(Command.class);
         upgradeCards.removeAll(EnumSet.of(
@@ -188,6 +194,8 @@ public class GameController {
         }
         Collections.shuffle(upgradeDeck);
     }
+
+
 
 
 
@@ -918,8 +926,9 @@ public class GameController {
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 }
             }
+            checkForWinner();
         }
-        checkForWinner();
+
     }
 
     public void addDamageCard(Player player, Command type){
