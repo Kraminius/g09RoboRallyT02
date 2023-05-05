@@ -189,7 +189,9 @@ public class GameController {
                 Command.POWER_UP,
                 Command.SPAM_FOLDER,
                 Command.SPEED,
-                Command.WEASEL));
+                Command.WEASEL,
+                Command.ENERGY,
+                Command.SANDBOX));
 
         //Adding 5 of each card. Will implement a discard upgradeCards pile in next Scope. Planned in next PI.
         for(Command command : upgradeCards){
@@ -1510,6 +1512,7 @@ public class GameController {
      */
     public void spamBlockerTemp(Player player){
         for (int i = 0; i< Player.NO_CARDS; i++){
+            if(player.getCardField(i).getCard() != null){
             if(player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")){
                 player.getCardField(i).setCard(null);
                 player.getCardField(i).setCard(drawTopCard(player));
@@ -1517,6 +1520,7 @@ public class GameController {
             else {
                 System.out.println("You have no spam cards in your hand");
             }
+        }
         }
     }
 
