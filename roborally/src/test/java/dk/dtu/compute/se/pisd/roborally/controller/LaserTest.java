@@ -171,5 +171,295 @@ class LaserTest {
 
     }
 
+    @Test
+    void hitByPlayerLaser(){
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+
+        second.setSpace(board.getSpace(0,4));
+        second.setHeading(WEST);
+        current.setSpace(board.getSpace(1,4));
+        current.setHeading(SOUTH);
+        third.setSpace(board.getSpace(0,2));
+        third.setHeading(WEST);
+        activator.activateBoard(board, gameController);
+
+        int spamFound1 = 0;
+        for(int i = 0; i < current.getDiscardPile().size(); i++){
+            if(current.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound1++;
+            }
+        }
+        int spamFound2 = 0;
+        for(int i = 0; i < second.getDiscardPile().size(); i++){
+            if(second.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound2++;
+            }
+        }
+        int spamFound3 = 0;
+        for(int i = 0; i < third.getDiscardPile().size(); i++){
+            if(third.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound3++;
+            }
+        }
+
+        Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound3, 1, "Expect player "+third.getName()+" to take 1 damage");
+
+    }
+
+    @Test
+    void hitByPlayerWallLaser(){
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+
+        second.setSpace(board.getSpace(0,4));
+        second.setHeading(WEST);
+        current.setSpace(board.getSpace(1,4));
+        current.setHeading(SOUTH);
+        third.setSpace(board.getSpace(0,2));
+        third.setHeading(WEST);
+
+        //Setting up a wall
+        SpaceElement wallSpace = new SpaceElement();
+        Wall wall = new Wall();
+        ArrayList<Heading> wallHead = new ArrayList<>();
+        wallHead.add(EAST);
+        wall.setWallHeadings(wallHead);
+        wallSpace.setWall(wall);
+        board.getSpace(0,3).setElement(wallSpace);
+
+        activator.activateBoard(board, gameController);
+
+        int spamFound1 = 0;
+        for(int i = 0; i < current.getDiscardPile().size(); i++){
+            if(current.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound1++;
+            }
+        }
+        int spamFound2 = 0;
+        for(int i = 0; i < second.getDiscardPile().size(); i++){
+            if(second.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound2++;
+            }
+        }
+        int spamFound3 = 0;
+        for(int i = 0; i < third.getDiscardPile().size(); i++){
+            if(third.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound3++;
+            }
+        }
+
+        Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound3, 0, "Expect player "+third.getName()+" to take 0 damage");
+
+    }
+
+    @Test
+    void hitByPlayerWall2Laser(){
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+
+        second.setSpace(board.getSpace(0,4));
+        second.setHeading(WEST);
+        current.setSpace(board.getSpace(1,4));
+        current.setHeading(SOUTH);
+        third.setSpace(board.getSpace(0,2));
+        third.setHeading(WEST);
+
+        //Setting up a wall
+        SpaceElement wallSpace = new SpaceElement();
+        Wall wall = new Wall();
+        ArrayList<Heading> wallHead = new ArrayList<>();
+        wallHead.add(EAST);
+        wall.setWallHeadings(wallHead);
+        wallSpace.setWall(wall);
+        board.getSpace(0,2).setElement(wallSpace);
+
+        activator.activateBoard(board, gameController);
+
+        int spamFound1 = 0;
+        for(int i = 0; i < current.getDiscardPile().size(); i++){
+            if(current.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound1++;
+            }
+        }
+        int spamFound2 = 0;
+        for(int i = 0; i < second.getDiscardPile().size(); i++){
+            if(second.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound2++;
+            }
+        }
+        int spamFound3 = 0;
+        for(int i = 0; i < third.getDiscardPile().size(); i++){
+            if(third.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound3++;
+            }
+        }
+
+        Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound3, 0, "Expect player "+third.getName()+" to take 0 damage");
+
+    }
+
+    @Test
+    void hitByPlayerWall3Laser(){
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+
+        second.setSpace(board.getSpace(0,4));
+        second.setHeading(WEST);
+        current.setSpace(board.getSpace(1,4));
+        current.setHeading(SOUTH);
+        third.setSpace(board.getSpace(0,2));
+        third.setHeading(WEST);
+
+        //Setting up a wall
+        SpaceElement wallSpace = new SpaceElement();
+        Wall wall = new Wall();
+        ArrayList<Heading> wallHead = new ArrayList<>();
+        wallHead.add(WEST);
+        wall.setWallHeadings(wallHead);
+        wallSpace.setWall(wall);
+        board.getSpace(0,3).setElement(wallSpace);
+
+        activator.activateBoard(board, gameController);
+
+        int spamFound1 = 0;
+        for(int i = 0; i < current.getDiscardPile().size(); i++){
+            if(current.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound1++;
+            }
+        }
+        int spamFound2 = 0;
+        for(int i = 0; i < second.getDiscardPile().size(); i++){
+            if(second.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound2++;
+            }
+        }
+        int spamFound3 = 0;
+        for(int i = 0; i < third.getDiscardPile().size(); i++){
+            if(third.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound3++;
+            }
+        }
+
+        Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound3, 0, "Expect player "+third.getName()+" to take 0 damage");
+
+    }
+
+    @Test
+    void hitByPlayerWall4Laser(){
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+
+        second.setSpace(board.getSpace(0,4));
+        second.setHeading(WEST);
+        current.setSpace(board.getSpace(1,4));
+        current.setHeading(SOUTH);
+        third.setSpace(board.getSpace(0,2));
+        third.setHeading(WEST);
+
+        //Setting up a wall
+        SpaceElement wallSpace = new SpaceElement();
+        Wall wall = new Wall();
+        ArrayList<Heading> wallHead = new ArrayList<>();
+        wallHead.add(EAST);
+        wall.setWallHeadings(wallHead);
+        wallSpace.setWall(wall);
+        board.getSpace(0,2).setElement(wallSpace);
+
+        activator.activateBoard(board, gameController);
+
+        int spamFound1 = 0;
+        for(int i = 0; i < current.getDiscardPile().size(); i++){
+            if(current.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound1++;
+            }
+        }
+        int spamFound2 = 0;
+        for(int i = 0; i < second.getDiscardPile().size(); i++){
+            if(second.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound2++;
+            }
+        }
+        int spamFound3 = 0;
+        for(int i = 0; i < third.getDiscardPile().size(); i++){
+            if(third.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound3++;
+            }
+        }
+
+        Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound3, 0, "Expect player "+third.getName()+" to take 0 damage");
+
+    }
+
+    @Test
+    void hitByPlayerWall5Laser(){
+        Board board = gameController.board;
+        Player current = board.getCurrentPlayer();
+        Player second = board.getPlayer(1);
+        Player third = board.getPlayer(2);
+
+        second.setSpace(board.getSpace(0,4));
+        second.setHeading(WEST);
+        current.setSpace(board.getSpace(1,4));
+        current.setHeading(SOUTH);
+        third.setSpace(board.getSpace(0,2));
+        third.setHeading(WEST);
+
+        //Setting up a wall
+        SpaceElement wallSpace = new SpaceElement();
+        Wall wall = new Wall();
+        ArrayList<Heading> wallHead = new ArrayList<>();
+        wallHead.add(WEST);
+        wall.setWallHeadings(wallHead);
+        wallSpace.setWall(wall);
+        board.getSpace(0,2).setElement(wallSpace);
+
+        activator.activateBoard(board, gameController);
+
+        int spamFound1 = 0;
+        for(int i = 0; i < current.getDiscardPile().size(); i++){
+            if(current.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound1++;
+            }
+        }
+        int spamFound2 = 0;
+        for(int i = 0; i < second.getDiscardPile().size(); i++){
+            if(second.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound2++;
+            }
+        }
+        int spamFound3 = 0;
+        for(int i = 0; i < third.getDiscardPile().size(); i++){
+            if(third.getDiscardPile().get(i).command == Command.SPAM){
+                spamFound3++;
+            }
+        }
+
+        Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound3, 1, "Expect player "+third.getName()+" to take 1 damage");
+
+    }
+
    //Add more test for this one
 }
