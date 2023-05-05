@@ -187,7 +187,9 @@ public class GameController {
                 Command.MOVELEFT,
                 Command.MOVERIGHT,
                 Command.POWER_UP,
-                Command.SPAM_FOLDER));
+                Command.SPAM_FOLDER,
+                Command.SPEED,
+                Command.WEASEL));
 
         //Adding 5 of each card. Will implement a discard upgradeCards pile in next Scope. Planned in next PI.
         for(Command command : upgradeCards){

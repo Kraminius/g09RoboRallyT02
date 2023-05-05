@@ -102,8 +102,6 @@ public class AppController implements Observer {
             StartPositionWindow positionWindow = new StartPositionWindow();
             positionWindow.getStartSpaces(board);
 
-            for(int j = 0; j < board.getPlayersNumber(); j++)
-                board.getPlayer(j).setEnergyCubes(5);
 
             gameController.startUpgradePhase();
 
