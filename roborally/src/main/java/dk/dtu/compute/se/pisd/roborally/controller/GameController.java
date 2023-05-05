@@ -556,7 +556,7 @@ public class GameController {
                 }
                 return false;
             case SPAM_FOLDER:
-                spamFolderCard(player);
+                playSpamFolder(player);
                 return false;
 
             case MOVELEFT:
@@ -966,17 +966,6 @@ public class GameController {
             addDamageCard(otherPlayer, Command.SPAM);
         }
         playSpam(player);
-    }
-
-    public void playSpamFolder(Player player){
-        ArrayList<CommandCard> discardPile = player.getDiscardPile();
-        for(int i = 0; i < discardPile.size(); i++){
-            CommandCard cardToRemove = discardPile.get(i);
-            if(cardToRemove.getName().equals(Command.SPAM.displayName)){
-                discardPile.remove(i);
-                break;
-            }
-        }
     }
 
 
@@ -1537,18 +1526,17 @@ public class GameController {
         }
     }
 
-    public void spamFolderCard(Player player) {
+    public void playSpamFolder(Player player){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
-        Iterator<CommandCard> iterator = discardPile.iterator();
-
-        while (iterator.hasNext()) {
-            CommandCard card = iterator.next();
-            if (card.getName().equalsIgnoreCase("spam")) {
-                iterator.remove(); // Remove the current card from the ArrayList
-                break; // Exit the loop after removing the first matching card
+        for(int i = 0; i < discardPile.size(); i++){
+            CommandCard cardToRemove = discardPile.get(i);
+            if(cardToRemove.getName().equals(Command.SPAM.displayName)){
+                discardPile.remove(i);
+                break;
             }
         }
     }
+
 
 //endregion
 
