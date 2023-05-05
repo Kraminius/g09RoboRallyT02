@@ -21,6 +21,10 @@ public class UpgradeCardInfo {
                 return false;
             case SANDBOX_UPG:
                 return false;
+            case RECOMPILE_TUPG:
+                return false;
+            case RECHARGE_TUPG:
+                return false;
 
             default: return false;
         }
@@ -43,6 +47,10 @@ public class UpgradeCardInfo {
                 return 2;
             case SANDBOX_UPG:
                 return 5;
+            case RECOMPILE_TUPG:
+                return 1;
+            case RECHARGE_TUPG:
+                return 0;
             default: return 1;
         }
     }

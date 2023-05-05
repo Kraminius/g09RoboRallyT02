@@ -190,7 +190,7 @@ public class GameController {
                 Command.SPAM_FOLDER));
 
         for(Command command : upgradeCards){
-            upgradeDeck.add(new CommandCard(Command.SANDBOX_UPG));
+            upgradeDeck.add(new CommandCard(Command.HACK_TUPG));
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -1511,7 +1511,8 @@ public class GameController {
     protected void hackUpgradeCard(Player player) {
         int currentStep = board.getStep();
         Player currentPlayer = board.getCurrentPlayer();
-        if (currentStep >= 0 && currentStep < Player.NO_REGISTERS) {
+        if(board.getPhase().equals(Phase.ACTIVATION)){
+        if (currentStep >= 0 && currentStep < Player.NO_REGISTERS && currentPlayer.getProgramField(currentStep) != null) {
             CommandCard card = currentPlayer.getProgramField(currentStep).getCard();
             if (card != null) {
                 Command command = card.command;
@@ -1520,6 +1521,11 @@ public class GameController {
                     board.setPhase(Phase.PLAYER_INTERACTION);
                 }
             }
+        } else {
+            System.out.println("You have nothing in your register.");
+        }
+        } else {
+            System.out.println("You're not in activation phase.");
         }
     }
 

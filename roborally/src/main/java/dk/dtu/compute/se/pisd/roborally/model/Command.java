@@ -73,7 +73,7 @@ public enum Command {
     ENERGY("Gain 1 energy"),
     RECOMPILE_TUPG("Recompile \nDiscard your entire hand. Draw a new one"),
     RECHARGE_TUPG("Recharge \nGain three energy"),
-    HACK_TUPG("Hack \nExecute the programming in your current register again"),
+    HACK_TUPG("Hack \nExecute current register again"),
     ZOOP_TUPG("Zoop \nRotate to face any direction", LEFT, RIGHT, U_TURN),
     REBOOT_TUPG("Reboot \nReboot your robot, but take no damage"),
     REPEAT_ROUTINE_TUPG("Repeat Routine \nAdd the Repeat Routine Programming card to your discard pile"),
