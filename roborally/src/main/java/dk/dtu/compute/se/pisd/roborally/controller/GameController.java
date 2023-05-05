@@ -836,7 +836,7 @@ public class GameController {
     }
 
     /**
-     * Takes the players existing energyCube amount, and adds the int cubeAmount to it.
+     * Takes players current energycubes and adds an int on top.
      * @param player
      * @param cubeAmount
      */
@@ -1483,7 +1483,7 @@ public class GameController {
                 player.getCardField(i).setCard(drawTopCard(player));
             }
             else {
-                System.out.println("You have no spam cards in your hand.");
+                System.out.println("You have no spam cards in your hand");
             }
         }
     }
