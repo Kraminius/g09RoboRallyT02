@@ -894,38 +894,40 @@ public class GameController {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
             int moving;
-            if (player.getSpace().getElement().getBelt() != null) {
-                moving = player.getSpace().getElement().getBelt().getSpeed();
-                for (int n = moving; n > 0; n--) {
-                    Heading heading = player.getSpace().getElement().getBelt().getHeading();
-                    Space spaceInFront = null;
-                    switch (heading) {
-                        case EAST:
+            if (player.getSpace() != null) {
+                if (player.getSpace().getElement().getBelt() != null) {
+                    moving = player.getSpace().getElement().getBelt().getSpeed();
+                    for (int n = moving; n > 0; n--) {
+                        Heading heading = player.getSpace().getElement().getBelt().getHeading();
+                        Space spaceInFront = null;
+                        switch (heading) {
+                            case EAST:
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x + 1, player.getSpace().y);
-                            break;
-                        case WEST:
+                                break;
+                            case WEST:
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x - 1, player.getSpace().y);
-                            break;
-                        case NORTH:
+                                break;
+                            case NORTH:
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y - 1);
-                            break;
-                        case SOUTH:
+                                break;
+                            case SOUTH:
                                 spaceInFront = getSpaceAt(1, heading, player.getSpace().x, player.getSpace().y + 1);
-                            break;
-                        default:
-                            throw new RuntimeException("No Heading"); //This should not happen
+                                break;
+                            default:
+                                throw new RuntimeException("No Heading"); //This should not happen
+                        }
+                        if (spaceInFront == null) return;
+
+                        if (spaceInFront.getElement().getBelt() == null) {
+                            movePlayerForward(player, 1, heading, false); //Can move players as this would be outside of belt.
+                            moving = 0; //No longer moving on a belt so this is set to 0.
+                        } else
+                            movePlayerForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
+
+                        if (spaceInFront.getElement().getBelt().getTurn().equals("LEFT")) turnLeft(player);
+                        else if (spaceInFront.getElement().getBelt().getTurn().equals("RIGHT")) turnRight(player);
+
                     }
-                    if (spaceInFront == null) return;
-
-                    if (spaceInFront.getElement().getBelt() == null) {
-                        movePlayerForward(player, 1, heading, false); //Can move players as this would be outside of belt.
-                        moving = 0; //No longer moving on a belt so this is set to 0.
-                    } else
-                        movePlayerForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
-
-                    if (spaceInFront.getElement().getBelt().getTurn().equals("LEFT")) turnLeft(player);
-                    else if (spaceInFront.getElement().getBelt().getTurn().equals("RIGHT")) turnRight(player);
-
                 }
             }
         }
