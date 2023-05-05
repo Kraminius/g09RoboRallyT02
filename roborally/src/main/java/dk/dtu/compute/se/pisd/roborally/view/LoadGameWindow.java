@@ -1,4 +1,4 @@
-package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
+package dk.dtu.compute.se.pisd.roborally.view;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,8 +9,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class BoardLoadWindow {
-    String board;
+public class LoadGameWindow {
+    String saveName;
     Stage stage;
 
     /**@Author Tobias Gørlyk - s224271@dtu.dk
@@ -28,11 +28,11 @@ public class BoardLoadWindow {
         return toReturn;
     }
     /**@Author Tobias Gørlyk - s224271@dtu.dk
-     * Looks in the file folder to see all maps, it then adds it to the combobox, so we can choose between them.
+     * Looks in the file folder to see all games, it then adds it to the combobox, so we can choose between them.
      * @param box the combobox to add the files to
      */
     private void addFiles(ComboBox<String> box){
-        File folder = new File("roborally/src/main/resources/boards");
+        File folder = new File("roborally/src/main/resources/games");
         File[] listOfFiles = folder.listFiles();
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
@@ -42,13 +42,13 @@ public class BoardLoadWindow {
         }
     }
     /**@Author Tobias Gørlyk - s224271@dtu.dk
-     * opens a window for the user to input which board they want to play on.
-     * @return the name of the board the user chose.
+     * opens a window for the user to input which game they want to load
+     * @return the name of the save the user chose.
      */
-    public String getBoardInput(){
+    public String getLoadInput(){
         VBox window = new VBox();
         window.setAlignment(Pos.TOP_CENTER);
-        Label label = new Label("Choose Board");
+        Label label = new Label("Choose Save");
         label.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
         ComboBox<String> choices = new ComboBox<>();
         addFiles(choices);
@@ -60,14 +60,14 @@ public class BoardLoadWindow {
         stage.setScene(scene);
         choices.setOnAction(e -> setString(choices.getValue()));
         stage.showAndWait();
-        return board;
+        return saveName;
     }
     /**@Author Tobias Gørlyk - s224271@dtu.dk
      * Updates the chosen name with the combobox after an action. It also closes the window.
      * @param value the name of the board
      */
     private void setString(String value){
-        board = value;
+        saveName = value;
         stage.close();
     }
 }

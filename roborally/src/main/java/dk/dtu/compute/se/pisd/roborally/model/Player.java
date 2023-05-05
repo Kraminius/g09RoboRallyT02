@@ -240,7 +240,6 @@ public class Player extends Subject {
 
     public void setEnergyCubes(int energyCubes) {
         this.energyCubes = energyCubes;
-        energyCubeLabel.setText(energyCubes + "");
     }
     public void setEnergyCubeLabel(Label label){
         energyCubeLabel = label;
@@ -267,7 +266,10 @@ public class Player extends Subject {
         for(int i = 0; i < upgradeCards.length; i++){
             upgradeCards[i].setCard(tempArray[i].getCard());
         }
-        setEnergyCubes(energyCubes);
+        updateCubeLabel();
+    }
+    public void updateCubeLabel(){
+        energyCubeLabel.setText(energyCubes + "");
     }
 
     public PowerUps getPowerUps() {

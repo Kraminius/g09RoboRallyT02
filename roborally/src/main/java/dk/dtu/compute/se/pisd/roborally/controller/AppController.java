@@ -26,24 +26,19 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
-import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoadWindow;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
+import dk.dtu.compute.se.pisd.roborally.view.BoardLoadWindow;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameSave;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 
+import dk.dtu.compute.se.pisd.roborally.view.LoadGameWindow;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
+import dk.dtu.compute.se.pisd.roborally.view.StartPositionWindow;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -57,9 +52,9 @@ import java.util.Optional;
 public class AppController implements Observer {
 
     final private List<Integer> PLAYER_NUMBER_OPTIONS = Arrays.asList(2, 3, 4, 5, 6);
-    final private List<String> PLAYER_COLORS = Arrays.asList("red", "green", "blue", "orange", "grey", "magenta");
+    final public List<String> PLAYER_COLORS = Arrays.asList("red", "green", "blue", "orange", "grey", "magenta");
 
-    final private RoboRally roboRally;
+    final public RoboRally roboRally;
 
     private GameController gameController;
 
@@ -91,6 +86,7 @@ public class AppController implements Observer {
             int no = result.get();
             for (int i = 0; i < no; i++) {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i+1);
+                player.setEnergyCubes(5);
                 gameController.fillStartDeck(player.getCardDeck());
                 board.addPlayer(player);
 
@@ -133,7 +129,16 @@ public class AppController implements Observer {
     public void loadGame() {
         // XXX needs to be implemented eventually
         // for now, we just create a new game
-        if (gameController == null) {
+
+        LoadGameWindow load = new LoadGameWindow();
+        String saveName = load.getLoadInput();
+        System.out.println("Loading " + saveName);
+        gameController = GameLoader.loadGame(saveName, this);
+
+        if(gameController != null) {
+
+        }
+        else{
             newGame();
         }
     }

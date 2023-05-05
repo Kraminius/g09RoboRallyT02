@@ -46,13 +46,10 @@ public class UpgradeShop {
      * @param controller the controller we are using currently.
      */
     public void openShop(Board board, GameController controller){
-        for(int i = 0; i < board.getPlayersNumber(); i++){ //This should be removed, it is only to give some cubes to start with to test shop.
-            board.getPlayer(i).setEnergyCubes(10);
-        }
         this.board = board;
         this.controller = controller;
         createWindow();
-        playerOrder = 0;
+        playerOrder = -1;
         switchToNextPlayer();
 
     }

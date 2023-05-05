@@ -194,6 +194,7 @@ public class PlayerView extends Tab implements ViewObserver {
         sideBySide.getChildren().add(bottomBar);
         stackPane.getChildren().add(sideBySide);
 
+        player.updateCubeLabel();
 
 
 
