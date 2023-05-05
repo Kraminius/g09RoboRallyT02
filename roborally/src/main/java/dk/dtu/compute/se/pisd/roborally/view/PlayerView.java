@@ -30,6 +30,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -71,6 +72,18 @@ public class PlayerView extends Tab implements ViewObserver {
     private GridPane upgradeCards;
 
     private GameController gameController;
+    private void setColors() {
+        Border bordor = new Border(new BorderStroke(Color.valueOf(player.getColor()), BorderStrokeStyle.SOLID, null, new BorderWidths(2)));
+        for(CardFieldView view : programCardViews){
+            view.setBorder(bordor);
+        }
+        for(CardFieldView view : cardViews){
+            view.setBorder(bordor);
+        }
+        for(CardFieldView view : upgradeCardView){
+            view.setBorder(bordor);
+        }
+    }
 
     public PlayerView(@NotNull GameController gameController, @NotNull Player player) {
         super(player.getName());
@@ -221,6 +234,7 @@ public class PlayerView extends Tab implements ViewObserver {
             player.board.attach(this);
             update(player.board);
         }
+        setColors();
     }
 
     /**

@@ -96,6 +96,19 @@ public class Activator {
             if(spaces.get(i).getPlayer() != null){
                 Player player = spaces.get(i).getPlayer();
                 EnergyField energyField = spaces.get(i).getElement().getEnergyField();
+                if(energyField.getCubes() > 0) {
+                    player.setEnergyCubes(player.getEnergyCubes() + 1);
+                    player.updateCubeLabel();
+                    energyField.setCubes(energyField.getCubes() - 1);
+                    if(energyField.getCubes() > 0) energyField.setShowCube(true);
+                    else energyField.setShowCube(false);
+                }
+                else{
+                    if(board.getStep() == 5){
+                        player.setEnergyCubes(player.getEnergyCubes() + 1);
+                        player.updateCubeLabel();
+                    }
+                }
             }
         }
     }

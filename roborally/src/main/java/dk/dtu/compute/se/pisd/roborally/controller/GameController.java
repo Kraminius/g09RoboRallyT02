@@ -862,7 +862,8 @@ public class GameController {
      * @param cubeAmount the amount of cubes that should be added.
      */
     public void powerUp(@NotNull Player player, int cubeAmount){
-        player.setEnergyCubes(player.getEnergyCubes()+cubeAmount);
+        player.setEnergyCubes(player.getEnergyCubes() + cubeAmount);
+        player.updateCubeLabel();
     }
 
     /**@Author Freja Egelund Grønnemose s224286@dtu.dk
@@ -1174,67 +1175,47 @@ public class GameController {
     public void playerLaserActivate(Player[] players){
 
         for(int i = 0; i < players.length; i++){
-            Space start = players[i].getSpace();
-            Heading direction = players[i].getHeading();
-            Heading directOpposite;
-            int move;
-            boolean end = false;
-            //if(start.getElement().getWall() == null || !start.getElement().getWall().getWallHeadings().contains(direction)){
+            try{
+                Space start = players[i].getSpace();
+                Heading direction = players[i].getHeading();
+                Heading directOpposite;
+                int move;
+                boolean end = false;
 
-            switch (direction){
-                case SOUTH:
-                    move = +1; //y
-                    directOpposite = NORTH;
-                    break;
-                case NORTH:
-                    move = -1; //y
-                    directOpposite = SOUTH;
-                    break;
-                case WEST:
-                    move = -1; //x
-                    directOpposite = EAST;
-                    break;
-                case EAST:
-                    move = 1; //x
-                    directOpposite = WEST;
-                    break;
-                default:
-                    throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
-            }
-            //Maybe a Do while
-            while(end == false){
-                //Are we moving into a wall?
-                if(start.getElement().getWall() != null && start.getElement().getWall().getWallHeadings().contains(direction)){
-                    end = true;
+                switch (direction){
+                    case SOUTH:
+                        move = -1; //y
+                        directOpposite = NORTH;
+                        break;
+                    case NORTH:
+                        move = 1; //y
+                        directOpposite = SOUTH;
+                        break;
+                    case WEST:
+                        move = -1; //x
+                        directOpposite = EAST;
+                        break;
+                    case EAST:
+                        move = 1; //x
+                        directOpposite = WEST;
+                        break;
+                    default:
+                        throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
                 }
-                //We are moving verticaly
-                if(direction == SOUTH || direction == NORTH){
-                    if(board.getSpace(start.getX()+(move*2),start.getY()) == null){
-                    //if(start.y <= 0 || start.y >= board.height){
+                //Maybe a Do while
+                while(end == false){
+                    //Are we moving into a wall?
+                    if(start.getWallHeading().contains(direction)){
                         end = true;
                     }
-                    start = board.getSpace(start.x+move,(start.y));
-                    //are we hitting a wall
-                    if(start.getElement().getWall() != null && start.getElement().getWall().getWallHeadings().contains(directOpposite)){
-                        end = true;
-                    }
-                    //Are we moving into a player?
-                    else if(start.getPlayer() != null){
-                        end = true;
-                        //Deal damage to player
-                        addDamageCard(start.getPlayer(), Command.SPAM);
-                        barrelLaserFunctionality(players[i], start.getPlayer());
-                    }
-                }
-                //We are moving horisontaly
-                if(direction == EAST || direction == WEST){
-                    if(board.getSpace(start.getX(),start.getY()+(move*2)) == null){
-                    //if(start.x < 0 || start.x > board.width){
-                        end = true;
-                    }
-                    start = board.getSpace((start.x), start.y+move);
+                    //We are moving verticaly
+                    if(direction == SOUTH || direction == NORTH){
+                        if(start.y <= 0 || start.y >= board.height){
+                            end = true;
+                        }
+                        else{start = board.getSpace(start.x,(start.y + move));}
                         //are we hitting a wall
-                        if(start.getElement().getWall() != null && start.getElement().getWall().getWallHeadings().contains(directOpposite)){
+                        if(start.getWallHeading().contains(directOpposite)){
                             end = true;
                         }
                         //Are we moving into a player?
@@ -1245,10 +1226,33 @@ public class GameController {
                             barrelLaserFunctionality(players[i], start.getPlayer());
                         }
                     }
+                    //We are moving horisontaly
+                    if(direction == EAST || direction == WEST){
+                        if(start.x < 0 || start.x > board.width){
+                            end = true;
+                        }
+                        else{start = board.getSpace((start.x + move), start.y);
+                            //are we hitting a wall
+                            if(start.getWallHeading().contains(directOpposite)){
+                                end = true;
+                            }
+                            //Are we moving into a player?
+                            else if(start.getPlayer() != null){
+                                end = true;
+                                //Deal damage to player
+                                addDamageCard(start.getPlayer(), Command.SPAM);
+                            }
+                        }
                     }
                 }
-            //}
-        //}
+            }catch (Exception e){
+
+            }
+
+
+
+
+        }
     }
 
     public void checkForWinner(){
