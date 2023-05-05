@@ -835,6 +835,11 @@ public class GameController {
         executeCommand(player,command);
     }
 
+    /**
+     * Takes the players existing energyCube amount, and adds the int cubeAmount to it.
+     * @param player
+     * @param cubeAmount
+     */
     public void powerUp(@NotNull Player player, int cubeAmount){
         player.setEnergyCubes(player.getEnergyCubes()+cubeAmount);
     }
