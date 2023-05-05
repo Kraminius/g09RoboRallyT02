@@ -188,11 +188,7 @@ public class GameController {
         }
         Collections.shuffle(upgradeDeck);
     }
-    public void openUpgradeShop(){
-        if(upgradeShop == null) upgradeShop = new UpgradeShop();
-        upgradeShop.openShop(board, this);
-        startProgrammingPhase();
-    }
+
 
 
 
@@ -424,85 +420,8 @@ public class GameController {
     }
     // XXX: V2
 
-    /**
-     * @Author Mikkel Jürs, Tobias Pedersen Gørlyk s224279, s224271.
-     * @param player
-     * @param card
-     */
-    public void executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
-        if(card.getCard() != null){
-            Command command = card.getCard().command;
-            boolean isPermanent = UpgradeCardInfo.getPermanent(command);
-            boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
-
-            switch (command){
-                case BOINK_TUPG:
-                    boinkFunctionality(player);
-                    break;
-
-                case DEFRAG_GIZMO_PUPG:
-                    defragGizmoFunctionality(player);
-                    break;
-                case SPAM_BLOCKER_TUPG:
-                    spamBlockerTemp(player);
-                    break;
-
-                case ENERGY:
-                    this.playEnergyRoutine(player);
-                    break;
-                case RAMMING_GEAR_PUPG:
-                    break;
-                case ENERGY_ROUTINE_TUPG:
-                    CommandCard cardEnergy = new CommandCard(Command.ENERGY);
-                    this.discardCard(player, cardEnergy);
-                    break;
-                case SPAM_FOLDER_TUPG:
-                    CommandCard cardSpam = new CommandCard(Command.SPAM_FOLDER);
-                    discardCard(player, cardSpam);
-                    break;
-                case RECOMPILE_TUPG:
-                    recompileUpgradeCard(player);
-                    break;
-                case RECHARGE_TUPG:
-                    rechargeUpgradeCard(player);
-                    break;
-                case HACK_TUPG:
-                    hackUpgradeCard(player);
-                    break;
-
-                case REBOOT_TUPG:
-                    respawnPlayer(player, player.getHeading());
-                    break;
-                case REPEAT_ROUTINE_TUPG:
-                    CommandCard repeatRoutineTupgCard = new CommandCard(Command.AGAIN);
-                    this.discardCard(player, repeatRoutineTupgCard);
-                    break;
-                //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
-                case ZOOP_TUPG:
-                    zoopFunctionality(player);
-                    break;
-            }
 
 
-
-            if(!isPermanent && cardCouldBeUsed){
-                upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
-            }
-
-        } //No card at that spot, so nothing happens.
-    }
-    public void spamFolderCard(Player player) {
-        ArrayList<CommandCard> discardPile = player.getDiscardPile();
-        Iterator<CommandCard> iterator = discardPile.iterator();
-
-        while (iterator.hasNext()) {
-            CommandCard card = iterator.next();
-            if (card.getName().equalsIgnoreCase("spam")) {
-                iterator.remove(); // Remove the current card from the ArrayList
-                break; // Exit the loop after removing the first matching card
-            }
-        }
-    }
 
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * A method that via a switch statement over the given command either calls the corresponding comand method,
@@ -643,51 +562,7 @@ public class GameController {
         }
     }
 
-    /**
-     * Can't test if this works yet, as the "use" button doesn't work. ISSUE
-     * Find current register, and execute it again for the player.
-     * @param player
-     */
-    protected void hackUpgradeCard(Player player) {
-        int currentStep = board.getStep();
-        Player currentPlayer = board.getCurrentPlayer();
-        if (currentStep >= 0 && currentStep < Player.NO_REGISTERS) {
-            CommandCard card = currentPlayer.getProgramField(currentStep).getCard();
-            if (card != null) {
-                Command command = card.command;
-                boolean terminate = executeCommand(currentPlayer, command);
-                if (terminate) {
-                    board.setPhase(Phase.PLAYER_INTERACTION);
-                }
-            }
-        }
-    }
 
-    private boolean moveToLeftSpace(Player player){
-        turnLeft(player);
-        try {
-            moveForward(player);
-            turnRight(player);
-            return false;
-        } catch (OutsideBoardException e) {
-            player.setSpace(board.getRespawnSpaces());
-            player.setRespawnStatus(true);
-            return true;
-        }
-    }
-
-    private boolean moveToRightSpace(Player player){
-        turnRight(player);
-        try {
-            moveForward(player);
-            turnLeft(player);
-            return false;
-        } catch (OutsideBoardException e) {
-            player.setSpace(board.getRespawnSpaces());
-            player.setRespawnStatus(true);
-            return true;
-        }
-    }
 
     // TODO Assignment V2
     public void moveForward(@NotNull Player player) throws OutsideBoardException {
@@ -1074,24 +949,7 @@ public class GameController {
         playSpam(player);
     }
 
-    protected void rechargeUpgradeCard(Player player){
-        player.setEnergyCubes(player.getEnergyCubes()+3);
-    }
 
-    /** @author Mikkel Jürs, s224279@student.dtu.dk
-     * Method for the temp upgrade card: Spam Blocker "Replace Each SPAM damage card in your hand with a card from the
-     * top of your deck. Permanently discard the SPAM damage cards.
-     * @param player
-     */
-    public void spamBlockerTemp(Player player){
-        for (int i = 0; i< Player.NO_CARDS; i++){
-            if(player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")){
-                player.getCardField(i).setCard(null);
-                player.getCardField(i).setCard(drawTopCard(player));
-            }
-
-        }
-    }
 
     public void playVirus(Player player){
         List<Player> playersInRadius = board.findPlayerWithinRadius(player);
@@ -1112,144 +970,7 @@ public class GameController {
         }
     }
 
-    /** @Author Mikkel Jürs, s224279@student.dtu.dk
-     * This method is the functionality of the defragGizmoCard.
-     * It uses a couple of methods to determine what choice it should present to user.
-     * First it have a cardUsed array {true,true}, that sets the player.GetPowerUps().setDefragGizmo 2nd index to true, so it can't be used again.
-     * This is then set to false in the "SetGameStateUpgradeCards" method called at the beginning of each programming phase so it can be used in next round.
-     * For each type of damage card you have in your hand it presents
-     * @param player
-     */
-    public void defragGizmoFunctionality(Player player) {
-        boolean[] cardUsed = {true, true};
-        System.out.println(player.getPowerUps().getDefragGizmo()[0]);
-        if (player.getPowerUps().getDefragGizmo()[0]) {
-            if (board.getPhase() == Phase.PROGRAMMING && !(player.getPowerUps().getDefragGizmo()[1])) {
-                String[] defragOptions = getUniqueCardOptions(player);
-                if (defragOptions.length > 0){
-                Option defragOption = new Option("Choose a damage card type to discard permanently");
-                switchBlock:
-                switch (defragOption.getChoice(defragOptions)) {
-                    case "SPAM":
-                        for (int i = 0; i < Player.NO_CARDS; i++) {
-                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")) {
-                                player.getCardField(i).setCard(null);
-                                player.getCardField(i).setCard(drawTopCard(player));
-                                player.getPowerUps().setDefragGizmo(cardUsed);
-                                break switchBlock;
-                            }
-                        }
-                        break;
-                    case "TROJAN HORSE":
-                        for (int i = 0; i < Player.NO_CARDS; i++) {
-                            System.out.println(player.getCardField(i).getCard().getName());
-                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("trojan horse")) {
-                                player.getCardField(i).setCard(null);
-                                player.getCardField(i).setCard(drawTopCard(player));
-                                player.getPowerUps().setDefragGizmo(cardUsed);
-                                break switchBlock;
-                            }
-                        }
-                        break;
-                    case "VIRUS":
-                        for (int i = 0; i < Player.NO_CARDS; i++) {
-                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("virus")) {
-                                player.getCardField(i).setCard(null);
-                                player.getCardField(i).setCard(drawTopCard(player));
-                                player.getPowerUps().setDefragGizmo(cardUsed);
-                                break switchBlock;
-                            }
-                        }
-                        break;
-                    case "WORM":
-                        for (int i = 0; i < Player.NO_CARDS; i++) {
-                            if (player.getCardField(i).getCard().getName().equalsIgnoreCase("worm")) {
-                                player.getCardField(i).setCard(null);
-                                player.getCardField(i).setCard(drawTopCard(player));
-                                player.getPowerUps().setDefragGizmo(cardUsed);
-                                break switchBlock;
-                            }
-                        }
-                        break;
-                }
-                }
-            }
-        }
-    }
 
-    public void boinkFunctionality(Player player){
-        String[] options = new String[4];
-        options[0] = "Forward";
-        options[1] = "Backwards";
-        options[2] = "Left";
-        options[3] = "Right";
-        Option option = new Option("Move to an adjacent space. Do not change direction.");
-        switch (option.getChoice(options)) {
-            case "Forward":
-                try {
-                    this.moveForward(player);
-                } catch (OutsideBoardException e) {
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
-                }
-                break;
-            case "Backwards":
-                try {
-                    this.backUp(player);
-                } catch (OutsideBoardException e) {
-                    player.setSpace(board.getRespawnSpaces());
-                    player.setRespawnStatus(true);
-                }
-                break;
-            case "Left":
-                moveToLeftSpace(player);
-                break;
-            case "Right":
-                moveToRightSpace(player);
-                break;
-        }
-    }
-
-    public void zoopFunctionality(Player player){
-        String[] options = new String[4];
-        options[0] = "North";
-        options[1] = "South";
-        options[2] = "East";
-        options[3] = "West";
-        Option option = new Option("Rotate to face any direction");
-        switch (option.getChoice(options)) {
-            case "North":
-                player.setHeading(NORTH);
-                break;
-            case "South":
-                player.setHeading(SOUTH);
-                break;
-            case "East":
-                player.setHeading(EAST);
-                break;
-            case "West":
-                player.setHeading(WEST);
-                break;
-        }
-    }
-
-    /**
-     * @author Mikkel Jürs, s224279@student.dtu.dk
-     * @param player
-     * @return
-     */
-    private String[] getUniqueCardOptions(Player player) {
-        Set<String> uniqueCards = new HashSet<>();
-
-        for (int i = 0; i < Player.NO_CARDS; i++) {
-            String cardName = player.getCardField(i).getCard().getName().toUpperCase();
-            if (cardName.equals("TROJAN HORSE") || cardName.equals("VIRUS") || cardName.equals("WORM") || cardName.equals("SPAM")) {
-                uniqueCards.add(cardName);
-            }
-        }
-
-        return uniqueCards.toArray(new String[0]);
-    }
 
     public void playEnergyRoutine(Player player){
         powerUp(player, 1);
@@ -1406,11 +1127,6 @@ public class GameController {
     }
 
 
-
-
-
-
-
     /**
      * Make all the given players shoot a laser.
      * The laser gives 1 SPAM Card to any players hit
@@ -1493,14 +1209,6 @@ public class GameController {
         }
     }
 
-    public void tempUpgradeCards(int tempCardID){
-
-        switch (tempCardID){
-
-        }
-
-    }
-
     public void checkForWinner(){
         for(int i = 0; i < board.getPlayersNumber(); i++){
             Player playerTesting = board.getPlayer(i);
@@ -1526,6 +1234,83 @@ public class GameController {
     }
 
 
+//region UPGRADE CARD SECTION
+
+    /**
+     * @Author Mikkel Jürs, Tobias Pedersen Gørlyk s224279, s224271.
+     * @param player
+     * @param card
+     */
+    public void executeUpgradeCommand(@NotNull Player player, @NotNull CommandCardField card){
+        if(card.getCard() != null){
+            Command command = card.getCard().command;
+            boolean isPermanent = UpgradeCardInfo.getPermanent(command);
+            boolean cardCouldBeUsed = true; //You should determine whether this should be true or not. If you cant use your card, you shouldn't lose it.
+
+            switch (command){
+                case BOINK_TUPG:
+                    boinkFunctionality(player);
+                    break;
+
+                case DEFRAG_GIZMO_PUPG:
+                    defragGizmoFunctionality(player);
+                    break;
+                case SPAM_BLOCKER_TUPG:
+                    spamBlockerTemp(player);
+                    break;
+
+                case ENERGY:
+                    this.playEnergyRoutine(player);
+                    break;
+                case RAMMING_GEAR_PUPG:
+                    break;
+                case ENERGY_ROUTINE_TUPG:
+                    CommandCard cardEnergy = new CommandCard(Command.ENERGY);
+                    this.discardCard(player, cardEnergy);
+                    break;
+                case SPAM_FOLDER_TUPG:
+                    CommandCard cardSpam = new CommandCard(Command.SPAM_FOLDER);
+                    discardCard(player, cardSpam);
+                    break;
+                case RECOMPILE_TUPG:
+                    recompileUpgradeCard(player);
+                    break;
+                case RECHARGE_TUPG:
+                    rechargeUpgradeCard(player);
+                    break;
+                case HACK_TUPG:
+                    hackUpgradeCard(player);
+                    break;
+
+                case REBOOT_TUPG:
+                    respawnPlayer(player, player.getHeading());
+                    break;
+                case REPEAT_ROUTINE_TUPG:
+                    CommandCard repeatRoutineTupgCard = new CommandCard(Command.AGAIN);
+                    this.discardCard(player, repeatRoutineTupgCard);
+                    break;
+                //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
+                case ZOOP_TUPG:
+                    zoopFunctionality(player);
+                    break;
+            }
+
+
+
+            if(!isPermanent && cardCouldBeUsed){
+                upgradeShop.discardCard(card); //Removes the temporary card from the player and adds it to the discarded upgrade card-pile for the shop.
+            }
+
+        } //No card at that spot, so nothing happens.
+    }
+
+    public void openUpgradeShop(){
+        if(upgradeShop == null) upgradeShop = new UpgradeShop();
+        upgradeShop.openShop(board, this);
+        startProgrammingPhase();
+    }
+
+
     public void rammingGearFunctionality(Player player, Player playerToMove){
         if(player.getPowerUps().isRammingGear()){
             addDamageCard(playerToMove, Command.SPAM);
@@ -1537,5 +1322,225 @@ public class GameController {
             addDamageCard(playerToShoot, Command.SPAM);
         }
     }
+
+    /** @Author Mikkel Jürs, s224279@student.dtu.dk
+     * This method is the functionality of the defragGizmoCard.
+     * It uses a couple of methods to determine what choice it should present to user.
+     * First it have a cardUsed array {true,true}, that sets the player.GetPowerUps().setDefragGizmo 2nd index to true, so it can't be used again.
+     * This is then set to false in the "SetGameStateUpgradeCards" method called at the beginning of each programming phase so it can be used in next round.
+     * For each type of damage card you have in your hand it presents
+     * @param player
+     */
+    public void defragGizmoFunctionality(Player player) {
+        boolean[] cardUsed = {true, true};
+        System.out.println(player.getPowerUps().getDefragGizmo()[0]);
+        if (player.getPowerUps().getDefragGizmo()[0]) {
+            if (board.getPhase() == Phase.PROGRAMMING && !(player.getPowerUps().getDefragGizmo()[1])) {
+                String[] defragOptions = getUniqueDamageCardOptions(player);
+                if (defragOptions.length > 0){
+                    Option defragOption = new Option("Choose a damage card type to discard permanently");
+                    switchBlock:
+                    switch (defragOption.getChoice(defragOptions)) {
+                        case "SPAM":
+                            for (int i = 0; i < Player.NO_CARDS; i++) {
+                                if (player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")) {
+                                    player.getCardField(i).setCard(null);
+                                    player.getCardField(i).setCard(drawTopCard(player));
+                                    player.getPowerUps().setDefragGizmo(cardUsed);
+                                    break switchBlock;
+                                }
+                            }
+                            break;
+                        case "TROJAN HORSE":
+                            for (int i = 0; i < Player.NO_CARDS; i++) {
+                                System.out.println(player.getCardField(i).getCard().getName());
+                                if (player.getCardField(i).getCard().getName().equalsIgnoreCase("trojan horse")) {
+                                    player.getCardField(i).setCard(null);
+                                    player.getCardField(i).setCard(drawTopCard(player));
+                                    player.getPowerUps().setDefragGizmo(cardUsed);
+                                    break switchBlock;
+                                }
+                            }
+                            break;
+                        case "VIRUS":
+                            for (int i = 0; i < Player.NO_CARDS; i++) {
+                                if (player.getCardField(i).getCard().getName().equalsIgnoreCase("virus")) {
+                                    player.getCardField(i).setCard(null);
+                                    player.getCardField(i).setCard(drawTopCard(player));
+                                    player.getPowerUps().setDefragGizmo(cardUsed);
+                                    break switchBlock;
+                                }
+                            }
+                            break;
+                        case "WORM":
+                            for (int i = 0; i < Player.NO_CARDS; i++) {
+                                if (player.getCardField(i).getCard().getName().equalsIgnoreCase("worm")) {
+                                    player.getCardField(i).setCard(null);
+                                    player.getCardField(i).setCard(drawTopCard(player));
+                                    player.getPowerUps().setDefragGizmo(cardUsed);
+                                    break switchBlock;
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void boinkFunctionality(Player player){
+        String[] options = new String[4];
+        options[0] = "Forward";
+        options[1] = "Backwards";
+        options[2] = "Left";
+        options[3] = "Right";
+        Option option = new Option("Move to an adjacent space. Do not change direction.");
+        switch (option.getChoice(options)) {
+            case "Forward":
+                try {
+                    this.moveForward(player);
+                } catch (OutsideBoardException e) {
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                }
+                break;
+            case "Backwards":
+                try {
+                    this.backUp(player);
+                } catch (OutsideBoardException e) {
+                    player.setSpace(board.getRespawnSpaces());
+                    player.setRespawnStatus(true);
+                }
+                break;
+            case "Left":
+                moveToLeftSpace(player);
+                break;
+            case "Right":
+                moveToRightSpace(player);
+                break;
+        }
+    }
+
+    public void zoopFunctionality(Player player){
+        String[] options = new String[4];
+        options[0] = "North";
+        options[1] = "South";
+        options[2] = "East";
+        options[3] = "West";
+        Option option = new Option("Rotate to face any direction");
+        switch (option.getChoice(options)) {
+            case "North":
+                player.setHeading(NORTH);
+                break;
+            case "South":
+                player.setHeading(SOUTH);
+                break;
+            case "East":
+                player.setHeading(EAST);
+                break;
+            case "West":
+                player.setHeading(WEST);
+                break;
+        }
+    }
+
+    /**
+     * @author Mikkel Jürs, s224279@student.dtu.dk
+     * This method loops through the different damage cards a player have in their hand, adds them to a HashSet (Unique identifier)
+     * converts the hashset back into an array, and returns that array. This is used for
+     * @param player
+     * @return
+     */
+    private String[] getUniqueDamageCardOptions(Player player) {
+        Set<String> uniqueCards = new HashSet<>();
+
+        for (int i = 0; i < Player.NO_CARDS; i++) {
+            String cardName = player.getCardField(i).getCard().getName().toUpperCase();
+            if (cardName.equals("TROJAN HORSE") || cardName.equals("VIRUS") || cardName.equals("WORM") || cardName.equals("SPAM")) {
+                uniqueCards.add(cardName);
+            }
+        }
+
+        return uniqueCards.toArray(new String[0]);
+    }
+
+    protected void rechargeUpgradeCard(Player player){
+        player.setEnergyCubes(player.getEnergyCubes()+3);
+    }
+
+    /** @author Mikkel Jürs, s224279@student.dtu.dk
+     * Method for the temp upgrade card: Spam Blocker "Replace Each SPAM damage card in your hand with a card from the
+     * top of your deck. Permanently discard the SPAM damage cards.
+     * @param player
+     */
+    public void spamBlockerTemp(Player player){
+        for (int i = 0; i< Player.NO_CARDS; i++){
+            if(player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")){
+                player.getCardField(i).setCard(null);
+                player.getCardField(i).setCard(drawTopCard(player));
+            }
+        }
+    }
+
+    /**
+     * Can't test if this works yet, as the "use" button doesn't work. ISSUE
+     * Find current register, and execute it again for the player.
+     * @param player
+     */
+    protected void hackUpgradeCard(Player player) {
+        int currentStep = board.getStep();
+        Player currentPlayer = board.getCurrentPlayer();
+        if (currentStep >= 0 && currentStep < Player.NO_REGISTERS) {
+            CommandCard card = currentPlayer.getProgramField(currentStep).getCard();
+            if (card != null) {
+                Command command = card.command;
+                boolean terminate = executeCommand(currentPlayer, command);
+                if (terminate) {
+                    board.setPhase(Phase.PLAYER_INTERACTION);
+                }
+            }
+        }
+    }
+
+    private boolean moveToLeftSpace(Player player){
+        turnLeft(player);
+        try {
+            moveForward(player);
+            turnRight(player);
+            return false;
+        } catch (OutsideBoardException e) {
+            player.setSpace(board.getRespawnSpaces());
+            player.setRespawnStatus(true);
+            return true;
+        }
+    }
+
+    private boolean moveToRightSpace(Player player){
+        turnRight(player);
+        try {
+            moveForward(player);
+            turnLeft(player);
+            return false;
+        } catch (OutsideBoardException e) {
+            player.setSpace(board.getRespawnSpaces());
+            player.setRespawnStatus(true);
+            return true;
+        }
+    }
+
+    public void spamFolderCard(Player player) {
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        Iterator<CommandCard> iterator = discardPile.iterator();
+
+        while (iterator.hasNext()) {
+            CommandCard card = iterator.next();
+            if (card.getName().equalsIgnoreCase("spam")) {
+                iterator.remove(); // Remove the current card from the ArrayList
+                break; // Exit the loop after removing the first matching card
+            }
+        }
+    }
+
+//endregion
 
 }
