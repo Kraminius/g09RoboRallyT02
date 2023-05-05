@@ -225,9 +225,9 @@ public class Board extends Subject {
         int currentX = currentPlayer.getSpace().x;
         int currentY = currentPlayer.getSpace().y;
         int radius = 6;
-        for(int x = Math.max(0, currentX - radius); x <= Math.min(board.width - 1, currentX + radius); x++){
-            for(int y = Math.max(0, currentY - radius); y<= Math.min(board.height - 1, currentY + radius); y++){
-                Space space = board.getSpace(x,y);
+        for(int x = Math.max(0, currentX - radius); x <= Math.min(width - 1, currentX + radius); x++){
+            for(int y = Math.max(0, currentY - radius); y<= Math.min(height - 1, currentY + radius); y++){
+                Space space = getSpace(x,y);
                 Player player = space.getPlayer();
                 if(player != null && player != currentPlayer){
                     playersWithinRadius.add(player);
