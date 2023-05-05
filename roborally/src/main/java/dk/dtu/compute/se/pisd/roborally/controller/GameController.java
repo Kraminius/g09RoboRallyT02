@@ -164,7 +164,7 @@ public class GameController {
 
     /**
      * @Author Mikkel Jürs, s224279@student.dtu.dk
-     * Method for filling the UpgradeCardDeck.
+     * Method for filling the UpgradeCard Deck.
      * @param upgradeDeck ArrayList of CommandCards that holds all upgradeCards, with all the Unems from Command without
      *                    the non-upgradeable ones.
      */
@@ -836,7 +836,7 @@ public class GameController {
     }
 
     public void powerUp(@NotNull Player player, int cubeAmount){
-        player.setEnergyCubes(cubeAmount);
+        player.setEnergyCubes(player.getEnergyCubes()+cubeAmount);
     }
 
     /**@Author Freja Egelund Grønnemose s224286@dtu.dk
@@ -1476,6 +1476,9 @@ public class GameController {
             if(player.getCardField(i).getCard().getName().equalsIgnoreCase("spam")){
                 player.getCardField(i).setCard(null);
                 player.getCardField(i).setCard(drawTopCard(player));
+            }
+            else {
+                System.out.println("You have no spam cards in your hand.");
             }
         }
     }
