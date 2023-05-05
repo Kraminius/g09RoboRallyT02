@@ -659,7 +659,7 @@ public class GameController {
     }
 
     /**
-     *
+     * @Author Freja Egelund Grønnemose, 224286@dtu.dk
      * @param amount the amount of spaces the player should move
      * @param heading the players heading
      * @param x the x value of the space they want to move to
@@ -714,6 +714,12 @@ public class GameController {
             }
             return space;
         }
+
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * @param player the player which is moving to respawn or the player being pushed away from respawn.
+     * @param heading the heading in which the player already on the respawn field is heading.
+     */
     private void movePlayerToRespawn(@NotNull Player player, Heading heading){
         Player playerToMove = board.getRespawnSpaces().getPlayer();
         if(playerToMove != null){
@@ -723,7 +729,7 @@ public class GameController {
                 }
                 Space space = getSpaceAt(1, heading, playerToMove.getSpace().getX(), playerToMove.getSpace().getY());
                 if(obstacleInSpace(board.getRespawnSpaces(), space)){
-                    movePlayerToRespawn(player, playerToMove.getHeading().next());
+                    movePlayerToRespawn(playerToMove, playerToMove.getHeading().next());
                 } else {
                     playerToMove.setSpace(space);
                     player.setSpace(board.getRespawnSpaces());
@@ -736,7 +742,7 @@ public class GameController {
         }
     }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
-     * This methods set the players space to the space of the rebootToken. At some point the method should cover more than 1 reboot token.
+     * This methods set the players space to the space of the rebootToken.
      * The method also removes ALL the players remaining program cards.
      * @param player the player that should be respawned
      */
@@ -752,22 +758,7 @@ public class GameController {
             field.setVisible(true);
         }
         board.setPhase(Phase.ACTIVATION);
-        if(sequence.size() == 0){
-            int step = board.getStep();
-            step++;
-            if (step < Player.NO_REGISTERS) {
-                makeProgramFieldsVisible(step);
-                board.setStep(step);
-                antennaPriority();
-                board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
-                Activator.getInstance().activateBoard(board, this);
-
-            } else {
-                startUpgradePhase();
-            }
-        }else{
-            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
-        }
+        switchCurrentPlayer();
     }
 
     /**
@@ -817,11 +808,21 @@ public class GameController {
 
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This method changes the players heading by getting the next enum.
+     * @param player whos direction should change.
+     */
     // TODO Assignment V2
     public void turnRight(@NotNull Player player) {
         player.setHeading(player.getHeading().next());
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This method changes the players heading by getting the next enum.
+     * @param player
+     */
     // TODO Assignment V2
     public void turnLeft(@NotNull Player player) {
         player.setHeading(player.getHeading().prev());
@@ -855,9 +856,10 @@ public class GameController {
     }
 
     /**
-     * Takes players current energycubes and adds an int on top.
-     * @param player
-     * @param cubeAmount
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * this method adds energy cubes to a player
+     * @param player the player who should recieve energycubes
+     * @param cubeAmount the amount of cubes that should be added.
      */
     public void powerUp(@NotNull Player player, int cubeAmount){
         player.setEnergyCubes(player.getEnergyCubes()+cubeAmount);
@@ -961,10 +963,10 @@ public class GameController {
         discardPile.add(damageCard);
     }
 
-    /**
+    /**@Author Freja Egelund Grønnemose, s224286@dtu.dk
      * This method get the topCard from the players deck, places it in the current register (and shows it),
      * then it calls the executeCommand() with the topCards command.
-     * @param player
+     * @param player the player that plays the spam card.
      */
     public void playSpam(Player player){
         int step = board.getStep();
@@ -975,6 +977,11 @@ public class GameController {
         executeCommand(player, topCard.command);
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * this method adds two spam cards to the player, and then calls the playSpam() method
+     * @param player the player who plays the Trojan horse card.
+     */
     public void playTrojan(Player player){
         for(int i = 0; i < 2; i++){
             addDamageCard(player, Command.SPAM);
@@ -983,15 +990,25 @@ public class GameController {
     }
 
 
-
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This method finds all the players in a fixed radius around the player.
+     * Then adds a spam card to all those players, and calls the playSpam() on the original player.
+     * @param player the player who plays the virus card
+     */
     public void playVirus(Player player){
-        List<Player> playersInRadius = board.findPlayerWithinRadius(player);
+        ArrayList<Player> playersInRadius = board.findPlayerWithinRadius(player);
         for(Player otherPlayer : playersInRadius){
             addDamageCard(otherPlayer, Command.SPAM);
         }
         playSpam(player);
     }
 
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This method calls the powerUp method.
+     * @param player the player who plays the Energy Routine card
+     */
 
 
     public void playEnergyRoutine(Player player){

@@ -214,30 +214,23 @@ public class Board extends Subject {
         return (x < 0 || x >= width || y < 0 || y >= height) ? null : getSpace(x, y);
     }
 
-    public List<Player> findPlayerWithinRadius(Player currentPlayer){
-        List<Player> playersWithinRadius = new ArrayList<>();
+    /**
+     * @Author Freja Egelund Grønnemose, s224286@dtu.dk
+     * This method finds all players in a radius of 6 from the given player.
+     * @param currentPlayer the given player.
+     * @return arraylist with all players in an radius of 6 from the given player.
+     */
+    public ArrayList<Player> findPlayerWithinRadius(Player currentPlayer){
+        ArrayList<Player> playersWithinRadius = new ArrayList<>();
         int currentX = currentPlayer.getSpace().x;
         int currentY = currentPlayer.getSpace().y;
         int radius = 6;
-        for(int x = currentX - radius; x <= currentX + radius; x++){
-            for(int y = currentY - radius; x <= currentY + radius; y++){
-                if(x < 0 || x >= board.height || y < 0 || y >= board.width){
-                    continue;
-                }
-                Space space = getSpace(x, y);
+        for(int x = Math.max(0, currentX - radius); x <= Math.min(width - 1, currentX + radius); x++){
+            for(int y = Math.max(0, currentY - radius); y<= Math.min(height - 1, currentY + radius); y++){
+                Space space = getSpace(x,y);
                 Player player = space.getPlayer();
                 if(player != null && player != currentPlayer){
                     playersWithinRadius.add(player);
-                }
-
-                for(Heading heading : Heading.values()){
-                    Space neighbor = board.getNeighbour(space, heading);
-                    if(neighbor != null){
-                        Player neighborPlayer = neighbor.getPlayer();
-                        if(neighborPlayer != null && neighborPlayer != currentPlayer){
-                            playersWithinRadius.add(neighborPlayer);
-                        }
-                    }
                 }
             }
         }
