@@ -1158,19 +1158,19 @@ public class GameController {
 
         for(int i = 0; i < players.length; i++){
             Space start = players[i].getSpace();
-            if (start.getWallHeading() != null) {
             Heading direction = players[i].getHeading();
             Heading directOpposite;
             int move;
             boolean end = false;
+            //if(start.getElement().getWall() == null || !start.getElement().getWall().getWallHeadings().contains(direction)){
 
             switch (direction){
                 case SOUTH:
-                    move = -1; //y
+                    move = +1; //y
                     directOpposite = NORTH;
                     break;
                 case NORTH:
-                    move = 1; //y
+                    move = -1; //y
                     directOpposite = SOUTH;
                     break;
                 case WEST:
@@ -1187,17 +1187,18 @@ public class GameController {
             //Maybe a Do while
             while(end == false){
                 //Are we moving into a wall?
-                if(start.getWallHeading().contains(direction)){
+                if(start.getElement().getWall() != null && start.getElement().getWall().getWallHeadings().contains(direction)){
                     end = true;
                 }
                 //We are moving verticaly
                 if(direction == SOUTH || direction == NORTH){
-                    if(start.y <= 0 || start.y >= board.height){
+                    if(board.getSpace(start.getX()+(move*2),start.getY()) == null){
+                    //if(start.y <= 0 || start.y >= board.height){
                         end = true;
                     }
-                    else{start = board.getSpace(start.x,(start.y + move));}
+                    start = board.getSpace(start.x+move,(start.y));
                     //are we hitting a wall
-                    if(start.getWallHeading().contains(directOpposite)){
+                    if(start.getElement().getWall() != null && start.getElement().getWall().getWallHeadings().contains(directOpposite)){
                         end = true;
                     }
                     //Are we moving into a player?
@@ -1210,12 +1211,13 @@ public class GameController {
                 }
                 //We are moving horisontaly
                 if(direction == EAST || direction == WEST){
-                    if(start.x < 0 || start.x > board.width){
+                    if(board.getSpace(start.getX(),start.getY()+(move*2)) == null){
+                    //if(start.x < 0 || start.x > board.width){
                         end = true;
                     }
-                    else{start = board.getSpace((start.x + move), start.y);
+                    start = board.getSpace((start.x), start.y+move);
                         //are we hitting a wall
-                        if(start.getWallHeading().contains(directOpposite)){
+                        if(start.getElement().getWall() != null && start.getElement().getWall().getWallHeadings().contains(directOpposite)){
                             end = true;
                         }
                         //Are we moving into a player?
@@ -1223,12 +1225,13 @@ public class GameController {
                             end = true;
                             //Deal damage to player
                             addDamageCard(start.getPlayer(), Command.SPAM);
+                            barrelLaserFunctionality(players[i], start.getPlayer());
                         }
                     }
                     }
                 }
-            }
-        }
+            //}
+        //}
     }
 
     public void checkForWinner(){
