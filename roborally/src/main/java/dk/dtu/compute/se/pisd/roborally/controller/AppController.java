@@ -90,6 +90,7 @@ public class AppController implements Observer {
                 gameController.fillStartDeck(player.getCardDeck());
                 board.addPlayer(player);
 
+
                 //player.setSpace(board.getSpace(i % board.width, i));
             }
 
@@ -100,6 +101,9 @@ public class AppController implements Observer {
             roboRally.createBoardView(gameController);
             StartPositionWindow positionWindow = new StartPositionWindow();
             positionWindow.getStartSpaces(board);
+
+            for(int j = 0; j < board.getPlayersNumber(); j++)
+                board.getPlayer(j).setEnergyCubes(5);
 
             gameController.startUpgradePhase();
 

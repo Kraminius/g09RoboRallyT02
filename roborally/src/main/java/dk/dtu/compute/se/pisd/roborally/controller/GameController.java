@@ -162,6 +162,12 @@ public class GameController {
         Collections.shuffle(playerDeck);
     }
 
+    /**
+     * @Author Mikkel Jürs, s224279@student.dtu.dk
+     * Method for filling the UpgradeCard Deck.
+     * @param upgradeDeck ArrayList of CommandCards that holds all upgradeCards, with all the Unems from Command without
+     *                    the non-upgradeable ones.
+     */
     public void fillUpgradeCardDeck(@NotNull ArrayList<CommandCard> upgradeDeck){
         Set<Command> upgradeCards = EnumSet.allOf(Command.class);
         upgradeCards.removeAll(EnumSet.of(
@@ -183,11 +189,16 @@ public class GameController {
                 Command.POWER_UP,
                 Command.SPAM_FOLDER));
 
+        //Adding 5 of each card. Will implement a discard upgradeCards pile in next Scope. Planned in next PI.
         for(Command command : upgradeCards){
-            upgradeDeck.add(new CommandCard(Command.SPAM_FOLDER_TUPG));
+            for (int i=0;i<5;i++) {
+                upgradeDeck.add(new CommandCard(command));
+            }
         }
         Collections.shuffle(upgradeDeck);
     }
+
+
 
 
 
@@ -548,14 +559,21 @@ public class GameController {
                 }
                 return false;
             case SPAM_FOLDER:
-                spamFolderCard(player);
+                playSpamFolder(player);
                 return false;
 
             case MOVELEFT:
                 moveToLeftSpace(player);
+                return false;
 
             case MOVERIGHT:
                 moveToRightSpace(player);
+                return false;
+
+            case SANDBOX:
+                return true;
+
+
 
             default:
                 throw new RuntimeException("Should not happen");
@@ -624,8 +642,13 @@ public class GameController {
             }
     }
 
+    /** @Author Mikkel Jürs, s224279@dtu.dk
+     * Discards entire hand, drawe new cards.
+     * @param player
+     */
     protected void recompileUpgradeCard(Player player){
         for(int i = 0; i<Player.NO_CARDS; i++){
+            discardCard(player, player.getCardField(i).getCard());
             player.getCardField(i).setCard(null);
             player.getCardField(i).setCard(drawTopCard(player));
         }
@@ -827,8 +850,13 @@ public class GameController {
         executeCommand(player,command);
     }
 
+    /**
+     * Takes players current energycubes and adds an int on top.
+     * @param player
+     * @param cubeAmount
+     */
     public void powerUp(@NotNull Player player, int cubeAmount){
-        player.setEnergyCubes(cubeAmount);
+        player.setEnergyCubes(player.getEnergyCubes()+cubeAmount);
     }
 
     /**@Author Freja Egelund Grønnemose s224286@dtu.dk
@@ -918,8 +946,9 @@ public class GameController {
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 }
             }
+            checkForWinner();
         }
-        checkForWinner();
+
     }
 
     public void addDamageCard(Player player, Command type){
@@ -957,17 +986,6 @@ public class GameController {
             addDamageCard(otherPlayer, Command.SPAM);
         }
         playSpam(player);
-    }
-
-    public void playSpamFolder(Player player){
-        ArrayList<CommandCard> discardPile = player.getDiscardPile();
-        for(int i = 0; i < discardPile.size(); i++){
-            CommandCard cardToRemove = discardPile.get(i);
-            if(cardToRemove.getName().equals(Command.SPAM.displayName)){
-                discardPile.remove(i);
-                break;
-            }
-        }
     }
 
 
@@ -1281,10 +1299,17 @@ public class GameController {
                 case HACK_TUPG:
                     hackUpgradeCard(player);
                     break;
+                case SPEED_TUPG:
+                    CommandCard speedCard = new CommandCard(Command.SPEED);
+                    discardCard(player, speedCard);
+                    break;
 
+                /* Removing from this scope. Not working as intended. ISSUE.
                 case REBOOT_TUPG:
+
                     respawnPlayer(player, player.getHeading());
                     break;
+                     */
                 case REPEAT_ROUTINE_TUPG:
                     CommandCard repeatRoutineTupgCard = new CommandCard(Command.AGAIN);
                     this.discardCard(player, repeatRoutineTupgCard);
@@ -1292,6 +1317,9 @@ public class GameController {
                 //Execute the Command.ZOOP_TUPG command with 3 options: Left, Right or U-turn.
                 case ZOOP_TUPG:
                     zoopFunctionality(player);
+                    break;
+                case SANDBOX_UPG:
+                    sandboxUpgradeCard(player);
                     break;
             }
 
@@ -1388,6 +1416,11 @@ public class GameController {
         }
     }
 
+    /**
+     * @Author Mikkel Jürs, s224279@dtu.dk
+     * Creates an Options window and executes the command picked.
+     * @param player
+     */
     public void boinkFunctionality(Player player){
         String[] options = new String[4];
         options[0] = "Forward";
@@ -1479,6 +1512,9 @@ public class GameController {
                 player.getCardField(i).setCard(null);
                 player.getCardField(i).setCard(drawTopCard(player));
             }
+            else {
+                System.out.println("You have no spam cards in your hand");
+            }
         }
     }
 
@@ -1490,7 +1526,8 @@ public class GameController {
     protected void hackUpgradeCard(Player player) {
         int currentStep = board.getStep();
         Player currentPlayer = board.getCurrentPlayer();
-        if (currentStep >= 0 && currentStep < Player.NO_REGISTERS) {
+        if(board.getPhase().equals(Phase.ACTIVATION)){
+        if (currentStep >= 0 && currentStep < Player.NO_REGISTERS && currentPlayer.getProgramField(currentStep) != null) {
             CommandCard card = currentPlayer.getProgramField(currentStep).getCard();
             if (card != null) {
                 Command command = card.command;
@@ -1499,6 +1536,11 @@ public class GameController {
                     board.setPhase(Phase.PLAYER_INTERACTION);
                 }
             }
+        } else {
+            System.out.println("You have nothing in your register.");
+        }
+        } else {
+            System.out.println("You're not in activation phase.");
         }
     }
 
@@ -1528,18 +1570,22 @@ public class GameController {
         }
     }
 
-    public void spamFolderCard(Player player) {
+    public void playSpamFolder(Player player){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
-        Iterator<CommandCard> iterator = discardPile.iterator();
-
-        while (iterator.hasNext()) {
-            CommandCard card = iterator.next();
-            if (card.getName().equalsIgnoreCase("spam")) {
-                iterator.remove(); // Remove the current card from the ArrayList
-                break; // Exit the loop after removing the first matching card
+        for(int i = 0; i < discardPile.size(); i++){
+            CommandCard cardToRemove = discardPile.get(i);
+            if(cardToRemove.getName().equals(Command.SPAM.displayName)){
+                discardPile.remove(i);
+                break;
             }
         }
     }
+
+    public void sandboxUpgradeCard(Player player){
+        CommandCard sandboxCard = new CommandCard(Command.SANDBOX);
+        discardCard(player, sandboxCard);
+    }
+
 
 //endregion
 

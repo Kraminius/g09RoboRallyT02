@@ -48,6 +48,7 @@ public class UpgradeShop {
     public void openShop(Board board, GameController controller){
         this.board = board;
         this.controller = controller;
+
         createWindow();
         playerOrder = -1;
         switchToNextPlayer();
