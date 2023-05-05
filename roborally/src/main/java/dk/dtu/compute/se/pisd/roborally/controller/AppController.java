@@ -133,12 +133,9 @@ public class AppController implements Observer {
         LoadGameWindow load = new LoadGameWindow();
         String saveName = load.getLoadInput();
         System.out.println("Loading " + saveName);
-        gameController = GameLoader.loadGame(saveName, this);
+        //gameController = GameLoader.loadGame(saveName, this); //This Doesn't work yet.
 
-        if(gameController != null) {
-
-        }
-        else{
+        if(gameController == null) {
             newGame();
         }
     }
