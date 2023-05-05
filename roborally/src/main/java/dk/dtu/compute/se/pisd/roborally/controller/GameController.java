@@ -190,7 +190,7 @@ public class GameController {
                 Command.SPAM_FOLDER));
 
         for(Command command : upgradeCards){
-            upgradeDeck.add(new CommandCard(Command.SPAM_FOLDER_TUPG));
+            upgradeDeck.add(new CommandCard(Command.SANDBOX_UPG));
         }
         Collections.shuffle(upgradeDeck);
     }
@@ -561,9 +561,16 @@ public class GameController {
 
             case MOVELEFT:
                 moveToLeftSpace(player);
+                return false;
 
             case MOVERIGHT:
                 moveToRightSpace(player);
+                return false;
+
+            case SANDBOX:
+                return true;
+
+
 
             default:
                 throw new RuntimeException("Should not happen");
@@ -632,8 +639,13 @@ public class GameController {
             }
     }
 
+    /** @Author Mikkel Jürs, s224279@dtu.dk
+     * Discards entire hand, drawe new cards.
+     * @param player
+     */
     protected void recompileUpgradeCard(Player player){
         for(int i = 0; i<Player.NO_CARDS; i++){
+            discardCard(player, player.getCardField(i).getCard());
             player.getCardField(i).setCard(null);
             player.getCardField(i).setCard(drawTopCard(player));
         }
@@ -1296,6 +1308,9 @@ public class GameController {
                 case ZOOP_TUPG:
                     zoopFunctionality(player);
                     break;
+                case SANDBOX_UPG:
+                    sandboxUpgradeCard(player);
+                    break;
             }
 
 
@@ -1543,6 +1558,11 @@ public class GameController {
                 break;
             }
         }
+    }
+
+    public void sandboxUpgradeCard(Player player){
+        CommandCard sandboxCard = new CommandCard(Command.SANDBOX);
+        discardCard(player, sandboxCard);
     }
 
 

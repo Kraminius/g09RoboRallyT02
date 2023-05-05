@@ -17,6 +17,10 @@ public class UpgradeCardInfo {
                 return true;
             case SPAM_BLOCKER_TUPG:
                 return false;
+            case SPAM_FOLDER_TUPG:
+                return false;
+            case SANDBOX_UPG:
+                return false;
 
             default: return false;
         }
@@ -35,6 +39,10 @@ public class UpgradeCardInfo {
                 return 2;
             case SPAM_BLOCKER_TUPG:
                 return 3;
+            case SPAM_FOLDER_TUPG:
+                return 2;
+            case SANDBOX_UPG:
+                return 5;
             default: return 1;
         }
     }
