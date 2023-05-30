@@ -23,9 +23,9 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
-import dk.dtu.compute.se.pisd.roborally.view.ViewObserver;
 import dk.dtu.compute.se.pisd.roborally.view.WinnerDisplay;
 import org.jetbrains.annotations.NotNull;
 
@@ -1172,25 +1172,29 @@ public class GameController {
     /**
      * Make all the given players shoot a laser.
      * The laser gives 1 SPAM Card to any players hit
-     * @param players an array with all the players, this should be available through board.
+     * @param player an single player who's laser will be shot, this should be available through board.
      */
-    public void playerLaserActivate(Player[] players){
+    public void playerLaserActivate(Player player){
 
-        for(int i = 0; i < players.length; i++){
-            try{
-                Space start = players[i].getSpace();
-                Heading direction = players[i].getHeading();
+        //for(int i = 0; i < players.length; i++){
+            //try{
+               // Space laser = players[i].getSpace();
+                Space laser = player.getSpace();
+                //Heading direction = players[i].getHeading();
+                Heading direction = player.getHeading();
                 Heading directOpposite;
+                ArrayList<Heading> wallHeading;
+                Wall wall;
                 int move;
                 boolean end = false;
 
                 switch (direction){
                     case SOUTH:
-                        move = -1; //y
+                        move = 1; //y
                         directOpposite = NORTH;
                         break;
                     case NORTH:
-                        move = 1; //y
+                        move = -1; //y
                         directOpposite = SOUTH;
                         break;
                     case WEST:
@@ -1204,58 +1208,136 @@ public class GameController {
                     default:
                         throw new IllegalStateException("PlayerLaser - Unexpected (Heading)value: " + direction);
                 }
+
+                while(end == false){
+                    //Checks if a wall is in front of laser
+                    //If there is we end here
+                    wall = laser.getElement().getWall();
+                    if(wall != null){
+                        wallHeading = wall.getWallHeadings();
+                    for(int i = 0; i < wallHeading.size(); i++){
+                        if(wallHeading.get(i) == direction){
+                            end = true;
+                        }
+                    }}
+                    /*
+                    if(wall.contains(direction) == true){
+                        end = true;
+                    }
+                   */
+                    //If not we proceed
+                    if(end == false){
+                        //We move forward in one of four directions
+                        if(direction == SOUTH || direction == NORTH){
+                            laser = board.getSpace(laser.x,(laser.y+move));
+                            //Marks the next space to visit
+                            if(laser != null){
+                                wall = board.getSpace(laser.x,(laser.y)).getElement().getWall();
+                            }
+                            else{
+                                wall = null;
+                            }
+
+                        }
+                        if(direction == EAST || direction == WEST){
+                            laser = board.getSpace((laser.x + move),laser.y);
+                            //Marks the next space to visit
+                            if(laser != null) {
+                                wall = board.getSpace((laser.x), laser.y).getElement().getWall();
+                            }
+                            else{
+                                wall = null;
+                            }
+                        }
+                        //We check to see if a player is on the way
+                        //If so we end and give the player a SPAM card
+                        if(laser != null && laser.getPlayer() != null){
+                            end = true;
+                            addDamageCard(laser.getPlayer(), Command.SPAM);
+                        }
+                        //Check to see if we are facing a wall on the next space
+                        //We here use wall we made when finding directions
+                        else{
+                             if(wall != null){
+                                 wallHeading = wall.getWallHeadings();
+                            if(wallHeading.contains(directOpposite) == true){
+                                end = true;
+                            }}
+                        }
+                    }
+                    //No mather what we check to see if we are within the board
+                    //These needs to be in the bottom so they are always checked
+                    if(laser == null){
+                        end = true;
+                    }
+                    /*
+                    if(laser.x <= 0 || laser.x >= board.width){
+                        end = true;
+                    }
+                    if(laser.y <= 0 || laser.y >= board.height){
+                        end = true;
+                    }
+                    */
+                }
+
+                /*
                 //Maybe a Do while
                 while(end == false){
                     //Are we moving into a wall?
-                    if(start.getWallHeading().contains(direction)){
+                    if(laser.getWallHeading().contains(direction)){
                         end = true;
                     }
+                    if(end == false){
                     //We are moving verticaly
                     if(direction == SOUTH || direction == NORTH){
-                        if(start.y <= 0 || start.y >= board.height){
+                        if(laser.y < 0 || laser.y > board.height){
                             end = true;
                         }
-                        else{start = board.getSpace(start.x,(start.y + move));}
+                        else{laser = board.getSpace(laser.x,(laser.y + move));}
                         //are we hitting a wall
-                        if(start.getWallHeading().contains(directOpposite)){
+                        if(laser.getWallHeading().contains(directOpposite)){
                             end = true;
                         }
                         //Are we moving into a player?
-                        else if(start.getPlayer() != null){
+                        else if(laser.getPlayer() != null){
                             end = true;
                             //Deal damage to player
-                            addDamageCard(start.getPlayer(), Command.SPAM);
-                            barrelLaserFunctionality(players[i], start.getPlayer());
+                            addDamageCard(laser.getPlayer(), Command.SPAM);
+                            barrelLaserFunctionality(players[i], laser.getPlayer());
                         }
                     }
                     //We are moving horisontaly
                     if(direction == EAST || direction == WEST){
-                        if(start.x < 0 || start.x > board.width){
+                        if(laser.x < 0 || laser.x > board.width){
                             end = true;
                         }
-                        else{start = board.getSpace((start.x + move), start.y);
+                        else{laser = board.getSpace((laser.x + move), laser.y);};
                             //are we hitting a wall
-                            if(start.getWallHeading().contains(directOpposite)){
+                            if(laser.getWallHeading().contains(directOpposite)){
                                 end = true;
                             }
                             //Are we moving into a player?
-                            else if(start.getPlayer() != null){
+                            else if(laser.getPlayer() != null){
                                 end = true;
                                 //Deal damage to player
-                                addDamageCard(start.getPlayer(), Command.SPAM);
+                                addDamageCard(laser.getPlayer(), Command.SPAM);
                             }
                         }
-                    }
-                }
-            }catch (Exception e){
+                    }}
 
-            }
+                 */
+
+            //}catch (Exception e){
+
+            //}
 
 
 
 
         }
-    }
+
+
+  //  }
 
     public void checkForWinner(){
         for(int i = 0; i < board.getPlayersNumber(); i++){
