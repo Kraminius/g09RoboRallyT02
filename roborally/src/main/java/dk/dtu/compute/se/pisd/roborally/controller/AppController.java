@@ -156,7 +156,6 @@ public class AppController implements Observer {
 
             // here we save the game (without asking the user).
             //saveGame();
-
             gameController = null;
             roboRally.createBoardView(null);
             return true;
