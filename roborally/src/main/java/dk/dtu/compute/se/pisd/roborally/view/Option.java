@@ -35,6 +35,26 @@ public class Option {
         top.getChildren().add(textLabel);
         window.getChildren().add(top);
     }
+    public Option(String name, String flavorText, double width, double height){
+        stage = new Stage();
+        window  = new VBox();
+        window.setMaxSize(width, height);
+        window.setMinSize(width, height);
+        window.setAlignment(Pos.TOP_CENTER);
+
+        VBox top = new VBox();
+        top.setAlignment(Pos.CENTER);
+        top.setPadding(new Insets(5, 5 ,10, 10));
+        top.setStyle("-fx-background-color: #491886");
+        Label nameLabel = new Label(name);
+        Label textLabel = new Label(flavorText);
+        textLabel.setWrapText(true);
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: #eeeeee");
+        textLabel.setStyle("-fx-font-size: 13;");
+        top.getChildren().add(nameLabel);
+        window.getChildren().add(top);
+        window.getChildren().add(textLabel);
+    }
     private void show(){
         Scene scene = new Scene(window);
         stage.setScene(scene);

@@ -68,26 +68,27 @@ public enum Command {
     SPAM_FOLDER("Spam folder\nPermamently discard one spam card from your discard pile"),
     SANDBOX("Sandbox Routine", FORWARD, FAST_FORWARD, SPRINT_FORWARD, BACK_UP, LEFT, RIGHT, U_TURN),
     WEASEL("Weasel routine", LEFT, RIGHT, U_TURN),
-    SANDBOX_UPG("Sandbox Routine\nAdd the Sandbox routine card to your discard pile"),
+    SANDBOX_UPG("Sandbox Routine","Add the Sandbox routine card to your discard pile"),
     //Bug with this card. If you turn right, then use this card. You will move 3 steps forward and 3 steps downwards. ISSUE
-    SPEED("Speed routine\nMove 3"),
-    SPEED_TUPG("Speed Routine\nAdd the speed routine to your discard pile"),
-    ENERGY("Gain 1 energy"),
-    RECOMPILE_TUPG("Recompile \nDiscard your entire hand. Draw a new one"),
-    RECHARGE_TUPG("Recharge \nGain three energy"),
-    HACK_TUPG("Hack \nExecute current register again"),
-    ZOOP_TUPG("Zoop \nRotate to face any direction"),
+    SPEED("Speed routine","Move 3"),
+    SPEED_TUPG("Speed Routine","Add the speed routine to your discard pile"),
+    ENERGY("Energy","Gain 1 energy"),
+    RECOMPILE_TUPG("Recompile ","Discard your entire hand. Draw a new one"),
+    RECHARGE_TUPG("Recharge ","Gain three energy"),
+    HACK_TUPG("Hack ","Execute current register again"),
+    ZOOP_TUPG("Zoop ","Rotate to face any direction"),
     /*This doesn't work as intended. Removing for this scope. ISSUE
     REBOOT_TUPG("Reboot \nReboot your robot, but take no damage"),
      */
-    REPEAT_ROUTINE_TUPG("Repeat Routine \nAdd an again card to your discard pile"),
-    DEFRAG_GIZMO_PUPG("Defrag Gizmo \nPermanently discards a damage card from your hand"),
-    BOINK_TUPG("Boink \nMove to an adjacent space. Do not change direction"),
-    DOUBLE_BARREL_LASER_PUGB("Double Barrel Laser \nDeal one additional SPAM damage card to any robot you shoot.");
+    REPEAT_ROUTINE_TUPG("Repeat Routine","Add an again card to your discard pile"),
+    DEFRAG_GIZMO_PUPG("Defrag Gizmo","Permanently discards a damage card from your hand"),
+    BOINK_TUPG("Boink","Move to an adjacent space. Do not change direction"),
+    DOUBLE_BARREL_LASER_PUGB("Double Barrel Laser","Deal one additional SPAM damage card to any robot you shoot.");
     // XXX Assignment P3
 
 
     final public String displayName;
+    final public String description;
 
     // XXX Assignment P3
     // Command(String displayName) {
@@ -100,6 +101,12 @@ public enum Command {
 
     Command(String displayName, Command... options) {
         this.displayName = displayName;
+        this.description = "";
+        this.options = Collections.unmodifiableList(Arrays.asList(options));
+    }
+    Command(String displayName, String displayDescription, Command... options) {
+        this.displayName = displayName;
+        this.description = displayDescription;
         this.options = Collections.unmodifiableList(Arrays.asList(options));
     }
 

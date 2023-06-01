@@ -178,15 +178,27 @@ public class PlayerView extends Tab implements ViewObserver {
         for (int i = 0; i < Player.NO_UPGRADE_CARDS; i++) {
             CommandCardField cardField = player.getUpgradeCard(i);
             if (cardField != null) {
+                StackPane upgradeCard = new StackPane();
                 Button button = new Button("Use");
                 final int at = i;
                 button.setOnAction(e -> gameController.executeUpgradeCommand(player, upgradeCardView[at].getField()));
                 button.setStyle("-fx-border-color: #6969d3");
                 button.setPrefWidth(65);
                 useButtons.getChildren().add(button);
-
+                Button showCard = new Button("");
                 upgradeCardView[i] = new CardFieldView(gameController, cardField);
-                upgradeCards.add(upgradeCardView[i], i, 0);
+                upgradeCard.setPrefSize(65, 95);
+                showCard.setPrefSize(65, 95);
+                showCard.setOpacity(0);
+                showCard.setOnAction(e ->{
+                    String name = cardField.getCard().getName();
+                    String text = cardField.getCard().getDescription();
+                    Option option = new Option(name, text, 130, 190);
+                    option.getOKPressed();
+                });
+                upgradeCard.getChildren().add(upgradeCardView[i]);
+                upgradeCard.getChildren().add(showCard);
+                upgradeCards.add(upgradeCard, i, 0);
             }
         }
 
