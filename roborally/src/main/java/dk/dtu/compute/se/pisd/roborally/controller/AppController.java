@@ -153,9 +153,6 @@ public class AppController implements Observer {
      */
     public boolean stopGame() {
         if (gameController != null) {
-
-            // here we save the game (without asking the user).
-            //saveGame();
             gameController = null;
             roboRally.createBoardView(null);
             return true;
@@ -163,15 +160,26 @@ public class AppController implements Observer {
         return false;
     }
 
+
     public void exit() {
         if (gameController != null) {
-            Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Exit RoboRally?");
-            alert.setContentText("Are you sure you want to exit RoboRally?");
-            Optional<ButtonType> result = alert.showAndWait();
+            Option option = new Option("Are you sure you want to exit RoboRally?");
+            String[] options = new String[3];
+            options[0] = "Save and Exit";
+            options[1] = "Exit without Saving";
+            options[2] = "Cancel";
+            String answer = option.getChoice(options);
 
-            if (!result.isPresent() || result.get() != ButtonType.OK) {
-                return; // return without exiting the application
+            switch (answer){
+                case "Save and Exit":
+                    saveGame();
+                    break;
+                case "Exit without Saving":
+                    stopGame();
+                    break;
+                case "Cancel":
+                    //Do nothing, menu closes
+                    return;
             }
         }
 
