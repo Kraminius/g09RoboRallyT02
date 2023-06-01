@@ -23,6 +23,7 @@ public class Load {
     //Player Info
     String[] playerNames;
     String[] playerColors;
+    int[] playerCheckPoints;
     int[] playersXPosition;
     int[] playersYPosition;
     Heading[] playerHeadings;
@@ -141,6 +142,14 @@ public class Load {
 
     public void setPlayerHeadings(Heading[] playerHeadings) {
         this.playerHeadings = playerHeadings;
+    }
+
+    public int[] getPlayerCheckPoints(){
+        return this.playerCheckPoints;
+    }
+
+    public void setPlayerCheckPoints(int[] playerCheckPoints) {
+        this.playerCheckPoints = playerCheckPoints;
     }
 
     public Command[][] getPlayerProgrammingDeck() {

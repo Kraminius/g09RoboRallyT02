@@ -3,9 +3,9 @@ package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
-import dk.dtu.compute.se.pisd.roborally.view.StartPositionWindow;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.util.ArrayList;
 
 import static java.lang.Integer.parseInt;
 
@@ -27,15 +27,12 @@ public class GameLoader {
     }
 
     /**
-     * @param controller the controller that the changes should be made to
-     * @param value      the Object that comes with the key, this is cast onto different values.
-     * @param varName    The name of the change we should make.
+     * @param obj - A JSONObject that has info from a a json file of a new game.
      * @Author Tobias Gørlyk - s224271@dtu.dk
-     * Goes through all the keys and adds their values to a game
+     * Creates a Load.java object that can hold all the data from a new load,
+     * so all data can be pulled from this file already being converted to the right format.
+     * The method uses the Converter.java class to convert after receiving the data from the obj file.
      */
-    private static void insert(GameController controller, Object value, String varName) {
-
-    }
     private static Load loadData(JSONObject obj){
         Load load = new Load();
         load.setBoard((String)obj.get("board"));
@@ -44,7 +41,6 @@ public class GameLoader {
         load.setStepmode(Converter.getBool((String)obj.get("isStepMode")));
         load.setPhase(Converter.getPhase ((String) obj.get("phase")));
         load.setPlayerAmount((int)obj.get("playerAmount"));
-
         int amount = load.getPlayerAmount();
         load.setPlayerNames(new String[amount]);
         load.setPlayerColors(new String[amount]);
@@ -55,30 +51,30 @@ public class GameLoader {
         load.setPlayerCurrentProgram(new Command[amount][]);
         load.setPlayerDiscardPile(new Command[amount][]);
         load.setPlayerUpgradeCards(new Command[amount][]);
+        String[][] playersProgrammingDeck  = Converter.splitSeries((String[]) obj.get("playersProgrammingDeck"), "#");
+        String[][] playersProgram  = Converter.splitSeries((String[]) obj.get("playersProgram"), "#");
+        String[][] playerUpgradeCards = Converter.splitSeries((String[]) obj.get("playerUpgradeCards"), "#");
+        String[][] playersDiscardCards = Converter.splitSeries((String[]) obj.get("playersDiscardCards"), "#");
         for(int i = 0; i < amount; i++){
             load.getPlayerNames()[i] = ((String[])obj.get("playersName"))[i];
             load.getPlayerColors()[i] = ((String[])obj.get("playerColor"))[i];
             load.getPlayersXPosition()[i] = ((int[])obj.get("playersX"))[i];
             load.getPlayersYPosition()[i] = ((int[])obj.get("playersY"))[i];
             load.getPlayerHeadings()[i] = Converter.getHeading (((String[])obj.get("playersHeading"))[i]);
+            load.getPlayerCheckPoints()[i] = ((int[])obj.get("playersCheckpoints"))[i];
+            load.getPlayerProgrammingDeck()[i] = Converter.getCommands(playersProgrammingDeck[i]);
+            load.getPlayerCurrentProgram()[i] = Converter.getCommands(playersProgram[i]);
+            load.getPlayerUpgradeCards()[i] = Converter.getCommands(playerUpgradeCards[i]);
+            load.getPlayerDiscardPile()[i] = Converter.getCommands(playersDiscardCards[i]);
         }
-        /*
-  "upgradeDiscardDeck":["SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG"],
-  "upgradeOutDeck":["SPAM_FOLDER_TUPG"],
-  "upgradeCardsDeck":["SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG"],
-  "playersProgrammingDeck":["FAST_FORWARD","FORWARD","POWER_UP","LEFT","FORWARD","RIGHT","U_TURN","BACK_UP","AGAIN","AGAIN","SPRINT_FORWARD","RIGHT","POWER_UP","FORWARD","LEFT","FORWARD","RIGHT","AGAIN"],
-
-  "playersProgram":[],
-  "playersCheckpoints":[0,0],
-  "playerUpgradeCards":[],
-  "playersDiscardCards":[],
-  "step":0,"board":"Chop Shop Challenge"}
-         */
-
+        load.setUpgradeCardsDeck(Converter.getCommands((String[])obj.get("upgradeCardsDeck")));
+        load.setUpgradeOutDeck(Converter.getCommands((String[])obj.get("upgradeOutDeck")));
+        load.setUpgradeDiscardDeck(Converter.getCommands((String[])obj.get("upgradeDiscardDeck")));
         return load;
     }
+
     private static void load(AppController appController, Load load){
-        Board board = new Board((String)obj.get("board"));
+        /*Board board = new Board((String)obj.get("board"));
         gameController = new GameController(board);
         appController.roboRally.createBoardView(gameController);
         int no = (int) obj.get("playerAmount");
@@ -104,12 +100,9 @@ public class GameLoader {
         positionWindow.getStartSpaces(board);
 
         gameController.startUpgradePhase();
+
+        */
     }
 
 
-    private Command getCommand(String command){
-        switch (command){
-            case "STEP": return Command.AGAIN
-        }
-    }
 }
