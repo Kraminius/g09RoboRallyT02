@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.model.AntennaHandler;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
@@ -19,6 +20,7 @@ class PriorityTest {
     private final int TEST_HEIGHT = 8;
 
     private GameController gameController;
+    private AntennaHandler antennaHandler;
 
     @BeforeEach
     void setUp() {
@@ -82,7 +84,7 @@ class PriorityTest {
         current.setSpace(board.getSpace(3,4)); //1
         fifth.setSpace(board.getSpace(4,4)); //5
         sixth.setSpace(board.getSpace(5,5)); //6
-        gameController.antennaPriority();
+        antennaHandler.antennaPriority(board);
         Assertions.assertEquals(fourth, gameController.getSequence().get(0), "The highest prioritised player should be" +
                 "Player " + fourth.getName() + "but is: " + gameController.getSequence().get(0).getName()  );
         Assertions.assertEquals(second, gameController.getSequence().get(1), "The 2nd prioritised player should be" +
@@ -115,7 +117,7 @@ class PriorityTest {
         current.setSpace(board.getSpace(3,4)); //1
         fifth.setSpace(board.getSpace(4,4)); //5
         sixth.setSpace(board.getSpace(5,5)); //6
-        gameController.antennaPriority();
+        antennaHandler.antennaPriority(board);
         Assertions.assertEquals(second, gameController.getSequence().get(0), "The highest prioritised player should be" +
                 "Player " + second.getName() + "but is: " + gameController.getSequence().get(0).getName()  );
         Assertions.assertEquals(fourth, gameController.getSequence().get(1), "The 2nd prioritised player should be" +
@@ -150,7 +152,7 @@ class PriorityTest {
         current.setSpace(board.getSpace(3,4)); //1
         fifth.setSpace(board.getSpace(4,4)); //5
         sixth.setSpace(board.getSpace(5,5)); //6
-        gameController.antennaPriority();
+        antennaHandler.antennaPriority(board);
         Assertions.assertEquals(fourth, gameController.getSequence().get(0), "The highest prioritised player should be" +
                 "Player " + fourth.getName() + "but is: " + gameController.getSequence().get(0).getName() );
         Assertions.assertEquals(second, gameController.getSequence().get(1), "The 2nd prioritised player should be" +
@@ -185,7 +187,7 @@ class PriorityTest {
         sixth.setSpace(board.getSpace(2,5)); //6
         fifth.setSpace(board.getSpace(6,6)); //5
         third.setSpace(board.getSpace(7,7)); //3
-        gameController.antennaPriority();
+        antennaHandler.antennaPriority(board);
         Assertions.assertEquals(second, gameController.getSequence().get(0), "The highest prioritised player should be" +
                 "Player " + second.getName() + "but is: " + gameController.getSequence().get(0).getName() );
         Assertions.assertEquals(fourth, gameController.getSequence().get(1), "The 2nd prioritised player should be" +
