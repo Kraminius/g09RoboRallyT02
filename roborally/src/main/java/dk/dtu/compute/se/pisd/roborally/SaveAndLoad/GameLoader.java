@@ -2,10 +2,7 @@ package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
-import dk.dtu.compute.se.pisd.roborally.model.Board;
-import dk.dtu.compute.se.pisd.roborally.model.Heading;
-import dk.dtu.compute.se.pisd.roborally.model.Player;
-import dk.dtu.compute.se.pisd.roborally.model.Space;
+import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.view.StartPositionWindow;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,11 +21,8 @@ public class GameLoader {
             System.out.println("Error in loading");
             return null;
         }
-        load(appController, obj);
+        load(appController, loadData(obj));
 
-        for (Object key : obj.keySet()) {
-            insert(gameController, obj.get(key), (String) key);
-        }
         return gameController;
     }
 
@@ -42,7 +36,48 @@ public class GameLoader {
     private static void insert(GameController controller, Object value, String varName) {
 
     }
-    private static void load(AppController appController, JSONObject obj){
+    private static Load loadData(JSONObject obj){
+        Load load = new Load();
+        load.setBoard((String)obj.get("board"));
+        load.setStep((int)obj.get("step"));
+        load.setCurrentPlayer((String)obj.get("currentPlayer"));
+        load.setStepmode(Converter.getBool((String)obj.get("isStepMode")));
+        load.setPhase(Converter.getPhase ((String) obj.get("phase")));
+        load.setPlayerAmount((int)obj.get("playerAmount"));
+
+        int amount = load.getPlayerAmount();
+        load.setPlayerNames(new String[amount]);
+        load.setPlayerColors(new String[amount]);
+        load.setPlayersXPosition(new int[amount]);
+        load.setPlayersYPosition(new int[amount]);
+        load.setPlayerHeadings(new Heading[amount]);
+        load.setPlayerProgrammingDeck(new Command[amount][]);
+        load.setPlayerCurrentProgram(new Command[amount][]);
+        load.setPlayerDiscardPile(new Command[amount][]);
+        load.setPlayerUpgradeCards(new Command[amount][]);
+        for(int i = 0; i < amount; i++){
+            load.getPlayerNames()[i] = ((String[])obj.get("playersName"))[i];
+            load.getPlayerColors()[i] = ((String[])obj.get("playerColor"))[i];
+            load.getPlayersXPosition()[i] = ((int[])obj.get("playersX"))[i];
+            load.getPlayersYPosition()[i] = ((int[])obj.get("playersY"))[i];
+            load.getPlayerHeadings()[i] = Converter.getHeading (((String[])obj.get("playersHeading"))[i]);
+        }
+        /*
+  "upgradeDiscardDeck":["SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG"],
+  "upgradeOutDeck":["SPAM_FOLDER_TUPG"],
+  "upgradeCardsDeck":["SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG","SPAM_FOLDER_TUPG"],
+  "playersProgrammingDeck":["FAST_FORWARD","FORWARD","POWER_UP","LEFT","FORWARD","RIGHT","U_TURN","BACK_UP","AGAIN","AGAIN","SPRINT_FORWARD","RIGHT","POWER_UP","FORWARD","LEFT","FORWARD","RIGHT","AGAIN"],
+
+  "playersProgram":[],
+  "playersCheckpoints":[0,0],
+  "playerUpgradeCards":[],
+  "playersDiscardCards":[],
+  "step":0,"board":"Chop Shop Challenge"}
+         */
+
+        return load;
+    }
+    private static void load(AppController appController, Load load){
         Board board = new Board((String)obj.get("board"));
         gameController = new GameController(board);
         appController.roboRally.createBoardView(gameController);
@@ -51,7 +86,7 @@ public class GameLoader {
             Player player = new Player(board, appController.PLAYER_COLORS.get(i), (String)((JSONArray) obj.get("playersName")).get(i), i+1);
             gameController.fillStartDeck(player.getCardDeck());
             player.setSpace(board.getSpace((int)((JSONArray) obj.get("playersX")).get(i), (int)((JSONArray) obj.get("playersY")).get(i)));
-            player.setHeading(getHeading((String)((JSONArray) obj.get("playersHeading")).get(i)));
+            player.setHeading(Converter.getHeading((String)((JSONArray) obj.get("playersHeading")).get(i)));
             int checkpointReached = ((int)((JSONArray) obj.get("playersCheckpoints")).get(i));
             for(int j = 0; j < checkpointReached; j++){
                 player.setCheckpointReadhed(j, true);
@@ -71,17 +106,10 @@ public class GameLoader {
         gameController.startUpgradePhase();
     }
 
-    private static Heading getHeading(String heading){
-        switch (heading){
-            case "SOUTH":
-                return Heading.SOUTH;
-            case "WEST":
-                return Heading.WEST;
-            case "NORTH":
-                return Heading.NORTH;
-            case "EAST":
-                return Heading.EAST;
+
+    private Command getCommand(String command){
+        switch (command){
+            case "STEP": return Command.AGAIN
         }
-        return null;
     }
 }

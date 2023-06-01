@@ -44,8 +44,8 @@ public enum Command {
     U_TURN("U-turn"),
     AGAIN("Again"),
 
-    MOVELEFT("Move Left"),
-    MOVERIGHT("Move Right"),
+    MOVE_LEFT("Move Left"),
+    MOVE_RIGHT("Move Right"),
 
     POWER_UP("Power up"),
     OPTION_LEFT_RIGHT("Left OR Right", LEFT, RIGHT),

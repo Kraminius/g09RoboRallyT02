@@ -26,7 +26,6 @@ import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
-import dk.dtu.compute.se.pisd.roborally.view.ViewObserver;
 import dk.dtu.compute.se.pisd.roborally.view.WinnerDisplay;
 import org.jetbrains.annotations.NotNull;
 
@@ -185,8 +184,8 @@ public class GameController {
                 Command.WORM,
                 Command.TROJAN_HORSE,
                 Command.VIRUS,
-                Command.MOVELEFT,
-                Command.MOVERIGHT,
+                Command.MOVE_LEFT,
+                Command.MOVE_RIGHT,
                 Command.POWER_UP,
                 Command.SPAM_FOLDER,
                 Command.SPEED,
@@ -567,11 +566,11 @@ public class GameController {
                 playSpamFolder(player);
                 return false;
 
-            case MOVELEFT:
+            case MOVE_LEFT:
                 moveToLeftSpace(player);
                 return false;
 
-            case MOVERIGHT:
+            case MOVE_RIGHT:
                 moveToRightSpace(player);
                 return false;
 

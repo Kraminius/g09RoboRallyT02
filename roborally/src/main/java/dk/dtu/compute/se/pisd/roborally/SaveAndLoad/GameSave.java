@@ -68,17 +68,19 @@ public class GameSave {
             CommandCardField[] upgradeCards = player.getUpgradeCards();
             ArrayList<CommandCard> discardPile = player.getDiscardPile();
 
-
+            playersProgram.add("#");
             for(int j = 0; j < program.length; j++){
-
                 if(program[i].getCard() != null) playersProgram.add(program[j].getCard().command.toString());
             }
+            playersProgrammingDeck.add("#");
             for(int j = 0; j < card.length; j++){
                 if(card[i].getCard() != null) playersProgrammingDeck.add(card[j].getCard().command.toString());
             }
+            playerUpgradeCards.add("#");
             for(int j = 0; j < upgradeCards.length; j++){
                 if(upgradeCards[i].getCard() != null) playerUpgradeCards.add(upgradeCards[j].getCard().command.toString());
             }
+            playersDiscardCards.add("#");
             for(int j = 0; j < discardPile.size(); j++){
                 if(discardPile.get(i) != null) playersDiscardCards.add(discardPile.get(j).command.toString());
             }

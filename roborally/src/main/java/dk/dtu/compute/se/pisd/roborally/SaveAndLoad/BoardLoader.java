@@ -71,7 +71,7 @@ public class BoardLoader {
                         Wall wall;
                         if(b.spaces[x][y].getElement().getWall() == null) wall = new Wall();
                         else wall = b.spaces[x][y].getElement().getWall();
-                        wall.getWallHeadings().add(getHeading(values[j]));
+                        wall.getWallHeadings().add(Converter.getHeading(values[j]));
                         b.spaces[x][y].getElement().setWall(wall);
                     }
                 }
@@ -85,7 +85,7 @@ public class BoardLoader {
                     Belt belt = new Belt();
                     if(values[2].equals("null")) belt.setTurn(""); //LEFT/RIGHT/null
                     else belt.setTurn(values[2]);
-                    belt.setHeading(getHeading(values[3]));
+                    belt.setHeading(Converter.getHeading(values[3]));
                     belt.setSpeed(parseInt(values[4]));
                     b.spaces[x][y].getElement().setBelt(belt);
 
@@ -109,7 +109,7 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     Laser laser = new Laser();
-                    laser.setHeading(getHeading(values[2]));
+                    laser.setHeading(Converter.getHeading(values[2]));
                     laser.setDamage(parseInt(values[3]));
                     if(values[4].equals("TRUE")) laser.setStart(true);
                     b.spaces[x][y].getElement().setLaser(laser);
@@ -137,7 +137,7 @@ public class BoardLoader {
                     int x = parseInt(values[0]);
                     int y = parseInt(values[1]);
                     Push push = new Push();
-                    push.setHeading(getHeading(values[2]));
+                    push.setHeading(Converter.getHeading(values[2]));
                     for(int j = 3; j < values.length; j++){
                         push.getActivateRounds().add(parseInt(values[j]));
                     }
@@ -216,19 +216,7 @@ public class BoardLoader {
         }
     }
 
-    public Heading getHeading(String heading){
-        switch (heading){
-            case "SOUTH":
-                return Heading.SOUTH;
-            case "WEST":
-                return Heading.WEST;
-            case "NORTH":
-                return Heading.NORTH;
-            case "EAST":
-                return Heading.EAST;
-        }
-        return null;
-    }
+
     private ArrayList<String> getList(JSONArray arr){
         ArrayList<String> list = new ArrayList<>();
         for(int i = 0; i < arr.size(); i++){
