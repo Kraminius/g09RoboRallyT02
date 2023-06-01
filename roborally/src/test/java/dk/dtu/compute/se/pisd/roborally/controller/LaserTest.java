@@ -178,12 +178,12 @@ class LaserTest {
         Player second = board.getPlayer(1);
         Player third = board.getPlayer(2);
 
-        second.setSpace(board.getSpace(0,4));
+        second.setSpace(board.getSpace(1,4));
         second.setHeading(WEST);
-        current.setSpace(board.getSpace(1,4));
-        current.setHeading(SOUTH);
-        third.setSpace(board.getSpace(0,2));
-        third.setHeading(WEST);
+        current.setSpace(board.getSpace(2,4));
+        current.setHeading(NORTH);
+        third.setSpace(board.getSpace(1,2));
+        third.setHeading(SOUTH);
         activator.activateBoard(board, gameController);
 
         int spamFound1 = 0;
@@ -206,13 +206,18 @@ class LaserTest {
         }
 
         Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
-        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
-        Assertions.assertEquals(spamFound3, 1, "Expect player "+third.getName()+" to take 1 damage");
+        Assertions.assertEquals(spamFound3, 0, "Dont expect player "+third.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 1, "Expect player "+second.getName()+" to take 1 damage");
 
     }
 
     @Test
     void hitByPlayerWallLaser(){
+        /*
+        Testin a wall in the middle of the eay
+        but being on the beside the laser
+        meaning it isnt obscuring and player 2 is hit
+         */
         Board board = gameController.board;
         Player current = board.getCurrentPlayer();
         Player second = board.getPlayer(1);
@@ -223,7 +228,7 @@ class LaserTest {
         current.setSpace(board.getSpace(1,4));
         current.setHeading(SOUTH);
         third.setSpace(board.getSpace(0,2));
-        third.setHeading(WEST);
+        third.setHeading(SOUTH);
 
         //Setting up a wall
         SpaceElement wallSpace = new SpaceElement();
@@ -256,13 +261,17 @@ class LaserTest {
         }
 
         Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
-        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 1, "Expect player "+second.getName()+" to take 1 damage");
         Assertions.assertEquals(spamFound3, 0, "Expect player "+third.getName()+" to take 0 damage");
 
     }
 
     @Test
     void hitByPlayerWall2Laser(){
+        /*
+        Testing a wall from the one shoting but on the opposite site
+        meaning the laser isnt obstructed and hits player 2
+         */
         Board board = gameController.board;
         Player current = board.getCurrentPlayer();
         Player second = board.getPlayer(1);
@@ -273,13 +282,13 @@ class LaserTest {
         current.setSpace(board.getSpace(1,4));
         current.setHeading(SOUTH);
         third.setSpace(board.getSpace(0,2));
-        third.setHeading(WEST);
+        third.setHeading(SOUTH);
 
         //Setting up a wall
         SpaceElement wallSpace = new SpaceElement();
         Wall wall = new Wall();
         ArrayList<Heading> wallHead = new ArrayList<>();
-        wallHead.add(EAST);
+        wallHead.add(NORTH);
         wall.setWallHeadings(wallHead);
         wallSpace.setWall(wall);
         board.getSpace(0,2).setElement(wallSpace);
@@ -306,13 +315,17 @@ class LaserTest {
         }
 
         Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
-        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
+        Assertions.assertEquals(spamFound2, 1, "Expect player "+second.getName()+" to take 1 damage");
         Assertions.assertEquals(spamFound3, 0, "Expect player "+third.getName()+" to take 0 damage");
 
     }
 
     @Test
     void hitByPlayerWall3Laser(){
+        /*
+        Testing a wall in the middle of the way to player 2
+        meaning player 2 isnt hit
+         */
         Board board = gameController.board;
         Player current = board.getCurrentPlayer();
         Player second = board.getPlayer(1);
@@ -323,13 +336,13 @@ class LaserTest {
         current.setSpace(board.getSpace(1,4));
         current.setHeading(SOUTH);
         third.setSpace(board.getSpace(0,2));
-        third.setHeading(WEST);
+        third.setHeading(SOUTH);
 
         //Setting up a wall
         SpaceElement wallSpace = new SpaceElement();
         Wall wall = new Wall();
         ArrayList<Heading> wallHead = new ArrayList<>();
-        wallHead.add(WEST);
+        wallHead.add(NORTH);
         wall.setWallHeadings(wallHead);
         wallSpace.setWall(wall);
         board.getSpace(0,3).setElement(wallSpace);
@@ -363,6 +376,10 @@ class LaserTest {
 
     @Test
     void hitByPlayerWall4Laser(){
+        /*
+        Testing a wall on the space where the laser is shot from
+        emidietly hitting a wall and not reaching player 2
+         */
         Board board = gameController.board;
         Player current = board.getCurrentPlayer();
         Player second = board.getPlayer(1);
@@ -371,15 +388,15 @@ class LaserTest {
         second.setSpace(board.getSpace(0,4));
         second.setHeading(WEST);
         current.setSpace(board.getSpace(1,4));
-        current.setHeading(SOUTH);
+        current.setHeading(EAST);
         third.setSpace(board.getSpace(0,2));
-        third.setHeading(WEST);
+        third.setHeading(SOUTH);
 
         //Setting up a wall
         SpaceElement wallSpace = new SpaceElement();
         Wall wall = new Wall();
         ArrayList<Heading> wallHead = new ArrayList<>();
-        wallHead.add(EAST);
+        wallHead.add(SOUTH);
         wall.setWallHeadings(wallHead);
         wallSpace.setWall(wall);
         board.getSpace(0,2).setElement(wallSpace);
@@ -413,6 +430,11 @@ class LaserTest {
 
     @Test
     void hitByPlayerWall5Laser(){
+        /*
+        Testing a player still gets hit if they are on a space
+        with a wall, but the wall is on the other side of where the player laser
+        is comming from.
+         */
         Board board = gameController.board;
         Player current = board.getCurrentPlayer();
         Player second = board.getPlayer(1);
@@ -423,16 +445,16 @@ class LaserTest {
         current.setSpace(board.getSpace(1,4));
         current.setHeading(SOUTH);
         third.setSpace(board.getSpace(0,2));
-        third.setHeading(WEST);
+        third.setHeading(SOUTH);
 
         //Setting up a wall
         SpaceElement wallSpace = new SpaceElement();
         Wall wall = new Wall();
         ArrayList<Heading> wallHead = new ArrayList<>();
-        wallHead.add(WEST);
+        wallHead.add(SOUTH);
         wall.setWallHeadings(wallHead);
         wallSpace.setWall(wall);
-        board.getSpace(0,2).setElement(wallSpace);
+        board.getSpace(0,4).setElement(wallSpace);
 
         activator.activateBoard(board, gameController);
 
@@ -456,10 +478,10 @@ class LaserTest {
         }
 
         Assertions.assertEquals(spamFound1, 0, "Dont expect player "+current.getName()+" to get any damage");
-        Assertions.assertEquals(spamFound2, 0, "Dont expect player "+second.getName()+" to get any damage");
-        Assertions.assertEquals(spamFound3, 1, "Expect player "+third.getName()+" to take 1 damage");
+        Assertions.assertEquals(spamFound3, 0, "Dont expect player "+third.getName()+" to get any damage");
+        Assertions.assertEquals(1, spamFound2, "Expect player "+second.getName()+" to take 1 damage");
 
     }
 
-   //Add more test for this one
+    //Add more test for this one
 }

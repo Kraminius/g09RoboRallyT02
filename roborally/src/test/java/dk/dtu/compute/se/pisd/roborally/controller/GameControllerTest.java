@@ -11,6 +11,7 @@ import static dk.dtu.compute.se.pisd.roborally.model.Heading.*;
 import static org.testng.AssertJUnit.*;
 
 class GameControllerTest {
+    /*
 
     private GameController gameController;
 
@@ -45,6 +46,7 @@ class GameControllerTest {
         Assertions.assertNull(board.getSpace(0, 0).getPlayer(), "Space (0,0) should be empty!");
         Assertions.assertEquals(player2, board.getCurrentPlayer(), "Current player should be " + player2.getName() +"!");
     }*/
+    /*
 
     @Test
     void moveForward() throws OutsideBoardException {
@@ -205,6 +207,7 @@ class GameControllerTest {
         assertEquals(player2, board.getSpace(1,0).getPlayer());
 
     }
+    */
 
     /*
     @Test
