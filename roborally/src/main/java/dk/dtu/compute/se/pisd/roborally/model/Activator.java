@@ -83,11 +83,9 @@ public class Activator {
         }
     }
     private void activatePlayerLasers(){
-        Player[] players = new Player[board.getPlayersNumber()];
-        for(int i = 0; i < players.length; i++){
-            players[i] = board.getPlayer(i);
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            controller.playerLaserActivate(board.getPlayer(i));
         }
-        controller.playerLaserActivate(players);
     }
 
     private void activateEnergyFields(){
