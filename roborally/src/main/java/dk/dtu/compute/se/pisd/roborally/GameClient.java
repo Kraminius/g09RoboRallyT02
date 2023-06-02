@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class MyClient {
+public class GameClient {
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
@@ -16,31 +16,15 @@ public class MyClient {
             .build();
 
 
-
-    public static boolean weConnect(int playerNum) throws Exception {
+    public static boolean areAllConnected(int playerNum) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(Integer.toString(playerNum)))
-                .uri(URI.create("http://localhost:8080/connected"))
+                .GET()
+                .uri(URI.create("http://localhost:8080/allConnected?playerNum=" + playerNum))
                 .build();
         CompletableFuture<HttpResponse<String>> response =
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
-        return result.equals("we connected");
+        return Boolean.parseBoolean(result);
     }
-
-
-
-
-
-
-    private boolean connected;
-
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-
-
 
 }

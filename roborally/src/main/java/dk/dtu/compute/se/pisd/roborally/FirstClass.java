@@ -1,27 +1,38 @@
 package dk.dtu.compute.se.pisd.roborally;
 
-import dk.dtu.compute.se.pisd.roborally.model.Board;
-
 import java.util.Scanner;
 
 public class FirstClass {
 
     public static void main(String[] args) throws Exception {
-        System.out.println("Tab 1 to connect");
+
         Scanner scanner = new Scanner(System.in);
-        String myAnswer = scanner.nextLine();
+        System.out.println("Your player number: ");
+        String num = scanner.nextLine();
 
-        Boolean bool;
+        while(true){
+            System.out.println("Tab 1 to connect");
 
-        if(myAnswer.equals("1")){
+            String myAnswer = scanner.nextLine();
 
-            bool = MyClient.weConnect();
+            int  playerNum = Integer.parseInt(num);
 
-        }else{
-            bool = false;
+            Boolean bool = null;
+
+            if(myAnswer.equals("1")){
+
+                MyClient.weConnect(playerNum-1);
+                bool = GameClient.areAllConnected(playerNum-1);
+
+            }
+            else if(myAnswer.equals("8")){
+                break;
+            }
+
+            System.out.println("All conncted: " + bool);
         }
 
-        System.out.println(bool);
+
 
     }
 
