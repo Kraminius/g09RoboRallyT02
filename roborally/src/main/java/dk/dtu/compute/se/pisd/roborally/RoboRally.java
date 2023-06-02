@@ -24,7 +24,9 @@ package dk.dtu.compute.se.pisd.roborally;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
+import dk.dtu.compute.se.pisd.roborally.view.Lobby;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.RoboRallyMenuBar;
 import javafx.application.Application;
@@ -56,6 +58,9 @@ public class RoboRally extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        GameSettings gameSettings = new GameSettings();
+        Lobby lobby = new Lobby(gameSettings);
+        lobby.show();
         stage = primaryStage;
 
         AppController appController = new AppController(this);
