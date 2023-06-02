@@ -31,7 +31,7 @@ class RestTest {
     void setUp() {
 
         activator = new Activator();
-        programCards = new ProgramCards(gameController.board);
+        //programCards = new ProgramCards(gameController.board);
 
         Board board = new Board();
         board.width = 8;

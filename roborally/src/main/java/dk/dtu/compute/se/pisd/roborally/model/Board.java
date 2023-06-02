@@ -80,6 +80,8 @@ public class Board extends Subject {
         if (!BoardLoader.getInstance().loadBoard(boardName, this)) {
             System.out.println("Board not found with the name [" + boardName + "], loaded \"Dizzy Highway TESTBOARD\" instead.");
             BoardLoader.getInstance().loadBoard("board_0", this);
+            //I have no idea if this will work
+            BoardService.setBoard(this);
         }
     }
 

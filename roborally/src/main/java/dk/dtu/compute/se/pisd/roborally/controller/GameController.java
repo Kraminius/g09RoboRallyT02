@@ -57,6 +57,8 @@ public class GameController {
      */
     public GameController(@NotNull Board board) {
         this.board = board;
+        GameControllerService.setGame(this);
+
     }
 
 
@@ -84,6 +86,7 @@ public class GameController {
     public void startUpgradePhase(){
         System.out.println("Upgrade Phase Started");
         board.setPhase(Phase.UPGRADE);
+        GameControllerService.setGame(this);
     }
 
     public void startProgrammingPhase() {
@@ -112,6 +115,7 @@ public class GameController {
                 }
             }
         }
+        GameControllerService.setGame(this);
     }
 
     public void setGameStateUpgradeCards(){
@@ -126,6 +130,7 @@ public class GameController {
                 }
             }
         }
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -162,6 +167,7 @@ public class GameController {
             index++;
         }
         Collections.shuffle(playerDeck);
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -202,6 +208,7 @@ public class GameController {
             }
         }
         Collections.shuffle(upgradeDeck);
+        GameControllerService.setGame(this);
     }
 
 
@@ -221,6 +228,7 @@ public class GameController {
         cardDeck.addAll(discardPile);
         Collections.shuffle(cardDeck);
         discardPile.clear();
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -256,6 +264,7 @@ public class GameController {
     protected void discardCard(Player player, CommandCard card){
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         discardPile.add(card);
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -275,6 +284,7 @@ public class GameController {
                 }
             }
         }
+        GameControllerService.setGame(this);
     }
     // XXX: V2
     public void finishProgrammingPhase() {
@@ -289,6 +299,7 @@ public class GameController {
         //sequence.remove(0);
         //board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
+        GameControllerService.setGame(this);
     }
 
     // XXX: V2
@@ -300,6 +311,7 @@ public class GameController {
                 field.setVisible(true);
             }
         }
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -314,6 +326,7 @@ public class GameController {
                 field.setVisible(false);
             }
         }
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -323,6 +336,7 @@ public class GameController {
     public void executePrograms() {
         board.setStepMode(false);
         continuePrograms();
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -332,6 +346,7 @@ public class GameController {
     public void executeStep() {
         board.setStepMode(true);
         continuePrograms();
+        GameControllerService.setGame(this);
     }
 
     // XXX: V2
@@ -340,6 +355,7 @@ public class GameController {
         do {
             executeNextStep();
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
+        GameControllerService.setGame(this);
     }
 
 
@@ -387,6 +403,7 @@ public class GameController {
             // this should not happen
             assert false;
         }
+        GameControllerService.setGame(this);
     }
 
     private void switchCurrentPlayer(){
@@ -406,6 +423,7 @@ public class GameController {
             board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
             Activator.getInstance().activateBoard(board, this);
         }
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -434,6 +452,7 @@ public class GameController {
         }else{
             board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
         }
+        GameControllerService.setGame(this);
     }
     // XXX: V2
 
@@ -658,6 +677,7 @@ public class GameController {
             player.getCardField(i).setCard(null);
             player.getCardField(i).setCard(drawTopCard(player));
         }
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -742,6 +762,7 @@ public class GameController {
         } else {
             player.setSpace(board.getRespawnSpaces());
         }
+        GameControllerService.setGame(this);
     }
     /**@author Freja Egelund Grønnemose, s224286@dtu.dk
      * This methods set the players space to the space of the rebootToken.
@@ -761,6 +782,7 @@ public class GameController {
         }
         board.setPhase(Phase.ACTIVATION);
         switchCurrentPlayer();
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -933,6 +955,7 @@ public class GameController {
                 }
             }
         }
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -960,12 +983,14 @@ public class GameController {
             checkForWinner();
         }
 
+        GameControllerService.setGame(this);
     }
 
     public void addDamageCard(Player player, Command type){
         CommandCard damageCard = new CommandCard(type);
         ArrayList<CommandCard> discardPile = player.getDiscardPile();
         discardPile.add(damageCard);
+        GameControllerService.setGame(this);
     }
 
     /**@Author Freja Egelund Grønnemose, s224286@dtu.dk
@@ -980,6 +1005,7 @@ public class GameController {
         currentRegister.setCard(topCard);
         currentRegister.setVisible(true);
         executeCommand(player, topCard.command);
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -992,6 +1018,7 @@ public class GameController {
             addDamageCard(player, Command.SPAM);
         }
         playSpam(player);
+        GameControllerService.setGame(this);
     }
 
 
@@ -1007,6 +1034,7 @@ public class GameController {
             addDamageCard(otherPlayer, Command.SPAM);
         }
         playSpam(player);
+        GameControllerService.setGame(this);
     }
 
     /**
@@ -1264,6 +1292,7 @@ public class GameController {
                 end = true;
             }
         }
+        GameControllerService.setGame(this);
     }
 
     public void checkForWinner(){
@@ -1280,6 +1309,7 @@ public class GameController {
                 //Platform.exit();
             }
         }
+        GameControllerService.setGame(this);
     }
 
     public List<Player> getSequence() {
@@ -1369,12 +1399,14 @@ public class GameController {
             }
 
         } //No card at that spot, so nothing happens.
+        GameControllerService.setGame(this);
     }
 
     public void openUpgradeShop(){
         if(upgradeShop == null) upgradeShop = new UpgradeShop();
         upgradeShop.openShop(board, this);
         startProgrammingPhase();
+        GameControllerService.setGame(this);
     }
 
 
@@ -1382,6 +1414,7 @@ public class GameController {
         if(player.getPowerUps().isRammingGear()){
             addDamageCard(playerToMove, Command.SPAM);
         }
+        GameControllerService.setGame(this);
     }
 
     public void barrelLaserFunctionality(Player player, Player playerToShoot){
@@ -1453,6 +1486,7 @@ public class GameController {
                 }
             }
         }
+        GameControllerService.setGame(this);
     }
 
     /**

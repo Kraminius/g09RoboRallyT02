@@ -110,7 +110,7 @@ public class AppController implements Observer {
 
             gameController.startUpgradePhase();
             //Testing
-            ProgramCards programCards = new ProgramCards(board);
+            //ProgramCards programCards = new ProgramCards(board);
 
         }
     }

@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class ProgramContoller {
 
-
-    @Autowired
-    private RoboRally;
-
     @Autowired
     private IProgramCards programCards;
 
