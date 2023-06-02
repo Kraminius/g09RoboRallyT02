@@ -2,10 +2,7 @@ package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
-import dk.dtu.compute.se.pisd.roborally.model.Board;
-import dk.dtu.compute.se.pisd.roborally.model.Command;
-import dk.dtu.compute.se.pisd.roborally.model.CommandCard;
-import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
 
 import java.util.ArrayList;
@@ -76,7 +73,7 @@ public class LoadInstance {
             for(int j = 0; j < checkpointReached; j++){ //Checks all checkpoints for that player up to that point.
                 player.setCheckpointReached(j, true);
             }
-
+            loadCardsForPlayer(player, load, i);
             board.addPlayer(player); //Adds player to board
         }
 
@@ -87,12 +84,34 @@ public class LoadInstance {
                 break;
             }
         }
-        Command[][] playerProgrammingDeck;
-        Command[][] playerCurrentProgram;
-        Command[][] playerDiscardPile;
-        Command[][] playerUpgradeCards;
     }
-    private static void loadCardsForPlayer(Player player, Load load){
+    private static void loadCardsForPlayer(Player player, Load load, int index){
+        Command[][] playerProgrammingDeck = load.getPlayerProgrammingDeck();
+        Command[][] playerCurrentProgram = load.getPlayerCurrentProgram();
+        Command[][] playerDiscardPile = load.getPlayerDiscardPile();
+        Command[][] playerUpgradeCards = load.getPlayerUpgradeCards();
+
+        ArrayList<CommandCard> deck = player.getCardDeck();
+        ArrayList<CommandCard> discard = player.getDiscardPile();
+        CommandCardField[] upgradeCards = player.getUpgradeCards();
+        CommandCardField[] currentProgram = player.getProgram();
+        deck.clear();
+        discard.clear();
+        for(int i = 0; i < playerProgrammingDeck[index].length; i++){
+            deck.add(new CommandCard(playerProgrammingDeck[index][i]));
+        }
+        for(int i = 0; i < playerDiscardPile[index].length; i++){
+            discard.add(new CommandCard(playerDiscardPile[index][i]));
+        }
+        for(int i = 0; i < playerCurrentProgram[index].length; i++){
+            currentProgram[i] = new CommandCardField (player);
+            currentProgram[i].setCard(new CommandCard(playerCurrentProgram[index][i]));
+        }
+        for(int i = 0; i < playerUpgradeCards[index].length; i++){
+            if(!UpgradeCardInfo.getPermanent(playerUpgradeCards[index][i]) && i < 3) i = 3; //If it's permanent I have to move it a bit to the right in the array.
+            upgradeCards[i] = new CommandCardField (player);
+            upgradeCards[i].setCard(new CommandCard(playerUpgradeCards[index][i]));
+        }
 
     }
     private static void loadCurrentState(Load load, Board board){
