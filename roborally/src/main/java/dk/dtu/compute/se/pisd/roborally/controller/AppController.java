@@ -24,6 +24,8 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Observer;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
+import dk.dtu.compute.se.pisd.roborally.APITests.ProgramCards;
+import dk.dtu.compute.se.pisd.roborally.G09RoboRally3WpApplication;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
@@ -57,6 +59,9 @@ public class AppController implements Observer {
     final public RoboRally roboRally;
 
     private GameController gameController;
+
+    //Test
+    private ProgramCards programCards;
 
     public AppController(@NotNull RoboRally roboRally) {
         this.roboRally = roboRally;
@@ -104,6 +109,8 @@ public class AppController implements Observer {
 
 
             gameController.startUpgradePhase();
+            //Testing
+            ProgramCards programCards = new ProgramCards(board);
 
         }
     }

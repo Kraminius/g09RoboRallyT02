@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.APIController.ProgramContoller;
+import dk.dtu.compute.se.pisd.roborally.APITests.ProgramCards;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoader;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;

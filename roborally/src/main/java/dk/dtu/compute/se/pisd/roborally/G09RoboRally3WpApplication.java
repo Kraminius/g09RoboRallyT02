@@ -7,7 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class G09RoboRally3WpApplication {
 
     public static void main(String[] args) {
+
+
+        StartRoboRally.main(args);
         SpringApplication.run(G09RoboRally3WpApplication.class, args);
+        //new StartRoboRally();
+
+
     }
 
 }
