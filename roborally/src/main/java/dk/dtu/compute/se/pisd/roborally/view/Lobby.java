@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
+import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import javafx.beans.binding.Bindings;
 import javafx.event.Event;
@@ -127,7 +128,10 @@ public class Lobby {
         numberOfPlayersInput.setEditable(false);
 
         Label boardToPlayLabel = new Label("What board to play:");
-        TextField boardToPlayInput = new TextField();
+        ComboBox<String> boardsToPlayInput = new ComboBox<>();
+        BoardLoadWindow boardLoadWindow = new BoardLoadWindow();
+        boardLoadWindow.addFiles(boardsToPlayInput);
+
 
         // Create a submit button
         Button submitButton = new Button("Create Game");
@@ -137,7 +141,7 @@ public class Lobby {
             gameSettings.setGameName(gameNameInput.getText());
             gameSettings.setCreatorName(creatorNameInput.getText());
             gameSettings.setNumberOfPlayers(numberOfPlayersInput.getValue());
-            gameSettings.setBoardToPlay(boardToPlayInput.getText());
+            gameSettings.setBoardToPlay(boardsToPlayInput.getValue());
 
             System.out.println("Game created with settings: " + gameSettings);
 
@@ -145,7 +149,7 @@ public class Lobby {
         });
 
         // Add all elements to the layout
-        createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardToPlayInput, submitButton);
+        createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
 
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(createGameLayout, 400, 400);
