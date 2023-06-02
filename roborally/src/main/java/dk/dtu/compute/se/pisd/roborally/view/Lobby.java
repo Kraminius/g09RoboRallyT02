@@ -23,7 +23,11 @@ public class Lobby {
     boolean yesNo;
 
     GameSettings gameSettings;
-
+    /**
+     * Default constructor for the Lobby class.
+     * @param gameSettings GameSettings object which contains the settings of the game
+     * @author Mikkel Jürs, s224279@student.dtu.dk
+     */
     public Lobby(GameSettings gameSettings) {
         this.gameSettings = gameSettings;
         stage = new Stage();
@@ -87,8 +91,11 @@ public class Lobby {
     }
 
 
-    //Your second constructor remains unchanged.
 
+    /**
+     * Method to display the lobby window.
+     * @author Mikkel Jürs, s224279@student.dtu.dk
+     */
     public void show(){
         Scene scene = new Scene(window);
         stage.setScene(scene);
@@ -97,6 +104,11 @@ public class Lobby {
         stage.showAndWait();
     }
 
+    /**
+     * Method to open a new scene for creating a game.
+     * @param gameSettings GameSettings object which contains the settings of the game
+     * @author Mikkel Jürs, s224279@student.dtu.dk
+     */
     private void openCreateGameScene(GameSettings gameSettings) {
         // Create new Stage for this scene
         Stage createGameStage = new Stage();
@@ -142,6 +154,10 @@ public class Lobby {
     }
 
 
+    /**
+     * Method to close the lobby window.
+     * @author Mikkel Jürs, s224279@student.dtu.dk
+     */
     private void close(){
         stage.close();
     }
