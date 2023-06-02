@@ -41,4 +41,14 @@ public class MyRest {
         return ResponseEntity.ok().body(5);
     }
 
+
+    @GetMapping(value = "/getPlayerNumber")
+    public ResponseEntity<Integer> allConnected() {
+        // Now you can use playerNumStr
+        Integer temp = gameDataRep.playerNumber();
+        return ResponseEntity.ok().body(temp);
+    }
+
+
+
 }

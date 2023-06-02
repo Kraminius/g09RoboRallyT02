@@ -9,6 +9,7 @@ public class GameData {
 
 
 
+    String currentGameMap;
     int numPlayers;
 
     boolean[] readyList;
@@ -45,9 +46,13 @@ public class GameData {
     }
 
 
+    public String getCurrentGameMap() {
+        return currentGameMap;
+    }
 
-
-
+    public void setCurrentGameMap(String currentGameMap) {
+        this.currentGameMap = currentGameMap;
+    }
 
     public boolean isAllPlayersConnected() {
         return allPlayersConnected;

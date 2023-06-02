@@ -32,6 +32,11 @@ public class FirstClass {
                 String nue = scanner.nextLine();
                 int numb = Integer.parseInt(nue);
                 GameClient.instaGameData(numb);
+            }else if(myAnswer.equals("3")){
+                int playerNumber = Integer.parseInt(MyClient.playerNumber());
+                System.out.println("Your player number is: " + playerNumber);
+            } else if (myAnswer.equals("5")) {
+                GameClient.instaGameData(5);
             }
 
             System.out.println("All conncted: " + bool);

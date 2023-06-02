@@ -60,12 +60,17 @@ public class AppController implements Observer {
 
     private GameController gameController;
 
+    private boolean currentGamingRunning = false;
+
     public AppController(@NotNull RoboRally roboRally) {
         this.roboRally = roboRally;
     }
 
     public void newGame() throws Exception {
 
+        if(currentGamingRunning){
+            currentGame();
+        }
 
         ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
         dialog.setTitle("Player number");
@@ -129,7 +134,19 @@ public class AppController implements Observer {
         }
     }
 
+    public void currentGame() throws Exception{
 
+        int playerNumber = Integer.parseInt(MyClient.playerNumber());
+
+        MyClient.weConnect(playerNumber);
+
+
+        /*Player player = new Player(board, PLAYER_COLORS.get(playerNumber), "Player " + (playerNumber + 1), playerNumber+1);
+        player.setEnergyCubes(5);
+        gameController.fillStartDeck(player.getCardDeck());
+        board.addPlayer(player);*/
+
+    }
 
     public void saveGame() {
         // XXX needs to be implemented eventually

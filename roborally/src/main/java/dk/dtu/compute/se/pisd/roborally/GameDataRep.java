@@ -34,6 +34,21 @@ public class GameDataRep {
 
     }
 
+    public int playerNumber(){
+
+        int i;
+        for (i = 0; i < gameData.readyList.length; i++) {
+
+            System.out.println("This player: " + gameData.readyList[i]);
+
+            if(!gameData.readyList[i]){
+                break;
+            }
+        }
+
+        return i;
+    }
+
 
 
 

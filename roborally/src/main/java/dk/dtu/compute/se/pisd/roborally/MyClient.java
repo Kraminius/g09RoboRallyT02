@@ -28,7 +28,19 @@ public class MyClient {
         return result.equals("we connected");
     }
 
+    public static String playerNumber() throws Exception{
 
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getPlayerNumber"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result;
+
+    }
 
 
 

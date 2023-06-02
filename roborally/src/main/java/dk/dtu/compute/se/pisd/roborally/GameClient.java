@@ -38,5 +38,16 @@ public class GameClient {
         return result.equals("something");
     }
 
+    public static String addMapName(String mapName) throws Exception{
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/instaGameData?mapName=" + mapName))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result;
+    }
+
 
 }
