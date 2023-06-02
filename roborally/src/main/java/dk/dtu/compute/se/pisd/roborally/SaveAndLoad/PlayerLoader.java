@@ -81,7 +81,7 @@ public class PlayerLoader {
                 }
                 break;
             case "heading":
-                Heading h = getHeading((String) value);
+                Heading h = Converter.getHeading((String) value);
                 p.setHeading(h);
                 break;
             //These three cases needs testing
@@ -107,26 +107,13 @@ public class PlayerLoader {
                 ArrayList<String> checkpoints = getList((JSONArray) value);
                 for(int i = 0; i < checkpoints.size(); i++){
                     boolean check = getBoolean(checkpoints.get(i));
-                    p.setCheckpointReadhed(i, check);
+                    p.setCheckpointReached(i, check);
                 }
                 break;
 
 }}
 
 
-    public Heading getHeading(String heading){
-        switch (heading){
-            case "SOUTH":
-                return Heading.SOUTH;
-            case "WEST":
-                return Heading.WEST;
-            case "NORTH":
-                return Heading.NORTH;
-            case "EAST":
-                return Heading.EAST;
-        }
-        return null;
-    }
 
     public CommandCardField getCommandCardField(String commandCardField, Player p){
                CommandCardField c = new CommandCardField(p);

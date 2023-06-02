@@ -26,7 +26,6 @@ import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.UpgradeShop;
-import dk.dtu.compute.se.pisd.roborally.view.ViewObserver;
 import dk.dtu.compute.se.pisd.roborally.view.WinnerDisplay;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +48,7 @@ public class GameController {
 
     final public Board board;
     public UpgradeShop upgradeShop;
+    public AntennaHandler antennaHandler = new AntennaHandler();
 
    private List<Player> sequence;
 
@@ -185,8 +185,8 @@ public class GameController {
                 Command.WORM,
                 Command.TROJAN_HORSE,
                 Command.VIRUS,
-                Command.MOVELEFT,
-                Command.MOVERIGHT,
+                Command.MOVE_LEFT,
+                Command.MOVE_RIGHT,
                 Command.POWER_UP,
                 Command.SPAM_FOLDER,
                 Command.SPEED,
@@ -275,7 +275,7 @@ public class GameController {
 
         discardUnusedCards();
         //Checks who have priority
-        antennaPriority();
+        sequence = antennaHandler.antennaPriority(board);
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
         board.setPhase(Phase.ACTIVATION);
@@ -361,7 +361,7 @@ public class GameController {
                     if (step < Player.NO_REGISTERS) {
                         makeProgramFieldsVisible(step);
                         board.setStep(step);
-                        antennaPriority();
+                        sequence = antennaHandler.antennaPriority(board);
                         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                         Activator.getInstance().activateBoard(board, this);
 
@@ -390,7 +390,7 @@ public class GameController {
             if (step < Player.NO_REGISTERS) {
                 makeProgramFieldsVisible(step);
                 board.setStep(step);
-                antennaPriority();
+                antennaHandler.antennaPriority(board);
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
             } else {
                 //Probably upgrade phase here?
@@ -418,7 +418,7 @@ public class GameController {
             if (step < Player.NO_REGISTERS) {
                 makeProgramFieldsVisible(step);
                 board.setStep(step);
-                antennaPriority();
+                antennaHandler.antennaPriority(board);
                 board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
                 Activator.getInstance().activateBoard(board, this);
 
@@ -562,11 +562,11 @@ public class GameController {
                 playSpamFolder(player);
                 return false;
 
-            case MOVELEFT:
+            case MOVE_LEFT:
                 moveToLeftSpace(player);
                 return false;
 
-            case MOVERIGHT:
+            case MOVE_RIGHT:
                 moveToRightSpace(player);
                 return false;
 
@@ -758,10 +758,11 @@ public class GameController {
     }
 
     /**
+     * @author Kenneth Kaiser, s221064@dtu.dk
      * @param fromSpace The Space where the player currently is and will move from
      * @param toSpace   The space where the player is moving to.
      * @return
-     * @author Checks for obstacles in a given space, used when moving a player into a field
+     *
      */
     private boolean obstacleInSpace(Space fromSpace, Space toSpace) {
 
@@ -944,10 +945,10 @@ public class GameController {
             if (space.getElement().getCheckpoint() != null) {
                 number = space.getElement().getCheckpoint().getNumber();
                 if (number == 1) {
-                    player.setCheckpointReadhed(0, true);
+                    player.setCheckpointReached(0, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 } else if (checkpointStatus[(number - 2)]) {
-                    player.setCheckpointReadhed(number - 1, true);
+                    player.setCheckpointReached(number - 1, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 }
             }
@@ -1023,146 +1024,8 @@ public class GameController {
         assert false;
     }
 
-    /**
-     * Method for determining in what order the players will play their turn.
-     */
-    public void antennaPriority(){
-
-        List<Player> sortedPlayers = findPlayerSequence(board.getAntenna());
-
-        //Testing to see the player sequence in console
-        System.out.println("Player sequence:");
-        for (Player player : sortedPlayers) {
-            System.out.println("Player " + player.getName());
-        }
-
-        //Maybe change how we save the sequence playerlist
-        this.sequence = sortedPlayers;
-    }
 
 
-    /**
-     * Calculates the sequence.
-     * @param antenna
-     * @return
-     */
-    public List<Player> findPlayerSequence(Space antenna) {
-
-        List<Player> players = new ArrayList<>();
-
-        //Used for checking the position of each player
-        for (int i = 0; i < board.getPlayersNumber(); i++) {
-            players.add(board.getPlayer(i));
-            System.out.println("x: " + board.getPlayer(i).getSpace().x+ " y: " + board.getPlayer(i).getSpace().x);
-
-        }
-
-        //Antenna sequence
-        System.out.println("Antenna: " + antenna.x + " " +antenna.y);
-
-        List<Player> sortedPlayers = new ArrayList<>(players);
-
-        Collections.sort(sortedPlayers, new Comparator<Player>() {
-            @Override
-            public int compare(Player p1, Player p2) {
-                double distance1 = calculateDistance(antenna, p1.getSpace());
-                double distance2 = calculateDistance(antenna, p2.getSpace());
-                if (distance1 == distance2) {
-                    return compareByClockwiseRadar(antenna, p1, p2);
-                } else {
-                    return Double.compare(distance1, distance2);
-                }
-
-            }
-        });
-
-        return sortedPlayers;
-    }
-
-    /**
-     * Calculates the distance between player and antenna.
-     * @param space
-     * @param antenna
-     * @return
-     */
-    public double calculateDistance(Space space, Space antenna){
-        int dx = Math.abs(space.x - antenna.x);
-        int dy = Math.abs(space.y - antenna.y);
-
-        return dx + dy;
-
-    }
-
-    /**
-     * If 2 or more players have the same distance a rader will determine who goes first. This is based on a direction
-     * then based on that direction it follows a clockwise movement.
-     * @param antenna
-     * @param p1
-     * @param p2
-     * @return
-     */
-    public int compareByClockwiseRadar(Space antenna, Player p1, Player p2) {
-
-        //Right now the direction is always east, Antenna object should have a direction value on it
-        String initialDirection = "east";
-
-        double angle1 = Math.atan2(p1.getSpace().y - antenna.y, p1.getSpace().x - antenna.x);
-        double angle2 = Math.atan2(p2.getSpace().y - antenna.y, p2.getSpace().x - antenna.x);
-
-        angle1 = adjustAngle(angle1, initialDirection);
-        angle2 = adjustAngle(angle2, initialDirection);
-
-        if (angle1 < 0) {
-            angle1 += 2 * Math.PI;
-        }
-        if (angle2 < 0) {
-            angle2 += 2 * Math.PI;
-        }
-
-        return Double.compare(angle1, angle2);
-    }
-
-    /**
-     * Adjusts the angle based on direction (North, west, east and south).
-     * @param angle
-     * @param initialDirection
-     * @return
-     */
-    public double adjustAngle(double angle, String initialDirection) {
-        double adjustment;
-        switch (initialDirection.toLowerCase()) {
-            case "north":
-                adjustment = Math.PI / 2;
-                break;
-            case "west":
-                adjustment = Math.PI;
-                break;
-            case "south":
-                adjustment = -Math.PI / 2;
-                break;
-            case "east":
-            default:
-                adjustment = 0;
-                break;
-        }
-        return angle + adjustment;
-    }
-
-    public void pickStartPosition(){
-
-
-        //Used for checking the position of each player
-        for (int i = 0; i < board.getPlayersNumber(); i++) {
-            //Maybe set current player
-            //Space space = drop down menu;
-            //board.getPlayer(i).setSpace(space);
-
-        }
-
-
-
-
-    }
 
 
     /**

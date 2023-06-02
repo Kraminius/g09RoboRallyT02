@@ -3,6 +3,8 @@ package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
+
 public class JSONHandler {
 
     ReaderAndWriter raw = new ReaderAndWriter();
@@ -21,6 +23,12 @@ public class JSONHandler {
         raw.writeJSON("test", jsonObject, "board");
         printJSON("test", "board");
     }
+    public String[] getNamesOfGame(String name){
+        JSONObject obj = raw.readJSON(name, "game");
+        String[] names = Converter.jsonArrToString((JSONArray)obj.get("playersName"));
+        return names;
+    }
+
     /**@Author Tobias Gørlyk - s224271@dtu.dk
      * Loads a json file and recieves a JSON object.
      * @param name the name of the file it should look for
