@@ -63,7 +63,7 @@ public class RoboRally extends Application {
         lobby.show();
         stage = primaryStage;
 
-        AppController appController = new AppController(this);
+        AppController appController = new AppController(this, gameSettings);
 
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled

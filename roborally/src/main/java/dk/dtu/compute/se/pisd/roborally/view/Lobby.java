@@ -131,6 +131,7 @@ public class Lobby {
         ComboBox<String> boardsToPlayInput = new ComboBox<>();
         BoardLoadWindow boardLoadWindow = new BoardLoadWindow();
         boardLoadWindow.addFiles(boardsToPlayInput);
+        boardsToPlayInput.setValue(boardsToPlayInput.getItems().get(0));
 
 
         // Create a submit button
@@ -145,7 +146,8 @@ public class Lobby {
 
             System.out.println("Game created with settings: " + gameSettings);
 
-            createGameStage.close();  // close the window after submitting
+            createGameStage.close();
+            stage.close();  // close the window after submitting
         });
 
         // Add all elements to the layout

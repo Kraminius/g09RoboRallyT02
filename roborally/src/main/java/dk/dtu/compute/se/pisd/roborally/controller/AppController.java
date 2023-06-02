@@ -57,12 +57,15 @@ public class AppController implements Observer {
     final public RoboRally roboRally;
 
     private GameController gameController;
+    private GameSettings gameSettings;
 
-    public AppController(@NotNull RoboRally roboRally) {
+    public AppController(@NotNull RoboRally roboRally, GameSettings gameSettings) {
         this.roboRally = roboRally;
+        this.gameSettings = gameSettings;
     }
 
     public void newGame() {
+        /*
         ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
         dialog.setTitle("Player number");
         dialog.setHeaderText("Select number of players");
@@ -72,40 +75,44 @@ public class AppController implements Observer {
 
 
         if (result.isPresent()) {
-            if (gameController != null) {
-                // The UI should not allow this, but in case this happens anyway.
-                // give the user the option to save the game or abort this operation!
-                if (!stopGame()) {
-                    return;
-                }
-            }
-            BoardLoadWindow boardLoadWindow = new BoardLoadWindow();
-            String boardInput = boardLoadWindow.getBoardInput();
-            Board board = new Board(boardInput);
-            gameController = new GameController(board);
-            int no = result.get();
-            for (int i = 0; i < no; i++) {
-                Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i+1);
-                player.setEnergyCubes(5);
-                gameController.fillStartDeck(player.getCardDeck());
-                board.addPlayer(player);
-
-
-                //player.setSpace(board.getSpace(i % board.width, i));
-            }
-
-            // XXX: V2
-            // board.setCurrentPlayer(board.getPlayer(0));
-            //gameController.startProgrammingPhase();
-            board.setCurrentPlayer(board.getPlayer(0));
-            roboRally.createBoardView(gameController);
-            StartPositionWindow positionWindow = new StartPositionWindow();
-            positionWindow.getStartSpaces(board);
-
-
-            gameController.startUpgradePhase();
-
+                Following code used to be in here
+                int no = result.get();
         }
+            */
+
+
+        if (gameController != null) {
+            // The UI should not allow this, but in case this happens anyway.
+            // give the user the option to save the game or abort this operation!
+            if (!stopGame()) {
+                return;
+            }
+        }
+
+        Board board = new Board(gameSettings.getBoardToPlay());
+        gameController = new GameController(board);
+        int no = gameSettings.getNumberOfPlayers();
+        for (int i = 0; i < no; i++) {
+            Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + gameSettings.getCreatorName() + (i + 1), i+1);
+            player.setEnergyCubes(5);
+            gameController.fillStartDeck(player.getCardDeck());
+            board.addPlayer(player);
+
+
+            //player.setSpace(board.getSpace(i % board.width, i));
+        }
+
+        // XXX: V2
+        // board.setCurrentPlayer(board.getPlayer(0));
+        //gameController.startProgrammingPhase();
+        board.setCurrentPlayer(board.getPlayer(0));
+        roboRally.createBoardView(gameController);
+        StartPositionWindow positionWindow = new StartPositionWindow();
+        positionWindow.getStartSpaces(board);
+
+
+        gameController.startUpgradePhase();
+
     }
 
 
