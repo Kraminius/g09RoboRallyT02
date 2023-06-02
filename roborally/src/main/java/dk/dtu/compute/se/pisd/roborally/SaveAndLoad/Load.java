@@ -27,11 +27,13 @@ public class Load {
     int[] playerCheckPoints;
     int[] playersXPosition;
     int[] playersYPosition;
+    int[] mapCubePositions;
     Heading[] playerHeadings;
     Command[][] playerProgrammingDeck;
     Command[][] playerCurrentProgram;
     Command[][] playerDiscardPile;
     Command[][] playerUpgradeCards;
+    Command[][] playersPulledCards;
 
     public int getPlayerAmount() {
         return playerAmount;
@@ -199,5 +201,21 @@ public class Load {
 
     public int[] getPlayersYPosition() {
         return playersYPosition;
+    }
+
+    public Command[][] getPlayersPulledCards() {
+        return playersPulledCards;
+    }
+
+    public void setPlayersPulledCards(Command[][] playersPulledCards) {
+        this.playersPulledCards = playersPulledCards;
+    }
+
+    public int[] getMapCubePositions() {
+        return mapCubePositions;
+    }
+
+    public void setMapCubePositions(int[] mapCubePositions) {
+        this.mapCubePositions = mapCubePositions;
     }
 }

@@ -59,7 +59,7 @@ public class Player extends Subject {
     private PlayerView playerView;
 
     private CommandCardField[] program;
-    private CommandCardField[] cards;
+    private CommandCardField[] cards; //Command cards
     private CommandCardField[] upgradeCards;
 
     private ArrayList<CommandCard> cardDeck;

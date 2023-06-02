@@ -1,9 +1,0 @@
-{
-  "name": "Player 4",
-  "color": "yellow",
-  "space": "4;4",
-  "heading": "SOUTH",
-  "program":["true;FORWARD","true;FORWARD","true;U_TURN","true;U_TURN","true;FORWARD"],
-  "cards":["true;FORWARD","true;FORWARD","true;U_TURN","true;U_TURN","true;FORWARD","true;FORWARD","true;FORWARD","true;U_TURN"],
-"checkpointsReadhed": ["true","true","false"]
-}
