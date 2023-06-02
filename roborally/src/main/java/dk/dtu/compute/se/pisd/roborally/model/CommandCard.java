@@ -44,6 +44,4 @@ public class CommandCard extends Subject {
     public String getDescription(){
         return command.description;
     }
-
-
 }

@@ -24,7 +24,9 @@ package dk.dtu.compute.se.pisd.roborally;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
+import dk.dtu.compute.se.pisd.roborally.view.Lobby;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.RoboRallyMenuBar;
 import javafx.application.Application;
@@ -56,9 +58,12 @@ public class RoboRally extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        GameSettings gameSettings = new GameSettings();
+        Lobby lobby = new Lobby(gameSettings);
+        lobby.show();
         stage = primaryStage;
 
-        AppController appController = new AppController(this);
+        AppController appController = new AppController(this, gameSettings);
 
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
@@ -80,6 +85,8 @@ public class RoboRally extends Application {
         stage.setX(700);
         stage.setY(100);
         stage.show();
+        appController.newGame();
+
     }
 
     public void createBoardView(GameController gameController) {

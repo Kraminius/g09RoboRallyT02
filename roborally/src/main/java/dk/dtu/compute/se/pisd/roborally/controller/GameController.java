@@ -202,11 +202,6 @@ public class GameController {
         Collections.shuffle(upgradeDeck);
     }
 
-
-
-
-
-
     /**
      * @Author Freja Egelund Grønnemose s224286@dtu.dk
      * This method fetches a players two ArrayLists - discardPile & cardDeck.
