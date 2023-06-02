@@ -24,6 +24,8 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Observer;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
+import dk.dtu.compute.se.pisd.roborally.GameClient;
+import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
@@ -62,7 +64,7 @@ public class AppController implements Observer {
         this.roboRally = roboRally;
     }
 
-    public void newGame() {
+    public void newGame() throws Exception {
 
 
         ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
@@ -73,8 +75,6 @@ public class AppController implements Observer {
 
 
         Optional<Integer> result = dialog.showAndWait();
-
-        result.get();
 
 
 
@@ -92,6 +92,19 @@ public class AppController implements Observer {
             Board board = new Board(boardInput);
             gameController = new GameController(board);
             int no = result.get();
+
+            GameClient.instaGameData(no);
+            MyClient.weConnect(0);
+
+            boolean waitingForConnects = false;
+            while(!waitingForConnects){
+
+                waitingForConnects = GameClient.areAllConnected(no);
+
+            }
+
+
+
             for (int i = 0; i < no; i++) {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1), i+1);
                 player.setEnergyCubes(5);
@@ -136,7 +149,7 @@ public class AppController implements Observer {
 
     }
 
-    public void loadGame() {
+    public void loadGame() throws Exception {
         // XXX needs to be implemented eventually
         // for now, we just create a new game
 
@@ -207,5 +220,7 @@ public class AppController implements Observer {
     public void update(Subject subject) {
         // XXX do nothing for now
     }
+
+
 
 }
