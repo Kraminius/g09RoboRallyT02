@@ -57,7 +57,7 @@ public class RoboRally extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws Exception {
         GameSettings gameSettings = new GameSettings();
         Lobby lobby = new Lobby(gameSettings);
         lobby.show();

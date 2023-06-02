@@ -37,6 +37,10 @@ public class FirstClass {
                 System.out.println("Your player number is: " + playerNumber);
             } else if (myAnswer.equals("5")) {
                 GameClient.instaGameData(5);
+            } else if (myAnswer.equals("11")) {
+                GameClient.addMapName("Dizzy MotherFucker Map");
+            }else if(myAnswer.equals("12")){
+                System.out.println("Map Name: " + GameClient.getMapName());
             }
 
             System.out.println("All conncted: " + bool);

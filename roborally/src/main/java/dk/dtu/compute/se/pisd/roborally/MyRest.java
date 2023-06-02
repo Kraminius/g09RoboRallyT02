@@ -23,8 +23,6 @@ public class MyRest {
     }
 
 
-
-
     @GetMapping(value = "/allConnected")
     public ResponseEntity<Boolean> allConnected(@RequestParam("playerNum") String playerNumStr) {
         // Now you can use playerNumStr
@@ -50,5 +48,20 @@ public class MyRest {
     }
 
 
+    @PostMapping (value = "/addMapName")
+    public ResponseEntity<Integer> instaGameName(@RequestParam("mapName") String map) {
+        // Now you can use playerNumStr
+
+        gameDataRep.gameData.setCurrentGameMap(map);
+        System.out.println("Name: " + gameDataRep.gameData.getCurrentGameMap());
+        return ResponseEntity.ok().body(5);
+    }
+
+    @GetMapping(value = "/getMapName")
+    public ResponseEntity<String> getMapName() {
+
+        String temp = gameDataRep.gameData.getCurrentGameMap();
+        return ResponseEntity.ok().body(temp);
+    }
 
 }

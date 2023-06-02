@@ -24,6 +24,8 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Observer;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
+import dk.dtu.compute.se.pisd.roborally.GameClient;
+import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
@@ -59,12 +61,13 @@ public class AppController implements Observer {
     private GameController gameController;
     private GameSettings gameSettings;
 
+
     public AppController(@NotNull RoboRally roboRally, GameSettings gameSettings) {
         this.roboRally = roboRally;
         this.gameSettings = gameSettings;
     }
 
-    public void newGame() {
+    public void newGame() throws Exception {
         /*
         ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
         dialog.setTitle("Player number");
@@ -81,6 +84,8 @@ public class AppController implements Observer {
             */
 
 
+
+
         if (gameController != null) {
             // The UI should not allow this, but in case this happens anyway.
             // give the user the option to save the game or abort this operation!
@@ -88,10 +93,24 @@ public class AppController implements Observer {
                 return;
             }
         }
+        int no = gameSettings.getNumberOfPlayers();
+        GameClient.instaGameData(no);
+        MyClient.weConnect(0);
+        GameClient.addMapName(gameSettings.getGameName());
+
+
+        boolean waitForPlayer = false;
+        while(!waitForPlayer){
+
+            GameClient.areAllConnected(no);
+
+        }
+
+
 
         Board board = new Board(gameSettings.getBoardToPlay());
         gameController = new GameController(board);
-        int no = gameSettings.getNumberOfPlayers();
+
         for (int i = 0; i < no; i++) {
             String name;
             if(gameSettings.getPlayerNames().size() <= i) name = "Player " + i+1;
@@ -118,6 +137,11 @@ public class AppController implements Observer {
 
     }
 
+    public void currentGameIsRunning(){
+
+
+
+    }
 
 
     public void saveGame() {
@@ -138,7 +162,7 @@ public class AppController implements Observer {
 
     }
 
-    public void loadGame() {
+    public void loadGame() throws Exception {
         // XXX needs to be implemented eventually
         // for now, we just create a new game
 

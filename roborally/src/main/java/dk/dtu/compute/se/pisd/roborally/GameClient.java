@@ -1,9 +1,11 @@
 package dk.dtu.compute.se.pisd.roborally;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -39,9 +41,21 @@ public class GameClient {
     }
 
     public static String addMapName(String mapName) throws Exception{
+        String encodedMapName = URLEncoder.encode(mapName, StandardCharsets.UTF_8.toString());
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
-                .uri(URI.create("http://localhost:8080/instaGameData?mapName=" + mapName))
+                .uri(URI.create("http://localhost:8080/addMapName?mapName=" + encodedMapName))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result;
+    }
+
+    public static String getMapName() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getMapName"))
                 .build();
         CompletableFuture<HttpResponse<String>> response =
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
