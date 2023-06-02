@@ -32,5 +32,13 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    @PostMapping (value = "/instaGameData")
+    public ResponseEntity<Integer> instaGameData(@RequestParam("numberOfPlayers") String playerNumStr) {
+        // Now you can use playerNumStr
+        int numberOfPlayers = Integer.parseInt(playerNumStr);
+        gameDataRep.instantiateGameData(numberOfPlayers);
+        System.out.println("Size: " + gameDataRep.gameData.readyList.length + "& " + gameDataRep.gameData.numPlayers);
+        return ResponseEntity.ok().body(5);
+    }
 
 }

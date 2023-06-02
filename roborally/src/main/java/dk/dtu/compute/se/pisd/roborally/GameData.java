@@ -14,6 +14,20 @@ public class GameData {
     boolean[] readyList;
     private boolean allPlayersConnected;
 
+
+
+    public GameData(int numPlayers){
+
+        this.numPlayers = numPlayers;
+
+        readyList = new boolean[numPlayers];
+
+        for (int i = 0; i < readyList.length; i++) {
+            readyList[i] = false;
+        }
+
+    }
+
     public int getNumPlayers() {
         return numPlayers;
     }
@@ -30,17 +44,7 @@ public class GameData {
         this.readyList = readyList;
     }
 
-    public GameData(int numPlayers){
 
-        this.numPlayers = numPlayers;
-
-        readyList = new boolean[numPlayers];
-
-        for (int i = 0; i < readyList.length; i++) {
-            readyList[i] = false;
-        }
-
-    }
 
 
 

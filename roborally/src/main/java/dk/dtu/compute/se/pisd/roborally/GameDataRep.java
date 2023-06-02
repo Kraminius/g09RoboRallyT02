@@ -10,7 +10,11 @@ public class GameDataRep {
     GameData gameData;
 
     public GameDataRep(){
-        gameData = new GameData(4);
+
+    }
+
+    public void instantiateGameData(int numPlayer){
+        this.gameData = new GameData(numPlayer);
     }
 
 

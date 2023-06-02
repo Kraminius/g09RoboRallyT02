@@ -27,4 +27,16 @@ public class GameClient {
         return Boolean.parseBoolean(result);
     }
 
+    public static boolean instaGameData(int numberOfPlayers) throws Exception{
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/instaGameData?numberOfPlayers=" + numberOfPlayers))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result.equals("something");
+    }
+
+
 }

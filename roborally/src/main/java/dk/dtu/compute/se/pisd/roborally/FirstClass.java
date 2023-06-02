@@ -27,6 +27,11 @@ public class FirstClass {
             }
             else if(myAnswer.equals("8")){
                 break;
+            } else if (myAnswer.equals("7")) {
+                System.out.println("Number of players: ");
+                String nue = scanner.nextLine();
+                int numb = Integer.parseInt(nue);
+                GameClient.instaGameData(numb);
             }
 
             System.out.println("All conncted: " + bool);
