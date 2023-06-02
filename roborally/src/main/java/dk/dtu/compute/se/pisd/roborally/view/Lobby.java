@@ -6,10 +6,7 @@ import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -124,7 +121,10 @@ public class Lobby {
         TextField creatorNameInput = new TextField();
 
         Label numberOfPlayersLabel = new Label("How many players:");
-        TextField numberOfPlayersInput = new TextField();
+        Spinner<Integer> numberOfPlayersInput = new Spinner<>();
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2);
+        numberOfPlayersInput.setValueFactory(valueFactory);
+        numberOfPlayersInput.setEditable(false);
 
         Label boardToPlayLabel = new Label("What board to play:");
         TextField boardToPlayInput = new TextField();
@@ -136,7 +136,7 @@ public class Lobby {
         submitButton.setOnAction(e -> {
             gameSettings.setGameName(gameNameInput.getText());
             gameSettings.setCreatorName(creatorNameInput.getText());
-            gameSettings.setNumberOfPlayers(Integer.parseInt(numberOfPlayersInput.getText()));
+            gameSettings.setNumberOfPlayers(numberOfPlayersInput.getValue());
             gameSettings.setBoardToPlay(boardToPlayInput.getText());
 
             System.out.println("Game created with settings: " + gameSettings);
@@ -152,6 +152,7 @@ public class Lobby {
         createGameStage.setScene(createGameScene);
         createGameStage.show();
     }
+
 
 
     /**
