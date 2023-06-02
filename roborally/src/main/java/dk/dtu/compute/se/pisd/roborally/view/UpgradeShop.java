@@ -383,7 +383,7 @@ public class UpgradeShop {
                 if(getPermanent(cardFieldView.getField().getCard().command)){
                     for(int i = 0; i < playerCards.length; i++){
                         if(playerCards[i].getField().getCard() != null){
-                            if(getPermanent(cardsToBuy[i].getField().getCard().command)) amountOfSame++;
+                            if(getPermanent(playerCards[i].getField().getCard().command)) amountOfSame++;
                         }
                     }
                     if(amountOfSame > 2) {

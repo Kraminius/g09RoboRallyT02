@@ -950,10 +950,10 @@ public class GameController {
             if (space.getElement().getCheckpoint() != null) {
                 number = space.getElement().getCheckpoint().getNumber();
                 if (number == 1) {
-                    player.setCheckpointReadhed(0, true);
+                    player.setCheckpointReached(0, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 } else if (checkpointStatus[(number - 2)]) {
-                    player.setCheckpointReadhed(number - 1, true);
+                    player.setCheckpointReached(number - 1, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 }
             }

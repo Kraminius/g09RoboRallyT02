@@ -3,8 +3,11 @@ package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 import dk.dtu.compute.se.pisd.roborally.model.Command;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Phase;
+import org.json.simple.JSONArray;
 
 import java.util.ArrayList;
+
+import static java.lang.Integer.parseInt;
 
 public class Converter {
     /**
@@ -87,6 +90,9 @@ public class Converter {
         return null;
     }
     public static Command[] getCommands(String[] commands){
+        if(commands == null){
+            return null;
+        }
         Command[] toReturn = new Command[commands.length];
         for(int i = 0; i < commands.length; i++){
             toReturn[i] = getCommand(commands[i]);
@@ -95,17 +101,22 @@ public class Converter {
     }
     public static String[][] splitSeries(String[] arr, String splitter){
         //Count splitters + 1
-        int amount = 1;
+        int amount = 0;
         for(int i = 0; i < arr.length; i++){
             if(arr[i].equals(splitter)) amount++;
         }
         String[][] toReturn = new String[amount][];
         ArrayList<String> list = new ArrayList<>();
-        for(int i = 0; i < arr.length; i++){
+        amount = 0;
+        for(int i = 1; i < arr.length; i++){
             if(arr[i].equals(splitter)){
                 toReturn[amount] = list.toArray(new String[list.size()]);
                 amount++;
                 list.clear();
+            }
+            else if(i == arr.length-1){
+                list.add(arr[i]);
+                toReturn[amount] = list.toArray(new String[list.size()]);
             }
             else{
                 list.add(arr[i]);
@@ -114,6 +125,20 @@ public class Converter {
         return toReturn;
     }
 
+    public static int[] jsonArrToInt(JSONArray jsonArray){
+        int[] toReturn = new int[jsonArray.size()];
+        for(int i = 0; i < jsonArray.size(); i++){
+            toReturn[i] = parseInt(String.valueOf(jsonArray.get(i)));
+        }
+        return toReturn;
+    }
+    public static String[] jsonArrToString(JSONArray jsonArray){
+        String[] toReturn = new String[jsonArray.size()];
+        for(int i = 0; i < jsonArray.size(); i++){
+            toReturn[i] = String.valueOf(jsonArray.get(i));
+        }
+        return toReturn;
+    }
 
 
 }
