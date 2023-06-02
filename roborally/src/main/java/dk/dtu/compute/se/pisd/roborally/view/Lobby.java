@@ -143,6 +143,7 @@ public class Lobby {
             gameSettings.setCreatorName(creatorNameInput.getText());
             gameSettings.setNumberOfPlayers(numberOfPlayersInput.getValue());
             gameSettings.setBoardToPlay(boardsToPlayInput.getValue());
+            gameSettings.getPlayerNames().add(gameSettings.getCreatorName());
 
             System.out.println("Game created with settings: " + gameSettings);
 

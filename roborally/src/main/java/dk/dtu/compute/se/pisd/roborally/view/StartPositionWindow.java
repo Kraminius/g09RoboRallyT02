@@ -69,12 +69,11 @@ public class StartPositionWindow {
         window.setAlignment(Pos.TOP_CENTER);
         window.setSpacing(10);
         window.setPadding(new Insets(30, 50, 30, 50));
-        label = new Label("Choose Name, Starting Position & Heading.");
+        label = new Label("Choose Starting Position & Heading.");
         label.setAlignment(Pos.CENTER);
         label.setMinHeight(30);
         label.setWrapText(true);
         label.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
-        textField = new TextField();
         button = new Button("OK");
         button.setOnAction(e -> addPos());
         button.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
@@ -87,7 +86,6 @@ public class StartPositionWindow {
         startPosChoice.setPrefWidth(200);
         startHeading.setPrefWidth(200);
         window.getChildren().add(label);
-        window.getChildren().add(textField);
         window.getChildren().add(startPosChoice);
         window.getChildren().add(startHeading);
         window.getChildren().add(button);
@@ -104,16 +102,11 @@ public class StartPositionWindow {
 
     private void addPos(){
 
-        if(textField.getText() == null || textField.getText().equals("") ){
-            label.setText("Please Input a name");
-            return;
-        }
         int number = parseInt(startPosChoice.getValue());
         ArrayList<Space> startFields = board.getStartFieldSpaces();
         for(int i = 0; i < startFields.size(); i++){
             if(startFields.get(i).getElement().getStartField().getId() == number){
                 startFields.get(i).setPlayer(nextPlayer);
-                nextPlayer.setName(textField.getText());
                 nextPlayer.getPlayerView().setText(nextPlayer.getName());
                 nextPlayer.setHeading(getHeading(startHeading.getValue()));
                 stage.close();

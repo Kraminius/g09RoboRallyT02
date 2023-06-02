@@ -85,6 +85,8 @@ public class RoboRally extends Application {
         stage.setX(700);
         stage.setY(100);
         stage.show();
+        appController.newGame();
+
     }
 
     public void createBoardView(GameController gameController) {

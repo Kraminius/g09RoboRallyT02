@@ -93,7 +93,10 @@ public class AppController implements Observer {
         gameController = new GameController(board);
         int no = gameSettings.getNumberOfPlayers();
         for (int i = 0; i < no; i++) {
-            Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + gameSettings.getCreatorName() + (i + 1), i+1);
+            String name;
+            if(gameSettings.getPlayerNames().size() <= i) name = "Player " + i+1;
+            else name = gameSettings.getPlayerNames().get(i);
+            Player player = new Player(board, PLAYER_COLORS.get(i), name, i+1);
             player.setEnergyCubes(5);
             gameController.fillStartDeck(player.getCardDeck());
             board.addPlayer(player);

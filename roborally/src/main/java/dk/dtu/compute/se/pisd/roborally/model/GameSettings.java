@@ -1,10 +1,13 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
+import java.util.ArrayList;
+
 public class GameSettings {
     private String gameName;
     private String creatorName;
     private int numberOfPlayers;
     private String boardToPlay;
+    private ArrayList<String> playerNames = new ArrayList<>();
 
     public String getGameName() {
         return gameName;
@@ -36,5 +39,13 @@ public class GameSettings {
 
     public void setBoardToPlay(String boardToPlay) {
         this.boardToPlay = boardToPlay;
+    }
+
+    public ArrayList<String> getPlayerNames() {
+        return playerNames;
+    }
+
+    public void setPlayerNames(ArrayList<String> playerNames) {
+        this.playerNames = playerNames;
     }
 }
