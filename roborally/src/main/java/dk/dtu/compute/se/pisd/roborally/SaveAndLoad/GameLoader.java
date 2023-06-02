@@ -5,8 +5,6 @@ import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-
 import static java.lang.Integer.parseInt;
 
 public class GameLoader {
@@ -21,7 +19,7 @@ public class GameLoader {
             System.out.println("Error in loading");
             return null;
         }
-        load(appController, loadData(obj));
+        gameController = LoadInstance.load(appController, loadData(obj));
 
         return gameController;
     }
@@ -46,6 +44,7 @@ public class GameLoader {
         load.setPlayerColors(new String[amount]);
         load.setPlayersXPosition(new int[amount]);
         load.setPlayersYPosition(new int[amount]);
+        load.setPlayerEnergyCubes(new int[amount]);
         load.setPlayerHeadings(new Heading[amount]);
         load.setPlayerProgrammingDeck(new Command[amount][]);
         load.setPlayerCurrentProgram(new Command[amount][]);
@@ -58,8 +57,9 @@ public class GameLoader {
         for(int i = 0; i < amount; i++){
             load.getPlayerNames()[i] = ((String[])obj.get("playersName"))[i];
             load.getPlayerColors()[i] = ((String[])obj.get("playerColor"))[i];
-            load.getPlayersXPosition()[i] = ((int[])obj.get("playersX"))[i];
-            load.getPlayersYPosition()[i] = ((int[])obj.get("playersY"))[i];
+            load.getX()[i] = ((int[])obj.get("playersX"))[i];
+            load.getY()[i] = ((int[])obj.get("playersY"))[i];
+            load.getPlayerEnergyCubes()[i] = ((int[])obj.get("playerCubes"))[i];
             load.getPlayerHeadings()[i] = Converter.getHeading (((String[])obj.get("playersHeading"))[i]);
             load.getPlayerCheckPoints()[i] = ((int[])obj.get("playersCheckpoints"))[i];
             load.getPlayerProgrammingDeck()[i] = Converter.getCommands(playersProgrammingDeck[i]);
@@ -73,36 +73,6 @@ public class GameLoader {
         return load;
     }
 
-    private static void load(AppController appController, Load load){
-        /*Board board = new Board((String)obj.get("board"));
-        gameController = new GameController(board);
-        appController.roboRally.createBoardView(gameController);
-        int no = (int) obj.get("playerAmount");
-        for (int i = 0; i < no; i++) {
-            Player player = new Player(board, appController.PLAYER_COLORS.get(i), (String)((JSONArray) obj.get("playersName")).get(i), i+1);
-            gameController.fillStartDeck(player.getCardDeck());
-            player.setSpace(board.getSpace((int)((JSONArray) obj.get("playersX")).get(i), (int)((JSONArray) obj.get("playersY")).get(i)));
-            player.setHeading(Converter.getHeading((String)((JSONArray) obj.get("playersHeading")).get(i)));
-            int checkpointReached = ((int)((JSONArray) obj.get("playersCheckpoints")).get(i));
-            for(int j = 0; j < checkpointReached; j++){
-                player.setCheckpointReadhed(j, true);
-            }
-            board.addPlayer(player);
-
-            //player.setSpace(board.getSpace(i % board.width, i));
-        }
-
-        // XXX: V2
-        // board.setCurrentPlayer(board.getPlayer(0));
-        //gameController.startProgrammingPhase();
-        board.setCurrentPlayer(board.getPlayer(0));
-        StartPositionWindow positionWindow = new StartPositionWindow();
-        positionWindow.getStartSpaces(board);
-
-        gameController.startUpgradePhase();
-
-        */
-    }
 
 
 }

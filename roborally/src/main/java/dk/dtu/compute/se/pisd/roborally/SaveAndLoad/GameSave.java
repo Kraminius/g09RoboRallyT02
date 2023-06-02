@@ -55,10 +55,12 @@ public class GameSave {
         JSONArray playersProgram = new JSONArray();
         JSONArray playersDiscardCards = new JSONArray();
         JSONArray playerUpgradeCards = new JSONArray();
+        JSONArray playerEnergyCubes = new JSONArray();
         for(int i = 0; i < board.getPlayersNumber(); i++){
             Player player = board.getPlayer(i);
             playersName.add(player.getName());
             playersColor.add(player.getColor());
+            playerEnergyCubes.add(player.getEnergyCubes());
             playersX.add(player.getSpace().x);
             playersY.add(player.getSpace().y);
             playersHeading.add(headingToString(player.getHeading()));
@@ -85,24 +87,29 @@ public class GameSave {
                 if(discardPile.get(i) != null) playersDiscardCards.add(discardPile.get(j).command.toString());
             }
         }
-        ArrayList<CommandCard> outUpgradeCards = controller.upgradeShop.getOut();
-        ArrayList<CommandCard> discardUpgradeCards = controller.upgradeShop.getDiscarded();
-        ArrayList<CommandCard> upgradeDeck = controller.upgradeShop.getDeck();
         JSONArray upgradeCardsDeck = new JSONArray();
         JSONArray upgradeDiscardDeck = new JSONArray();
         JSONArray upgradeOutDeck = new JSONArray();
+        if(controller.upgradeShop != null){
+            ArrayList<CommandCard> outUpgradeCards = controller.upgradeShop.getOut();
+            ArrayList<CommandCard> discardUpgradeCards = controller.upgradeShop.getDiscarded();
+            ArrayList<CommandCard> upgradeDeck = controller.upgradeShop.getDeck();
 
-        for(CommandCard c : outUpgradeCards){
-            upgradeOutDeck.add(c.command.toString());
+
+            for(CommandCard c : outUpgradeCards){
+                upgradeOutDeck.add(c.command.toString());
+            }
+            for(CommandCard c : discardUpgradeCards){
+                upgradeDiscardDeck.add(c.command.toString());
+            }
+            for(CommandCard c : upgradeDeck){
+                upgradeCardsDeck.add(c.command.toString());
+            }
         }
-        for(CommandCard c : discardUpgradeCards){
-            upgradeDiscardDeck.add(c.command.toString());
-        }
-        for(CommandCard c : upgradeDeck){
-            upgradeCardsDeck.add(c.command.toString());
-        }
+
 
         obj.put("playersName", playersName);
+        obj.put("playerCubes", playerEnergyCubes);
         obj.put("playerColor", playersColor);
         obj.put("playersX", playersX);
         obj.put("playersY", playersY);

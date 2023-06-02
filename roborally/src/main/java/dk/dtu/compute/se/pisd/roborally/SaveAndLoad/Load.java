@@ -23,6 +23,7 @@ public class Load {
     //Player Info
     String[] playerNames;
     String[] playerColors;
+    int[] playerEnergyCubes;
     int[] playerCheckPoints;
     int[] playersXPosition;
     int[] playersYPosition;
@@ -120,7 +121,7 @@ public class Load {
         this.playerColors = playerColors;
     }
 
-    public int[] getPlayersXPosition() {
+    public int[] getX() {
         return playersXPosition;
     }
 
@@ -128,7 +129,7 @@ public class Load {
         this.playersXPosition = playersXPosition;
     }
 
-    public int[] getPlayersYPosition() {
+    public int[] getY() {
         return playersYPosition;
     }
 
@@ -182,5 +183,21 @@ public class Load {
 
     public void setPlayerUpgradeCards(Command[][] playerUpgradeCards) {
         this.playerUpgradeCards = playerUpgradeCards;
+    }
+
+    public int[] getPlayerEnergyCubes() {
+        return playerEnergyCubes;
+    }
+
+    public void setPlayerEnergyCubes(int[] playerEnergyCubes) {
+        this.playerEnergyCubes = playerEnergyCubes;
+    }
+
+    public int[] getPlayersXPosition() {
+        return playersXPosition;
+    }
+
+    public int[] getPlayersYPosition() {
+        return playersYPosition;
     }
 }

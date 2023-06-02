@@ -214,7 +214,7 @@ public class Player extends Subject {
         return checkpointsReached;
     }
     //Method to change their checkpoints reached
-    public void setCheckpointReadhed(int Checkpoint, boolean state) {
+    public void setCheckpointReached(int Checkpoint, boolean state) {
         checkpointsReached[Checkpoint] = state;
     }
 

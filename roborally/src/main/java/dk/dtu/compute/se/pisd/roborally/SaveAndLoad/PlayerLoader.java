@@ -107,7 +107,7 @@ public class PlayerLoader {
                 ArrayList<String> checkpoints = getList((JSONArray) value);
                 for(int i = 0; i < checkpoints.size(); i++){
                     boolean check = getBoolean(checkpoints.get(i));
-                    p.setCheckpointReadhed(i, check);
+                    p.setCheckpointReached(i, check);
                 }
                 break;
 
