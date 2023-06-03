@@ -257,7 +257,7 @@ public class Lobby {
         lobbyVbox.getChildren().add(lobbyHbox);
         lobbyList.getChildren().add(lobbyVbox);
 
-        // store the GameLobby instance and the HBox instance for later reference
+        // store the GameLobby in a HashMap, so we can update and distinguish between each lobby individually
         gameLobbyMap.put(lobbyId, gameLobby);
         lobbyHBoxMap.put(lobbyId, lobbyHbox);
     }
