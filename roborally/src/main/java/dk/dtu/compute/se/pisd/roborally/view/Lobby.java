@@ -1,37 +1,71 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
-import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.RoboRally;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
+import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
+import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
+
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public class Lobby {
+
+    private Map<String, GameLobby> gameLobbyMap = new HashMap<>();
+    private Map<String, HBox> lobbyHBoxMap = new HashMap<>();
+
+    private Map<String, VBox> specificLobbyLabels = new HashMap<>();
+
     Stage stage;
+    VBox lobbyLayout;
+    Stage waitStage;
     VBox window;
+    VBox lobbyList;
+    VBox lobbyVbox;
+    Label lobbyText;
+    Label lobbyPlayer;
+    HBox lobbyHbox;
+    ScrollPane lobbySP;
+    BorderPane rootLayout;
+    private LobbyWindow lobbyWindow;
+    private VBox joinWaitWindow;
     String answer;
 
     String[] options;
     boolean yesNo;
 
     GameSettings gameSettings;
+    private LobbyManager lobbyManager;
+    private GameLobby gameLobby;
+
+    private RoboRally roboRally;
+
     /**
      * Default constructor for the Lobby class.
      * @param gameSettings GameSettings object which contains the settings of the game
      * @author Mikkel Jürs, s224279@student.dtu.dk
      */
-    public Lobby(GameSettings gameSettings) {
+    public Lobby(GameSettings gameSettings, LobbyManager lobbyManager) {
         this.gameSettings = gameSettings;
+        this.lobbyManager = lobbyManager;
+        lobbyWindow = new LobbyWindow();
         stage = new Stage();
         window = new VBox();
-        ScrollPane lobbySP = new ScrollPane();
-        VBox lobbyList = new VBox();
+        lobbySP = new ScrollPane();
+        lobbyList = new VBox();
         window.setMaxSize(900, 550);
         window.setMinSize(900, 550);
         window.setAlignment(Pos.TOP_CENTER);
@@ -55,39 +89,28 @@ public class Lobby {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button createGameButton = new Button("Create Game");
-        createGameButton.setOnAction(e -> openCreateGameScene(gameSettings));
-        Button joinGameButton = new Button("Join Game");
-        createGameButton.setId("JoinGameButton");
+        createGameButton.setOnAction(e -> openCreateGameScene());
+        Button loadGameButton = new Button("Load Game");
 
-        buttonBox.getChildren().addAll(spacer, createGameButton, joinGameButton);
+        buttonBox.getChildren().addAll(spacer, createGameButton, loadGameButton);
         top.getChildren().add(buttonBox);  // Add the HBox to top
-
-        // For each lobby element, add a new vbox.
-        for (int i = 0; i < 10; i++) {
-            VBox lobbyVbox = new VBox();
-            lobbyVbox.prefWidthProperty().bind(Bindings.createObjectBinding(() ->
-                    lobbySP.getViewportBounds().getWidth(), lobbySP.viewportBoundsProperty()));
-            HBox lobbyHbox = new HBox();
-            Label lobbyText = new Label("Lobby " + i + "\n" + "Creator: ");
-            Button joinButton = new Button("Join");
-            joinButton.setId("JoinButton" + i);
-            Region spacerInLobby = new Region();
-            HBox.setHgrow(spacerInLobby, Priority.ALWAYS);
-            lobbyHbox.getChildren().addAll(lobbyText, spacerInLobby, joinButton);
-            lobbyVbox.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: #b4b4b4; -fx-background-color: #ffffff");
-            lobbyVbox.setPadding(new Insets(2, 2, 2, 2));
-            if (i % 2 == 0) {
-                lobbyVbox.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: #eeeeee; -fx-background-color: #eeeeee");
-            }
-            lobbyVbox.getChildren().add(lobbyHbox);
-            lobbyList.getChildren().add(lobbyVbox);
-        }
 
         lobbySP.setContent(lobbyList);
         window.getChildren().add(top);
         window.getChildren().add(lobbySP);
     }
-
+    private void getButtStuffForLoad(){
+        LoadGameWindow lgw = new LoadGameWindow();//Where i have method to get all saves
+        ComboBox<String> comboBox = new ComboBox<>();
+        lgw.addFiles(comboBox); //fill the combobox with the names of saves
+        comboBox.setValue(comboBox.getItems().get(0)); //Sets the value to the first so there always one chosen
+        //After chosen a save to load, these following names should be shown to the players so they can choose which to take over.
+    }
+    private String[] getNames(String saveName){
+        JSONHandler json = new JSONHandler(); //Where I can access files
+        String[] names = json.getNamesOfGame(saveName); //Get names of files with a method that only loads the names of the json file.
+        return names;
+    }
 
 
     /**
@@ -104,12 +127,15 @@ public class Lobby {
 
     /**
      * Method to open a new scene for creating a game.
-     * @param gameSettings GameSettings object which contains the settings of the game
      * @author Mikkel Jürs, s224279@student.dtu.dk
      */
-    private void openCreateGameScene(GameSettings gameSettings) {
+    private void openCreateGameScene() {
+        GameSettings gameSettings = new GameSettings();
         // Create new Stage for this scene
         Stage createGameStage = new Stage();
+
+        // Create a new BorderPane layout
+        rootLayout = new BorderPane();
 
         // Create a new VBox layout
         VBox createGameLayout = new VBox(10);
@@ -133,33 +159,230 @@ public class Lobby {
         boardLoadWindow.addFiles(boardsToPlayInput);
         boardsToPlayInput.setValue(boardsToPlayInput.getItems().get(0));
 
-
         // Create a submit button
         Button submitButton = new Button("Create Game");
 
+
         // Add event to the submit button
         submitButton.setOnAction(e -> {
-            gameSettings.setGameName(gameNameInput.getText());
-            gameSettings.setCreatorName(creatorNameInput.getText());
-            gameSettings.setNumberOfPlayers(numberOfPlayersInput.getValue());
-            gameSettings.setBoardToPlay(boardsToPlayInput.getValue());
-            gameSettings.getPlayerNames().add(gameSettings.getCreatorName());
+            String lobbyID = UUID.randomUUID().toString();
+            // Set the game settings
+            if (!gameNameInput.getText().isEmpty() && !creatorNameInput.getText().isEmpty()) {
+                gameNameInput.setStyle(null);
+                creatorNameInput.setStyle(null);
+                gameSettings.setGameName(gameNameInput.getText());
+                gameSettings.setCreatorName(creatorNameInput.getText());
+                gameSettings.setNumberOfPlayers(numberOfPlayersInput.getValue());
+                gameSettings.setBoardToPlay(boardsToPlayInput.getValue());
+                gameSettings.getPlayerNames().add(gameSettings.getCreatorName());
+                gameNameInput.setDisable(true);
+                creatorNameInput.setDisable(true);
+                numberOfPlayersInput.setDisable(true);
+                boardsToPlayInput.setDisable(true);
+                submitButton.setDisable(true);
 
-            System.out.println("Game created with settings: " + gameSettings);
-
-            createGameStage.close();
-            stage.close();  // close the window after submitting
+                GameLobby gameLobby = new GameLobby(lobbyID, gameSettings); // create a new game lobby
+                this.gameLobby = gameLobby;
+                lobbyManager.createGame(gameLobby);
+                addLobbyToLobby(gameLobby, lobbyID);
+                lobbyPlayer.setText("Players: " + gameLobby.getGameSettings().getPlayerNames().size() + "/" + gameLobby.getGameSettings().getNumberOfPlayers());
+                rootLayout.setRight(createLobbyLayout(gameLobby));
+            }
+            if (gameNameInput.getText().isEmpty()) {
+                gameNameInput.setStyle("-fx-border-color: #ff0000");
+            }
+            if (creatorNameInput.getText().isEmpty()){
+                creatorNameInput.setStyle("-fx-border-color: #ff0000");
+            }
+            if (!gameNameInput.getText().isEmpty()) {
+                gameNameInput.setStyle(null);
+            }
+            if(!creatorNameInput.getText().isEmpty()){
+                creatorNameInput.setStyle(null);
+                }
         });
 
-        // Add all elements to the layout
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
-
+        rootLayout.setLeft(createGameLayout);
         // Create the scene and add it to the stage
-        Scene createGameScene = new Scene(createGameLayout, 400, 400);
+        Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
         createGameStage.setScene(createGameScene);
         createGameStage.show();
     }
 
+    private VBox createLobbyLayout(GameLobby gameLobby) {
+        lobbyLayout = new VBox();
+        lobbyLayout.setPadding(new Insets(10, 10, 10, 10));
+        lobbyLayout.setAlignment(Pos.TOP_CENTER);
+        lobbyLayout.setSpacing(2);
+
+        int amountOfPlayers = gameLobby.getGameSettings().getPlayerNames().size();
+        Label amount = new Label();
+        amount.setStyle("-fx-font-weight: bold; -fx-font-size: 16");
+        amount.setText("Players Joined: " + amountOfPlayers);
+        lobbyLayout.getChildren().add(amount);
+
+        for(String name : gameLobby.getGameSettings().getPlayerNames()){
+            VBox background = new VBox();
+            background.setStyle("-fx-border-color: #dddddd");
+            background.setPadding(new Insets(2, 2, 2, 2));
+            background.setAlignment(Pos.CENTER);
+            Label label = new Label(name);
+            label.setAlignment(Pos.CENTER);
+            label.setStyle("-fx-font-size: 14");
+            background.getChildren().add(label);
+            lobbyLayout.getChildren().add(background);
+        }
+        String lobbyId = gameLobby.getLobbyId();
+        specificLobbyLabels.put(lobbyId, lobbyLayout);
+        return lobbyLayout;
+    }
+
+    private void addLobbyToLobby(GameLobby gameLobby, String lobbyId){
+        lobbyText = new Label();
+        lobbyText.setText("Game Name: " + gameLobby.getGameSettings().getGameName() + "\nCreator: " + gameLobby.getGameSettings().getCreatorName());
+        lobbyVbox = new VBox();
+        lobbyPlayer = new Label();
+        lobbyVbox.prefWidthProperty().bind(Bindings.createObjectBinding(() -> lobbySP.getViewportBounds().getWidth(), lobbySP.viewportBoundsProperty()));
+        lobbyHbox = new HBox();
+        Button joinButton = new Button("Join");
+        lobbyPlayer.setText("Players: " + gameLobby.getGameSettings().getPlayerNames().size() + "/" + gameLobby.getGameSettings().getNumberOfPlayers());
+        joinButton.setId(lobbyId);
+        joinButton.setOnAction(e -> openJoinGamePopup(joinButton.getId()));
+        Region spacerInLobby = new Region();
+        HBox.setHgrow(spacerInLobby, Priority.ALWAYS);
+        lobbyHbox.getChildren().addAll(lobbyText, spacerInLobby, lobbyPlayer, joinButton);
+        lobbyVbox.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: #b4b4b4; -fx-background-color: #ffffff");
+        lobbyVbox.setPadding(new Insets(2, 2, 2, 2));
+        lobbyVbox.getChildren().add(lobbyHbox);
+        lobbyList.getChildren().add(lobbyVbox);
+
+        // store the GameLobby instance and the HBox instance for later reference
+        gameLobbyMap.put(lobbyId, gameLobby);
+        lobbyHBoxMap.put(lobbyId, lobbyHbox);
+    }
+
+    private void openJoinGamePopup(String lobbyId) {
+        gameLobby = gameLobbyMap.get(lobbyId);
+        lobbyHbox = lobbyHBoxMap.get(lobbyId);
+        // Create a new dialog
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Join Game");
+        dialog.setHeaderText("Enter Your Name");
+
+        // Set the button types (OK and CANCEL)
+        ButtonType joinButtonType = new ButtonType("Join", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(joinButtonType, ButtonType.CANCEL);
+
+        // Create a text field for entering the name
+        TextField nameField = new TextField();
+        nameField.setPromptText("Your Name");
+
+        // Enable the join button only if the name is not empty
+        Node joinButton = dialog.getDialogPane().lookupButton(joinButtonType);
+        joinButton.setDisable(true);
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            joinButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        // Set the content of the dialog
+        dialog.getDialogPane().setContent(nameField);
+
+        // Request focus on the name field by default
+        Platform.runLater(nameField::requestFocus);
+
+        // Convert the result of the dialog to the player's name
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == joinButtonType) {
+                return nameField.getText();
+            }
+
+            return null;
+        });
+        // Show the dialog and wait for the user's input
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(playerName -> joinLobby(gameLobby, playerName));
+    }
+
+    private void joinLobby(GameLobby gameLobby, String playerName) {
+        // Add the player to the game lobby
+        lobbyManager.addPlayer(gameLobby, playerName);
+        updateJoinWindow(gameLobby); //Update joinWindow
+
+    }
+
+    private VBox updateJoinWindow(GameLobby gameLobby){
+        String lobbyId = gameLobby.getLobbyId();
+        VBox specificLobbyLayout = specificLobbyLabels.get(lobbyId);
+        specificLobbyLayout.getChildren().clear();
+        specificLobbyLayout.setPadding(new Insets(10, 10, 10, 10));
+        specificLobbyLayout.setAlignment(Pos.TOP_CENTER);
+        specificLobbyLayout.setSpacing(2);
+        Button startGame = new Button();
+        startGame.setId(lobbyId);
+        startGame.setText("Start Game");
+        startGame.setVisible(false);
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        startGame.setOnAction(e -> {
+            // Retrieve the GameLobby using the button's ID (which is the lobbyId)
+            GameLobby gameLobbyButton = gameLobbyMap.get(startGame.getId());
+
+            // Retrieve the GameSettings from the GameLobby
+            GameSettings gameSettings = gameLobbyButton.getGameSettings();
+
+            // Call the startGame method with these GameSettings
+            RoboRally.getInstance().startGame(gameSettings, stage);
+        });
+
+
+
+        int amountOfPlayers = gameLobby.getGameSettings().getPlayerNames().size();
+        Label amount = new Label();
+        amount.setStyle("-fx-font-weight: bold; -fx-font-size: 16");
+        amount.setText("Players Joined: " + amountOfPlayers);
+        specificLobbyLayout.getChildren().addAll(amount);
+        for(String name : gameLobby.getGameSettings().getPlayerNames()){
+            VBox background = new VBox();
+            background.setStyle("-fx-border-color: #dddddd");
+            background.setPadding(new Insets(2, 2, 2, 2));
+            background.setAlignment(Pos.CENTER);
+            Label label = new Label(name);
+            label.setAlignment(Pos.CENTER);
+            label.setStyle("-fx-font-size: 14");
+            background.getChildren().add(label);
+            specificLobbyLayout.getChildren().add(background);
+        }
+        specificLobbyLayout.getChildren().addAll(spacer, startGame);
+        updateLabels(gameLobby.getLobbyId());
+        if(gameLobby.getGameSettings().getPlayerNames().size() == gameLobby.getGameSettings().getNumberOfPlayers()){
+           startGame.setVisible(true);
+        }
+        return specificLobbyLayout;
+    }
+
+    public void updateLabels(String lobbyId){
+        HBox lobbyHbox = lobbyHBoxMap.get(lobbyId);
+        Label gameNameCreatorName = (Label) lobbyHbox.getChildren().get(0);
+        Button joinButton = (Button) lobbyHbox.getChildren().get(3);
+        Label lobbyPlayerLabel = (Label) lobbyHbox.getChildren().get(2);
+
+
+
+        GameLobby gameLobby = gameLobbyMap.get(lobbyId);
+        gameNameCreatorName.setText("Game Name: " + gameLobby.getGameSettings().getGameName() + "\nCreator: " + gameLobby.getGameSettings().getCreatorName());
+        lobbyPlayerLabel.setText("Players: " + gameLobby.getGameSettings().getPlayerNames().size() + "/" + gameLobby.getGameSettings().getNumberOfPlayers());
+        if(gameLobby.getGameSettings().getPlayerNames().size() == gameLobby.getGameSettings().getNumberOfPlayers()){
+            joinButton.setDisable(true);
+        }
+    }
+
+    private void openWaitScene(){
+        if(waitStage != null) return;
+        waitStage = new Stage();
+        waitStage.show();
+    }
 
 
     /**
