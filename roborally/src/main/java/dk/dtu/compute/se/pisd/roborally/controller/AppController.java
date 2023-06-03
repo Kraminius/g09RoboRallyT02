@@ -27,6 +27,9 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LoadInstance;
+import dk.dtu.compute.se.pisd.roborally.SharingGame.LoadHttpGame;
 import dk.dtu.compute.se.pisd.roborally.view.BoardLoadWindow;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameSave;
 import dk.dtu.compute.se.pisd.roborally.model.*;
@@ -141,6 +144,14 @@ public class AppController implements Observer {
             newGame();
         }
     }
+
+    //Testing
+
+    public void reinstantiateGame(Load load){
+        LoadInstance.load(this, load);
+    }
+
+    //Usual
 
     /**
      * Stop playing the current game, giving the user the option to save

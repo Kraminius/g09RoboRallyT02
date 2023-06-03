@@ -22,6 +22,8 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
+import dk.dtu.compute.se.pisd.roborally.SharingGame.GameRep;
+import dk.dtu.compute.se.pisd.roborally.SharingGame.MyClient;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
@@ -81,11 +83,31 @@ public class GameController {
      */
     // XXX: V2
     public void startUpgradePhase(){
+        //Testing
+        GameRep.setGame(this);
+
         System.out.println("Upgrade Phase Started");
         board.setPhase(Phase.UPGRADE);
     }
 
     public void startProgrammingPhase() {
+        //Testing
+        GameRep.setGame(this);
+        try {
+            MyClient.postGame(GameRep.getJsonGame());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            MyClient.getGame(1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        //Usual stuff
+
         board.setPhase(Phase.PROGRAMMING);
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
@@ -338,6 +360,10 @@ public class GameController {
 
         do {
             executeNextStep();
+
+            //Testing
+            GameRep.setGame(this);
+
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
