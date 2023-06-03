@@ -1034,6 +1034,7 @@ public class GameController {
 
 
     /**
+     *  @author Nicklas Christensen     s224314.dtu.dk
      * Make all the given players shoot a laser.
      * The laser gives 1 SPAM Card to any players hit
      * @param player an single player who's laser will be shot, this should be available through board.
