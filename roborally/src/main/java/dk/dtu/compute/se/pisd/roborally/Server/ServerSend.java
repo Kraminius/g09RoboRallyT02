@@ -8,6 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -26,20 +27,20 @@ public class ServerSend {
      * @return
      */
 
-    public boolean sendProgram(CommandCardField commandCardField, int id) {
+    public static boolean sendProgram(ArrayList<ArrayList<CommandCardField>> commandCardField, int id, String playerURI) {
         try{
             //Might need another way to make JSONObjects
             String productJSON = new Gson().toJson(commandCardField);
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(productJSON))
-                    .uri(URI.create("http://localhost:8080/Player/"))
+                    .uri(URI.create(playerURI))
                     .setHeader("User-Agent", "Product Client")
                     .header("Content-Type", "application/json")
                     .build();
             CompletableFuture<HttpResponse<String>> response =
                     httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
             String result = response.thenApply((r)->r.body()).get(5, TimeUnit.SECONDS);
-            return result.equals("added")? true : false;
+            return result.equals("acknowledged")? true : false;
         } catch (Exception e) {
             return false;
         }

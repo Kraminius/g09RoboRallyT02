@@ -8,8 +8,10 @@ import java.util.ArrayList;
 @Service
 public class PlayerProgramService {
 
+    //We need a way to save players and their URI
     public int numberOfPlayers;
     ArrayList<Integer> players = new ArrayList<>();
+    ArrayList<String> playersURI = new ArrayList<>();
     ArrayList<CommandCardField> commandCardFields = new ArrayList<>();
     ArrayList<ArrayList<CommandCardField>> allCommandCardFields = new ArrayList<>();
 
@@ -38,7 +40,7 @@ public class PlayerProgramService {
     public void sendAllPrograms(){
         for(int i = 0; i < numberOfPlayers; i++){
             int id = players.get(i);
-
+            ServerSend.sendProgram(allCommandCardFields, players.get(i), playersURI.get(i));
         }
     }
 
