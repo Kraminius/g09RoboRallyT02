@@ -52,10 +52,12 @@ public class GameSave {
         JSONArray playersHeading = new JSONArray();
         JSONArray playersCheckpoints = new JSONArray();
         JSONArray playersProgrammingDeck = new JSONArray();
+        JSONArray playersPulledCards = new JSONArray();
         JSONArray playersProgram = new JSONArray();
         JSONArray playersDiscardCards = new JSONArray();
         JSONArray playerUpgradeCards = new JSONArray();
         JSONArray playerEnergyCubes = new JSONArray();
+        JSONArray mapEnergyCubes = new JSONArray();
         for(int i = 0; i < board.getPlayersNumber(); i++){
             Player player = board.getPlayer(i);
             playersName.add(player.getName());
@@ -66,25 +68,32 @@ public class GameSave {
             playersHeading.add(headingToString(player.getHeading()));
             playersCheckpoints.add(getCheckpointReached(player.getCheckpointReadhed()));
             CommandCardField[] program = player.getProgram();
-            CommandCardField[] card = player.getCards();
+            CommandCardField[] pulled = player.getCards();
             CommandCardField[] upgradeCards = player.getUpgradeCards();
             ArrayList<CommandCard> discardPile = player.getDiscardPile();
+            ArrayList<CommandCard> programmingDeck = player.getCardDeck();
+
 
             playersProgram.add("#");
             for(int j = 0; j < program.length; j++){
-                if(program[i].getCard() != null) playersProgram.add(program[j].getCard().command.toString());
+                if(program[j].getCard() != null) playersProgram.add(program[j].getCard().command.toString());
             }
-            playersProgrammingDeck.add("#");
-            for(int j = 0; j < card.length; j++){
-                if(card[i].getCard() != null) playersProgrammingDeck.add(card[j].getCard().command.toString());
+
+            playersPulledCards.add("#");
+            for(int j = 0; j < pulled.length; j++){
+                if(pulled[j].getCard() != null) playersPulledCards.add(pulled[j].getCard().command.toString());
             }
             playerUpgradeCards.add("#");
             for(int j = 0; j < upgradeCards.length; j++){
-                if(upgradeCards[i].getCard() != null) playerUpgradeCards.add(upgradeCards[j].getCard().command.toString());
+                if(upgradeCards[j].getCard() != null) playerUpgradeCards.add(upgradeCards[j].getCard().command.toString());
             }
             playersDiscardCards.add("#");
             for(int j = 0; j < discardPile.size(); j++){
-                if(discardPile.get(i) != null) playersDiscardCards.add(discardPile.get(j).command.toString());
+                if(discardPile.get(j) != null) playersDiscardCards.add(discardPile.get(j).command.toString());
+            }
+            playersProgrammingDeck.add("#");
+            for(int j = 0; j < programmingDeck.size(); j++){
+                if(programmingDeck.get(j) != null) playersProgrammingDeck.add(programmingDeck.get(j).command.toString());
             }
         }
         JSONArray upgradeCardsDeck = new JSONArray();
@@ -107,6 +116,9 @@ public class GameSave {
             }
         }
 
+        saveCubes(mapEnergyCubes, board);
+
+
 
         obj.put("playersName", playersName);
         obj.put("playerCubes", playerEnergyCubes);
@@ -116,15 +128,25 @@ public class GameSave {
         obj.put("playersHeading", playersHeading);
         obj.put("playersCheckpoints", playersCheckpoints);
         obj.put("playersProgrammingDeck", playersProgrammingDeck);
+        obj.put("playersPulledCards", playersPulledCards);
         obj.put("playersProgram", playersProgram);
         obj.put("playersDiscardCards", playersDiscardCards);
         obj.put("playerUpgradeCards", playerUpgradeCards);
         obj.put("upgradeCardsDeck", upgradeCardsDeck);
         obj.put("upgradeDiscardDeck", upgradeDiscardDeck);
         obj.put("upgradeOutDeck", upgradeOutDeck);
+        obj.put("mapCubes", mapEnergyCubes);
 
         json.save(name, obj, "game");
         return true;
+    }
+    private void saveCubes(JSONArray mapEnergyCubes, Board board){
+        ArrayList<Space> energyCubeSpaces = board.getEnergyFieldSpaces();
+        for(int i = 0; i < energyCubeSpaces.size(); i++){
+            mapEnergyCubes.add(energyCubeSpaces.get(i).x);
+            mapEnergyCubes.add(energyCubeSpaces.get(i).y);
+            mapEnergyCubes.add(energyCubeSpaces.get(i).getElement().getEnergyField().getCubes());
+        }
     }
     private int getCheckpointReached(boolean[] arr){
         int reached = 0;

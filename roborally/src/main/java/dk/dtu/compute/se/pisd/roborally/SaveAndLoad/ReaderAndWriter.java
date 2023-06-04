@@ -38,7 +38,8 @@ public class ReaderAndWriter {
         try {
             File directory = null;
             if(type.equals( "board")) directory = new File("roborally/src/main/resources/boards/");
-            if(type.equals("game")) directory = new File("roborally/src/main/resources/games/");
+            else if(type.equals("game")) directory = new File("roborally/src/main/resources/games/");
+            else if(type.equals("saveData")) directory = new File("roborally/src/main/resources/saveData/");
             if(directory == null) {
                 System.out.println("No such type");
                 return null;
@@ -115,6 +116,29 @@ public class ReaderAndWriter {
             }
         } catch (IOException | ParseException e) {
             System.out.println("Error reading " + name + ".json file: " + e.getMessage());
+            return null;
+        }
+    }
+    public JSONObject createJSON(File file){
+        try {
+            if (file != null) {
+                FileInputStream inputStream = new FileInputStream(file);
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder stringBuilder = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+                bufferedReader.close();
+                String jsonString = stringBuilder.toString();
+                JSONParser parser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) parser.parse(jsonString);
+                return jsonObject;
+            } else {
+                return null;
+            }
+        } catch (IOException | ParseException e) {
             return null;
         }
     }

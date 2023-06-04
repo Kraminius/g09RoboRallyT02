@@ -37,6 +37,8 @@ public class UpgradeShop {
     private ArrayList<CommandCard> discarded;
     private ArrayList<CommandCard> out;
 
+    private AntennaHandler antennaHandler = new AntennaHandler();
+
 
     /**
      * @author Tobias - s224271@dtu.dk
@@ -334,7 +336,7 @@ public class UpgradeShop {
      * @return returns a list of players which is the order
      */
     private List<Player> getPlayerPriority(){
-        List<Player> playerOrder = controller.findPlayerSequence(board.getAntenna());
+        List<Player> playerOrder = antennaHandler.findPlayerSequence(board.getAntenna(), board);
         return playerOrder;
     }
     /**

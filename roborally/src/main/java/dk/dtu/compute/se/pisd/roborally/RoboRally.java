@@ -23,8 +23,10 @@ package dk.dtu.compute.se.pisd.roborally;
 
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
+import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
+import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
 import dk.dtu.compute.se.pisd.roborally.view.Lobby;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
@@ -44,6 +46,7 @@ import javafx.stage.Stage;
 public class RoboRally extends Application {
 
     private static final int MIN_APP_WIDTH = 600;
+    private static RoboRally instance;
 
     private Stage stage;
     private BorderPane boardRoot;
@@ -57,14 +60,19 @@ public class RoboRally extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
+        instance = this;
+        LobbyManager lobbyManager = new LobbyManager();
         GameSettings gameSettings = new GameSettings();
-        Lobby lobby = new Lobby(gameSettings);
+        Lobby lobby = new Lobby(gameSettings, lobbyManager);
         lobby.show();
         stage = primaryStage;
+    }
 
+
+    public void startGame(GameSettings gameSettings, Stage primaryStage){
+        stage = primaryStage;
         AppController appController = new AppController(this, gameSettings);
-
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
         // when the user creates a new game or loads a game
@@ -86,7 +94,6 @@ public class RoboRally extends Application {
         stage.setY(100);
         stage.show();
         appController.newGame();
-
     }
 
     public void createBoardView(GameController gameController) {
@@ -116,4 +123,7 @@ public class RoboRally extends Application {
         launch(args);
     }
 
+    public static RoboRally getInstance() { // And add this method
+        return instance;
+    }
 }

@@ -169,7 +169,7 @@ public class AppController implements Observer {
         LoadGameWindow load = new LoadGameWindow();
         String saveName = load.getLoadInput();
         System.out.println("Loading " + saveName);
-        //gameController = GameLoader.loadGame(saveName, this); //This Doesn't work yet.
+        gameController = GameLoader.loadGame(saveName, this);
 
         if(gameController == null) {
             newGame();
