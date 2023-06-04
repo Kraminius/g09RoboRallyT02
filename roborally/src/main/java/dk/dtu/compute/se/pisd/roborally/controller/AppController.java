@@ -90,6 +90,7 @@ public class AppController implements Observer {
                 gameController.fillStartDeck(player.getCardDeck());
                 board.addPlayer(player);
 
+                //We might want a way for this to tell what Player the user is
 
                 //player.setSpace(board.getSpace(i % board.width, i));
             }

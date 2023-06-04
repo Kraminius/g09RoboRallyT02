@@ -21,6 +21,8 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.Client.ClientProgramService;
+import dk.dtu.compute.se.pisd.roborally.Client.ClientSend;
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
@@ -283,11 +285,22 @@ public class GameController {
         sequence = antennaHandler.antennaPriority(board);
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
+
+        //Sending our cards to the server (Need to tell which player we are)
+        sendOwnCards(board.getPlayer(0));
+        //Now we need the game to wait for the cards from the server before moving forwards
+        boolean go = false;
+        while(go == false){
+            go = ClientProgramService.proceedToActivate();
+        }
+        ArrayList<ArrayList<CommandCardField>> commandCards = ClientProgramService.allCommandCardFiels;
+            distributeAllCards(commandCards);
         board.setPhase(Phase.ACTIVATION);
         board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
         //sequence.remove(0);
         //board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
+
     }
 
     // XXX: V2
@@ -1492,5 +1505,38 @@ public class GameController {
 
 
 //endregion
+
+
+    //Testing our Web-version
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * A method for setting all players programCards in place
+     * Is to be used after recieving them from server
+     * @param commands
+     */
+    public void distributeAllCards(ArrayList<ArrayList<CommandCardField>> commands){
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            for(int j = 0; j < Player.NO_REGISTERS; j++){
+            board.getPlayer(i).setProgramField(j, commands.get(i).get(j));
+        }}
+    }
+
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * A method for gathering a players cards before sending them to the server
+     * Is to be used after the player has finnished programming
+     * @param player the player whos card we are sending to the server
+     */
+    public void sendOwnCards(Player player){
+        int id = player.getId();
+        ArrayList<CommandCardField> commandCardFields = new ArrayList<>();
+        for(int i = 0; i < Player.NO_REGISTERS; i++) {
+            commandCardFields.add(player.getProgramField(i));
+        }
+        //ClientSend class are given cards and id to send to server
+        ClientSend.sendOwnProgram(commandCardFields, id);
+    }
 
 }

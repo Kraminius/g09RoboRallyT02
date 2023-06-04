@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 public class ServerController {
 
         @Autowired
-        private PlayerProgramService playerProgramService;
+        private ServerProgramService serverProgramService;
 
 
     /**
@@ -23,8 +23,8 @@ public class ServerController {
      * @return
      */
         @PostMapping("/playerProgram/{id}")
-        public ResponseEntity<String > addProgram(@RequestBody CommandCardField commandCardField, @PathVariable int id)  {
-            boolean added = playerProgramService.addProgram(commandCardField, id);
+        public ResponseEntity<String > addProgram(@RequestBody ArrayList<CommandCardField> commandCardField, @PathVariable int id)  {
+            boolean added = serverProgramService.addProgram(commandCardField, id);
             if(added)
                 return ResponseEntity.ok().body("added");
             else
