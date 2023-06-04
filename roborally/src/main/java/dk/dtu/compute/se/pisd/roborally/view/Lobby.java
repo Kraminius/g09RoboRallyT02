@@ -1,6 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.roborally.GameClient;
+import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
 import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
@@ -18,10 +19,7 @@ import javafx.stage.Stage;
 import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
 
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class Lobby {
 
@@ -132,6 +130,82 @@ public class Lobby {
         stage.showAndWait();
     }
 
+    public void openJoinGame(GameLobby gameLobby) throws Exception {
+
+        // Create new Stage for this scene
+        Stage createGameStage = new Stage();
+
+        // Create a new BorderPane layout
+        rootLayout = new BorderPane();
+
+        // Create a new VBox layout
+        VBox createGameLayout = new VBox(10);
+
+        // Create the form inputs
+        Label gameNameLabel = new Label("Name of the game:");
+        TextField gameNameInput = new TextField();
+        gameNameInput.setText(gameLobby.getGameSettings().getGameName());
+
+        Label creatorNameLabel = new Label("Creator name:");
+        TextField creatorNameInput = new TextField();
+        creatorNameInput.setText(gameLobby.getGameSettings().getCreatorName());
+
+        Label numberOfPlayersLabel = new Label("How many players:");
+        Spinner<Integer> numberOfPlayersInput = new Spinner<>();
+        numberOfPlayersInput.setPromptText(String.valueOf(gameLobby.getGameSettings().getNumberOfPlayers()));
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2);
+        numberOfPlayersInput.setValueFactory(valueFactory);
+        numberOfPlayersInput.setEditable(false);
+
+        Label boardToPlayLabel = new Label("What board to play:");
+        TextField boardsToPlayInput = new TextField();
+        gameNameInput.setText(gameLobby.getGameSettings().getBoardToPlay());
+
+
+
+
+        gameNameInput.setDisable(true);
+        creatorNameInput.setDisable(true);
+        numberOfPlayersInput.setDisable(true);
+        boardsToPlayInput.setDisable(true);
+
+/*
+        ArrayList<String> names = GameClient.getPlayerNames();
+        Label amount = new Label();
+        amount.setStyle("-fx-font-weight: bold; -fx-font-size: 16");
+        amount.setText("Players Joined: " + names.size());
+        createGameLayout.getChildren().addAll(amount);
+            for(String name : gameLobby.getGameSettings().getPlayerNames()){
+                VBox background = new VBox();
+                background.setStyle("-fx-border-color: #dddddd");
+                background.setPadding(new Insets(2, 2, 2, 2));
+                background.setAlignment(Pos.CENTER);
+                Label label = new Label(name);
+                label.setAlignment(Pos.CENTER);
+                label.setStyle("-fx-font-size: 14");
+            background.getChildren().add(label);
+            createGameLayout.getChildren().add(background);
+        }
+
+ */
+
+
+        createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput);
+        rootLayout.setLeft(createGameLayout);
+        // Create the scene and add it to the stage
+        Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
+        createGameStage.setScene(createGameScene);
+
+        rootLayout.setRight(createLobbyLayout(gameLobby));
+
+        createGameStage.show();
+
+
+
+    }
+
+
+
     /**
      * Method to open a new scene for creating a game.
      * @author Mikkel Jürs, s224279@student.dtu.dk
@@ -218,7 +292,19 @@ public class Lobby {
                 GameLobby gameLobby = gameLobbyTemp;
                 this.gameLobby = gameLobby;
 
+                try {
+                    GameClient.instaGameData(gameLobby.getGameSettings().getNumberOfPlayers());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    MyClient.weConnect(0, gameLobby.getGameSettings().getPlayerNames().get(0));
+                    gameLobby.getGameSettings().setPlayerNames(GameClient.getPlayerNames());
 
+                    System.out.println(gameLobby.toString());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
 
 
                 lobbyManager.createGame(gameLobby);
@@ -275,7 +361,7 @@ public class Lobby {
             lobbyLayout.getChildren().add(background);
         }
         String lobbyId = gameLobby.getLobbyId();
-        specificLobbyLabels.put(lobbyId, lobbyLayout);
+        //specificLobbyLabels.put(lobbyId, lobbyLayout);
         return lobbyLayout;
     }
 
@@ -305,6 +391,7 @@ public class Lobby {
 
     private void openJoinGamePopup(String lobbyId) {
         gameLobby = gameLobbyMap.get(lobbyId);
+
         lobbyHbox = lobbyHBoxMap.get(lobbyId);
         // Create a new dialog
         Dialog<String> dialog = new Dialog<>();
@@ -342,15 +429,35 @@ public class Lobby {
         });
         // Show the dialog and wait for the user's input
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(playerName -> joinLobby(gameLobby, playerName));
+        result.ifPresent(playerName -> {
+            try {
+                joinLobby(gameLobby, playerName);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    private void joinLobby(GameLobby gameLobby, String playerName) {
+    private void joinLobby(GameLobby gameLobby, String playerName) throws Exception {
+
+        int playerNumber = Integer.parseInt(MyClient.playerNumber());
+        MyClient.weConnect(playerNumber, playerName);
+        ArrayList<String> playerNames = GameClient.getPlayerNames();
+        gameLobby.getGameSettings().setPlayerNames(playerNames);
+
         // Add the player to the game lobby
-        lobbyManager.addPlayer(gameLobby, playerName);
-        updateJoinWindow(gameLobby); //Update joinWindow
+        lobbyManager.addPlayers(gameLobby, playerNames);
+        openJoinGame(gameLobby);
+
+
+
+        //updateJoinWindow(gameLobby); //Update joinWindow
+
+        System.out.println(GameClient.getPlayerNames());
 
     }
+
+
 
     private VBox updateJoinWindow(GameLobby gameLobby){
         String lobbyId = gameLobby.getLobbyId();
@@ -436,5 +543,13 @@ public class Lobby {
      */
     private void close(){
         stage.close();
+    }
+
+    public Map<String, GameLobby> getGameLobbyMap() {
+        return gameLobbyMap;
+    }
+
+    public void setGameLobbyMap(Map<String, GameLobby> gameLobbyMap) {
+        this.gameLobbyMap = gameLobbyMap;
     }
 }

@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 
@@ -10,6 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -110,4 +112,22 @@ public class GameClient {
         Boolean result = Boolean.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
         return result;
     }
+
+    public static ArrayList<String> getPlayerNames() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getAllPlayers"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String jsonResponse = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+
+        // Use ObjectMapper to convert the JSON string into an ArrayList<String>
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayList<String> result = objectMapper.readValue(jsonResponse, new TypeReference<ArrayList<String>>() {});
+
+        return result;
+    }
+
+
 }

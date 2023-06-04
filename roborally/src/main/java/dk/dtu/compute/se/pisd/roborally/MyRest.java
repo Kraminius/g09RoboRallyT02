@@ -7,7 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -27,9 +29,14 @@ public class MyRest {
 
 
     @PostMapping(value = "/connected")
-    public ResponseEntity<String> connector(@RequestBody String playerNumStr){
-        int playerNum = Integer.parseInt(playerNumStr);  // convert the player number from string to int
+    public ResponseEntity<String> connector(@RequestBody Map<String, Object> payload){
+        int playerNum = (int) payload.get("playerNum");
+        String name = (String) payload.get("name");
+
         gameDataRep.gameData.readyList[playerNum] = true;
+        gameDataRep.gameData.getPlayers().add(name);
+
+        System.out.println("mine spillere" + gameDataRep.gameData.getPlayers());
         System.out.println(gameDataRep.gameData.readyList[playerNum]);
         return ResponseEntity.ok().body("we connected");
     }
@@ -94,6 +101,23 @@ public class MyRest {
         GameLobby gameLobby = gameInfo.convertGameInfoToGameLobby(gameInfo);
         return ResponseEntity.ok(gameLobby);
     }
+
+    /*@PutMapping(value = "/joinGameLobby/{lobbyId}")
+    public ResponseEntity<String> joinGameLobby(@PathVariable String lobbyId, String player){
+
+        gameRepository.getGameSettings().getPlayerNames().add("Test");
+
+        return new ResponseEntity.ok("test");
+    }*/
+
+    @GetMapping(value = "/getAllPlayers")
+    public ResponseEntity<ArrayList<String>> getPlayerNames(){
+
+        return ResponseEntity.ok(gameDataRep.gameData.getPlayers());
+
+
+    }
+
 
 
 

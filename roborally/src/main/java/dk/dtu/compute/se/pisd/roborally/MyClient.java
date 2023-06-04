@@ -1,5 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import org.json.simple.JSONObject;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,9 +19,15 @@ public class MyClient {
 
 
 
-    public static boolean weConnect(int playerNum) throws Exception {
+    public static boolean weConnect(int playerNum, String name) throws Exception {
+        // Create a JSON object
+        JSONObject json = new JSONObject();
+        json.put("playerNum", playerNum);
+        json.put("name", name);
+
         HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(Integer.toString(playerNum)))
+                .POST(HttpRequest.BodyPublishers.ofString(json.toString())) // send JSON object
+                .header("Content-Type", "application/json")
                 .uri(URI.create("http://localhost:8080/connected"))
                 .build();
         CompletableFuture<HttpResponse<String>> response =

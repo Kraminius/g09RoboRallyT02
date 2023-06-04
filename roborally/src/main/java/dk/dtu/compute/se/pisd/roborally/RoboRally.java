@@ -51,6 +51,8 @@ public class RoboRally extends Application {
 
     private Stage stage;
     private BorderPane boardRoot;
+
+    private Lobby lobby;
     // private RoboRallyMenuBar menuBar;
 
     // private AppController appController;
@@ -67,7 +69,7 @@ public class RoboRally extends Application {
 
         LobbyManager lobbyManager = new LobbyManager();
 
-        Lobby lobby = new Lobby(lobbyManager);
+        lobby = new Lobby(lobbyManager);
 
         if(GameClient.isGameRunning()){
             System.out.println("Vi kommer her");
@@ -75,6 +77,7 @@ public class RoboRally extends Application {
             System.out.println(gameLobby.toString());
             lobbyManager.createGame(gameLobby);
             lobby.addLobbyToLobby(gameLobby);
+            lobby.getGameLobbyMap().put(gameLobby.getLobbyId(), gameLobby);
         }
 
         lobby.show();

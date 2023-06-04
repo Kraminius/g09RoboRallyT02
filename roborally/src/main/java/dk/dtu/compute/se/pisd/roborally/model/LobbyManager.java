@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +20,14 @@ public class LobbyManager {
         return instance;
     }
 
-    public static void addPlayer(GameLobby gameLobby, String playerName) {
+    public static void addPlayers(GameLobby gameLobby, ArrayList<String> playerNames) {
         if (gameLobby != null) {
-            gameLobby.getGameSettings().getPlayerNames().add(playerName);
+/*
+            for (int i = 0; i < gameLobby.getGameSettings().getPlayerNames().size(); i++) {
+                gameLobby.getGameSettings().getPlayerNames().add(playerNames.get(i));
+            }
+            */
+
 
         } else {
             System.out.println("Lobby not found");

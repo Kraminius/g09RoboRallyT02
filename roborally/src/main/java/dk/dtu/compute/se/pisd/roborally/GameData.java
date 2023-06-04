@@ -13,6 +13,9 @@ public class GameData {
     int numPlayers;
 
     boolean[] readyList;
+
+    private ArrayList<String> players = new ArrayList<>();
+
     private boolean allPlayersConnected;
 
 
@@ -60,5 +63,13 @@ public class GameData {
 
     public void setAllPlayersConnected(boolean allPlayersConnected) {
         this.allPlayersConnected = allPlayersConnected;
+    }
+
+    public ArrayList<String> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<String> players) {
+        this.players = players;
     }
 }
