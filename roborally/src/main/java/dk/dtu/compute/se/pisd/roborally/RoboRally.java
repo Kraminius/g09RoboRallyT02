@@ -21,6 +21,8 @@
  */
 package dk.dtu.compute.se.pisd.roborally;
 
+import dk.dtu.compute.se.pisd.roborally.chat.ChatController;
+import dk.dtu.compute.se.pisd.roborally.chat.ChatServer;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
@@ -32,6 +34,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 /**
  * ...
@@ -56,10 +60,13 @@ public class RoboRally extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        ChatController chatController = new ChatController();
+        chatController.startServer(4999);
+        chatController.addClient(chatController.getServerIP(), chatController.getServerPort(), "hans");
+        chatController.addClient(chatController.getServerIP(), chatController.getServerPort(), "geo");
         stage = primaryStage;
 
         AppController appController = new AppController(this);
-
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
         // when the user creates a new game or loads a game
@@ -74,7 +81,8 @@ public class RoboRally extends Application {
         stage.setOnCloseRequest(
                 e -> {
                     e.consume();
-                    appController.exit();} );
+                    appController.exit();
+                });
         stage.setResizable(false);
         stage.sizeToScene();
         stage.setX(700);
