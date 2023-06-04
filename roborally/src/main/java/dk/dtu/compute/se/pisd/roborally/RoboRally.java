@@ -21,6 +21,8 @@
  */
 package dk.dtu.compute.se.pisd.roborally;
 
+import dk.dtu.compute.se.pisd.roborally.BuildABoard.BoardBuildHandler;
+import dk.dtu.compute.se.pisd.roborally.Filesharing.SaveHandler;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
@@ -56,10 +58,12 @@ public class RoboRally extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        BoardBuildHandler buildHandler = new BoardBuildHandler();
+
         stage = primaryStage;
 
         AppController appController = new AppController(this);
-
+        //SaveHandler saveHandler = new SaveHandler(appController, this);
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
         // when the user creates a new game or loads a game

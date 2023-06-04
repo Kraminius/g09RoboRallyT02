@@ -67,6 +67,9 @@ public class Option {
         panel.setPadding(new Insets(20, 20 ,20, 20));
         Button okButton = new Button("OK");
         okButton.setOnAction(e -> close());
+        panel.getChildren().add(okButton);
+        panel.setAlignment(Pos.CENTER);
+        window.getChildren().add(panel);
         show();
     }
     public boolean getYESNO(){
@@ -74,6 +77,7 @@ public class Option {
         panel.setPadding(new Insets(20, 20 ,20, 20));
         Button yesButton = new Button("Yes");
         Button noButton = new Button("No");
+        panel.getChildren().addAll(yesButton, noButton);
         panel.setSpacing(10);
         yesButton.setOnAction(e -> {
             yesNo = true;
@@ -83,6 +87,7 @@ public class Option {
             yesNo = false;
             close();
         });
+        window.getChildren().add(panel);
         show();
         return yesNo;
     }

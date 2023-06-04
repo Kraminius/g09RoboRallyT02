@@ -10,9 +10,8 @@ public class SaveData {
     private String name;
     private File file;
 
-    public SaveData(int id, String name, File file){
+    public SaveData(int id, File file){
         this.id = id;
-        this.name = name;
         this.file = file;
         this.version = 0;
     }
@@ -21,12 +20,6 @@ public class SaveData {
     }
     public void setId(int id){
         this.id = id;
-    }
-    public String getName(){
-        return name;
-    }
-    public void setName(String name){
-        this.name = name;
     }
     public File getFile(){
         return file;
