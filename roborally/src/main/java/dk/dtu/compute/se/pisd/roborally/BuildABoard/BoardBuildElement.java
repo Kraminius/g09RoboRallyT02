@@ -89,6 +89,12 @@ public class BoardBuildElement {
                     wallHolder.getChildren().add(formatWall(1));
                     wallHolder.getChildren().add(formatWall(3));
                     break;
+                case 5: //End
+                    wallHolder.getChildren().add(formatWall(0));
+                    wallHolder.getChildren().add(formatWall(1));
+                    wallHolder.getChildren().add(formatWall(2));
+                    wallHolder.getChildren().add(formatWall(3));
+                    break;
             }
             rotate(wallHolder, wallRotation);
             holder.getChildren().add(wallHolder);
@@ -311,5 +317,37 @@ public class BoardBuildElement {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public int getWallRotation() {
+        return wallRotation;
+    }
+
+    public void setWallRotation(int wallRotation) {
+        this.wallRotation = wallRotation;
+    }
+
+    public int getBeltRotation() {
+        return beltRotation;
+    }
+
+    public void setBeltRotation(int beltRotation) {
+        this.beltRotation = beltRotation;
+    }
+
+    public int getPushRotation() {
+        return pushRotation;
+    }
+
+    public void setPushRotation(int pushRotation) {
+        this.pushRotation = pushRotation;
+    }
+
+    public int getLaserRotation() {
+        return laserRotation;
+    }
+
+    public void setLaserRotation(int laserRotation) {
+        this.laserRotation = laserRotation;
     }
 }

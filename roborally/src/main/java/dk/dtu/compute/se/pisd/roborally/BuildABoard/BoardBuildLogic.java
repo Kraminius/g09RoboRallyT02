@@ -123,6 +123,7 @@ public class BoardBuildLogic {
                 images.add(getElement("wall", 2).getView());
                 images.add(getElement("wall", 3).getView());
                 images.add(getElement("wall", 4).getView());
+                images.add(getElement("wall", 5).getView());
                 break;
             case 10: //Push
                 images.add(getElement("push", 1).getView());
@@ -231,6 +232,7 @@ public class BoardBuildLogic {
                 actives.add(element.getWall() == 2);
                 actives.add(element.getWall() == 3);
                 actives.add(element.getWall() == 4);
+                actives.add(element.getWall() == 5);
                 break;
             case 10: //Push
                 actives.add(element.getPush() == 0);

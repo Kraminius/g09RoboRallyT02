@@ -1,8 +1,11 @@
 package dk.dtu.compute.se.pisd.roborally.BuildABoard;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
+import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.util.ArrayList;
 
 public class BuildJSON {
 
@@ -20,8 +23,10 @@ public class BuildJSON {
         antennaArray.add(build.getAntenna().getX() + ";" + build.getAntenna().getY());
         JSONArray respawnArray = new JSONArray();
         antennaArray.add(build.getRespawn().getX() + ";" + build.getRespawn().getY());
-        JSONArray wallArray = new JSONArray();
-        JSONArray beltArray = new JSONArray();
+        JSONArray wallArray = makeWalls(build);
+        JSONArray beltArray = makeBelts(build);
+
+
         JSONArray checkpointArray = new JSONArray();
         JSONArray laserArray = new JSONArray();
         JSONArray pushArray = new JSONArray();
@@ -52,6 +57,25 @@ public class BuildJSON {
         obj.put("startFields", startFieldArray);
         return obj;
     }
+    private static String rotationToHeading(int rotation){
+        rotation = getTrueRotation(rotation);
+        switch (rotation){
+            case 0: return"EAST";
+            case 1: return "SOUTH";
+            case 2: return "WEST";
+            case 3: return "NORTH";
+        }
+        return "null";
+    }
+    private static int getTrueRotation(int rotation){
+        while(rotation > 3){
+            rotation -= 4;
+        }
+        while(rotation < 0){
+            rotation += 4;
+        }
+        return rotation;
+    }
     /*
     {
   "name": "Dizzy Highway",
@@ -72,18 +96,90 @@ public class BuildJSON {
 }
      */
 
-    private void testJSON(){
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", "John Doe");
-        jsonObject.put("age", 35);
-        jsonObject.put("email", "john.doe@example.com");
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.add("apple");
-        jsonArray.add("banana");
-        jsonArray.add("orange");
-        jsonObject.put("fruits", jsonArray);
-
-        jsonHandler.raw.writeJSON("test", jsonObject, "board");
-        jsonHandler.printJSON("test", "board");
+    private static JSONArray makeWalls(CheckBoardBuild build){
+        JSONArray wallArray = new JSONArray();
+        for(BoardBuildElement element : build.getWalls()){
+            if(element.getWall() > 0){
+                switch (element.getWall()){
+                    case 1: //Single East
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation()));
+                        break;
+                    case 2: //Double Corner East-South
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation()));
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation() + 1));
+                        break;
+                    case 3: //Double Opposite East-West
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation()));
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation() + 2));
+                        break;
+                    case 4: //Tripple END East-South-North
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation()));
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation() + 1));
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation() + 3));
+                        break;
+                    case 5: //All Four
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation()));
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation() + 1));
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation() + 2));
+                        wallArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getWallRotation() + 3));
+                        break;
+                }
+            }
+        }
+        return wallArray;
+    }
+    private static JSONArray makeBelts(CheckBoardBuild build){
+        JSONArray beltArray = new JSONArray();
+        for(BoardBuildElement element : build.getBelts()){
+            if(element.getWall() > 0){
+                switch (element.getGreenBelt()){
+                    case 1: //Forward South
+                        beltArray.add(element.getX() + ";" + element.getY() + ";null;" + rotationToHeading(element.getBeltRotation()+1) + ";1");
+                        break;
+                    case 2: //Left East
+                        beltArray.add(element.getX() + ";" + element.getY() + ";LEFT;" + rotationToHeading(element.getBeltRotation()) + ";1");
+                        break;
+                    case 3: //Right West
+                        beltArray.add(element.getX() + ";" + element.getY() + ";RIGHT;" + rotationToHeading(element.getBeltRotation()+2) + ";1");
+                        break;
+                    case 4: //T-Left North
+                        beltArray.add(element.getX() + ";" + element.getY() + ";LEFT_T;" + rotationToHeading(element.getBeltRotation()+3) + ";1");
+                        break;
+                    case 5: //T-Right North
+                        beltArray.add(element.getX() + ";" + element.getY() + ";RIGHT_T;" + rotationToHeading(element.getBeltRotation()+3) + ";1");
+                        break;
+                    case 6: //Interweave East
+                        beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()) + ";1");
+                        break;
+                    case 7: //Interweave 2 West
+                        beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()+2) + ";1");
+                        break;
+                }
+                switch (element.getBlueBelt()){
+                    case 1: //Forward South
+                        beltArray.add(element.getX() + ";" + element.getY() + ";null;" + rotationToHeading(element.getBeltRotation()+1) + ";2");
+                        break;
+                    case 2: //Left East
+                        beltArray.add(element.getX() + ";" + element.getY() + ";LEFT;" + rotationToHeading(element.getBeltRotation()) + ";2");
+                        break;
+                    case 3: //Right West
+                        beltArray.add(element.getX() + ";" + element.getY() + ";RIGHT;" + rotationToHeading(element.getBeltRotation()+2) + ";2");
+                        break;
+                    case 4: //T-Left North
+                        beltArray.add(element.getX() + ";" + element.getY() + ";LEFT_T;" + rotationToHeading(element.getBeltRotation()+3) + ";2");
+                        break;
+                    case 5: //T-Right North
+                        beltArray.add(element.getX() + ";" + element.getY() + ";RIGHT_T;" + rotationToHeading(element.getBeltRotation()+3) + ";2");
+                        break;
+                    case 6: //Interweave East
+                        beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()) + ";2");
+                        break;
+                    case 7: //Interweave 2 West
+                        beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()+2) + ";2");
+                        break;
+                }
+            }
+        }
+        return beltArray;
     }
 }
