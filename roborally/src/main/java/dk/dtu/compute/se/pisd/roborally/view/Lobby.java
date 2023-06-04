@@ -130,7 +130,7 @@ public class Lobby {
      * @author Mikkel Jürs, s224279@student.dtu.dk
      */
     private void openCreateGameScene() {
-        GameSettings gameSettings = new GameSettings();
+
         // Create new Stage for this scene
         Stage createGameStage = new Stage();
 
@@ -170,11 +170,17 @@ public class Lobby {
             if (!gameNameInput.getText().isEmpty() && !creatorNameInput.getText().isEmpty()) {
                 gameNameInput.setStyle(null);
                 creatorNameInput.setStyle(null);
+
+                /*GameSettings gameSettings = new GameSettings();
                 gameSettings.setGameName(gameNameInput.getText());
                 gameSettings.setCreatorName(creatorNameInput.getText());
                 gameSettings.setNumberOfPlayers(numberOfPlayersInput.getValue());
                 gameSettings.setBoardToPlay(boardsToPlayInput.getValue());
-                gameSettings.getPlayerNames().add(gameSettings.getCreatorName());
+                gameSettings.getPlayerNames().add(gameSettings.getCreatorName());*/
+
+
+
+
                 gameNameInput.setDisable(true);
                 creatorNameInput.setDisable(true);
                 numberOfPlayersInput.setDisable(true);

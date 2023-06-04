@@ -41,6 +41,8 @@ public class FirstClass {
                 GameClient.addMapName("Dizzy MotherFucker Map");
             }else if(myAnswer.equals("12")){
                 System.out.println("Map Name: " + GameClient.getMapName());
+            }else if(myAnswer.equals("13")){
+
             }
 
             System.out.println("All conncted: " + bool);

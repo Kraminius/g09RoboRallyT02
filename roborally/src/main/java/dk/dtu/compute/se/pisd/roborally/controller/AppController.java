@@ -94,18 +94,18 @@ public class AppController implements Observer {
             }
         }
         int no = gameSettings.getNumberOfPlayers();
+
         /*GameClient.instaGameData(no);
         MyClient.weConnect(0);
-        GameClient.addMapName(gameSettings.getGameName());
+        GameClient.addMapName(gameSettings.getGameName());*/
 
 
-        boolean waitForPlayer = false;
+        /*boolean waitForPlayer = false;
         while(!waitForPlayer){
 
             GameClient.areAllConnected(no);
 
-        }
-        */
+        }*/
 
 
         Board board = new Board(gameSettings.getBoardToPlay());

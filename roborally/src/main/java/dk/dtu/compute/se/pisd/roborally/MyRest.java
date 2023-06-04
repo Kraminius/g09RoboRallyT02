@@ -59,6 +59,14 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    @PostMapping(value = "/addGame")
+    public ResponseEntity<String> addGame(){
+
+
+
+        return ResponseEntity.ok("hej");
+    }
+
 
 
 
