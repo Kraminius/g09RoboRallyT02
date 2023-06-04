@@ -1,10 +1,14 @@
 package dk.dtu.compute.se.pisd.roborally;
 
 
+import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
+import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
+import dk.dtu.compute.se.pisd.roborally.view.Lobby;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Service
 public class GameRepository {
@@ -12,6 +16,9 @@ public class GameRepository {
 
 
     GameSettings gameSettings;
+
+
+
 
 
 
@@ -26,8 +33,17 @@ public class GameRepository {
         gameSettings.setBoardToPlay(boardToPlay);
         gameSettings.getPlayerNames().add(creatorName);
 
+        String lobbyID = UUID.randomUUID().toString();
+
+        /*GameLobby gameLobby = new GameLobby(lobbyID, gameSettings); // create a new game lobby
+        this.gameLobby = gameLobby;
+        lobbyManager.createGame(gameLobby);
+        addLobbyToLobby(gameLobby, lobbyID);*/
+
 
     }
+
+
 
     public void addPlayer(String playerName){
 
@@ -35,5 +51,7 @@ public class GameRepository {
 
     }
 
-
+    public GameSettings getGameSettings() {
+        return gameSettings;
+    }
 }

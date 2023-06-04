@@ -25,6 +25,7 @@ import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
@@ -60,12 +61,24 @@ public class RoboRally extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws Exception {
+
         instance = this;
+
         LobbyManager lobbyManager = new LobbyManager();
-        GameSettings gameSettings = new GameSettings();
-        Lobby lobby = new Lobby(gameSettings, lobbyManager);
+
+        Lobby lobby = new Lobby(lobbyManager);
+
+        if(GameClient.isGameRunning()){
+            System.out.println("Vi kommer her");
+            GameLobby gameLobby = GameClient.getGame();
+            System.out.println(gameLobby.toString());
+            lobbyManager.createGame(gameLobby);
+            lobby.addLobbyToLobby(gameLobby);
+        }
+
         lobby.show();
+
         stage = primaryStage;
     }
 

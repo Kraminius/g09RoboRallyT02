@@ -1,5 +1,8 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -64,4 +67,47 @@ public class GameClient {
     }
 
 
+    public static String addGame(String[] settings) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(settings);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .uri(URI.create("http://localhost:8080/addGame"))
+                .header("Content-Type", "application/json")
+                .build();
+
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result;
+    }
+
+    public static GameLobby getGame() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getGameLobby"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+
+        // Parse JSON response into GameLobby object
+        ObjectMapper objectMapper = new ObjectMapper();
+        GameLobby gameLobby = objectMapper.readValue(result, GameLobby.class);
+
+        return gameLobby;
+    }
+
+    public static Boolean isGameRunning() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/isGameRunning"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        Boolean result = Boolean.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
+        return result;
+    }
 }

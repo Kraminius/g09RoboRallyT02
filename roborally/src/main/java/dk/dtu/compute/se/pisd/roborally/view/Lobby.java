@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
+import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
 import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
@@ -53,12 +54,13 @@ public class Lobby {
 
     private RoboRally roboRally;
 
+
+
     /**
      * Default constructor for the Lobby class.
-     * @param gameSettings GameSettings object which contains the settings of the game
      * @author Mikkel Jürs, s224279@student.dtu.dk
      */
-    public Lobby(GameSettings gameSettings, LobbyManager lobbyManager) {
+    public Lobby(LobbyManager lobbyManager) {
         this.gameSettings = gameSettings;
         this.lobbyManager = lobbyManager;
         lobbyWindow = new LobbyWindow();
@@ -99,6 +101,8 @@ public class Lobby {
         window.getChildren().add(top);
         window.getChildren().add(lobbySP);
     }
+
+
     private void getButtStuffForLoad(){
         LoadGameWindow lgw = new LoadGameWindow();//Where i have method to get all saves
         ComboBox<String> comboBox = new ComboBox<>();
@@ -106,6 +110,9 @@ public class Lobby {
         comboBox.setValue(comboBox.getItems().get(0)); //Sets the value to the first so there always one chosen
         //After chosen a save to load, these following names should be shown to the players so they can choose which to take over.
     }
+
+
+
     private String[] getNames(String saveName){
         JSONHandler json = new JSONHandler(); //Where I can access files
         String[] names = json.getNamesOfGame(saveName); //Get names of files with a method that only loads the names of the json file.
@@ -171,6 +178,16 @@ public class Lobby {
                 gameNameInput.setStyle(null);
                 creatorNameInput.setStyle(null);
 
+                String[] arr = {gameNameInput.getText(), creatorNameInput.getText(), String.valueOf(numberOfPlayersInput.getValue()),
+                        boardsToPlayInput.getValue() };
+
+                try {
+                    GameClient.addGame(arr);
+                    System.out.println("this works");
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+
                 /*GameSettings gameSettings = new GameSettings();
                 gameSettings.setGameName(gameNameInput.getText());
                 gameSettings.setCreatorName(creatorNameInput.getText());
@@ -187,10 +204,28 @@ public class Lobby {
                 boardsToPlayInput.setDisable(true);
                 submitButton.setDisable(true);
 
-                GameLobby gameLobby = new GameLobby(lobbyID, gameSettings); // create a new game lobby
+
+                GameLobby gameLobbyTemp;
+                //APi call lobbyid gameSettings
+                try {
+                    gameLobbyTemp = GameClient.getGame();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                System.out.println("Her står noget: " + gameLobbyTemp);
+
+                GameLobby gameLobby = gameLobbyTemp;
                 this.gameLobby = gameLobby;
+
+
+
+
                 lobbyManager.createGame(gameLobby);
-                addLobbyToLobby(gameLobby, lobbyID);
+                addLobbyToLobby(gameLobby);
+
+
+
                 lobbyPlayer.setText("Players: " + gameLobby.getGameSettings().getPlayerNames().size() + "/" + gameLobby.getGameSettings().getNumberOfPlayers());
                 rootLayout.setRight(createLobbyLayout(gameLobby));
             }
@@ -244,7 +279,7 @@ public class Lobby {
         return lobbyLayout;
     }
 
-    private void addLobbyToLobby(GameLobby gameLobby, String lobbyId){
+    public void addLobbyToLobby(GameLobby gameLobby){
         lobbyText = new Label();
         lobbyText.setText("Game Name: " + gameLobby.getGameSettings().getGameName() + "\nCreator: " + gameLobby.getGameSettings().getCreatorName());
         lobbyVbox = new VBox();
@@ -253,7 +288,7 @@ public class Lobby {
         lobbyHbox = new HBox();
         Button joinButton = new Button("Join");
         lobbyPlayer.setText("Players: " + gameLobby.getGameSettings().getPlayerNames().size() + "/" + gameLobby.getGameSettings().getNumberOfPlayers());
-        joinButton.setId(lobbyId);
+        joinButton.setId(gameLobby.getLobbyId());
         joinButton.setOnAction(e -> openJoinGamePopup(joinButton.getId()));
         Region spacerInLobby = new Region();
         HBox.setHgrow(spacerInLobby, Priority.ALWAYS);
@@ -264,8 +299,8 @@ public class Lobby {
         lobbyList.getChildren().add(lobbyVbox);
 
         // store the GameLobby in a HashMap, so we can update and distinguish between each lobby individually
-        gameLobbyMap.put(lobbyId, gameLobby);
-        lobbyHBoxMap.put(lobbyId, lobbyHbox);
+        gameLobbyMap.put(gameLobby.getLobbyId(), gameLobby);
+        lobbyHBoxMap.put(gameLobby.getLobbyId(), lobbyHbox);
     }
 
     private void openJoinGamePopup(String lobbyId) {

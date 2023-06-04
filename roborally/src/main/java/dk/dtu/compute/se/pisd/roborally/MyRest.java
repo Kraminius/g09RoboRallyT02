@@ -1,10 +1,14 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
+import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class MyRest {
@@ -12,6 +16,14 @@ public class MyRest {
 
     @Autowired
     GameDataRep gameDataRep;
+
+    @Autowired
+    GameRepository gameRepository;
+
+
+    @Autowired
+    GameInfo gameInfo;
+
 
 
     @PostMapping(value = "/connected")
@@ -60,15 +72,38 @@ public class MyRest {
     }
 
     @PostMapping(value = "/addGame")
-    public ResponseEntity<String> addGame(){
+    public ResponseEntity<String> addGame(@RequestBody String[] settings){
+
+        gameRepository.createGame(settings[0],settings[1], Integer.parseInt(settings[2]), settings[3]);
+
+        String lobbyID = UUID.randomUUID().toString();
+
+        gameInfo.instaGameInfo(lobbyID, gameRepository.getGameSettings());
+
+        System.out.println(gameInfo.toString());
 
 
+        System.out.println(gameRepository.getGameSettings().toString());
 
         return ResponseEntity.ok("hej");
     }
 
 
+    @GetMapping(value = "/getGameLobby", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GameLobby> getGameLobby(){
+        GameLobby gameLobby = gameInfo.convertGameInfoToGameLobby(gameInfo);
+        return ResponseEntity.ok(gameLobby);
+    }
 
+
+
+    @GetMapping(value = "/isGameRunning")
+    public ResponseEntity<Boolean> isGameRunning(){
+
+
+        return ResponseEntity.ok().body(gameInfo.isGameRunning());
+
+    }
 
 
 }

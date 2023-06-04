@@ -95,6 +95,7 @@ public class AppController implements Observer {
         }
         int no = gameSettings.getNumberOfPlayers();
 
+
         /*GameClient.instaGameData(no);
         MyClient.weConnect(0);
         GameClient.addMapName(gameSettings.getGameName());*/

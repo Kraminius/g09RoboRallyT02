@@ -48,4 +48,15 @@ public class GameSettings {
     public void setPlayerNames(ArrayList<String> playerNames) {
         this.playerNames = playerNames;
     }
+
+    @Override
+    public String toString() {
+        return "GameSettings{" +
+                "gameName='" + gameName + '\'' +
+                ", creatorName='" + creatorName + '\'' +
+                ", numberOfPlayers=" + numberOfPlayers +
+                ", boardToPlay='" + boardToPlay + '\'' +
+                ", playerNames=" + playerNames +
+                '}';
+    }
 }
