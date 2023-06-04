@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class JSONHandler {
 
-    ReaderAndWriter raw = new ReaderAndWriter();
+    public ReaderAndWriter raw = new ReaderAndWriter();
 
     private void testJSON(){
         JSONObject jsonObject = new JSONObject();

@@ -3,6 +3,7 @@ package dk.dtu.compute.se.pisd.roborally.BuildABoard;
 import java.util.ArrayList;
 
 public class BoardBuild {
+    private String name;
     private int width = 10;
     private int height = 10;
     private ArrayList<ArrayList<BoardBuildElement>> currentBuild;
@@ -22,12 +23,13 @@ public class BoardBuild {
                 line.add(element);
             }
         }
+        setCoords();
     }
     private void setCoords(){
         for(int x = 0; x < currentBuild.size(); x++){
             for(int y = 0; y < currentBuild.get(0).size(); y++){
                 currentBuild.get(x).get(y).setX(x);
-                currentBuild.get(x).get(y).setX(y);
+                currentBuild.get(x).get(y).setY(y);
             }
         }
     }
@@ -60,6 +62,7 @@ public class BoardBuild {
                 resizeBoard();
             }
         }
+        setCoords();
     }
     public void setSize(int width, int height){
         this.width = width;
@@ -67,4 +70,30 @@ public class BoardBuild {
         resizeBoard();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+    public void setCurrentBuild(ArrayList<ArrayList<BoardBuildElement>> currentBuild) {
+        this.currentBuild = currentBuild;
+    }
 }

@@ -104,8 +104,9 @@ public class BoardBuildElement {
             ImageView laser = new ImageView(ImageLoader.get().laserStart);
             laser.setFitHeight(30);
             laser.setFitWidth(20);
-            holder.getChildren().add(getAtEdge(laser, 0));
-            rotate(laser, laserRotation);
+            VBox laserHolder = getAtEdge(laser, 0);
+            holder.getChildren().add(laserHolder);
+            rotate(laserHolder, laserRotation);
         }
         if(showing) {
             VBox showBorder = new VBox();
@@ -117,10 +118,10 @@ public class BoardBuildElement {
     }
     private Node formatWall(int rotation){
         ImageView wall = new ImageView(ImageLoader.get().wall);
-        wall.setFitWidth(20);
+        wall.setFitWidth(10);
         wall.setFitHeight(HEIGHT);
-        VBox wallBox = getAtEdge(wall, rotation);
-        rotate(wallBox, wallRotation);
+        VBox wallBox = getAtEdge(wall, 0);
+        rotate(wallBox, rotation);
         return wallBox;
     }
     private ImageView getImage(Image image, boolean fitWidth, boolean fitHeight){
@@ -174,12 +175,6 @@ public class BoardBuildElement {
                 else laserRotation = 3;
                 break;
         }
-    }
-    public int getWallRotation(){
-        return wallRotation;
-    }
-    public int getBeltRotation(){
-        return beltRotation;
     }
 
     public boolean isAntenna() {

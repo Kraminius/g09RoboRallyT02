@@ -16,15 +16,14 @@ public class BoardBuildLogic {
 
     public static ArrayList<Boolean> getActiveElements(BoardBuildElement element){
         ArrayList<Boolean> arrayList = new ArrayList<>();
+        arrayList.add(false); //Empty
         if(element.isAntenna()) arrayList.add(true);
         else arrayList.add(false);
         if(element.isEnergyField()) arrayList.add(true);
         else arrayList.add(false);
         if(element.isHole()) arrayList.add(true);
         else arrayList.add(false);
-        if(element.isLaserPointer()) arrayList.add(true);
-        else arrayList.add(false);
-        if(element.isLaserRay()) arrayList.add(true);
+        if(element.isLaserPointer() || element.isLaserRay()) arrayList.add(true);
         else arrayList.add(false);
         if(element.isRepair()) arrayList.add(true);
         else arrayList.add(false);
@@ -46,6 +45,8 @@ public class BoardBuildLogic {
         else arrayList.add(false);
         return arrayList;
     }
+
+
     public static String checkSizeInput(String[] input){
         int x = 0;
         int y = 0;
@@ -92,6 +93,259 @@ public class BoardBuildLogic {
         images.add(getElement("greenBelt", 1).getView());
         images.add(getElement("blueBelt", 1).getView());
         return images;
+    }
+    public static ArrayList<StackPane> getBoardVariants(int type){
+        ArrayList<StackPane> images = new ArrayList<>();
+        images.add(getElement("empty", 0).getView());
+        switch (type){
+            case 4: //Laser
+                images.add(getElement("laserStart", 0).getView());
+                images.add(getElement("laserBeam", 0).getView());
+                break;
+            case 7:
+                images.add(getElement("startField", 1).getView());
+                images.add(getElement("startField", 2).getView());
+                images.add(getElement("startField", 3).getView());
+                images.add(getElement("startField", 4).getView());
+                images.add(getElement("startField", 5).getView());
+                images.add(getElement("startField", 6).getView());
+                break;
+            case 8:
+                images.add(getElement("checkpoint", 1).getView());
+                images.add(getElement("checkpoint", 2).getView());
+                images.add(getElement("checkpoint", 3).getView());
+                images.add(getElement("checkpoint", 4).getView());
+                images.add(getElement("checkpoint", 5).getView());
+                images.add(getElement("checkpoint", 6).getView());
+                break;
+            case 9: //Wall
+                images.add(getElement("wall", 1).getView());
+                images.add(getElement("wall", 2).getView());
+                images.add(getElement("wall", 3).getView());
+                images.add(getElement("wall", 4).getView());
+                break;
+            case 10: //Push
+                images.add(getElement("push", 1).getView());
+                images.add(getElement("push", 2).getView());
+                break;
+            case 12: //Green Belt
+                images.add(getElement("greenBelt", 1).getView());
+                images.add(getElement("greenBelt", 2).getView());
+                images.add(getElement("greenBelt", 3).getView());
+                images.add(getElement("greenBelt", 4).getView());
+                images.add(getElement("greenBelt", 5).getView());
+                images.add(getElement("greenBelt", 6).getView());
+                images.add(getElement("greenBelt", 7).getView());
+                break;
+            case 13: //Blue Belt
+                images.add(getElement("blueBelt", 1).getView());
+                images.add(getElement("blueBelt", 2).getView());
+                images.add(getElement("blueBelt", 3).getView());
+                images.add(getElement("blueBelt", 4).getView());
+                images.add(getElement("blueBelt", 5).getView());
+                images.add(getElement("blueBelt", 6).getView());
+                images.add(getElement("blueBelt", 7).getView());
+                break;
+        }
+        return images;
+    }
+    public static void changeElementVariant(BoardBuildElement element, int type, int value){
+        switch (type){
+            case 4: //Laser
+                if(value == 1){
+                    element.setLaserPointer(true);
+                    element.setLaserRay(true);
+                }
+                else if(value == 2){
+                    element.setLaserPointer(false);
+                    element.setLaserRay(true);
+                }
+                else  if(value == 0){
+                    element.setLaserPointer(false);
+                    element.setLaserRay(false);
+                }
+                break;
+            case 7: //StartField
+                element.setStartField(value);
+                break;
+            case 8: //Checkpoint
+                element.setCheckpoint(value);
+                break;
+            case 9: //Wall
+                element.setWall(value);
+                break;
+            case 10: //Push
+                element.setPush(value);
+                break;
+            case 12: //Green Belt
+                element.setGreenBelt(value);
+                break;
+            case 13: //Blue Belt
+                element.setBlueBelt(value);
+                break;
+        }
+    }
+    public static boolean hasVariant(int type){
+        switch (type){
+            case 4:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 12:
+            case 13:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static ArrayList<Boolean> getActiveVariant(BoardBuildElement element, int type){
+        ArrayList<Boolean> actives = new ArrayList<>();
+        switch (type){
+            case 4: //Laser
+                actives.add(!element.isLaserRay() && !element.isLaserPointer());
+                actives.add(element.isLaserPointer() && element.isLaserRay());
+                actives.add(!element.isLaserPointer() && element.isLaserRay());
+                break;
+            case 7: //startField
+                actives.add(element.getStartField() == 0);
+                actives.add(element.getStartField() == 1);
+                actives.add(element.getStartField() == 2);
+                actives.add(element.getStartField() == 3);
+                actives.add(element.getStartField() == 4);
+                actives.add(element.getStartField() == 5);
+                actives.add(element.getStartField() == 6);
+                break;
+            case 8: //checkpoint
+                actives.add(element.getCheckpoint() == 0);
+                actives.add(element.getCheckpoint() == 1);
+                actives.add(element.getCheckpoint() == 2);
+                actives.add(element.getCheckpoint() == 3);
+                actives.add(element.getCheckpoint() == 4);
+                actives.add(element.getCheckpoint() == 5);
+                actives.add(element.getCheckpoint() == 6);
+                break;
+            case 9: //Wall
+                actives.add(element.getWall() == 0);
+                actives.add(element.getWall() == 1);
+                actives.add(element.getWall() == 2);
+                actives.add(element.getWall() == 3);
+                actives.add(element.getWall() == 4);
+                break;
+            case 10: //Push
+                actives.add(element.getPush() == 0);
+                actives.add(element.getPush() == 1);
+                actives.add(element.getPush() == 2);
+                break;
+            case 12: //Green Belt
+                actives.add(element.getGreenBelt() == 0);
+                actives.add(element.getGreenBelt() == 1);
+                actives.add(element.getGreenBelt() == 2);
+                actives.add(element.getGreenBelt() == 3);
+                actives.add(element.getGreenBelt() == 4);
+                actives.add(element.getGreenBelt() == 5);
+                actives.add(element.getGreenBelt() == 6);
+                actives.add(element.getGreenBelt() == 7);
+                break;
+            case 13: //Blue Belt
+                actives.add(element.getBlueBelt() == 0);
+                actives.add(element.getBlueBelt() == 1);
+                actives.add(element.getBlueBelt() == 2);
+                actives.add(element.getBlueBelt() == 3);
+                actives.add(element.getBlueBelt() == 4);
+                actives.add(element.getBlueBelt() == 5);
+                actives.add(element.getBlueBelt() == 6);
+                actives.add(element.getBlueBelt() == 7);
+                break;
+        }
+        return actives;
+    }
+    public static boolean addIfNotExistent(int index, BoardBuildElement element){
+        switch (index){
+            case 0: //Empty
+                element.setAntenna(false);
+                element.setEnergyField(false);
+                element.setHole(false);
+                element.setLaserRay(false);
+                element.setLaserPointer(false);
+                element.setRepair(false);
+                element.setRespawn(false);
+                element.setStartField(0);
+                element.setCheckpoint(0);
+                element.setWall(0);
+                element.setPush(0);
+                element.setGear(0);
+                element.setGreenBelt(0);
+                element.setBlueBelt(0);
+                return true;
+            case 1: //antenna
+                if(!element.isAntenna()){
+                    element.setAntenna(true);
+                    return true;
+                } else return false;
+            case 2: //energyField
+                if(!element.isEnergyField()){
+                    element.setEnergyField(true);
+                    return true;
+                } else return false;
+            case 3: //hole
+                if(!element.isHole()){
+                    element.setHole(true);
+                    return true;
+                } else return false;
+            case 4: //laserStart
+                if(!element.isLaserPointer() && !element.isLaserRay()){
+                    element.setLaserPointer(true);
+                    element.setLaserRay(true);
+                    return true;
+                } else return false;
+            case 5: //repair
+                if(!element.isRepair()){
+                    element.setRepair(true);
+                    return true;
+                } else return false;
+            case 6: //respawn
+                if(!element.isRespawn()){
+                    element.setRespawn(true);
+                    return true;
+                } else return false;
+            case 7: //startField
+                if(element.getStartField() == 0){
+                    element.setStartField(1);
+                    return true;
+                } else return false;
+            case 8: //checkpoint
+                if(element.getCheckpoint() == 0){
+                    element.setCheckpoint(1);
+                    return true;
+                } else return false;
+            case 9: //wall
+                if(element.getWall() == 0){
+                    element.setWall(1);
+                    return true;
+                } else return false;
+            case 10: //push
+                if(element.getPush() == 0){
+                    element.setPush(1);
+                    return true;
+                } else return false;
+            case 11: //gear
+                if(element.getGear() == 0){
+                    element.setGear(1);
+                    return true;
+                } else return false;
+            case 12: //green belt
+                if(element.getGreenBelt() == 0){
+                    element.setGreenBelt(1);
+                    return true;
+                } else return false;
+            case 13: //blue belt
+                if(element.getBlueBelt() == 0){
+                    element.setBlueBelt(1);
+                    return true;
+                } else return false;
+        }
+        return true;
     }
     public static BoardBuildElement getElement(String type, int variant){
         switch (type){
@@ -185,6 +439,29 @@ public class BoardBuildLogic {
         if(element.getGreenBelt() > 0 && index == 12) return true;
         if(element.getBlueBelt() > 0 && index == 13) return true;
         return false;
+    }
+    public static boolean shouldShowTurns(int index){
+        if(index == 4) return true; //Laser
+        if(index == 9) return true; //Wall
+        if(index == 10) return true; //Push
+        if(index == 12) return true; //Green Belt
+        if(index == 13) return true; //Blue Belt
+        return false;
+    }
+    public static void turn(BoardBuildElement element, int index, boolean direction){
+        if(direction) { //Right
+            if(index == 4) element.nextRotation("laser"); //Laser
+            if(index == 9) element.nextRotation("wall"); //Wall
+            if(index == 10) element.nextRotation("push"); //Push
+            if(index == 12) element.nextRotation("belt"); //Green Belt
+            if(index == 13) element.nextRotation("belt"); //Blue Belt
+        }else{ //Left
+            if(index == 4) element.prevRotation("laser"); //Laser
+            if(index == 9) element.prevRotation("wall"); //Wall
+            if(index == 10) element.prevRotation("push"); //Push
+            if(index == 12) element.prevRotation("belt"); //Green Belt
+            if(index == 13) element.prevRotation("belt"); //Blue Belt
+        }
     }
 
 }
