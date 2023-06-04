@@ -94,7 +94,7 @@ public class AppController implements Observer {
             }
         }
         int no = gameSettings.getNumberOfPlayers();
-        GameClient.instaGameData(no);
+        /*GameClient.instaGameData(no);
         MyClient.weConnect(0);
         GameClient.addMapName(gameSettings.getGameName());
 
@@ -105,7 +105,7 @@ public class AppController implements Observer {
             GameClient.areAllConnected(no);
 
         }
-
+        */
 
 
         Board board = new Board(gameSettings.getBoardToPlay());

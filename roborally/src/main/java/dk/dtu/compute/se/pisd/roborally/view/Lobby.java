@@ -333,7 +333,11 @@ public class Lobby {
             GameSettings gameSettings = gameLobbyButton.getGameSettings();
 
             // Call the startGame method with these GameSettings
-            RoboRally.getInstance().startGame(gameSettings, stage);
+            try {
+                RoboRally.getInstance().startGame(gameSettings, stage);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
 

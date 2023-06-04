@@ -70,7 +70,7 @@ public class RoboRally extends Application {
     }
 
 
-    public void startGame(GameSettings gameSettings, Stage primaryStage){
+    public void startGame(GameSettings gameSettings, Stage primaryStage) throws Exception {
         stage = primaryStage;
         AppController appController = new AppController(this, gameSettings);
         // create the primary scene with the a menu bar and a pane for
@@ -93,6 +93,7 @@ public class RoboRally extends Application {
         stage.setX(700);
         stage.setY(100);
         stage.show();
+        System.out.println("Test ny");
         appController.newGame();
     }
 
