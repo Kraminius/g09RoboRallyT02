@@ -9,13 +9,29 @@ public class BoardBuildHandler {
     private BoardBuild boardBuild;
     private BuildABoardViewController view;
 
-
-
-    public BoardBuildHandler(){
+    public void createNewBoard(){
         boardBuild = new BoardBuild();
         view = new BuildABoardViewController(this);
         updateBoard();
         view.show();
+    }
+    public void saveBoard(String name){
+        String nameError = CheckLogic.checkName(name);
+        if(nameError == null){
+            boardBuild.setName(name);
+            CheckBoardBuild checkBoardBuild = new CheckBoardBuild();
+            String error = checkBoardBuild.checkBoard(boardBuild);
+            if(error == null){
+                checkBoardBuild = checkBoardBuild.getSortedBoardBuild(boardBuild);
+                BuildJSON.saveBoard(checkBoardBuild);
+            }
+            else{
+                view.showError(error);
+            }
+        }
+        else{
+            view.showError(nameError);
+        }
     }
 
     public void showElementMenuFor(int x, int y){

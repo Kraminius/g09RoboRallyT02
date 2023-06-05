@@ -25,6 +25,9 @@ public class BoardBuild {
         }
         setCoords();
     }
+    public void loadBoard(String name){
+
+    }
     private void setCoords(){
         for(int x = 0; x < currentBuild.size(); x++){
             for(int y = 0; y < currentBuild.get(0).size(); y++){

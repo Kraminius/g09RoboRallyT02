@@ -22,6 +22,7 @@ public class BoardBuildElement {
     private boolean laserRay;
     private boolean repair;
     private boolean respawn;
+    private boolean noField;
     private int startField;
     private int checkpoint;
     private int wall;
@@ -29,6 +30,7 @@ public class BoardBuildElement {
     private int gear;
     private int greenBelt;
     private int blueBelt;
+    private int laserStrength;
     private int wallRotation = 0;
     private int beltRotation = 0;
     private int pushRotation = 0;
@@ -100,19 +102,16 @@ public class BoardBuildElement {
             holder.getChildren().add(wallHolder);
         }
         if(laserRay){
-            ImageView laser = new ImageView(ImageLoader.get().laserBeam);
-            laser.setFitHeight(5);
-            laser.setFitWidth(WIDTH);
-            holder.getChildren().add(getAtEdge(laser, 0));
-            rotate(laser, laserRotation);
+            holder.getChildren().add(spaceOutLasers(laserStrength,false));
         }
         if(laserPointer){
-            ImageView laser = new ImageView(ImageLoader.get().laserStart);
-            laser.setFitHeight(30);
-            laser.setFitWidth(20);
-            VBox laserHolder = getAtEdge(laser, 0);
-            holder.getChildren().add(laserHolder);
-            rotate(laserHolder, laserRotation);
+            holder.getChildren().add(spaceOutLasers(laserStrength,true));
+        }
+        if(noField){
+            VBox cover = new VBox();
+            cover.setStyle("-fx-background-color: #909090");
+            cover.setPrefSize(WIDTH, HEIGHT);
+            holder.getChildren().add(cover);
         }
         if(showing) {
             VBox showBorder = new VBox();
@@ -135,6 +134,39 @@ public class BoardBuildElement {
         if(fitWidth)imageView.setFitWidth(WIDTH);
         if(fitHeight)imageView.setFitHeight(HEIGHT);
         return imageView;
+    }
+    private VBox spaceOutLasers(int amount, boolean isLaserPointer){
+        VBox box = new VBox();
+        box.setAlignment(Pos.CENTER);
+        for(int i = 0; i < amount; i++){
+            VBox part = new VBox();
+            part.setPrefSize(WIDTH, 20);
+            part.setAlignment(Pos.CENTER);
+            if(isLaserPointer){
+                ImageView laser = new ImageView(ImageLoader.get().laserStart);
+                laser.setFitHeight(20);
+                laser.setFitWidth(14);
+                VBox laserHolder = getAtEdge(laser, 0);
+                part.getChildren().add(laserHolder);
+            }else{
+                ImageView laser = new ImageView(ImageLoader.get().laserBeam);
+                laser.setFitHeight(5);
+                laser.setFitWidth(WIDTH);
+                part.getChildren().add(laser);
+            }
+            box.getChildren().add(part);
+        }
+        if(amount == 2){
+            box.getChildren().get(0).setLayoutY(10);
+            box.getChildren().get(1).setLayoutY(-10);
+        }
+        else if(amount == 3){
+            box.getChildren().get(0).setLayoutY(20);
+            box.getChildren().get(2).setLayoutY(-20);
+        }
+
+        rotate(box, laserRotation);
+        return box;
     }
     private VBox getAtEdge(Node node, int rotation){
         return BoardBuildLogic.getAtEdge(node, rotation);
@@ -349,5 +381,21 @@ public class BoardBuildElement {
 
     public void setLaserRotation(int laserRotation) {
         this.laserRotation = laserRotation;
+    }
+
+    public int getLaserStrength() {
+        return laserStrength;
+    }
+
+    public void setLaserStrength(int laserStrength) {
+        this.laserStrength = laserStrength;
+    }
+
+    public boolean isNoField() {
+        return noField;
+    }
+
+    public void setNoField(boolean noField) {
+        this.noField = noField;
     }
 }

@@ -43,6 +43,8 @@ public class BoardBuildLogic {
         else arrayList.add(false);
         if(element.getBlueBelt() > 0) arrayList.add(true);
         else arrayList.add(false);
+        if(element.isNoField()) arrayList.add(true);
+        else arrayList.add(false);
         return arrayList;
     }
 
@@ -82,7 +84,7 @@ public class BoardBuildLogic {
         images.add(getElement("antenna", 0).getView());
         images.add(getElement("energyField", 0).getView());
         images.add(getElement("hole", 0).getView());
-        images.add(getElement("laserStart", 0).getView());
+        images.add(getElement("laserStart", 1).getView());
         images.add(getElement("repair", 0).getView());
         images.add(getElement("respawn", 0).getView());
         images.add(getElement("startField", 1).getView());
@@ -92,6 +94,7 @@ public class BoardBuildLogic {
         images.add(getElement("gear", 1).getView());
         images.add(getElement("greenBelt", 1).getView());
         images.add(getElement("blueBelt", 1).getView());
+        images.add(getElement("noField", 0).getView());
         return images;
     }
     public static ArrayList<StackPane> getBoardVariants(int type){
@@ -99,8 +102,12 @@ public class BoardBuildLogic {
         images.add(getElement("empty", 0).getView());
         switch (type){
             case 4: //Laser
-                images.add(getElement("laserStart", 0).getView());
-                images.add(getElement("laserBeam", 0).getView());
+                images.add(getElement("laserStart", 1).getView());
+                images.add(getElement("laserBeam", 1).getView());
+                images.add(getElement("laserStart", 2).getView());
+                images.add(getElement("laserBeam", 2).getView());
+                images.add(getElement("laserStart", 3).getView());
+                images.add(getElement("laserBeam", 3).getView());
                 break;
             case 7:
                 images.add(getElement("startField", 1).getView());
@@ -129,6 +136,10 @@ public class BoardBuildLogic {
                 images.add(getElement("push", 1).getView());
                 images.add(getElement("push", 2).getView());
                 break;
+            case 11: //Gear
+                images.add(getElement("gear", 1).getView());
+                images.add(getElement("gear", 2).getView());
+                break;
             case 12: //Green Belt
                 images.add(getElement("greenBelt", 1).getView());
                 images.add(getElement("greenBelt", 2).getView());
@@ -153,17 +164,26 @@ public class BoardBuildLogic {
     public static void changeElementVariant(BoardBuildElement element, int type, int value){
         switch (type){
             case 4: //Laser
-                if(value == 1){
-                    element.setLaserPointer(true);
-                    element.setLaserRay(true);
-                }
-                else if(value == 2){
-                    element.setLaserPointer(false);
-                    element.setLaserRay(true);
-                }
-                else  if(value == 0){
-                    element.setLaserPointer(false);
-                    element.setLaserRay(false);
+                switch (value){
+                    case 0:
+                        element.setLaserPointer(false);
+                        element.setLaserRay(false);
+                        element.setLaserStrength(0);
+                        break;
+                    case 1:
+                    case 3:
+                    case 5:
+                        element.setLaserPointer(true);
+                        element.setLaserRay(true);
+                        element.setLaserStrength((value+1)/2);
+                        break;
+                    case 2:
+                    case 4:
+                    case 6:
+                        element.setLaserPointer(false);
+                        element.setLaserRay(true);
+                        element.setLaserStrength(value/2);
+                        break;
                 }
                 break;
             case 7: //StartField
@@ -177,6 +197,8 @@ public class BoardBuildLogic {
                 break;
             case 10: //Push
                 element.setPush(value);
+            case 11: //Gear
+                element.setGear(value);
                 break;
             case 12: //Green Belt
                 element.setGreenBelt(value);
@@ -193,6 +215,7 @@ public class BoardBuildLogic {
             case 8:
             case 9:
             case 10:
+            case 11:
             case 12:
             case 13:
                 return true;
@@ -205,8 +228,12 @@ public class BoardBuildLogic {
         switch (type){
             case 4: //Laser
                 actives.add(!element.isLaserRay() && !element.isLaserPointer());
-                actives.add(element.isLaserPointer() && element.isLaserRay());
-                actives.add(!element.isLaserPointer() && element.isLaserRay());
+                actives.add(element.isLaserPointer() && element.isLaserRay() && element.getLaserStrength() == 1);
+                actives.add(!element.isLaserPointer() && element.isLaserRay() && element.getLaserStrength() == 1);
+                actives.add(element.isLaserPointer() && element.isLaserRay() && element.getLaserStrength() == 2);
+                actives.add(!element.isLaserPointer() && element.isLaserRay() && element.getLaserStrength() == 2);
+                actives.add(element.isLaserPointer() && element.isLaserRay() && element.getLaserStrength() == 3);
+                actives.add(!element.isLaserPointer() && element.isLaserRay() && element.getLaserStrength() == 3);
                 break;
             case 7: //startField
                 actives.add(element.getStartField() == 0);
@@ -239,6 +266,11 @@ public class BoardBuildLogic {
                 actives.add(element.getPush() == 1);
                 actives.add(element.getPush() == 2);
                 break;
+            case 11: //Gear
+                actives.add(element.getGear() == 0);
+                actives.add(element.getGear() == 1);
+                actives.add(element.getGear() == 2);
+                break;
             case 12: //Green Belt
                 actives.add(element.getGreenBelt() == 0);
                 actives.add(element.getGreenBelt() == 1);
@@ -263,6 +295,7 @@ public class BoardBuildLogic {
         return actives;
     }
     public static boolean addIfNotExistent(int index, BoardBuildElement element){
+        element.setNoField(false);
         switch (index){
             case 0: //Empty
                 element.setAntenna(false);
@@ -279,6 +312,7 @@ public class BoardBuildLogic {
                 element.setGear(0);
                 element.setGreenBelt(0);
                 element.setBlueBelt(0);
+                element.setNoField(false);
                 return true;
             case 1: //antenna
                 if(!element.isAntenna()){
@@ -299,6 +333,7 @@ public class BoardBuildLogic {
                 if(!element.isLaserPointer() && !element.isLaserRay()){
                     element.setLaserPointer(true);
                     element.setLaserRay(true);
+                    element.setLaserStrength(1);
                     return true;
                 } else return false;
             case 5: //repair
@@ -346,6 +381,12 @@ public class BoardBuildLogic {
                     element.setBlueBelt(1);
                     return true;
                 } else return false;
+            case 14: //noField
+                if(!element.isNoField()){
+                    addIfNotExistent(0, element);
+                    element.setNoField(true);
+                    return true;
+                } else return false;
         }
         return true;
     }
@@ -367,10 +408,12 @@ public class BoardBuildLogic {
                 BoardBuildElement laserStart = new BoardBuildElement();
                 laserStart.setLaserPointer(true);
                 laserStart.setLaserRay(true);
+                laserStart.setLaserStrength(variant);
                 return laserStart;
             case "laserBeam":
                 BoardBuildElement laserBeam = new BoardBuildElement();
                 laserBeam.setLaserRay(true);
+                laserBeam.setLaserStrength(variant);
                 return laserBeam;
             case "repair":
                 BoardBuildElement repair = new BoardBuildElement();
@@ -408,6 +451,10 @@ public class BoardBuildLogic {
                 BoardBuildElement blueBelt = new BoardBuildElement();
                 blueBelt.setBlueBelt(variant);
                 return blueBelt;
+            case "noField":
+                BoardBuildElement noField = new BoardBuildElement();
+                noField.setNoField(true);
+                return noField;
             case "empty":
             default:
                 BoardBuildElement empty = new BoardBuildElement();
@@ -441,6 +488,10 @@ public class BoardBuildLogic {
         if(element.getGreenBelt() > 0 && index == 12) return true;
         if(element.getBlueBelt() > 0 && index == 13) return true;
         return false;
+    }
+    public static String checkName(String name){
+
+        return null;
     }
     public static boolean shouldShowTurns(int index){
         if(index == 4) return true; //Laser

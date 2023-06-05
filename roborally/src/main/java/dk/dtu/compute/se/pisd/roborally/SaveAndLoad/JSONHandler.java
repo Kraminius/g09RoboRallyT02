@@ -63,6 +63,10 @@ public class JSONHandler {
         }
     }
 
+    public boolean deleteFile(String name, String type){
+        raw.deleteFile(name, type);
+        return true;
+    }
 
 
 

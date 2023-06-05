@@ -142,4 +142,8 @@ public class ReaderAndWriter {
             return null;
         }
     }
+    public boolean deleteFile(String name, String type){
+        File file = createIfNonExistingJSON(name, type);
+        return file.delete();
+    }
 }

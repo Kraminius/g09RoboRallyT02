@@ -1,48 +1,39 @@
 package dk.dtu.compute.se.pisd.roborally.BuildABoard;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
-import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import java.util.ArrayList;
 
 public class BuildJSON {
 
 
-    JSONHandler jsonHandler = new JSONHandler();
+    static JSONHandler jsonHandler = new JSONHandler();
 
-    public void saveBoard(CheckBoardBuild build){
-        jsonHandler.raw.writeJSON(build.getName(), createObjectFromBuild(build), "board");
+    public static void saveBoard(CheckBoardBuild build){
+        jsonHandler.raw.writeJSON(build.getName(), saveBuildToJSON(build), "board");
         jsonHandler.printJSON(build.getName(), "board");
     }
 
-    public static JSONObject createObjectFromBuild(CheckBoardBuild build){
+    public static JSONObject saveBuildToJSON(CheckBoardBuild build){
         JSONObject obj = new JSONObject();
         JSONArray antennaArray = new JSONArray();
-        antennaArray.add(build.getAntenna().getX() + ";" + build.getAntenna().getY());
+        antennaArray.add(build.getAntenna().get(0).getX() + ";" + build.getAntenna().get(0).getY());
         JSONArray respawnArray = new JSONArray();
-        antennaArray.add(build.getRespawn().getX() + ";" + build.getRespawn().getY());
+        respawnArray.add(build.getRespawn().get(0).getX() + ";" + build.getRespawn().get(0).getY());
         JSONArray wallArray = makeWalls(build);
         JSONArray beltArray = makeBelts(build);
-
-
-        JSONArray checkpointArray = new JSONArray();
-        JSONArray laserArray = new JSONArray();
-        JSONArray pushArray = new JSONArray();
-        JSONArray energyFieldArray = new JSONArray();
-        JSONArray gearArray = new JSONArray();
-        JSONArray holeArray = new JSONArray();
-        JSONArray noFieldArray = new JSONArray();
-        JSONArray startFieldArray = new JSONArray();
-
-
-
-
-
-        obj.put("name", build.getName());
-        obj.put("width", build.getWidth());
-        obj.put("height", build.getHeight());
+        JSONArray checkpointArray = makeCheckPoints(build);
+        JSONArray laserArray = makeLasers(build);
+        JSONArray pushArray = makePush(build);
+        JSONArray energyFieldArray  = makeEnergyFields(build);
+        JSONArray gearArray = makeGear(build);
+        JSONArray holeArray  = makeHole(build);
+        JSONArray noFieldArray  = makeNoFields(build);
+        JSONArray startFieldArray  = makeStartFields(build);
+        JSONArray repairArray  = makeRepair(build);
+        obj.put("name", build.getName()+"");
+        obj.put("width", build.getWidth()+"");
+        obj.put("height", build.getHeight()+"");
         obj.put("wall", wallArray);
         obj.put("belt", beltArray);
         obj.put("checkpoint", checkpointArray);
@@ -55,6 +46,7 @@ public class BuildJSON {
         obj.put("respawn", respawnArray);
         obj.put("noField", noFieldArray);
         obj.put("startFields", startFieldArray);
+        obj.put("repair", repairArray);
         return obj;
     }
     private static String rotationToHeading(int rotation){
@@ -76,26 +68,6 @@ public class BuildJSON {
         }
         return rotation;
     }
-    /*
-    {
-  "name": "Dizzy Highway",
-  "width": "13",
-  "height": "10",
-  "wall":["1;2;NORTH","1;7;SOUTH","2;4;EAST","2;5;EAST", "6;3;NORTH", "6;4;SOUTH", "6;6;WEST", "7;6;EAST", "8;3;WEST", "9;3;EAST", "9;5;NORTH", "9;6;SOUTH"],
-  "belt":["2;0;null;EAST;1", "2;9;null;EAST;1","3;7;null;EAST;2", "3;8;null;EAST;2", "4;0;null;SOUTH;2", "4;1;LEFT_T;SOUTH;2","4;2;null;SOUTH;2","4;3;null;SOUTH;2","4;4;null;SOUTH;2","4;5;null;SOUTH;2","4;6;null;SOUTH;2", "4;7;RIGHT_T;SOUTH;2", "4;8;LEFT_T;EAST;2", "5;8;null;EAST;2","6;8;null;EAST;2","7;8;null;EAST;2", "8;8;null;EAST;2", "9;8;null;EAST;2", "10;8;RIGHT_T;EAST;2", "11;8;LEFT_T;NORTH;2", "10;9;null;NORTH;2", "11;9;null;NORTH;2", "5;0;null;SOUTH;2", "5;1;RIGHT_T;WEST;2", "6;1;null;WEST;2", "7;1;null;WEST;2", "8;1;null;WEST;2", "9;1;null;WEST;2", "10;1;null;WEST;2", "11;1;LEFT_T;WEST;2", "12;1;null;WEST;2", "12;2;null;WEST;2", "11;2;RIGHT_T;NORTH;2", "11;3;null;NORTH;2", "11;4;null;NORTH;2","11;5;null;NORTH;2","11;6;null;NORTH;2","11;7;null;NORTH;2","11;9;null;NORTH;2"],
-  "checkpoint":["12;3;1"],
-  "laser":["6;4;NORTH;1;TRUE", "6;3;NORTH;1;FALSE", "7;6;WEST;1;TRUE","6;6;WEST;1;FALSE", "8;3;WEST;1;FALSE", "9;3;WEST;1;TRUE", "9;5;SOUTH;1;TRUE", "9;6;SOUTH;1;FALSE"],
-  "antenna":["0;4"],
-  "push": null,
-  "energyField":["3;9;1", "5;2;1", "7;5;1", "8;4;1", "10;7;1", "12;0;1"],
-  "gear": null,
-  "hole": null,
-  "respawn": ["7;3"],
-  "noField": null,
-  "startFields":["1;1;1", "0;3;2", "1;4;3", "1;5;4", "0;6;5", "1;8;6"]
-}
-     */
-
     private static JSONArray makeWalls(CheckBoardBuild build){
         JSONArray wallArray = new JSONArray();
         for(BoardBuildElement element : build.getWalls()){
@@ -131,7 +103,7 @@ public class BuildJSON {
     private static JSONArray makeBelts(CheckBoardBuild build){
         JSONArray beltArray = new JSONArray();
         for(BoardBuildElement element : build.getBelts()){
-            if(element.getWall() > 0){
+            if(element.getGreenBelt() > 0){
                 switch (element.getGreenBelt()){
                     case 1: //Forward South
                         beltArray.add(element.getX() + ";" + element.getY() + ";null;" + rotationToHeading(element.getBeltRotation()+1) + ";1");
@@ -155,6 +127,8 @@ public class BuildJSON {
                         beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()+2) + ";1");
                         break;
                 }
+            }
+            if(element.getBlueBelt() > 0){
                 switch (element.getBlueBelt()){
                     case 1: //Forward South
                         beltArray.add(element.getX() + ";" + element.getY() + ";null;" + rotationToHeading(element.getBeltRotation()+1) + ";2");
@@ -182,4 +156,101 @@ public class BuildJSON {
         }
         return beltArray;
     }
+    private static JSONArray makeCheckPoints(CheckBoardBuild build){
+        JSONArray checkpointArray = new JSONArray();
+        for(BoardBuildElement element : build.getCheckpoints()){
+            if(element.getCheckpoint() > 0){
+                checkpointArray.add(element.getX() + ";" + element.getY() + ";" + element.getCheckpoint());
+            }
+        }
+        return checkpointArray;
+    }
+    private static JSONArray makeLasers(CheckBoardBuild build){
+        JSONArray laserArray = new JSONArray();
+        for(BoardBuildElement element : build.getLasers()){
+            if(element.isLaserRay()){
+                if(element.isLaserPointer()){
+                    laserArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getLaserRotation()) + ";" + element.getLaserStrength() + ";TRUE");
+                }
+                else{
+                    laserArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getLaserRotation()) + ";" + element.getLaserStrength() + ";FALSE");
+                }
+            }
+        }
+        return laserArray;
+    }
+    private static JSONArray makePush(CheckBoardBuild build){
+        JSONArray pushArray = new JSONArray();
+        for(BoardBuildElement element : build.getPushers()){
+            if(element.getPush() > 0){
+                if(element.getPush() == 1){
+                    pushArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getPushRotation()) + ";2;4");
+                }
+                if(element.getPush() == 2){
+                    pushArray.add(element.getX() + ";" + element.getY() + ";" + rotationToHeading(element.getPushRotation()) + ";1;3;5");
+                }
+            }
+        }
+        return pushArray;
+    }
+    private static JSONArray makeEnergyFields(CheckBoardBuild build){
+        JSONArray energyFieldArray = new JSONArray();
+        for(BoardBuildElement element : build.getEnergyFields()){
+            if(element.isEnergyField()){
+                energyFieldArray.add(element.getX() + ";" + element.getY() + ";1" );
+            }
+        }
+        return energyFieldArray;
+    }
+    private static JSONArray makeRepair(CheckBoardBuild build){
+        JSONArray repairArray = new JSONArray();
+        for(BoardBuildElement element : build.getRepair()){
+            if(element.isRepair()){
+                repairArray.add(element.getX() + ";" + element.getY());
+            }
+        }
+        return repairArray;
+    }
+    private static JSONArray makeNoFields(CheckBoardBuild build){
+        JSONArray noFieldArray = new JSONArray();
+        for(BoardBuildElement element : build.getNoFields()){
+            if(element.isNoField()){
+                noFieldArray.add(element.getX() + ";" + element.getY());
+            }
+        }
+        return noFieldArray;
+    }
+    private static JSONArray makeHole(CheckBoardBuild build){
+        JSONArray holeArray = new JSONArray();
+        for(BoardBuildElement element : build.getHoles()){
+            if(element.isHole()){
+                holeArray.add(element.getX() + ";" + element.getY());
+            }
+        }
+        return holeArray;
+    }
+    private static JSONArray makeGear(CheckBoardBuild build){
+        JSONArray gearArray = new JSONArray();
+        for(BoardBuildElement element : build.getGears()){
+            if(element.getGear() == 1){
+                gearArray.add(element.getX() + ";" + element.getY() + ";LEFT");
+            }
+            if(element.getGear() == 2){
+                gearArray.add(element.getX() + ";" + element.getY() + ";RIGHT");
+            }
+        }
+        return gearArray;
+    }
+    private static JSONArray makeStartFields(CheckBoardBuild build){
+        JSONArray startFieldArray = new JSONArray();
+        for(BoardBuildElement element : build.getStartFields()){
+            if(element.getStartField() > 0){
+                startFieldArray.add(element.getX() + ";" + element.getY() + ";" + element.getStartField());
+            }
+        }
+        return startFieldArray;
+    }
+
+    //Gear, Hole, NoField
+
 }

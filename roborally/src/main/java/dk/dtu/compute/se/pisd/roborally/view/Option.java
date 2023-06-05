@@ -62,22 +62,35 @@ public class Option {
         stage.setOnCloseRequest(Event::consume);
         stage.showAndWait();
     }
-    public void getOKPressed(){
+    public void getOKPressed(String text){
         VBox panel = new VBox();
         panel.setPadding(new Insets(20, 20 ,20, 20));
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 14");
+        label.setAlignment(Pos.CENTER);
+        label.setWrapText(true);
+        label.setMaxWidth(300);
         Button okButton = new Button("OK");
         okButton.setOnAction(e -> close());
-        panel.getChildren().add(okButton);
+        panel.getChildren().addAll(label, okButton);
         panel.setAlignment(Pos.CENTER);
+        panel.setSpacing(10);
         window.getChildren().add(panel);
         show();
     }
-    public boolean getYESNO(){
+    public boolean getYESNO(String text){
         HBox panel = new HBox();
         panel.setPadding(new Insets(20, 20 ,20, 20));
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 14");
+        label.setAlignment(Pos.CENTER);
+        label.setWrapText(true);
+        label.setMaxWidth(300);
         Button yesButton = new Button("Yes");
         Button noButton = new Button("No");
+        VBox view = new VBox();
         panel.getChildren().addAll(yesButton, noButton);
+        view.getChildren().addAll(label, panel);
         panel.setSpacing(10);
         yesButton.setOnAction(e -> {
             yesNo = true;
@@ -87,7 +100,7 @@ public class Option {
             yesNo = false;
             close();
         });
-        window.getChildren().add(panel);
+        window.getChildren().add(view);
         show();
         return yesNo;
     }

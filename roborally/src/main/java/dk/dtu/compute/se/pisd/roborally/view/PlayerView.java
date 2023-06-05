@@ -194,7 +194,7 @@ public class PlayerView extends Tab implements ViewObserver {
                     String name = cardField.getCard().getName();
                     String text = cardField.getCard().getDescription();
                     Option option = new Option(name, text, 130, 190);
-                    option.getOKPressed();
+                    option.getOKPressed("");
                 });
                 upgradeCard.getChildren().add(upgradeCardView[i]);
                 upgradeCard.getChildren().add(showCard);

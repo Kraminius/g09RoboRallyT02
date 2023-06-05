@@ -54,15 +54,15 @@ public class BuildABoardViewController {
     }
 
     public void showError(String text) {
-        Option option = new Option(text);
-        option.getOKPressed();
+        Option option = new Option("ERROR");
+        option.getOKPressed(text);
     }
 
     private void createScene() {
         stage = new Stage();
         stage.setScene(new Scene(window, SCREEN_WIDTH, SCREEN_HEIGHT));
         stage.initModality(Modality.APPLICATION_MODAL); //Make other window useless.
-        stage.setOnCloseRequest(Event::consume);
+        //stage.setOnCloseRequest(Event::consume);
     }
 
     private void createWindow() {
@@ -119,7 +119,7 @@ public class BuildABoardViewController {
         VBox menu = new VBox();
         VBox boardDescription = createBoardDescription();
         bottom = createBottom();
-        elementWindow.setPrefSize(150, 350);
+        elementWindow.setPrefSize(150, 450);
         elementWindow.setAlignment(Pos.CENTER);
         menu.getChildren().addAll(boardDescription, elementWindow, bottom);
         menu.setStyle("-fx-border-color: #909090; -fx-background-color: #dddddd");
@@ -174,12 +174,14 @@ public class BuildABoardViewController {
         for(int i = 0; i < 2; i++){
             VBox vBox = new VBox();
             vBox.setAlignment(Pos.CENTER);
-            for(int j = 0; j < 14; j+=2){
+            for(int j = 0; j < 15; j+=2){
                 HBox hBox = new HBox();
                 hBox.setSpacing(5);
                 hBox.setAlignment(Pos.CENTER);
                 hBox.getChildren().add(spots.get(j));
-                hBox.getChildren().add(spots.get(j+1));
+                if(j+1 != 15){
+                    hBox.getChildren().add(spots.get(j+1));
+                }
                 vBox.getChildren().add(hBox);
             }
             vBox.setSpacing(5);
@@ -222,6 +224,7 @@ public class BuildABoardViewController {
         ArrayList<Boolean> actives = BoardBuildLogic.getActiveElements(element);
         for (int i = 0; i < spots.size(); i++) {
             spots.get(i).getChildren().clear();
+            VBox background = new VBox();
             VBox active = new VBox();
             VBox addAble = new VBox();
             VBox border = new VBox();
@@ -234,17 +237,19 @@ public class BuildABoardViewController {
             button.setOnMouseExited(e->{border.setStyle("-fx-border-color: #404040; -fx-border-width: 1");});
             button.setOpacity(0);
             if(actives.get(i)) active.setStyle("-fx-background-color: #ffce00");
+            background.setStyle("-fx-background-color: #dddddd");
             active.setOpacity(0.3);
             button.setPrefSize(currentElement.WIDTH, currentElement.HEIGHT);
             active.setMaxSize(currentElement.WIDTH, currentElement.HEIGHT);
+            background.setMaxSize(currentElement.WIDTH, currentElement.HEIGHT);
             border.setMaxSize(currentElement.WIDTH, currentElement.HEIGHT);
-            stackPane.getChildren().addAll(images.get(i), addAble, active, border, button);
+            stackPane.getChildren().addAll(background, images.get(i), addAble, active, border, button);
             spots.get(i).getChildren().add(stackPane);
         }
     }
     private ArrayList<VBox> createGrid(){
         ArrayList<VBox> spots = new ArrayList<>();
-        for(int i = 0; i < 14; i++){
+        for(int i = 0; i < 15; i++){
             VBox spot1 = new VBox();
             spots.add(spot1);
         }
@@ -291,7 +296,7 @@ public class BuildABoardViewController {
         handler.showElementMenuFor(x, y);
     }
     private void saveBoardPressed(){
-
+        handler.saveBoard(boardName.getText());
     }
     private void setSizePressed(){
         String[] input = new String[2];
