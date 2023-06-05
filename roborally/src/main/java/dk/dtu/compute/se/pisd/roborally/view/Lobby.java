@@ -248,7 +248,6 @@ public class Lobby {
 
         // Add event to the submit button
         submitButton.setOnAction(e -> {
-            String lobbyID = UUID.randomUUID().toString();
             // Set the game settings
             if (!gameNameInput.getText().isEmpty() && !creatorNameInput.getText().isEmpty()) {
                 gameNameInput.setStyle(null);
@@ -337,7 +336,7 @@ public class Lobby {
                 }
 
             specificLobbyLabels.put(this.gameLobby.getLobbyId(), createGameLayout);
-
+            GameClient.startPlayerNamesPolling();
         });
 
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
