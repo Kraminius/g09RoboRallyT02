@@ -538,7 +538,7 @@ public class Lobby {
         /*if(gameLobby.getGameSettings().getPlayerNames().size() == gameLobby.getGameSettings().getNumberOfPlayers()){
            startGame.setVisible(true);
         }*/
-        rootLayout.setRight(specificLobbyLayout);
+        //rootLayout.setRight(specificLobbyLayout);
 
     }
 

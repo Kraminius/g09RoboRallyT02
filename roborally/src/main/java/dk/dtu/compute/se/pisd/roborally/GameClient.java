@@ -12,10 +12,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class GameClient {
 
@@ -32,9 +29,11 @@ public class GameClient {
     private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     private static final int POLLING_INTERVAL_SECONDS = 5;
 
+    private static ScheduledFuture<?> playerNamesPollingTask;
+
     public static void startPlayerNamesPolling() {
 
-        executorService.scheduleAtFixedRate(GameClient::pollPlayerNames, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+        playerNamesPollingTask = executorService.scheduleAtFixedRate(GameClient::pollPlayerNames, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
     public static void startCheckAllConnected(){
@@ -43,14 +42,14 @@ public class GameClient {
 
     }
 
-    private static void pollAllConnected() throws Exception {
+    private static boolean pollAllConnected() throws Exception {
         Boolean allConnected = false;
         allConnected = areAllConnected();
 
         if(allConnected){
-            System.out.println("Yes brother");
+            System.out.println("We are all connected");
         }
-
+        return allConnected;
     }
 
 
@@ -62,7 +61,10 @@ public class GameClient {
                 players = playerNames;
             }
 
+
+
             if(players.size() != playerNames.size()){
+
                 javafx.application.Platform.runLater(() -> {
                     GameLobby gameLobby = null;
                     try {
@@ -72,11 +74,19 @@ public class GameClient {
                     }
                     RoboRally.getLobby().updateJoinWindow(gameLobby);
                     players = playerNames;
-                });
+                    });
+
             }
+
+
 
             // Process the player names as needed
             System.out.println("Player Names pulled: " + playerNames);
+
+            if(pollAllConnected()){
+                playerNamesPollingTask.cancel(false);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             // Handle any exceptions that occur during polling
