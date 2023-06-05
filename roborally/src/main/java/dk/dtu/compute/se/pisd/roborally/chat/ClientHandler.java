@@ -60,6 +60,7 @@ public class ClientHandler implements Runnable{
 
     public void removeClientHandler(){
         clients.remove(this);
+        broadcastMessage("SERVER: " + this.userName + " has left the chat!");
     }
 
     public void closeEverything(Socket socket, BufferedReader reader, BufferedWriter writer){

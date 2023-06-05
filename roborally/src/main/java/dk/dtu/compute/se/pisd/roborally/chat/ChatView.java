@@ -1,10 +1,9 @@
 package dk.dtu.compute.se.pisd.roborally.chat;
-import javafx.scene.control.TextInputDialog;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 import java.io.BufferedWriter;
@@ -17,6 +16,7 @@ public class ChatView{
     private Stage stage;
     private TextArea chatBox;
     private TextField messageField ;
+    //private HBox onlineClients;
     private Button sendButton;
 
     private ChatClient client;
@@ -40,16 +40,52 @@ public class ChatView{
                 messageField.clear();
             }
         });
-
+       /* onlineClients = new HBox(10);
+        onlineClients.setPadding(new Insets(10));*/
         VBox window = new VBox(10);
-        window.getChildren().addAll(chatBox, messageField, sendButton);
+        window.getChildren().addAll(/*onlineClients*/ chatBox, messageField, sendButton);
 
         Scene scene = new Scene(window);
         this.stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("RoboRally chat");
+        stage.setTitle("RoboRally Chat - Join");
     }
 
+    /*private VBox createInitialWindow(){
+        Button joinButton = new Button("Join chat");
+        joinButton.setOnAction(actionEvent -> {
+            String username = promptForUsername();
+            client.setUserName(username);
+            if(!username.isEmpty()){
+                personalizeChatWindow(username);
+                stage.setScene(createChatScene());
+            } else {
+                showErrorDialog("Invalid Username", "Please enter a valid username.");
+            }
+        });
+
+        VBox initialWindow = new VBox(10);
+        initialWindow.setPadding(new Insets(50));
+        initialWindow.getChildren().add(joinButton);
+
+        return initialWindow;
+    }
+
+    private Scene createChatScene() {
+        VBox window = new VBox(10);
+        window.getChildren().addAll(onlineClients, chatBox, messageField, sendButton);
+
+        return new Scene(window, 10, 10);
+    }
+
+    public void showErrorDialog(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+*/
     public void displayMessage(String message){
         chatBox.appendText(message + "\n");
     }

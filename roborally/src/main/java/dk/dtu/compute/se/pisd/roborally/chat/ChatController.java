@@ -14,7 +14,7 @@ public class ChatController implements OnSendMessageListener {
         this.chatViews = new ArrayList<>();
     }
 
-    public void startChat(int serverPort) {
+    public void startServer(int serverPort) {
         try {
             this.chatServer = new ChatServer(serverPort);
             Thread serverThread = new Thread(() -> {

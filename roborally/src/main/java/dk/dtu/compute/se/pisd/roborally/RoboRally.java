@@ -61,12 +61,13 @@ public class RoboRally extends Application {
     @Override
     public void start(Stage primaryStage) {
         ChatController chatController = new ChatController();
-        chatController.startChat(4999);
+        chatController.startServer(4999);
         chatController.addClient(chatController.getServerIP(), chatController.getServerPort());
         chatController.addClient(chatController.getServerIP(), chatController.getServerPort());
         stage = primaryStage;
 
         AppController appController = new AppController(this);
+
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
         // when the user creates a new game or loads a game
