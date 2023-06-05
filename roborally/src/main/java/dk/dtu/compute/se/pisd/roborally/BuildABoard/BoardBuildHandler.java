@@ -15,6 +15,9 @@ public class BoardBuildHandler {
         updateBoard();
         view.show();
     }
+    public void loadBoard(String name){
+
+    }
     public void saveBoard(String name){
         String nameError = CheckLogic.checkName(name);
         if(nameError == null){

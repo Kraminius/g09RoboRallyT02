@@ -8,14 +8,10 @@ import dk.dtu.compute.se.pisd.roborally.view.Option;
 public class MainMenuHandler {
 
     private MainMenuController controller;
-    private BoardBuildHandler buildHandler;
-    private int toDo = 0;
+    private String toDo = "";
 
-    public MainMenuHandler(BoardBuildHandler buildHandler) {
-        this.buildHandler = buildHandler;
-    }
 
-    public int show(){
+    public String show(){
         if(controller==null){
             controller = new MainMenuController(this);
         }
@@ -25,6 +21,7 @@ public class MainMenuHandler {
     }
     public void playGame(){
         controller.close();
+        toDo = "play";
     }
     public void showBoardMenu(){
         controller.showBoardBuilderMenu();
@@ -40,13 +37,11 @@ public class MainMenuHandler {
     }
     public void editNewBoard(){
         controller.close();
-        buildHandler.createNewBoard();
-        show();
+        toDo = "createBoard";
     }
     public void editLoadedBoard(String name){
         controller.close();
-
-        show();
+        toDo = "load;name";
     }
     public void deleteLoadedBoard(String name){
         if(CheckLogic.isOriginal(name) != null) {

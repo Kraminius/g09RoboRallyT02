@@ -24,6 +24,7 @@ package dk.dtu.compute.se.pisd.roborally;
 import dk.dtu.compute.se.pisd.roborally.BuildABoard.BoardBuildHandler;
 import dk.dtu.compute.se.pisd.roborally.Filesharing.SaveHandler;
 import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuHandler;
+import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuLoader;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
@@ -59,13 +60,11 @@ public class RoboRally extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
-        BoardBuildHandler buildHandler = new BoardBuildHandler();
-        MainMenuHandler mainMenu = new MainMenuHandler(buildHandler);
-        mainMenu.show();
+        MainMenuLoader mainMenu;
+        do{
+            mainMenu = new MainMenuLoader();
+        }while(!mainMenu.run()); //Returns true when playing game.
         //Everything that will run after the main menu, is what happens when the player has pressed Play Game.
-
-
         stage = primaryStage;
 
         AppController appController = new AppController(this);
