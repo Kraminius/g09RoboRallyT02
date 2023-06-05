@@ -37,6 +37,23 @@ public class GameClient {
         executorService.scheduleAtFixedRate(GameClient::pollPlayerNames, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
+    public static void startCheckAllConnected(){
+
+        executorService.scheduleWithFixedDelay(GameClient::pollPlayerNames, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+
+    }
+
+    private static void pollAllConnected() throws Exception {
+        Boolean allConnected = false;
+        allConnected = areAllConnected();
+
+        if(allConnected){
+            System.out.println("Yes brother");
+        }
+
+    }
+
+
     private static void pollPlayerNames() {
         try {
             ArrayList<String> playerNames = getPlayerNames();
@@ -68,10 +85,10 @@ public class GameClient {
 
 
 
-    public static boolean areAllConnected(int playerNum) throws Exception {
+    public static boolean areAllConnected() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("http://localhost:8080/allConnected?playerNum=" + playerNum))
+                .uri(URI.create("http://localhost:8080/allConnected"))
                 .build();
         CompletableFuture<HttpResponse<String>> response =
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());

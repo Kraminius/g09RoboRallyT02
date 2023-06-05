@@ -1,16 +1,13 @@
 package dk.dtu.compute.se.pisd.roborally;
 
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
-import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 public class MyRest {
@@ -43,7 +40,7 @@ public class MyRest {
 
 
     @GetMapping(value = "/allConnected")
-    public ResponseEntity<Boolean> allConnected(@RequestParam("playerNum") String playerNumStr) {
+    public ResponseEntity<Boolean> allConnected() {
         Boolean temp = gameDataRep.checkerPlayersConnected();
         return ResponseEntity.ok().body(temp);
     }
@@ -58,7 +55,7 @@ public class MyRest {
 
 
     @GetMapping(value = "/getPlayerNumber")
-    public ResponseEntity<Integer> allConnected() {
+    public ResponseEntity<Integer> allConnectedNot() {
         Integer temp = gameDataRep.playerNumber();
         return ResponseEntity.ok().body(temp);
     }

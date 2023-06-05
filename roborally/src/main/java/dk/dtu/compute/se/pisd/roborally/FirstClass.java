@@ -22,7 +22,7 @@ public class FirstClass {
             if(myAnswer.equals("1")){
 
                 MyClient.weConnect(playerNum-1, "jens");
-                bool = GameClient.areAllConnected(playerNum-1);
+                bool = GameClient.areAllConnected();
 
             }
             else if(myAnswer.equals("8")){
