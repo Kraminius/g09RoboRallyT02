@@ -13,14 +13,59 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class GameClient {
+
+
+
+    public static ArrayList<String> players = new ArrayList<>();
+
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .connectTimeout(Duration.ofSeconds(10))
             .build();
+
+    private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    private static final int POLLING_INTERVAL_SECONDS = 5;
+
+    public static void startPlayerNamesPolling() {
+
+        executorService.scheduleAtFixedRate(GameClient::pollPlayerNames, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    private static void pollPlayerNames() {
+        try {
+            ArrayList<String> playerNames = getPlayerNames();
+
+            if(players.size() == 0){
+                players = playerNames;
+            }
+
+            if(players.size() != playerNames.size()){
+                javafx.application.Platform.runLater(() -> {
+                    GameLobby gameLobby = null;
+                    try {
+                        gameLobby = getGame();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    RoboRally.getLobby().updateJoinWindow(gameLobby);
+                    players = playerNames;
+                });
+            }
+
+            // Process the player names as needed
+            System.out.println("Player Names pulled: " + playerNames);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle any exceptions that occur during polling
+        }
+    }
+
 
 
     public static boolean areAllConnected(int playerNum) throws Exception {

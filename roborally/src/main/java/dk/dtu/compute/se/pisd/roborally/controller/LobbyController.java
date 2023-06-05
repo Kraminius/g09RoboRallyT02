@@ -18,4 +18,10 @@ public class LobbyController {
         GameLobby gameLobby = new GameLobby(lobbyID, gameSettings); // create a new game lobby
         lobbyManager.createGame(gameLobby); // Pass the GameLobby instance to the createGame method
     }
+
+    public void updateJoinedGame(){
+
+
+
+    }
 }

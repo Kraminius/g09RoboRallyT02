@@ -9,7 +9,6 @@ import java.util.List;
 public class GameLobby {
     private String lobbyId;
     private GameSettings gameSettings;
-    private List<String> players;
 
 
     public GameLobby() {
@@ -19,7 +18,6 @@ public class GameLobby {
     public GameLobby(String lobbyId, GameSettings gameSettings) {
         this.lobbyId = lobbyId;
         this.gameSettings = gameSettings;
-        this.players = new ArrayList<>();
     }
 
 
@@ -39,20 +37,12 @@ public class GameLobby {
         return gameSettings;
     }
 
-    public List<String> getPlayers() {
-        return players;
-    }
-
-    public void addPlayer(String playerName) {
-        this.players.add(playerName);
-    }
 
     @Override
     public String toString() {
         return "GameLobby{" +
                 "lobbyId='" + lobbyId + '\'' +
                 ", gameSettings=" + gameSettings +
-                ", players=" + players +
                 '}';
     }
 }

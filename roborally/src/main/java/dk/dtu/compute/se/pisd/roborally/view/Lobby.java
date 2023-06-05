@@ -198,6 +198,8 @@ public class Lobby {
 
         rootLayout.setRight(createLobbyLayout(gameLobby));
 
+        specificLobbyLabels.put(gameLobby.getLobbyId(), createGameLayout);
+
         createGameStage.show();
 
 
@@ -279,10 +281,16 @@ public class Lobby {
                 submitButton.setDisable(true);
 
 
+
+
                 GameLobby gameLobbyTemp;
+
+
                 //APi call lobbyid gameSettings
                 try {
+                    System.out.println("what");
                     gameLobbyTemp = GameClient.getGame();
+                    System.out.println("up");
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -291,15 +299,15 @@ public class Lobby {
 
                 GameLobby gameLobby = gameLobbyTemp;
                 this.gameLobby = gameLobby;
+                lobbyManager.createGame(gameLobby);
+
+
+
 
                 try {
-                    GameClient.instaGameData(gameLobby.getGameSettings().getNumberOfPlayers());
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
-                    MyClient.weConnect(0, gameLobby.getGameSettings().getPlayerNames().get(0));
+                    MyClient.weConnect(0, gameLobby.getGameSettings().getCreatorName());
                     gameLobby.getGameSettings().setPlayerNames(GameClient.getPlayerNames());
+
 
                     System.out.println(gameLobby.toString());
                 } catch (Exception ex) {
@@ -307,7 +315,7 @@ public class Lobby {
                 }
 
 
-                lobbyManager.createGame(gameLobby);
+
                 addLobbyToLobby(gameLobby);
 
 
@@ -327,12 +335,18 @@ public class Lobby {
             if(!creatorNameInput.getText().isEmpty()){
                 creatorNameInput.setStyle(null);
                 }
+
+            specificLobbyLabels.put(this.gameLobby.getLobbyId(), createGameLayout);
+
         });
 
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
         rootLayout.setLeft(createGameLayout);
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
+
+
+
         createGameStage.setScene(createGameScene);
         createGameStage.show();
     }
@@ -436,6 +450,11 @@ public class Lobby {
                 throw new RuntimeException(e);
             }
         });
+
+        //Polling player names
+        GameClient.startPlayerNamesPolling();
+
+
     }
 
     private void joinLobby(GameLobby gameLobby, String playerName) throws Exception {
@@ -457,23 +476,32 @@ public class Lobby {
 
     }
 
+    public void updaterQueueLobby(GameLobby gameLobby){
 
 
-    private VBox updateJoinWindow(GameLobby gameLobby){
+
+
+
+    }
+
+
+    public void updateJoinWindow(GameLobby gameLobby){
+
         String lobbyId = gameLobby.getLobbyId();
         VBox specificLobbyLayout = specificLobbyLabels.get(lobbyId);
+
         specificLobbyLayout.getChildren().clear();
         specificLobbyLayout.setPadding(new Insets(10, 10, 10, 10));
         specificLobbyLayout.setAlignment(Pos.TOP_CENTER);
         specificLobbyLayout.setSpacing(2);
-        Button startGame = new Button();
-        startGame.setId(lobbyId);
-        startGame.setText("Start Game");
-        startGame.setVisible(false);
+        //Button startGame = new Button();
+        //startGame.setId(lobbyId);
+        //startGame.setText("Start Game");
+        //startGame.setVisible(false);
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        startGame.setOnAction(e -> {
+        /*startGame.setOnAction(e -> {
             // Retrieve the GameLobby using the button's ID (which is the lobbyId)
             GameLobby gameLobbyButton = gameLobbyMap.get(startGame.getId());
 
@@ -486,7 +514,7 @@ public class Lobby {
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
-        });
+        });*/
 
 
 
@@ -506,12 +534,13 @@ public class Lobby {
             background.getChildren().add(label);
             specificLobbyLayout.getChildren().add(background);
         }
-        specificLobbyLayout.getChildren().addAll(spacer, startGame);
+        specificLobbyLayout.getChildren().addAll(spacer);
         updateLabels(gameLobby.getLobbyId());
-        if(gameLobby.getGameSettings().getPlayerNames().size() == gameLobby.getGameSettings().getNumberOfPlayers()){
+        /*if(gameLobby.getGameSettings().getPlayerNames().size() == gameLobby.getGameSettings().getNumberOfPlayers()){
            startGame.setVisible(true);
-        }
-        return specificLobbyLayout;
+        }*/
+        rootLayout.setRight(specificLobbyLayout);
+
     }
 
     public void updateLabels(String lobbyId){

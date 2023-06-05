@@ -22,26 +22,7 @@ public class GameRepository {
 
 
 
-    public void createGame(String gameName, String creatorName, int numberOfplayers, String boardToPlay){
 
-
-        gameSettings = new GameSettings();
-
-        gameSettings.setGameName(gameName);
-        gameSettings.setCreatorName(creatorName);
-        gameSettings.setNumberOfPlayers(numberOfplayers);
-        gameSettings.setBoardToPlay(boardToPlay);
-        gameSettings.getPlayerNames().add(creatorName);
-
-        String lobbyID = UUID.randomUUID().toString();
-
-        /*GameLobby gameLobby = new GameLobby(lobbyID, gameSettings); // create a new game lobby
-        this.gameLobby = gameLobby;
-        lobbyManager.createGame(gameLobby);
-        addLobbyToLobby(gameLobby, lobbyID);*/
-
-
-    }
 
 
 

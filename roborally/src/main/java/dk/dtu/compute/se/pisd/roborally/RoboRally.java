@@ -52,7 +52,7 @@ public class RoboRally extends Application {
     private Stage stage;
     private BorderPane boardRoot;
 
-    private Lobby lobby;
+    private static Lobby lobby;
     // private RoboRallyMenuBar menuBar;
 
     // private AppController appController;
@@ -143,4 +143,9 @@ public class RoboRally extends Application {
     public static RoboRally getInstance() { // And add this method
         return instance;
     }
+
+    public static Lobby getLobby(){
+        return lobby;
+    }
+
 }

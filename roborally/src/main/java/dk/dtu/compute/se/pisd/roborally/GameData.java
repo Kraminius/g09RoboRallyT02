@@ -1,5 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,22 +10,21 @@ import java.util.Map;
 public class GameData {
 
 
+    private String id;
 
-    String currentGameMap;
-    int numPlayers;
+    private boolean[] readyList;
 
-    boolean[] readyList;
-
-    private ArrayList<String> players = new ArrayList<>();
+    private GameSettings gameSettings;
 
     private boolean allPlayersConnected;
+
+    private boolean isGameRunning = false;
 
 
 
     public GameData(int numPlayers){
 
-        this.numPlayers = numPlayers;
-
+        gameSettings = new GameSettings();
         readyList = new boolean[numPlayers];
 
         for (int i = 0; i < readyList.length; i++) {
@@ -32,13 +33,6 @@ public class GameData {
 
     }
 
-    public int getNumPlayers() {
-        return numPlayers;
-    }
-
-    public void setNumPlayers(int numPlayers) {
-        this.numPlayers = numPlayers;
-    }
 
     public boolean[] getReadyList() {
         return readyList;
@@ -49,13 +43,6 @@ public class GameData {
     }
 
 
-    public String getCurrentGameMap() {
-        return currentGameMap;
-    }
-
-    public void setCurrentGameMap(String currentGameMap) {
-        this.currentGameMap = currentGameMap;
-    }
 
     public boolean isAllPlayersConnected() {
         return allPlayersConnected;
@@ -65,11 +52,28 @@ public class GameData {
         this.allPlayersConnected = allPlayersConnected;
     }
 
-    public ArrayList<String> getPlayers() {
-        return players;
+
+    public GameSettings getGameSettings() {
+        return gameSettings;
     }
 
-    public void setPlayers(ArrayList<String> players) {
-        this.players = players;
+    public void setGameSettings(GameSettings gameSettings) {
+        this.gameSettings = gameSettings;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean isGameRunning() {
+        return isGameRunning;
+    }
+
+    public void setGameRunning(boolean gameRunning) {
+        isGameRunning = gameRunning;
     }
 }

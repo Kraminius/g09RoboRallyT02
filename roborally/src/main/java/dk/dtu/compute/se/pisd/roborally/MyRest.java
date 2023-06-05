@@ -33,11 +33,11 @@ public class MyRest {
         int playerNum = (int) payload.get("playerNum");
         String name = (String) payload.get("name");
 
-        gameDataRep.gameData.readyList[playerNum] = true;
-        gameDataRep.gameData.getPlayers().add(name);
+        gameDataRep.gameData.getReadyList()[playerNum] = true;
+        gameDataRep.gameData.getGameSettings().getPlayerNames().add(name);
 
-        System.out.println("mine spillere" + gameDataRep.gameData.getPlayers());
-        System.out.println(gameDataRep.gameData.readyList[playerNum]);
+        System.out.println("mine spillere" + gameDataRep.gameData.getGameSettings().getPlayerNames());
+        System.out.println(gameDataRep.gameData.getReadyList()[playerNum]);
         return ResponseEntity.ok().body("we connected");
     }
 
@@ -52,7 +52,7 @@ public class MyRest {
     public ResponseEntity<Integer> instaGameData(@RequestParam("numberOfPlayers") String playerNumStr) {
         int numberOfPlayers = Integer.parseInt(playerNumStr);
         gameDataRep.instantiateGameData(numberOfPlayers);
-        System.out.println("Size: " + gameDataRep.gameData.readyList.length + "& " + gameDataRep.gameData.numPlayers);
+        System.out.println("Size: " + gameDataRep.gameData.getReadyList().length + "& " + gameDataRep.gameData.getGameSettings().getNumberOfPlayers());
         return ResponseEntity.ok().body(5);
     }
 
@@ -66,7 +66,7 @@ public class MyRest {
 
     @PostMapping (value = "/addMapName")
     public ResponseEntity<Integer> instaGameName(@RequestParam("mapName") String map) {
-        gameDataRep.gameData.setCurrentGameMap(map);
+        gameDataRep.gameData.getGameSettings().setGameName(map);
         //System.out.println("Name: " + gameDataRep.gameData.getCurrentGameMap());
         return ResponseEntity.ok().body(5);
     }
@@ -74,23 +74,16 @@ public class MyRest {
     @GetMapping(value = "/getMapName")
     public ResponseEntity<String> getMapName() {
 
-        String temp = gameDataRep.gameData.getCurrentGameMap();
+        String temp = gameDataRep.gameData.getGameSettings().getGameName();
         return ResponseEntity.ok().body(temp);
     }
 
     @PostMapping(value = "/addGame")
     public ResponseEntity<String> addGame(@RequestBody String[] settings){
 
-        gameRepository.createGame(settings[0],settings[1], Integer.parseInt(settings[2]), settings[3]);
+        gameDataRep.createGame(settings[0],settings[1], Integer.parseInt(settings[2]), settings[3]);
 
-        String lobbyID = UUID.randomUUID().toString();
-
-        gameInfo.instaGameInfo(lobbyID, gameRepository.getGameSettings());
-
-        System.out.println(gameInfo.toString());
-
-
-        System.out.println(gameRepository.getGameSettings().toString());
+        //System.out.println(gameRepository.getGameSettings().toString());
 
         return ResponseEntity.ok("hej");
     }
@@ -98,7 +91,8 @@ public class MyRest {
 
     @GetMapping(value = "/getGameLobby", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GameLobby> getGameLobby(){
-        GameLobby gameLobby = gameInfo.convertGameInfoToGameLobby(gameInfo);
+        GameLobby gameLobby = gameDataRep.convertGameInfoToGameLobby();
+        System.out.println("kig her: " + gameLobby);
         return ResponseEntity.ok(gameLobby);
     }
 
@@ -113,7 +107,7 @@ public class MyRest {
     @GetMapping(value = "/getAllPlayers")
     public ResponseEntity<ArrayList<String>> getPlayerNames(){
 
-        return ResponseEntity.ok(gameDataRep.gameData.getPlayers());
+        return ResponseEntity.ok(gameDataRep.gameData.getGameSettings().getPlayerNames());
 
 
     }
@@ -125,7 +119,7 @@ public class MyRest {
     public ResponseEntity<Boolean> isGameRunning(){
 
 
-        return ResponseEntity.ok().body(gameInfo.isGameRunning());
+        return ResponseEntity.ok().body(gameDataRep.gameData.isGameRunning());
 
     }
 
