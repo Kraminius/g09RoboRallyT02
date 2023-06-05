@@ -10,38 +10,43 @@ public class ChatClient {
     private BufferedWriter writer;
     private String userName;
 
-    public ChatClient(String serverIP, int serverPort, String userName){
-        try {
-            this.userName = userName;
-            this.socket = new Socket();
-            this.socket.connect(new InetSocketAddress(serverIP, serverPort));
-            this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        } catch (IOException e){
-            closeEverything(socket, reader, writer);
-        }
+    public ChatClient(){
+    }
 
+    public void connectToServer(String serverIP, int serverPort) throws IOException {
+        this.socket = new Socket(serverIP, serverPort);
+        this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    }
+
+    public void sendUserName(String username) throws IOException {
+        writer.write(username);
+        writer.newLine();
+        writer.flush();
     }
 
     public void sendMessage(String message){
+        System.out.println("Send message from client: " + userName);
         try {
-            writer.write(userName);
+            writer.write(this.userName + ": " + message);
             writer.newLine();
             writer.flush();
-
-            while (socket.isConnected()){
-                writer.write(userName + message);
-                writer.newLine();
-                writer.flush();
-            }
         } catch (IOException e){
+            e.printStackTrace();
             closeEverything(socket, reader, writer);
         }
     }
 
     public String receiveMessage() throws IOException {
+        try {
             String messageFromChat = reader.readLine();
+            System.out.println("Client that receives message: " + userName);
             return messageFromChat;
+        } catch (IOException e){
+            e.printStackTrace();
+            closeEverything(socket, reader, writer);
+            throw e;
+        }
     }
 
     public String getClientIP(){

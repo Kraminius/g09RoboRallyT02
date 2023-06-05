@@ -61,9 +61,9 @@ public class RoboRally extends Application {
     @Override
     public void start(Stage primaryStage) {
         ChatController chatController = new ChatController();
-        chatController.startServer(4999);
-        chatController.addClient(chatController.getServerIP(), chatController.getServerPort(), "hans");
-        chatController.addClient(chatController.getServerIP(), chatController.getServerPort(), "geo");
+        chatController.startChat(4999);
+        chatController.addClient(chatController.getServerIP(), chatController.getServerPort());
+        chatController.addClient(chatController.getServerIP(), chatController.getServerPort());
         stage = primaryStage;
 
         AppController appController = new AppController(this);

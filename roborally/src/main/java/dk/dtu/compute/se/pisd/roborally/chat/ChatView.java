@@ -1,16 +1,17 @@
 package dk.dtu.compute.se.pisd.roborally.chat;
-
-import javafx.event.Event;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.event.EventHandler;
-import javafx.stage.WindowEvent;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.util.Optional;
 
 public class ChatView{
     private Stage stage;
@@ -19,7 +20,7 @@ public class ChatView{
     private Button sendButton;
 
     private ChatClient client;
-    private OnSendMessageListener listener;
+    private OnSendMessageListener messageListener;
 
     public ChatView(ChatClient client){
         this.client = client;
@@ -32,9 +33,10 @@ public class ChatView{
 
         sendButton = new Button("Send");
         sendButton.setOnAction(event -> {
-            if(listener != null){
+            if(messageListener != null){
                 String message = messageField.getText();
-                listener.onSendMessage(message);
+                System.out.println(this.client.getUserName());
+                messageListener.onSendMessage(this.client, message);
                 messageField.clear();
             }
         });
@@ -52,19 +54,37 @@ public class ChatView{
         chatBox.appendText(message + "\n");
     }
 
+    public String promptForUsername() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Username");
+        dialog.setHeaderText("Enter your username:");
+        dialog.setContentText("Username:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            // Handle case when the dialog is closed without entering a username
+            return "";
+        }
+    }
+
     public void show(){
         stage.show();
     }
 
+    public ChatClient getClient(){
+        return this.client;
+    }
+
+    public void personalizeChatWindow(String name){
+        stage.setTitle(name);
+    }
     public void setOnSendMessageListener(OnSendMessageListener listener) {
-        this.listener = listener;
+        this.messageListener = listener;
     }
 
     public interface OnSendMessageListener {
-        void onSendMessage(String message);
-    }
-
-    public ChatClient getChatClient(){
-        return client;
+        void onSendMessage(ChatClient senderClient, String message);
     }
 }
