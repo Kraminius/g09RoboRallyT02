@@ -214,6 +214,16 @@ public class AppController implements Observer {
         }
     }
 
+    //Instantiate a gameState
+    public void instantiateGame(){
+        GameSave gameSave = new GameSave();
+        try {
+            MyClient.instantiateGame(gameSave.jsonGame(gameController));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     //Updating game
     public void updateGame(){
 

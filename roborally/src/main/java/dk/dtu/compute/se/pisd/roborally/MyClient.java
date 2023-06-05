@@ -154,5 +154,18 @@ public class MyClient {
         return result.equals("acknowledged");
     }
 
+    //Instantiating a game
+    public static boolean instantiateGame(JSONObject json) throws Exception {
+        String jsonString = json.toString(); // Convert JSONObject to string
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(jsonString))
+                .uri(URI.create("http://localhost:8080/instaGameState"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result.equals("instantiated");
+    }
+
 
 }

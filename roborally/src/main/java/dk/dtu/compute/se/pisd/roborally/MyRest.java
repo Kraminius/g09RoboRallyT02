@@ -36,6 +36,16 @@ public class MyRest {
         return ResponseEntity.ok().body(5);
     }
 
+    //instantiating a gamestate to run from
+    @PostMapping (value = "/instaGameState")
+    public ResponseEntity<String> instaGameData(@RequestBody JSONObject newGame) {
+        //int numberOfPlayers = Integer.parseInt(playerNumStr);
+        gameDataRep.instantiateGameState(newGame);
+        //gameDataRep.instantiateGameData(numberOfPlayers);
+        System.out.println("Instantiated a gameState");
+        return ResponseEntity.ok().body("instantiated");
+    }
+
 
     @GetMapping(value = "/getPlayerNumber")
     public ResponseEntity<Integer> allConnected() {

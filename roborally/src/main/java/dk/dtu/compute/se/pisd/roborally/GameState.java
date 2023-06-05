@@ -6,6 +6,8 @@ import dk.dtu.compute.se.pisd.roborally.model.Phase;
 
 public class GameState {
 
+
+
         //Current State
         private int playerAmount;
         private int step;
@@ -34,6 +36,36 @@ public class GameState {
         Command[][] playerDiscardPile;
         Command[][] playerUpgradeCards;
         Command[][] playersPulledCards;
+
+        public GameState(int playerAmount, int step, Phase phase, String currentPlayer, String board, boolean isStepmode,
+                         Command[] upgradeDiscardDeck, Command[] upgradeOutDeck, Command[] upgradeCardsDeck,
+                         String[] playerNames, String[] playerColors, int[] playerEnergyCubes, int[] playerCheckPoints,
+                         int[] playersXPosition, int[] playersYPosition, int[] mapCubePositions, Heading[] playerHeadings,
+                         Command[][] playerProgrammingDeck, Command[][] playerCurrentProgram, Command[][] playerDiscardPile,
+                         Command[][] playerUpgradeCards, Command[][] playersPulledCards){
+            this.playerAmount = playerAmount;
+            this.step = step;
+            this.phase = phase;
+            this.currentPlayer = currentPlayer;
+            this.board = board;
+            this.isStepmode = isStepmode;
+            this.upgradeDiscardDeck = upgradeDiscardDeck;
+            this.upgradeOutDeck = upgradeOutDeck;
+            this.upgradeCardsDeck = upgradeCardsDeck;
+            this.playerNames = playerNames;
+            this.playerColors = playerColors;
+            this.playerEnergyCubes = playerEnergyCubes;
+            this.playerCheckPoints = playerCheckPoints;
+            this.playersXPosition = playersXPosition;
+            this.playersYPosition = playersYPosition;
+            this.mapCubePositions = mapCubePositions;
+            this.playerHeadings = playerHeadings;
+            this.playerProgrammingDeck = playerProgrammingDeck;
+            this.playerCurrentProgram = playerCurrentProgram;
+            this.playerDiscardPile = playerDiscardPile;
+            this.playerUpgradeCards = playerUpgradeCards;
+            this.playersPulledCards = playersPulledCards;
+        }
 
         public int getPlayerAmount() {
             return playerAmount;

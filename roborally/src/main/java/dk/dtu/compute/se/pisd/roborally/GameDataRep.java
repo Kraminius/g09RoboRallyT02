@@ -1,6 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally;
 
 
+import com.google.gson.Gson;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Converter;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
@@ -29,6 +30,12 @@ public class GameDataRep {
     public void instantiateGameData(int numPlayer){
         this.gameData = new GameData(numPlayer);
     }
+
+    public void instantiateGameState(JSONObject jsonObject){
+        GameState instantiatetedGameState = makeGameState(jsonObject);
+        this.gameState = instantiatetedGameState;
+    }
+
 
 
 
@@ -65,10 +72,10 @@ public class GameDataRep {
 
     //Changing the game we save in gameState
     public void setCurrentGame(JSONObject game){
-        gameState = makeGameState(game);
+        setGameState(gameState, game);
     }
 
-    //Making JSON into a GameState
+    //placing JSON into our GameState
     /**
      * @param obj - A JSONObject that has info from a a json file of a new game.
      * @Author Tobias Gørlyk - s224271@dtu.dk
@@ -76,8 +83,8 @@ public class GameDataRep {
      * so all data can be pulled from this file already being converted to the right format.
      * The method uses the Converter.java class to convert after receiving the data from the obj file.
      */
-    private static GameState makeGameState(JSONObject obj){
-        GameState gameState = new GameState();
+    private static void setGameState(GameState gameState, JSONObject obj){
+        //GameState gameState = new GameState();
         gameState.setBoard((String)obj.get("board"));
         gameState.setStep(parseInt(String.valueOf(obj.get("step"))));
         gameState.setCurrentPlayer((String)obj.get("currentPlayer"));
@@ -120,7 +127,74 @@ public class GameDataRep {
         gameState.setUpgradeCardsDeck(Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeCardsDeck"))));
         gameState.setUpgradeOutDeck(Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeOutDeck"))));
         gameState.setUpgradeDiscardDeck(Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeDiscardDeck"))));
+        //return gameState;
+    }
+
+    //Making JSON into our GameState
+    /**
+     * @param obj - A JSONObject that has info from a a json file of a new game.
+     * @Author Tobias Gørlyk - s224271@dtu.dk
+     * Creates a GameState.java object that can hold all the data from a new load,
+     * so all data can be pulled from this file already being converted to the right format.
+     * The method uses the Converter.java class to convert after receiving the data from the obj file.
+     */
+    private static GameState makeGameState(JSONObject obj){
+
+        String board = ((String)obj.get("board"));
+        int step = (parseInt(String.valueOf(obj.get("step"))));
+        String currentPlayer = ((String)obj.get("currentPlayer"));
+        boolean isStepmode = (Converter.getBool((String)obj.get("isStepMode")));
+        Phase phase = (Converter.getPhase ((String) obj.get("phase")));
+        int playerAmount = (parseInt(String.valueOf(obj.get("playerAmount"))));
+        //This is trequy stuff
+        int amount = playerAmount;
+        String[] playerNames = (new String[amount]);
+        String[] playerColors = (new String[amount]);
+        int[] playersXPosition = (new int[amount]);
+        int[] playersYPosition = (new int[amount]);
+        int[] playerEnergyCubes = (new int[amount]);
+        int[] playerCheckPoints = (new int[amount]);
+        Heading[] playerHeadings = (new Heading[amount]);
+        Command[][] CplayerProgrammingDeck = (new Command[amount][]);
+        Command[][] CplayerCurrentProgram = (new Command[amount][]);
+        Command[][] CplayerDiscardPile = (new Command[amount][]);
+        Command[][] CplayerUpgradeCards = (new Command[amount][]);
+        Command[][] CplayersPulledCards = (new Command[amount][]);
+
+        Gson gson = new Gson();
+
+        String[][] playersProgrammingDeck = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersProgrammingDeck")), "#");
+        String[][] playersProgram  = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersProgram")), "#");
+        String[][] playerUpgradeCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playerUpgradeCards")), "#");
+        String[][] playersDiscardCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersDiscardCards")), "#");
+        String[][] playersPulledCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersPulledCards")), "#");
+        for(int i = 0; i < amount; i++){
+            playerNames[i] = Converter.jsonArrToString((JSONArray)obj.get("playersName"))[i];
+            playerColors[i] = Converter.jsonArrToString((JSONArray)obj.get("playerColor"))[i];
+            playersXPosition[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersX"))[i];
+            playersYPosition[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersY"))[i];
+            playerEnergyCubes[i] = Converter.jsonArrToInt((JSONArray)obj.get("playerCubes"))[i];
+            playerHeadings[i] = Converter.getHeading (Converter.jsonArrToString((JSONArray)obj.get("playersHeading"))[i]);
+            playerCheckPoints[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersCheckpoints"))[i];
+            CplayerProgrammingDeck[i] = Converter.getCommands(playersProgrammingDeck[i]);
+            CplayerCurrentProgram[i] = Converter.getCommands(playersProgram[i]);
+            CplayerUpgradeCards[i] = Converter.getCommands(playerUpgradeCards[i]);
+            CplayerDiscardPile[i] = Converter.getCommands(playersDiscardCards[i]);
+            CplayersPulledCards[i] = Converter.getCommands(playersPulledCards[i]);
+        }
+        int[] mapCubePositions = (Converter.jsonArrToInt((JSONArray)obj.get("mapCubes")));
+        Command[] upgradeCardsDeck = (Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeCardsDeck"))));
+        Command[] upgradeOutDeck = (Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeOutDeck"))));
+        Command[] upgradeDiscardDeck = (Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeDiscardDeck"))));
+
+        GameState gameState = new GameState( playerAmount, step, phase, currentPlayer, board, isStepmode,
+                upgradeDiscardDeck, upgradeOutDeck, upgradeCardsDeck,
+                playerNames, playerColors, playerEnergyCubes, playerCheckPoints,
+        playersXPosition, playersYPosition, mapCubePositions, playerHeadings,
+                CplayerProgrammingDeck, CplayerCurrentProgram, CplayerDiscardPile,
+                CplayerUpgradeCards, CplayersPulledCards);
         return gameState;
+
     }
 
     //Retrieving the game we have in gameState
