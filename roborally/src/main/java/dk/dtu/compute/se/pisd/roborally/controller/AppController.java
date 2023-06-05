@@ -24,9 +24,13 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Observer;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
+import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LoadInstance;
+import dk.dtu.compute.se.pisd.roborally.UpdateInstance;
 import dk.dtu.compute.se.pisd.roborally.view.BoardLoadWindow;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameSave;
 import dk.dtu.compute.se.pisd.roborally.model.*;
@@ -199,5 +203,45 @@ public class AppController implements Observer {
     public void update(Subject subject) {
         // XXX do nothing for now
     }
+
+    //Sending game
+    public void sendGame(){
+        GameSave gameSave = new GameSave();
+        try {
+            MyClient.sendGame(gameSave.jsonGame(gameController));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Updating game
+    public void updateGame(){
+
+        try {
+            LoadInstance.load(this, MyClient.update());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        /*
+        try {
+            MyClient.update();
+          gameController =  UpdateInstance.load(gameController, MyClient.update());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+         */
+    }
+
+    /*
+    public void updateGame(){
+        try {
+            LoadInstance.load(this, MyClient.update());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+     */
 
 }

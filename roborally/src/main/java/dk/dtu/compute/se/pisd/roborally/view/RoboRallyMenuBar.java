@@ -48,6 +48,10 @@ public class RoboRallyMenuBar extends MenuBar {
 
     private MenuItem exitApp;
 
+    private MenuItem updateGame;
+
+    private MenuItem sendGame;
+
     public RoboRallyMenuBar(AppController appController) {
         this.appController = appController;
 
@@ -73,6 +77,14 @@ public class RoboRallyMenuBar extends MenuBar {
         exitApp = new MenuItem("Exit");
         exitApp.setOnAction( e -> this.appController.exit());
         controlMenu.getItems().add(exitApp);
+
+        updateGame = new MenuItem("Update");
+        updateGame.setOnAction( e -> this.appController.updateGame());
+        controlMenu.getItems().add(updateGame);
+
+        sendGame = new MenuItem("Update");
+        sendGame.setOnAction( e -> this.appController.sendGame());
+        controlMenu.getItems().add(sendGame);
 
         controlMenu.setOnShowing(e -> update());
         controlMenu.setOnShown(e -> this.updateBounds());

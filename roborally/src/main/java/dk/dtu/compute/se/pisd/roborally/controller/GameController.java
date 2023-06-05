@@ -22,6 +22,10 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
+import dk.dtu.compute.se.pisd.roborally.MyClient;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LoadInstance;
+import dk.dtu.compute.se.pisd.roborally.UpdateInstance;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
@@ -1488,6 +1492,19 @@ public class GameController {
         CommandCard sandboxCard = new CommandCard(Command.SANDBOX);
         discardCard(player, sandboxCard);
     }
+
+
+    //update
+    /*
+    public void updateGame(){
+        try {
+             = UpdateInstance.load(this, MyClient.update());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+     */
 
 
 //endregion

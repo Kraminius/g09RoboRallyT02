@@ -62,6 +62,9 @@ public class PlayerView extends Tab implements ViewObserver {
     private VBox buttonPanel;
     private VBox bottomBar;
 
+    //A button for updating the game
+    //private Button updateButton;
+
     private Button finishButton;
     private Button executeButton;
     private Button stepButton;
@@ -126,6 +129,10 @@ public class PlayerView extends Tab implements ViewObserver {
 
         openShopButton = new Button("Open Upgrade Shop");
         openShopButton.setOnAction( e-> gameController.openUpgradeShop());
+
+        //Update the game with REST
+        //updateButton = new Button("Update");
+        //updateButton.setOnAction(e-> gameController.updateGame());
 
 
 
@@ -293,6 +300,8 @@ public class PlayerView extends Tab implements ViewObserver {
                         executeButton.setDisable(false);
                         stepButton.setDisable(true);
                         openShopButton.setDisable(true);
+                        //Cant update when initiating
+                        //updateButton.setDisable(true);
                         break;
 
                     case PROGRAMMING:
@@ -319,6 +328,8 @@ public class PlayerView extends Tab implements ViewObserver {
                         executeButton.setDisable(true);
                         stepButton.setDisable(true);
                         openShopButton.setDisable(true);
+                        //update
+                        //updateButton.setDisable(true);
 
                 }
             } else {
