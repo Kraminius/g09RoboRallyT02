@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MyClient {
 
+    private static PlayerInfo playerInfo;
+
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .connectTimeout(Duration.ofSeconds(10))
@@ -21,6 +23,9 @@ public class MyClient {
 
     public static boolean weConnect(int playerNum, String name) throws Exception {
         // Create a JSON object
+
+         playerInfo = new PlayerInfo(name, playerNum);
+
         JSONObject json = new JSONObject();
         json.put("playerNum", playerNum);
         json.put("name", name);
@@ -49,18 +54,4 @@ public class MyClient {
         return result;
 
     }
-
-
-
-
-    private boolean connected;
-
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-
-
-
 }

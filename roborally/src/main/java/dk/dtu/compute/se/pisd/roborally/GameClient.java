@@ -29,18 +29,16 @@ public class GameClient {
     private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     private static final int POLLING_INTERVAL_SECONDS = 5;
 
+    //Tasks for polling. Can be closed
     private static ScheduledFuture<?> playerNamesPollingTask;
 
+
+    //Polling for how many players that have connected to the lobby
     public static void startPlayerNamesPolling() {
 
         playerNamesPollingTask = executorService.scheduleAtFixedRate(GameClient::pollPlayerNames, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
-    public static void startCheckAllConnected(){
-
-        executorService.scheduleWithFixedDelay(GameClient::pollPlayerNames, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
-
-    }
 
     private static boolean pollAllConnected() throws Exception {
         Boolean allConnected = false;
