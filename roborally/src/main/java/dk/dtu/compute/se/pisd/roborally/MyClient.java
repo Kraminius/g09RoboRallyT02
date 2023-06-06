@@ -109,5 +109,24 @@ public class MyClient {
         return result.equals("instantiated");
     }
 
+    /**
+     * @author Nicklas Christensen      s224314.dtu.dk
+     * @param commands the programCards of the player we are sending
+     * @param player the player number of the player who's cards we are sending
+     * @return wether we succeded at sending our cards or not
+     */
+    public static boolean sendProgramCards(Command[] commands, int player) throws Exception {
+        String productJSON = new Gson().toJson(commands);
+        HttpRequest request = HttpRequest.newBuilder()
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(productJSON))
+                .uri(URI.create("http://localhost:8080/updateProgramCards/" + player))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result.equals("acknowledged");
+    }
+
 
 }

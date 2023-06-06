@@ -183,5 +183,15 @@ public class GameDataRep {
         return makeGameState(gameState);
     }
 
+    /**
+     * @author Nicklas Christensen      s224314.dtu.dk
+     * @param commands an array of the programmingCards are player is sending.
+     * @param player the player who's programmingCards we are changing.
+     */
+    public boolean newProgramCards(Command[] commands, int player){
+        gameState.setPlayerProgramCards(commands, player);
+        return true;
+    }
+
 
 }

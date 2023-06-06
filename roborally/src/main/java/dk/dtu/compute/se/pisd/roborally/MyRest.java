@@ -3,6 +3,7 @@ package dk.dtu.compute.se.pisd.roborally;
 import com.google.gson.Gson;
 import com.mysql.cj.xdevapi.JsonString;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
+import dk.dtu.compute.se.pisd.roborally.model.Command;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -91,7 +92,21 @@ public class MyRest {
         return ResponseEntity.ok().body(game);
     }
 
+/**
+ * @author Nicklas Christensen     s224314.dtu.dk
+ * @param commands the cards which we are updating in the gameState
+ * @param player the player who's cards we are updating
+ * @return wether we succeded or not at recieving the game
+ */
+    @PostMapping (value = "/updateProgramCards/{player}")
+    public ResponseEntity<String> updateProgramCards(@PathVariable int player, @RequestBody Command[] commands) {
 
+        System.out.println("Have recieved Post of programCards from player: " + player);
+        gameDataRep.newProgramCards(commands, player);
+        //gameDataRep.instantiateGameData(numberOfPlayers);
+        System.out.println("cards have been updated");
+        return ResponseEntity.ok().body("acknowledged");
+    }
 
 
 

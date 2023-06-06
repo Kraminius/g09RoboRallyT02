@@ -255,5 +255,8 @@ public class GameState {
             this.mapCubePositions = mapCubePositions;
         }
 
+        public void setPlayerProgramCards(Command[] commands, int player){
+            this.playerProgrammingDeck[player] = commands;
+        }
 
 }
