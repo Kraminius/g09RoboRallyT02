@@ -161,7 +161,7 @@ public class GameDataRep {
         Command[][] CplayerUpgradeCards = (new Command[amount][]);
         Command[][] CplayersPulledCards = (new Command[amount][]);
 
-        Gson gson = new Gson();
+        //Gson gson = new Gson();
 
         String[][] playersProgrammingDeck = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersProgrammingDeck")), "#");
         String[][] playersProgram  = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersProgram")), "#");

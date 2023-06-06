@@ -1,9 +1,15 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import com.google.gson.Gson;
+import com.mysql.cj.xdevapi.JsonString;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
+import java.util.Collection;
 
 @RestController
 public class MyRest {
@@ -38,13 +44,32 @@ public class MyRest {
 
     //instantiating a gamestate to run from
     @PostMapping (value = "/instaGameState")
-    public ResponseEntity<String> instaGameData(@RequestBody JSONObject newGame) {
+    public ResponseEntity<String> instaGameData(@RequestBody JSONObject game) {
+
+        //JSONObject newGame = new JSONObject(game);
         //int numberOfPlayers = Integer.parseInt(playerNumStr);
-        gameDataRep.instantiateGameState(newGame);
+        System.out.println("insta request recieved");
+        gameDataRep.instantiateGameState(game);
         //gameDataRep.instantiateGameData(numberOfPlayers);
         System.out.println("Instantiated a gameState");
         return ResponseEntity.ok().body("instantiated");
     }
+
+
+
+    /*
+    @RequestMapping(value = "/instaGameState", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping(value = "/instaGameState", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<String> handleOctetStream(@RequestBody JSONObject payload) {
+        //JSONObject newGame = new JSONObject(game);
+        //int numberOfPlayers = Integer.parseInt(playerNumStr);
+        System.out.println("insta request recieved");
+        gameDataRep.instantiateGameState(payload);
+        //gameDataRep.instantiateGameData(numberOfPlayers);
+        System.out.println("Instantiated a gameState");
+        return ResponseEntity.ok().body("instantiated");
+    }
+         */
 
 
     @GetMapping(value = "/getPlayerNumber")
@@ -68,7 +93,7 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
-    @PostMapping(value = "/PostGame")
+    @PostMapping(value = "/sendingGame")
     public ResponseEntity<String> postGame(@RequestBody JSONObject newGame){
         gameDataRep.setCurrentGame(newGame);
         return ResponseEntity.ok().body("acknowledged");
@@ -79,6 +104,7 @@ public class MyRest {
         JSONObject game = gameDataRep.getGame();
         return ResponseEntity.ok().body(game);
     }
+
 
 
 

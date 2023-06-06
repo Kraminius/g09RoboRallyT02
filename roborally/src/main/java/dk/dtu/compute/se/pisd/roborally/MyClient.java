@@ -146,7 +146,7 @@ public class MyClient {
         String jsonString = json.toString(); // Convert JSONObject to string
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(jsonString))
-                .uri(URI.create("http://localhost:8080/PostGame"))
+                .uri(URI.create("http://localhost:8080/sendingGame"))
                 .build();
         CompletableFuture<HttpResponse<String>> response =
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
@@ -154,11 +154,18 @@ public class MyClient {
         return result.equals("acknowledged");
     }
 
+
     //Instantiating a game
     public static boolean instantiateGame(JSONObject json) throws Exception {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(String.valueOf(json)))
+
+        /*
         String jsonString = json.toString(); // Convert JSONObject to string
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(jsonString))
+         */
                 .uri(URI.create("http://localhost:8080/instaGameState"))
                 .build();
         CompletableFuture<HttpResponse<String>> response =
