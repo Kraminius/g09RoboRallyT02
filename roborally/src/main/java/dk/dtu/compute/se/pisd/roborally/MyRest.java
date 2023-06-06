@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.mysql.cj.xdevapi.JsonString;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.Command;
+import dk.dtu.compute.se.pisd.roborally.model.Phase;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -106,6 +107,14 @@ public class MyRest {
         //gameDataRep.instantiateGameData(numberOfPlayers);
         System.out.println("cards have been updated");
         return ResponseEntity.ok().body("acknowledged");
+    }
+
+    @GetMapping(value = "/phase")
+    public ResponseEntity<Phase> getPhase(){
+        System.out.println("We have been asked what phase it is");
+        Phase phase = gameDataRep.getPhase();
+        System.out.println("Phase found its :" + phase);
+        return ResponseEntity.ok().body(phase);
     }
 
 

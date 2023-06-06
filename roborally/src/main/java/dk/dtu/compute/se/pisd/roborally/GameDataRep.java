@@ -23,8 +23,18 @@ public class GameDataRep {
     GameData gameData;
     GameState gameState;
 
+    Board savedBoard;
+
     public GameDataRep(){
 
+    }
+
+    public void instantiateGameBoard(Board board){
+        this.savedBoard = board;
+    }
+
+    public Board getGameBoard(){
+        return savedBoard;
     }
 
     public void instantiateGameData(int numPlayer){
@@ -192,6 +202,15 @@ public class GameDataRep {
         gameState.setPlayerProgramCards(commands, player);
         return true;
     }
+
+    /**
+     * @author Nicklas Christensen      s224314.dtu.dk
+     * @return the phase saved on the server
+     */
+    public Phase getPhase(){
+        return gameState.getPhase();
+    }
+
 
 
 }

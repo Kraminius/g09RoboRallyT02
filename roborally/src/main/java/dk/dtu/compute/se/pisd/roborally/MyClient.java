@@ -6,6 +6,7 @@ import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Converter;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.Command;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
+import dk.dtu.compute.se.pisd.roborally.model.Phase;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -126,6 +127,30 @@ public class MyClient {
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
         return result.equals("acknowledged");
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * A method used to call the server for the current gameState
+     * @return a Load that can be loaded into the game to
+     */
+    public static Phase getPhase() {
+        try{
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(URI.create("http://localhost:8080/phase"))
+                    .setHeader("User-Agent", "Product Client")
+                    .header("Content-Type", "application/json")
+                    .build();
+            CompletableFuture<HttpResponse<String>> response =
+                    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            String result = response.thenApply((r)->r.body()).get(5, TimeUnit.SECONDS);
+            Gson gson = new Gson();
+            Phase phase = gson.fromJson(result, Phase.class);
+            return phase;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 

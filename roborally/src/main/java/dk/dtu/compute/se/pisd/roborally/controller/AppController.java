@@ -30,7 +30,6 @@ import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LoadInstance;
-import dk.dtu.compute.se.pisd.roborally.UpdateInstance;
 import dk.dtu.compute.se.pisd.roborally.view.BoardLoadWindow;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameSave;
 import dk.dtu.compute.se.pisd.roborally.model.*;
@@ -40,7 +39,6 @@ import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.StartPositionWindow;
 import javafx.application.Platform;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

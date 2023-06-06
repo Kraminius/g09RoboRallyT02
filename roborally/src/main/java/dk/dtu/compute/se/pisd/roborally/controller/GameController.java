@@ -22,10 +22,6 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
-import dk.dtu.compute.se.pisd.roborally.MyClient;
-import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
-import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LoadInstance;
-import dk.dtu.compute.se.pisd.roborally.UpdateInstance;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
@@ -35,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import java.util.*;
