@@ -551,18 +551,7 @@ public class Lobby {
 
 
         startGame.setOnAction(e -> {
-            // Retrieve the GameLobby using the button's ID (which is the lobbyId)
-            //GameLobby gameLobbyButton = gameLobbyMap.get(startGame.getId());
 
-            // Retrieve the GameSettings from the GameLobby
-            //GameSettings gameSettings = gameLobbyButton.getGameSettings();
-
-            // Call the startGame method with these GameSettings
-            /*try {
-                RoboRally.getInstance().startGame(gameSettings, stage);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }*/
             try {
                 GameClient.pressJoinButton();
             } catch (Exception ex) {
@@ -570,9 +559,62 @@ public class Lobby {
             }
             System.out.println("We are beginning the game");
 
+
+
+            // Retrieve the GameLobby using the button's ID (which is the lobbyId)
+            //GameLobby gameLobbyButton = gameLobbyMap.get(startGame.getId());
+
+            GameLobby theGame;
+
+            try {
+                theGame = GameClient.getGame();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+
+            System.out.println(theGame.toString());
+
+            // Retrieve the GameSettings from the GameLobby
+            GameSettings gameSettings = theGame.getGameSettings();
+
+            // Call the startGame method with these GameSettings
+            try {
+                RoboRally.getInstance().startGame(gameSettings, stage);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+
         });
 
         rootLayout.setLeft(startGame);
+
+    }
+
+    public void startingGame(){
+
+
+        // Retrieve the GameLobby using the button's ID (which is the lobbyId)
+        //GameLobby gameLobbyButton = gameLobbyMap.get(startGame.getId());
+
+        GameLobby theGame;
+
+        try {
+            theGame = GameClient.getGame();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
+        System.out.println(theGame.toString());
+
+        // Retrieve the GameSettings from the GameLobby
+        GameSettings gameSettings = theGame.getGameSettings();
+
+        // Call the startGame method with these GameSettings
+        try {
+            RoboRally.getInstance().startGame(gameSettings, stage);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
 
     }
 

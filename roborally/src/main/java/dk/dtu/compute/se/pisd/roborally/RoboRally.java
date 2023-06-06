@@ -57,6 +57,8 @@ public class RoboRally extends Application {
 
     // private AppController appController;
 
+    private static AppController appController;
+
     @Override
     public void init() throws Exception {
         super.init();
@@ -88,7 +90,7 @@ public class RoboRally extends Application {
 
     public void startGame(GameSettings gameSettings, Stage primaryStage) throws Exception {
         stage = primaryStage;
-        AppController appController = new AppController(this, gameSettings);
+        appController = new AppController(this, gameSettings);
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
         // when the user creates a new game or loads a game
@@ -147,5 +149,7 @@ public class RoboRally extends Application {
     public static Lobby getLobby(){
         return lobby;
     }
+
+    public static AppController getAppController(){return appController;}
 
 }

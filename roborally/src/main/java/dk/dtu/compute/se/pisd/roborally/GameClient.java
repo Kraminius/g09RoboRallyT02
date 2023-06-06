@@ -2,10 +2,13 @@ package dk.dtu.compute.se.pisd.roborally;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -36,6 +39,91 @@ public class GameClient {
     //Tasks for polling. Can be closed
     private static ScheduledFuture<?> playerNamesPollingTask;
     private static ScheduledFuture<?> waitingForJoinButtonPress;
+
+    private static ScheduledFuture<?> pickStartPosition;
+
+    //Waiting for start position
+    public static void startWaitingForStartPosition(){
+        pickStartPosition = executorService.scheduleAtFixedRate(GameClient::startPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);;
+    }
+
+    public static void startPosition(){
+        int player;
+        try {
+             player = getCurrentPlayer();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if(playerInfo.getPlayerId() == player){
+            System.out.println("Yeah its my turn" + playerInfo.getPlayerId());
+            javafx.application.Platform.runLater(() -> {
+                ArrayList<Integer> liste;
+                try {
+                     liste = getStartPosition();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                } catch (TimeoutException e) {
+                    throw new RuntimeException(e);
+                }
+
+                RoboRally.getAppController().currentPlayersTurn(liste);
+                pickStartPosition.cancel(false);
+            });
+
+        }
+
+    }
+
+    public static int addStartPosition(int pos) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString("pos=" + pos))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .uri(URI.create("http://localhost:8080/addStartPosition"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return Integer.parseInt(result);
+    }
+
+    public static ArrayList<Integer> getStartPosition() throws InterruptedException, ExecutionException, TimeoutException {
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getStartPosition"))
+                .build();
+
+        CompletableFuture<HttpResponse<String>> response = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+
+        Type listType = new TypeToken<ArrayList<Integer>>(){}.getType();
+
+        return new Gson().fromJson(result, listType);
+    }
+
+    public static int getCurrentPlayer() throws Exception{
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getCurrentPlayer"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return Integer.parseInt(result);
+    }
+
+    public static String nextPlayer() throws Exception{
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/nextPlayer"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result;
+    }
 
 
     //Polling for how many players that have connected to the lobby
@@ -126,7 +214,9 @@ public class GameClient {
 
             System.out.println("We are also starting now");
             waitingForJoinButtonPress.cancel(false);
-
+            javafx.application.Platform.runLater(() -> {
+                RoboRally.getLobby().startingGame();
+            });
         }
     }
 
@@ -297,5 +387,8 @@ public class GameClient {
         return result;
     }
 
+    public static int getPlayerNumber(){
+        return playerInfo.getPlayerId();
+    }
 
 }

@@ -41,6 +41,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,8 @@ public class AppController implements Observer {
 
     private GameController gameController;
     private GameSettings gameSettings;
+
+    private StartPositionWindow positionWindow = new StartPositionWindow();
 
 
     public AppController(@NotNull RoboRally roboRally, GameSettings gameSettings) {
@@ -128,20 +131,29 @@ public class AppController implements Observer {
         // XXX: V2
         // board.setCurrentPlayer(board.getPlayer(0));
         //gameController.startProgrammingPhase();
+        GameClient.startWaitingForStartPosition();
         board.setCurrentPlayer(board.getPlayer(0));
         roboRally.createBoardView(gameController);
-        StartPositionWindow positionWindow = new StartPositionWindow();
-        positionWindow.getStartSpaces(board);
 
+        positionWindow.getStartSpaces(board, GameClient.getPlayerNumber());
+        positionWindow.showWindow();
+        System.out.println("I picked this: " + positionWindow.getStartPosChoice().getValue());
+
+        GameClient.addStartPosition(Integer.parseInt(positionWindow.getStartPosChoice().getValue()));
+        GameClient.nextPlayer();
 
         gameController.startUpgradePhase();
 
     }
 
-    public void currentGameIsRunning(){
+    public void currentPlayersTurn(ArrayList<Integer> list){
 
 
 
+
+        positionWindow.actuallyShow(list);
+
+        //GameClient.addStartPosition();
     }
 
 

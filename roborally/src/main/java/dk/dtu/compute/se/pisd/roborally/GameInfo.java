@@ -6,6 +6,9 @@ import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 @Service
 public class GameInfo {
 
@@ -18,12 +21,17 @@ public class GameInfo {
 
     private boolean joinButtonPressed = false;
 
+    private int currentPlayer;
+
+    private ArrayList<Integer> chosenStartPlaces = new ArrayList<>();
+
 
     public void instaGameInfo(String id, GameSettings gameSettings){
 
         this.id = id;
         this.gameSettings = gameSettings;
         gameIsRunning = true;
+        currentPlayer = 0;
     }
 
     public boolean isGameRunning(){
@@ -43,6 +51,16 @@ public class GameInfo {
         GameLobby gameLobby = new GameLobby(lobbyID, gameSettings);
 
         return gameLobby;
+    }
+
+    public void nextPlayer(){
+
+        currentPlayer++;
+
+        if(currentPlayer > gameSettings.getNumberOfPlayers()-1){
+            currentPlayer = 0;
+        }
+
     }
 
 
@@ -85,5 +103,29 @@ public class GameInfo {
 
     public void setJoinButtonPressed(boolean joinButtonPressed) {
         this.joinButtonPressed = joinButtonPressed;
+    }
+
+
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(int currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+
+
+    public void addStartPosition(int pos){
+        chosenStartPlaces.add(pos);
+        Collections.sort(chosenStartPlaces);
+    }
+
+    public ArrayList<Integer> getChosenStartPlaces() {
+        return chosenStartPlaces;
+    }
+
+    public void setChosenStartPlaces(ArrayList<Integer> chosenStartPlaces) {
+        this.chosenStartPlaces = chosenStartPlaces;
     }
 }

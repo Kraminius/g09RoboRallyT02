@@ -142,4 +142,37 @@ public class MyRest {
     }
 
 
+    @GetMapping(value = "/getCurrentPlayer")
+    public ResponseEntity<Integer> getCurrentPlayer(){
+
+
+        return ResponseEntity.ok().body(gameInfo.getCurrentPlayer());
+
+    }
+
+    @PostMapping(value = "/nextPlayer")
+    public ResponseEntity<String> nextPlayer(){
+
+        gameInfo.nextPlayer();
+
+        //System.out.println(gameRepository.getGameSettings().toString());
+
+        return ResponseEntity.ok("hej");
+    }
+
+    @PostMapping (value = "/addStartPosition")
+    public ResponseEntity<Integer> addStartPosition(@RequestParam("pos") int pos) {
+        gameInfo.addStartPosition(pos);
+        //System.out.println("Name: " + gameDataRep.gameData.getCurrentGameMap());
+        return ResponseEntity.ok().body(5);
+    }
+
+    @GetMapping(value = "/getStartPosition")
+    public ResponseEntity<ArrayList<Integer>> getStartPosition(){
+
+        return ResponseEntity.ok(gameInfo.getChosenStartPlaces());
+
+
+    }
+
 }
