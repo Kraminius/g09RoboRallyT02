@@ -21,7 +21,7 @@ public class FirstClass {
 
             if(myAnswer.equals("1")){
 
-                MyClient.weConnect(playerNum-1, "jens");
+                GameClient.weConnect(playerNum-1, "jens");
                 bool = GameClient.areAllConnected();
 
             }

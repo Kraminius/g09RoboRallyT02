@@ -16,6 +16,8 @@ public class GameInfo {
 
     private boolean gameIsRunning = false;
 
+    private boolean joinButtonPressed = false;
+
 
     public void instaGameInfo(String id, GameSettings gameSettings){
 
@@ -75,5 +77,13 @@ public class GameInfo {
                 ", gameSettings=" + gameSettings +
                 ", gameIsRunning=" + gameIsRunning +
                 '}';
+    }
+
+    public boolean isJoinButtonPressed() {
+        return joinButtonPressed;
+    }
+
+    public void setJoinButtonPressed(boolean joinButtonPressed) {
+        this.joinButtonPressed = joinButtonPressed;
     }
 }

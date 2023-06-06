@@ -45,6 +45,27 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    @GetMapping(value = "/getLobbyId")
+    public ResponseEntity<String> getLobbyId() {
+        String temp = gameDataRep.gameData.getId();
+        return ResponseEntity.ok().body(temp);
+    }
+
+    @PostMapping (value = "/pressJoinButton")
+    public ResponseEntity<String> pressJoinButton() {
+
+        gameInfo.setJoinButtonPressed(true);
+        return ResponseEntity.ok().body("hej");
+    }
+
+    @GetMapping (value = "/isJoinButton")
+    public ResponseEntity<Boolean> isJoinButton() {
+
+
+        return ResponseEntity.ok().body(gameInfo.isJoinButtonPressed());
+    }
+
+
     @PostMapping (value = "/instaGameData")
     public ResponseEntity<Integer> instaGameData(@RequestParam("numberOfPlayers") String playerNumStr) {
         int numberOfPlayers = Integer.parseInt(playerNumStr);

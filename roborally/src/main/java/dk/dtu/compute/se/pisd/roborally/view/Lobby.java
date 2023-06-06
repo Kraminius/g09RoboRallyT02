@@ -304,7 +304,7 @@ public class Lobby {
 
 
                 try {
-                    MyClient.weConnect(0, gameLobby.getGameSettings().getCreatorName());
+                    GameClient.weConnect(0, gameLobby.getGameSettings().getCreatorName());
                     gameLobby.getGameSettings().setPlayerNames(GameClient.getPlayerNames());
 
 
@@ -459,7 +459,7 @@ public class Lobby {
     private void joinLobby(GameLobby gameLobby, String playerName) throws Exception {
 
         int playerNumber = Integer.parseInt(MyClient.playerNumber());
-        MyClient.weConnect(playerNumber, playerName);
+        GameClient.weConnect(playerNumber, playerName);
         ArrayList<String> playerNames = GameClient.getPlayerNames();
         gameLobby.getGameSettings().setPlayerNames(playerNames);
 
@@ -539,6 +539,40 @@ public class Lobby {
            startGame.setVisible(true);
         }*/
         //rootLayout.setRight(specificLobbyLayout);
+
+    }
+
+    public void showStartButton(String lobbyId){
+
+        Button startGame = new Button();
+        startGame.setId(lobbyId);
+        startGame.setText("Start Game");
+        startGame.setVisible(true);
+
+
+        startGame.setOnAction(e -> {
+            // Retrieve the GameLobby using the button's ID (which is the lobbyId)
+            //GameLobby gameLobbyButton = gameLobbyMap.get(startGame.getId());
+
+            // Retrieve the GameSettings from the GameLobby
+            //GameSettings gameSettings = gameLobbyButton.getGameSettings();
+
+            // Call the startGame method with these GameSettings
+            /*try {
+                RoboRally.getInstance().startGame(gameSettings, stage);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }*/
+            try {
+                GameClient.pressJoinButton();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            System.out.println("We are beginning the game");
+
+        });
+
+        rootLayout.setLeft(startGame);
 
     }
 

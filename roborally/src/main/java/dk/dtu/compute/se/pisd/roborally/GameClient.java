@@ -3,6 +3,8 @@ package dk.dtu.compute.se.pisd.roborally;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
+import org.json.simple.JSONObject;
+import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -20,6 +22,8 @@ public class GameClient {
 
     public static ArrayList<String> players = new ArrayList<>();
 
+    private static PlayerInfo playerInfo;
+
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
@@ -31,6 +35,7 @@ public class GameClient {
 
     //Tasks for polling. Can be closed
     private static ScheduledFuture<?> playerNamesPollingTask;
+    private static ScheduledFuture<?> waitingForJoinButtonPress;
 
 
     //Polling for how many players that have connected to the lobby
@@ -83,12 +88,105 @@ public class GameClient {
 
             if(pollAllConnected()){
                 playerNamesPollingTask.cancel(false);
+                if(playerInfo.getPlayerId() == 0){
+                javafx.application.Platform.runLater(() -> {
+                    System.out.println("this is the first player");
+                    try {
+                        RoboRally.getLobby().showStartButton(getLobbyId());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });}
+                else {
+                    waitingForJoinButton();
+                }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             // Handle any exceptions that occur during polling
         }
+    }
+
+    public static void waitingForJoinButton(){
+        waitingForJoinButtonPress = executorService.scheduleAtFixedRate(GameClient::pollJoinButton, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void pollJoinButton() {
+        boolean temp = false;
+        try {
+            temp = isJoinButton();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("Polling Join Button");
+
+        if(temp){
+
+            System.out.println("We are also starting now");
+            waitingForJoinButtonPress.cancel(false);
+
+        }
+    }
+
+
+    public static String pressJoinButton() throws Exception{
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/pressJoinButton"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return "something";
+
+    }
+
+    public static boolean isJoinButton() throws Exception{
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/isJoinButton"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return Boolean.parseBoolean(result);
+    }
+
+
+    public static String getLobbyId() throws Exception{
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getLobbyId"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result;
+    }
+
+    public static boolean weConnect(int playerNum, String name) throws Exception {
+        // Create a JSON object
+
+        playerInfo = new PlayerInfo(name, playerNum);
+
+        JSONObject json = new JSONObject();
+        json.put("playerNum", playerNum);
+        json.put("name", name);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(json.toString())) // send JSON object
+                .header("Content-Type", "application/json")
+                .uri(URI.create("http://localhost:8080/connected"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result.equals("we connected");
     }
 
 
