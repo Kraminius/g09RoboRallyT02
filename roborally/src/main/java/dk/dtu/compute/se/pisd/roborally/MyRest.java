@@ -2,6 +2,7 @@ package dk.dtu.compute.se.pisd.roborally;
 
 import com.google.gson.Gson;
 import com.mysql.cj.xdevapi.JsonString;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -44,7 +45,7 @@ public class MyRest {
 
     //instantiating a gamestate to run from
     @PostMapping (value = "/instaGameState")
-    public ResponseEntity<String> instaGameData(@RequestBody JSONObject game) {
+    public ResponseEntity<String> instaGameData(@RequestBody Load game) {
 
         //JSONObject newGame = new JSONObject(game);
         //int numberOfPlayers = Integer.parseInt(playerNumStr);
@@ -100,8 +101,8 @@ public class MyRest {
     }
 
     @GetMapping(value = "/GetGame")
-    public ResponseEntity<JSONObject> getGame(){
-        JSONObject game = gameDataRep.getGame();
+    public ResponseEntity<Load> getGame(){
+        Load game = gameDataRep.getGame();
         return ResponseEntity.ok().body(game);
     }
 

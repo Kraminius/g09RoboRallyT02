@@ -4,6 +4,10 @@ import dk.dtu.compute.se.pisd.roborally.model.Command;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Phase;
 
+/**
+ * @author Nicklas Christensen     s224314.dtu.dk
+ * This class is used to hold all the information in a game within the server
+ */
 public class GameState {
 
 

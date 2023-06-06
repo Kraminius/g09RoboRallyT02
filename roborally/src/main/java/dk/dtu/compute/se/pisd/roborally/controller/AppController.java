@@ -216,9 +216,11 @@ public class AppController implements Observer {
 
     //Instantiate a gameState
     public void instantiateGame(){
+        //we need to make a Load
         GameSave gameSave = new GameSave();
+        Load loadGame = GameLoader.loadData(gameSave.jsonGame(gameController));
         try {
-            MyClient.instantiateGame(gameSave.jsonGame(gameController));
+            MyClient.instantiateGame(loadGame);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -228,7 +230,7 @@ public class AppController implements Observer {
     public void updateGame(){
 
         try {
-            LoadInstance.load(this, MyClient.update());
+            LoadInstance.load(this,MyClient.update());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

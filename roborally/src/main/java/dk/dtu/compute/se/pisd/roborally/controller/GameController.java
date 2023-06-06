@@ -1494,19 +1494,6 @@ public class GameController {
     }
 
 
-    //update
-    /*
-    public void updateGame(){
-        try {
-             = UpdateInstance.load(this, MyClient.update());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-     */
-
-
 //endregion
 
 }

@@ -31,9 +31,13 @@ public class GameDataRep {
         this.gameData = new GameData(numPlayer);
     }
 
-    public void instantiateGameState(JSONObject jsonObject){
-        GameState instantiatetedGameState = makeGameState(jsonObject);
+    public void instantiateGameState(Load loadGame){
+        GameState instantiatetedGameState = makeGameState(loadGame);
         this.gameState = instantiatetedGameState;
+        System.out.println("We have :" + gameState.getBoard());
+        System.out.println(gameState.getPlayerNames());
+        System.out.println(String.valueOf(gameState.getPlayerHeadings()));
+        System.out.println(gameState.getCurrentPlayer());
     }
 
 
@@ -130,271 +134,115 @@ public class GameDataRep {
         //return gameState;
     }
 
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * This method goes through the different parts of gameState and sets
+     * them into a Load.
+     * @param gameState1 the gameState we want to create a Load version of
+     * @return a Load version
+     */
+    private static Load makeGameState(GameState gameState1) {
+
+        int playerAmount = gameState1.getPlayerAmount();
+        int step = gameState1.getStep();
+        Phase phase = gameState1.getPhase();
+        String currentPlayer = gameState1.getCurrentPlayer();
+        String board = gameState1.getBoard();
+        boolean isStepmode = gameState1.isStepmode();
+        Command[] upgradeDiscardDeck = gameState1.getUpgradeDiscardDeck();
+        Command[] upgradeOutDeck = gameState1.getUpgradeOutDeck();
+        Command[] upgradeCardsDeck = gameState1.getUpgradeCardsDeck();
+        String[] playerNames = gameState1.getPlayerNames();
+        String[] playerColors = gameState1.getPlayerColors();
+        int[] playerEnergyCubes = gameState1.getPlayerEnergyCubes();
+        int[] playerCheckPoints = gameState1.getPlayerCheckPoints();
+        int[] playersXPosition = gameState1.getPlayersXPosition();
+        int[] playersYPosition = gameState1.getPlayersYPosition();
+        int[] mapCubePositions = gameState1.getMapCubePositions();
+        Heading[] playerHeadings = gameState1.getPlayerHeadings();
+        Command[][] CplayerProgrammingDeck = gameState1.getPlayerProgrammingDeck();
+        Command[][] CplayerCurrentProgram = gameState1.getPlayerCurrentProgram();
+        Command[][] CplayerDiscardPile = gameState1.getPlayerDiscardPile();
+        Command[][] CplayerUpgradeCards = gameState1.getPlayerUpgradeCards();
+        Command[][] CplayersPulledCards = gameState1.getPlayersPulledCards();
+
+        Load load = new Load();
+        load.setPlayerAmount(playerAmount);
+        load.setStep(step);
+        load.setPhase(phase);
+        load.setCurrentPlayer(currentPlayer);
+        load.setBoard(board);
+        load.setStepmode(isStepmode);
+        load.setUpgradeDiscardDeck(upgradeDiscardDeck);
+        load.setUpgradeOutDeck(upgradeOutDeck);
+        load.setUpgradeCardsDeck(upgradeCardsDeck);
+        load.setPlayerNames(playerNames);
+        load.setPlayerColors(playerColors);
+        load.setPlayerEnergyCubes(playerEnergyCubes);
+        load.setPlayerCheckPoints(playerCheckPoints);
+        load.setPlayersXPosition(playersXPosition);
+        load.setPlayersYPosition(playersYPosition);
+        load.setMapCubePositions(mapCubePositions);
+        load.setPlayerHeadings(playerHeadings);
+        load.setPlayerProgrammingDeck(CplayerProgrammingDeck);
+        load.setPlayerCurrentProgram(CplayerCurrentProgram);
+        load.setPlayerDiscardPile(CplayerDiscardPile);
+        load.setPlayerUpgradeCards(CplayerUpgradeCards);
+        load.setPlayersPulledCards(CplayersPulledCards);
+        return load;
+    }
+
     //Making JSON into our GameState
     /**
-     * @param obj - A JSONObject that has info from a a json file of a new game.
-     * @Author Tobias Gørlyk - s224271@dtu.dk
-     * Creates a GameState.java object that can hold all the data from a new load,
-     * so all data can be pulled from this file already being converted to the right format.
+     * @author Nicklas Christensen     s224314.dtu.dk and Tobias Gørlyk - s224271@dtu.dk
+     * @param load - A Load that has info of a new game.
+     * Creates a GameState.java object that can hold all the data from a given load.
      * The method uses the Converter.java class to convert after receiving the data from the obj file.
      */
-    private static GameState makeGameState(JSONObject obj){
+    private static GameState makeGameState(Load load){
 
-        String board = ((String)obj.get("board"));
-        int step = (parseInt(String.valueOf(obj.get("step"))));
-        String currentPlayer = ((String)obj.get("currentPlayer"));
-        boolean isStepmode = (Converter.getBool((String)obj.get("isStepMode")));
-        Phase phase = (Converter.getPhase ((String) obj.get("phase")));
-        int playerAmount = (parseInt(String.valueOf(obj.get("playerAmount"))));
-        //This is trequy stuff
-        int amount = playerAmount;
-        String[] playerNames = (new String[amount]);
-        String[] playerColors = (new String[amount]);
-        int[] playersXPosition = (new int[amount]);
-        int[] playersYPosition = (new int[amount]);
-        int[] playerEnergyCubes = (new int[amount]);
-        int[] playerCheckPoints = (new int[amount]);
-        Heading[] playerHeadings = (new Heading[amount]);
-        Command[][] CplayerProgrammingDeck = (new Command[amount][]);
-        Command[][] CplayerCurrentProgram = (new Command[amount][]);
-        Command[][] CplayerDiscardPile = (new Command[amount][]);
-        Command[][] CplayerUpgradeCards = (new Command[amount][]);
-        Command[][] CplayersPulledCards = (new Command[amount][]);
-
-        //Gson gson = new Gson();
-
-        String[][] playersProgrammingDeck = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersProgrammingDeck")), "#");
-        String[][] playersProgram  = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersProgram")), "#");
-        String[][] playerUpgradeCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playerUpgradeCards")), "#");
-        String[][] playersDiscardCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersDiscardCards")), "#");
-        String[][] playersPulledCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersPulledCards")), "#");
-        for(int i = 0; i < amount; i++){
-            playerNames[i] = Converter.jsonArrToString((JSONArray)obj.get("playersName"))[i];
-            playerColors[i] = Converter.jsonArrToString((JSONArray)obj.get("playerColor"))[i];
-            playersXPosition[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersX"))[i];
-            playersYPosition[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersY"))[i];
-            playerEnergyCubes[i] = Converter.jsonArrToInt((JSONArray)obj.get("playerCubes"))[i];
-            playerHeadings[i] = Converter.getHeading (Converter.jsonArrToString((JSONArray)obj.get("playersHeading"))[i]);
-            playerCheckPoints[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersCheckpoints"))[i];
-            CplayerProgrammingDeck[i] = Converter.getCommands(playersProgrammingDeck[i]);
-            CplayerCurrentProgram[i] = Converter.getCommands(playersProgram[i]);
-            CplayerUpgradeCards[i] = Converter.getCommands(playerUpgradeCards[i]);
-            CplayerDiscardPile[i] = Converter.getCommands(playersDiscardCards[i]);
-            CplayersPulledCards[i] = Converter.getCommands(playersPulledCards[i]);
-        }
-        int[] mapCubePositions = (Converter.jsonArrToInt((JSONArray)obj.get("mapCubes")));
-        Command[] upgradeCardsDeck = (Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeCardsDeck"))));
-        Command[] upgradeOutDeck = (Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeOutDeck"))));
-        Command[] upgradeDiscardDeck = (Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeDiscardDeck"))));
+        int playerAmount = load.getPlayerAmount();
+        int step = load.getStep();
+        Phase phase = load.getPhase();
+        String currentPlayer = load.getCurrentPlayer();
+        String board = load.getBoard();
+        boolean isStepmode = load.isStepmode();
+        Command[] upgradeDiscardDeck = load.getUpgradeDiscardDeck();
+        Command[] upgradeOutDeck = load.getUpgradeOutDeck();
+        Command[] upgradeCardsDeck = load.getUpgradeCardsDeck();
+        String[] playerNames = load.getPlayerNames();
+        String[] playerColors = load.getPlayerColors();
+        int[] playerEnergyCubes = load.getPlayerEnergyCubes();
+        int[] playerCheckPoints = load.getPlayerCheckPoints();
+        int[] playersXPosition = load.getPlayersXPosition();
+        int[] playersYPosition = load.getPlayersYPosition();
+        int[] mapCubePositions = load.getMapCubePositions();
+        Heading[] playerHeadings = load.getPlayerHeadings();
+        Command[][] CplayerProgrammingDeck = load.getPlayerProgrammingDeck();
+        Command[][] CplayerCurrentProgram = load.getPlayerCurrentProgram();
+        Command[][] CplayerDiscardPile = load.getPlayerDiscardPile();
+        Command[][] CplayerUpgradeCards = load.getPlayerUpgradeCards();
+        Command[][] CplayersPulledCards = load.getPlayersPulledCards();
 
         GameState gameState = new GameState( playerAmount, step, phase, currentPlayer, board, isStepmode,
                 upgradeDiscardDeck, upgradeOutDeck, upgradeCardsDeck,
                 playerNames, playerColors, playerEnergyCubes, playerCheckPoints,
-        playersXPosition, playersYPosition, mapCubePositions, playerHeadings,
+                playersXPosition, playersYPosition, mapCubePositions, playerHeadings,
                 CplayerProgrammingDeck, CplayerCurrentProgram, CplayerDiscardPile,
                 CplayerUpgradeCards, CplayersPulledCards);
         return gameState;
 
     }
 
-    //Retrieving the game we have in gameState
-    public JSONObject getGame(){
-        return saveGame(gameState);
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * getGame is a method used to recieve the state of the game saved on the server.
+     * it is converted to a Load object before being sent.
+     * @return a Load version of the gameState
+     */
+    public Load getGame(){
+        return makeGameState(gameState);
     }
-
-
-    public JSONObject saveGame(GameState controller){
-        JSONObject obj = new JSONObject();
-
-        //Board betterBoard = new Board();
-        obj.put("board",controller.getBoard()); //String
-        obj.put("step", controller.getStep());  //Int
-        obj.put("playerAmount", controller.getPlayerAmount());  //Int
-        obj.put("currentPlayer", controller.getCurrentPlayer()); //String
-        obj.put("phase", phaseToString(controller.getPhase())); //String
-        obj.put("isStepMode", booleanToString(controller.isStepmode())); //String
-
-        JSONArray playersName = new JSONArray();
-        JSONArray playersColor = new JSONArray();
-        JSONArray playersX = new JSONArray();
-        JSONArray playersY = new JSONArray();
-        JSONArray playersHeading = new JSONArray();
-        JSONArray playersCheckpoints = new JSONArray();
-        JSONArray playersProgrammingDeck = new JSONArray();
-        JSONArray playersPulledCards = new JSONArray();
-        JSONArray playersProgram = new JSONArray();
-        JSONArray playersDiscardCards = new JSONArray();
-        JSONArray playerUpgradeCards = new JSONArray();
-        JSONArray playerEnergyCubes = new JSONArray();
-        JSONArray mapEnergyCubes = new JSONArray();
-        for(int i = 0; i < controller.getPlayerAmount(); i++){
-            //Player player = board.getPlayer(i);
-            playersName.add(controller.getPlayerNames()[i]);
-            playersColor.add(controller.getPlayerColors()[i]);
-            playerEnergyCubes.add(controller.getPlayerEnergyCubes()[i]);
-            playersX.add(controller.getPlayersXPosition()[i]);
-            playersY.add(controller.getPlayersYPosition()[i]);
-            playersHeading.add(controller.getPlayerHeadings()[i]);
-            playersCheckpoints.add(controller.getPlayerCheckPoints()[i]); //The checkpoints of each player
-            //We need to make the Command into CommandCardField
-            CommandCardField[] program = makeCardField(controller.getPlayerCurrentProgram()[i]);
-            //CommandCardField[] program = controller.getPlayerCurrentProgram()[i];
-            CommandCardField[] pulled = makeCardField(controller.getPlayersPulledCards()[i]);
-            //CommandCardField[] pulled = player.getCards();
-            CommandCardField[] upgradeCards = makeCardField(controller.getPlayerUpgradeCards()[i]);
-            //CommandCardField[] upgradeCards = player.getUpgradeCards();
-            ArrayList<CommandCard> discardPile = makeCard(controller.getPlayerDiscardPile()[i]);
-            //ArrayList<CommandCard> discardPile = player.getDiscardPile();
-            ArrayList<CommandCard> programmingDeck = makeCard(controller.getPlayerProgrammingDeck()[i]);
-            //ArrayList<CommandCard> programmingDeck = player.getCardDeck();
-
-
-            playersProgram.add("#");
-            for(int j = 0; j < program.length; j++){
-                if(program[j].getCard() != null) playersProgram.add(program[j].getCard().command.toString());
-            }
-
-            playersPulledCards.add("#");
-            for(int j = 0; j < pulled.length; j++){
-                if(pulled[j].getCard() != null) playersPulledCards.add(pulled[j].getCard().command.toString());
-            }
-            playerUpgradeCards.add("#");
-            for(int j = 0; j < upgradeCards.length; j++){
-                if(upgradeCards[j].getCard() != null) playerUpgradeCards.add(upgradeCards[j].getCard().command.toString());
-            }
-            playersDiscardCards.add("#");
-            for(int j = 0; j < discardPile.size(); j++){
-                if(discardPile.get(j) != null) playersDiscardCards.add(discardPile.get(j).command.toString());
-            }
-            playersProgrammingDeck.add("#");
-            for(int j = 0; j < programmingDeck.size(); j++){
-                if(programmingDeck.get(j) != null) playersProgrammingDeck.add(programmingDeck.get(j).command.toString());
-            }
-        }
-        JSONArray upgradeCardsDeck = new JSONArray();
-        JSONArray upgradeDiscardDeck = new JSONArray();
-        JSONArray upgradeOutDeck = new JSONArray();
-        //if(controller.upgradeShop != null){
-            ArrayList<CommandCard> outUpgradeCards = makeCard(controller.getUpgradeOutDeck());
-            //ArrayList<CommandCard> outUpgradeCards = controller.upgradeShop.getOut();
-            ArrayList<CommandCard> discardUpgradeCards = makeCard(controller.getUpgradeDiscardDeck());
-            //ArrayList<CommandCard> discardUpgradeCards = controller.upgradeShop.getDiscarded();
-            ArrayList<CommandCard> upgradeDeck = makeCard(controller.getUpgradeCardsDeck());
-            //ArrayList<CommandCard> upgradeDeck = controller.upgradeShop.getDeck();
-
-
-            for(CommandCard c : outUpgradeCards){
-                upgradeOutDeck.add(c.command.toString());
-            }
-            for(CommandCard c : discardUpgradeCards){
-                upgradeDiscardDeck.add(c.command.toString());
-            }
-            for(CommandCard c : upgradeDeck){
-                upgradeCardsDeck.add(c.command.toString());
-            }
-        //}
-
-        saveCubes(mapEnergyCubes, controller);
-
-
-
-        obj.put("playersName", playersName);
-        obj.put("playerCubes", playerEnergyCubes);
-        obj.put("playerColor", playersColor);
-        obj.put("playersX", playersX);
-        obj.put("playersY", playersY);
-        obj.put("playersHeading", playersHeading);
-        obj.put("playersCheckpoints", playersCheckpoints);
-        obj.put("playersProgrammingDeck", playersProgrammingDeck);
-        obj.put("playersPulledCards", playersPulledCards);
-        obj.put("playersProgram", playersProgram);
-        obj.put("playersDiscardCards", playersDiscardCards);
-        obj.put("playerUpgradeCards", playerUpgradeCards);
-        obj.put("upgradeCardsDeck", upgradeCardsDeck);
-        obj.put("upgradeDiscardDeck", upgradeDiscardDeck);
-        obj.put("upgradeOutDeck", upgradeOutDeck);
-        obj.put("mapCubes", mapEnergyCubes);
-
-        //json.save(name, obj, "game");
-        return obj;
-    }
-
-    private String phaseToString(Phase phase){
-        switch (phase){
-            case UPGRADE : return "UPGRADE";
-            case ACTIVATION : return "ACTIVATION";
-            case PROGRAMMING : return "PROGRAMMING";
-            case INITIALISATION : return "INITIALISATION";
-            case PLAYER_INTERACTION : return "PLAYER_INTERACTION";
-        }
-        return null;
-    }
-    private String headingToString(Heading heading){
-        switch (heading){
-            case NORTH: return "NORTH";
-            case EAST: return "EAST";
-            case SOUTH: return "SOUTH";
-            case WEST: return "WEST";
-        }
-        return null;
-    }
-    private String booleanToString(boolean bool){
-        if(bool) return "TRUE";
-        else return "FALSE";
-    }
-
-    private void saveCubes(JSONArray mapEnergyCubes, GameState controller){
-        //ArrayList<Space> energyCubeSpaces = new ArrayList<>();
-        int i = 0;
-        while(i < controller.getMapCubePositions().length){
-            mapEnergyCubes.add(controller.getMapCubePositions()[i]);
-            i++;
-            mapEnergyCubes.add(controller.getMapCubePositions()[i]);
-            i++;
-            mapEnergyCubes.add(controller.getMapCubePositions()[i]);
-            i++;
-        }
-
-        //Old
-        /*
-        ArrayList<Space> energyCubeSpaces = board.getEnergyFieldSpaces();
-        for(int i = 0; i < energyCubeSpaces.size(); i++){
-            mapEnergyCubes.add(energyCubeSpaces.get(i).x);
-            mapEnergyCubes.add(energyCubeSpaces.get(i).y);
-            mapEnergyCubes.add(energyCubeSpaces.get(i).getElement().getEnergyField().getCubes());
-        }
-        */
-    }
-
-    private int getCheckpointReached(boolean[] arr){
-        int reached = 0;
-        for(int i = 0; i < arr.length; i++){
-            if(arr[i])  reached++;
-        }
-        return reached;
-    }
-
-    //I am suspicious that this may not work
-    private CommandCardField[] makeCardField(Command[] com){
-        CommandCardField[] commandCardFields = new CommandCardField[com.length];
-        for(int i = 0; i < com.length; i++){
-            CommandCard commandCard = new CommandCard(com[i]);
-            CommandCardField commandCardField = new CommandCardField(null);
-            commandCardField.setCard(commandCard);
-            commandCardFields[i] = commandCardField;
-        }
-        return commandCardFields;
-    }
-
-    private ArrayList<CommandCard> makeCard(Command[] com){
-        ArrayList<CommandCard> commandCards = new ArrayList<>();
-        for(int i = 0; i < com.length; i++){
-            CommandCard commandCard = new CommandCard(com[i]);
-            commandCards.add(commandCard);
-        }
-        return commandCards;
-    }
-
 
 
 }

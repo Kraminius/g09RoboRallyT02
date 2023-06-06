@@ -1,6 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Converter;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.Command;
@@ -64,27 +65,28 @@ public class MyClient {
     }
 
 
-
-    // Asking for a game
-    public static Load update() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create("http://localhost:8080/GetGame"))
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response =
-                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String string = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
-
-        //Making a Map so we can create the JSONObject
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> map = objectMapper.readValue(string, Map.class);
-
-        // Create a JSONObject from the Map
-        JSONObject result = new JSONObject(map);
-        Load game = loadData(result);
-        return game;
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * A method used to call the server for the current gameState
+     * @return a Load that can be loaded into the game to
+     */
+    public static Load update() {
+        try{
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(URI.create("http://localhost:8080/GetGame"))
+                    .setHeader("User-Agent", "Product Client")
+                    .header("Content-Type", "application/json")
+                    .build();
+            CompletableFuture<HttpResponse<String>> response =
+                    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            String result = response.thenApply((r)->r.body()).get(5, TimeUnit.SECONDS);
+            Gson gson = new Gson();
+            Load load = gson.fromJson(result, Load.class);
+            return load;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -155,17 +157,11 @@ public class MyClient {
     }
 
 
-    //Instantiating a game
-    public static boolean instantiateGame(JSONObject json) throws Exception {
-
+    public static boolean instantiateGame(Load load) throws Exception {
+        String productJSON = new Gson().toJson(load);
         HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(String.valueOf(json)))
-
-        /*
-        String jsonString = json.toString(); // Convert JSONObject to string
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(jsonString))
-         */
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(productJSON))
                 .uri(URI.create("http://localhost:8080/instaGameState"))
                 .build();
         CompletableFuture<HttpResponse<String>> response =
