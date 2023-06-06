@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -173,6 +174,32 @@ public class MyRest {
         return ResponseEntity.ok(gameInfo.getChosenStartPlaces());
 
 
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * @param game the load of the game we want to save on the server
+     * @return wether we succeded or not at recieving the game
+     */
+    @PostMapping (value = "/instaGameState")
+    public ResponseEntity<String> instaGameData(@RequestBody Load game) {
+
+        System.out.println("insta request recieved");
+        gameDataRep.instantiateGameState(game);
+        //gameDataRep.instantiateGameData(numberOfPlayers);
+        System.out.println("Instantiated a gameState");
+        return ResponseEntity.ok().body("instantiated");
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * This method is used to send the current version of the game saved on the server
+     * @return a Load containing all the information about the game
+     */
+    @GetMapping(value = "/GetGame")
+    public ResponseEntity<Load> getGame(){
+        Load game = gameDataRep.getGame();
+        return ResponseEntity.ok().body(game);
     }
 
 }

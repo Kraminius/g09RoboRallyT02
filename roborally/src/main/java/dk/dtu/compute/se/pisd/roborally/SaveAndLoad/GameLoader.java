@@ -32,7 +32,7 @@ public class GameLoader {
      * so all data can be pulled from this file already being converted to the right format.
      * The method uses the Converter.java class to convert after receiving the data from the obj file.
      */
-    private static Load loadData(JSONObject obj){
+    public static Load loadData(JSONObject obj){
         Load load = new Load();
         load.setBoard((String)obj.get("board"));
         load.setStep(parseInt(String.valueOf(obj.get("step"))));

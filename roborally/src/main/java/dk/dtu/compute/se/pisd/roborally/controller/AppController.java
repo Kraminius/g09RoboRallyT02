@@ -29,6 +29,8 @@ import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LoadInstance;
 import dk.dtu.compute.se.pisd.roborally.view.BoardLoadWindow;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameSave;
 import dk.dtu.compute.se.pisd.roborally.model.*;
@@ -245,6 +247,28 @@ public class AppController implements Observer {
     @Override
     public void update(Subject subject) {
         // XXX do nothing for now
+    }
+
+    //Instantiate a gameState
+    public void instantiateGame(){
+        //we need to make a Load
+        GameSave gameSave = new GameSave();
+        Load loadGame = GameLoader.loadData(gameSave.jsonGame(gameController));
+        try {
+            MyClient.instantiateGame(loadGame);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Updating game
+    public void updateGame(){
+
+        try {
+            LoadInstance.load(this,MyClient.update());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
