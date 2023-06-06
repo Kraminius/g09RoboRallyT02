@@ -43,34 +43,20 @@ public class MyRest {
         return ResponseEntity.ok().body(5);
     }
 
-    //instantiating a gamestate to run from
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * @param game the load of the game we want to save on the server
+     * @return wether we succeded or not at recieving the game
+     */
     @PostMapping (value = "/instaGameState")
     public ResponseEntity<String> instaGameData(@RequestBody Load game) {
 
-        //JSONObject newGame = new JSONObject(game);
-        //int numberOfPlayers = Integer.parseInt(playerNumStr);
         System.out.println("insta request recieved");
         gameDataRep.instantiateGameState(game);
         //gameDataRep.instantiateGameData(numberOfPlayers);
         System.out.println("Instantiated a gameState");
         return ResponseEntity.ok().body("instantiated");
     }
-
-
-
-    /*
-    @RequestMapping(value = "/instaGameState", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @PostMapping(value = "/instaGameState", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<String> handleOctetStream(@RequestBody JSONObject payload) {
-        //JSONObject newGame = new JSONObject(game);
-        //int numberOfPlayers = Integer.parseInt(playerNumStr);
-        System.out.println("insta request recieved");
-        gameDataRep.instantiateGameState(payload);
-        //gameDataRep.instantiateGameData(numberOfPlayers);
-        System.out.println("Instantiated a gameState");
-        return ResponseEntity.ok().body("instantiated");
-    }
-         */
 
 
     @GetMapping(value = "/getPlayerNumber")
@@ -94,12 +80,11 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
-    @PostMapping(value = "/sendingGame")
-    public ResponseEntity<String> postGame(@RequestBody JSONObject newGame){
-        gameDataRep.setCurrentGame(newGame);
-        return ResponseEntity.ok().body("acknowledged");
-    }
-
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * This method is used to send the current version of the game saved on the server
+     * @return a Load containing all the information about the game
+     */
     @GetMapping(value = "/GetGame")
     public ResponseEntity<Load> getGame(){
         Load game = gameDataRep.getGame();

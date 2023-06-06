@@ -204,16 +204,6 @@ public class AppController implements Observer {
         // XXX do nothing for now
     }
 
-    //Sending game
-    public void sendGame(){
-        GameSave gameSave = new GameSave();
-        try {
-            MyClient.sendGame(gameSave.jsonGame(gameController));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     //Instantiate a gameState
     public void instantiateGame(){
         //we need to make a Load
@@ -234,26 +224,6 @@ public class AppController implements Observer {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        /*
-        try {
-            MyClient.update();
-          gameController =  UpdateInstance.load(gameController, MyClient.update());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-         */
     }
-
-    /*
-    public void updateGame(){
-        try {
-            LoadInstance.load(this, MyClient.update());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-     */
 
 }

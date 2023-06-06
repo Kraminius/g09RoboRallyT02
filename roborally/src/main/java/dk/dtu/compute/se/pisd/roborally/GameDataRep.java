@@ -73,67 +73,6 @@ public class GameDataRep {
         return i;
     }
 
-
-    //Changing the game we save in gameState
-    public void setCurrentGame(JSONObject game){
-        setGameState(gameState, game);
-    }
-
-    //placing JSON into our GameState
-    /**
-     * @param obj - A JSONObject that has info from a a json file of a new game.
-     * @Author Tobias Gørlyk - s224271@dtu.dk
-     * Creates a GameState.java object that can hold all the data from a new load,
-     * so all data can be pulled from this file already being converted to the right format.
-     * The method uses the Converter.java class to convert after receiving the data from the obj file.
-     */
-    private static void setGameState(GameState gameState, JSONObject obj){
-        //GameState gameState = new GameState();
-        gameState.setBoard((String)obj.get("board"));
-        gameState.setStep(parseInt(String.valueOf(obj.get("step"))));
-        gameState.setCurrentPlayer((String)obj.get("currentPlayer"));
-        gameState.setStepmode(Converter.getBool((String)obj.get("isStepMode")));
-        gameState.setPhase(Converter.getPhase ((String) obj.get("phase")));
-        gameState.setPlayerAmount(parseInt(String.valueOf(obj.get("playerAmount"))));
-        int amount = gameState.getPlayerAmount();
-        gameState.setPlayerNames(new String[amount]);
-        gameState.setPlayerColors(new String[amount]);
-        gameState.setPlayersXPosition(new int[amount]);
-        gameState.setPlayersYPosition(new int[amount]);
-        gameState.setPlayerEnergyCubes(new int[amount]);
-        gameState.setPlayerCheckPoints(new int[amount]);
-        gameState.setPlayerHeadings(new Heading[amount]);
-        gameState.setPlayerProgrammingDeck(new Command[amount][]);
-        gameState.setPlayerCurrentProgram(new Command[amount][]);
-        gameState.setPlayerDiscardPile(new Command[amount][]);
-        gameState.setPlayerUpgradeCards(new Command[amount][]);
-        gameState.setPlayersPulledCards(new Command[amount][]);
-        String[][] playersProgrammingDeck  = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersProgrammingDeck")), "#");
-        String[][] playersProgram  = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersProgram")), "#");
-        String[][] playerUpgradeCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playerUpgradeCards")), "#");
-        String[][] playersDiscardCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersDiscardCards")), "#");
-        String[][] playersPulledCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersPulledCards")), "#");
-        for(int i = 0; i < amount; i++){
-            gameState.getPlayerNames()[i] = Converter.jsonArrToString((JSONArray)obj.get("playersName"))[i];
-            gameState.getPlayerColors()[i] = Converter.jsonArrToString((JSONArray)obj.get("playerColor"))[i];
-            gameState.getX()[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersX"))[i];
-            gameState.getY()[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersY"))[i];
-            gameState.getPlayerEnergyCubes()[i] = Converter.jsonArrToInt((JSONArray)obj.get("playerCubes"))[i];
-            gameState.getPlayerHeadings()[i] = Converter.getHeading (Converter.jsonArrToString((JSONArray)obj.get("playersHeading"))[i]);
-            gameState.getPlayerCheckPoints()[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersCheckpoints"))[i];
-            gameState.getPlayerProgrammingDeck()[i] = Converter.getCommands(playersProgrammingDeck[i]);
-            gameState.getPlayerCurrentProgram()[i] = Converter.getCommands(playersProgram[i]);
-            gameState.getPlayerUpgradeCards()[i] = Converter.getCommands(playerUpgradeCards[i]);
-            gameState.getPlayerDiscardPile()[i] = Converter.getCommands(playersDiscardCards[i]);
-            gameState.getPlayersPulledCards()[i] = Converter.getCommands(playersPulledCards[i]);
-        }
-        gameState.setMapCubePositions(Converter.jsonArrToInt((JSONArray)obj.get("mapCubes")));
-        gameState.setUpgradeCardsDeck(Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeCardsDeck"))));
-        gameState.setUpgradeOutDeck(Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeOutDeck"))));
-        gameState.setUpgradeDiscardDeck(Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeDiscardDeck"))));
-        //return gameState;
-    }
-
     /**
      * @author Nicklas Christensen     s224314.dtu.dk
      * This method goes through the different parts of gameState and sets
