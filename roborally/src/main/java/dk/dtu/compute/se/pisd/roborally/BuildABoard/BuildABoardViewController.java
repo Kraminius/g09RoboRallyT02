@@ -326,12 +326,10 @@ public class BuildABoardViewController {
         handler.resizeBoard(input);
     }
     private void elementPressed(int index, int x, int y){
-        System.out.println("Pressed at [" + x + ", " + y + "]");
         handler.elementClicked(index, x ,y);
         currentType = index;
     }
     private void elementVariantPressed(int type, int index, int x, int y){
-        System.out.println("Pressed at [" + x + ", " + y + "]");
         handler.elementVariantClicked(type, index, x ,y);
     }
 

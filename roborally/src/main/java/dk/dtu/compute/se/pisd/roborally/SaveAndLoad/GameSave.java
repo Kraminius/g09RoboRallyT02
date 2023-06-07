@@ -99,10 +99,12 @@ public class GameSave {
         JSONArray upgradeCardsDeck = new JSONArray();
         JSONArray upgradeDiscardDeck = new JSONArray();
         JSONArray upgradeOutDeck = new JSONArray();
+        JSONArray upgradeLoadDeck = new JSONArray();
         if(controller.upgradeShop != null){
             ArrayList<CommandCard> outUpgradeCards = controller.upgradeShop.getOut();
             ArrayList<CommandCard> discardUpgradeCards = controller.upgradeShop.getDiscarded();
             ArrayList<CommandCard> upgradeDeck = controller.upgradeShop.getDeck();
+            ArrayList<CommandCardField> loadDeck = controller.upgradeShop.getLoadedCards();
 
 
             for(CommandCard c : outUpgradeCards){
@@ -113,6 +115,9 @@ public class GameSave {
             }
             for(CommandCard c : upgradeDeck){
                 upgradeCardsDeck.add(c.command.toString());
+            }
+            for(CommandCardField c : loadDeck){
+                upgradeLoadDeck.add(c.getCard().command.toString());
             }
         }
 
@@ -135,6 +140,7 @@ public class GameSave {
         obj.put("upgradeCardsDeck", upgradeCardsDeck);
         obj.put("upgradeDiscardDeck", upgradeDiscardDeck);
         obj.put("upgradeOutDeck", upgradeOutDeck);
+        obj.put("upgradeLoadDeck", upgradeLoadDeck);
         obj.put("mapCubes", mapEnergyCubes);
 
         json.save(name, obj, "game");

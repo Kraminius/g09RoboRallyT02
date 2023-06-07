@@ -9,11 +9,18 @@ public class BuildJSON {
 
     static JSONHandler jsonHandler = new JSONHandler();
 
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Saves the build to json as a board on the clients pc
+     * @param build the build that needs to be saved
+     */
     public static void saveBoard(CheckBoardBuild build){
         jsonHandler.raw.writeJSON(build.getName(), saveBuildToJSON(build), "board");
-        jsonHandler.printJSON(build.getName(), "board");
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates a JSON Object by going through the build, saving and serializing it.
+     */
     public static JSONObject saveBuildToJSON(CheckBoardBuild build){
         JSONObject obj = new JSONObject();
         JSONArray antennaArray = new JSONArray();
@@ -49,6 +56,10 @@ public class BuildJSON {
         obj.put("repair", repairArray);
         return obj;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * make a rotation found by an integer by
+     */
     private static String rotationToHeading(int rotation){
         rotation = getTrueRotation(rotation);
         switch (rotation){

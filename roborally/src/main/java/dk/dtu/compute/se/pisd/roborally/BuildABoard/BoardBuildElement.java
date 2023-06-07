@@ -37,32 +37,38 @@ public class BoardBuildElement {
     private int pushRotation = 0;
     private int laserRotation = 0;
 
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Create a StackPane containing layers of ImageViews of the different elements lasers going over belts as an example. It also rotates the images by using the variables in this class.
+     * @return StackPane of ImageViews of each element.
+     */
+
     public StackPane getView(){
         StackPane holder = new StackPane();
         holder.setAlignment(Pos.CENTER);
-        holder.getChildren().add(getImage(ImageLoader.get().empty, true, true));
-        if(antenna) holder.getChildren().add(getImage(ImageLoader.get().antenna, true, true));
-        if(energyField) holder.getChildren().add(getImage(ImageLoader.get().energyField, true, true));
-        if(hole) holder.getChildren().add(getImage(ImageLoader.get().hole, true, true));
-        if(repair) holder.getChildren().add(getImage(ImageLoader.get().repair, true, true));
-        if(respawn) holder.getChildren().add(getImage(ImageLoader.get().respawn, true, true));
+        holder.getChildren().add(getImage(ImageLoader.get().empty));
+        if(antenna) holder.getChildren().add(getImage(ImageLoader.get().antenna));
+        if(energyField) holder.getChildren().add(getImage(ImageLoader.get().energyField));
+        if(hole) holder.getChildren().add(getImage(ImageLoader.get().hole));
+        if(repair) holder.getChildren().add(getImage(ImageLoader.get().repair));
+        if(respawn) holder.getChildren().add(getImage(ImageLoader.get().respawn));
         if(startField > 0){
             StackPane stackPane = new StackPane();
-            stackPane.getChildren().add(getImage(ImageLoader.get().startField, true, true));
+            stackPane.getChildren().add(getImage(ImageLoader.get().startField));
             Label label = new Label("" + startField);
             label.setStyle("-fx-font-weight: bold; -fx-font-size: 16");
             stackPane.getChildren().add(label);
             holder.getChildren().add(stackPane);
         }
-        if(checkpoint > 0) holder.getChildren().add(getImage(ImageLoader.get().checkpoints[checkpoint-1], true, true));
-        if(gear > 0) holder.getChildren().add(getImage(ImageLoader.get().gear[gear-1], true, true));
+        if(checkpoint > 0) holder.getChildren().add(getImage(ImageLoader.get().checkpoints[checkpoint-1]));
+        if(gear > 0) holder.getChildren().add(getImage(ImageLoader.get().gear[gear-1]));
         if(greenBelt > 0){
-            ImageView belt = getImage(ImageLoader.get().greenBelts[greenBelt-1], true, true);
+            ImageView belt = getImage(ImageLoader.get().greenBelts[greenBelt-1]);
             holder.getChildren().add(belt);
             rotate(belt, beltRotation);
         }
         if(blueBelt > 0){
-            ImageView belt = getImage(ImageLoader.get().blueBelts[blueBelt-1], true, true);
+            ImageView belt = getImage(ImageLoader.get().blueBelts[blueBelt-1]);
             holder.getChildren().add(belt);
             rotate(belt, beltRotation);
         }
@@ -124,7 +130,13 @@ public class BoardBuildElement {
         }
         return holder;
     }
-    private Node formatWall(int rotation){
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Get a Wall at the edge in a specific direction
+     * @param rotation the rotation of the wall from 0 to 3 [0=0, 1=90, 2=180, 3=270]
+     * @return The VBox containing the wall rotated.
+     */
+    private VBox formatWall(int rotation){
         ImageView wall = new ImageView(ImageLoader.get().wall);
         wall.setFitWidth(10);
         wall.setFitHeight(HEIGHT);
@@ -132,12 +144,26 @@ public class BoardBuildElement {
         rotate(wallBox, rotation);
         return wallBox;
     }
-    private ImageView getImage(Image image, boolean fitWidth, boolean fitHeight){
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Get the ImageView containing an Image that is set to the right size fitting the element.
+     * This is used to get the elements that has the size of the whole field, so not walls and pushers, but instead things like the antenna or the reboot field.
+     * @param image the image that goes into the ImageView
+     * @return The ImageView Containing the image sized to the width and height of the element.
+     */
+    private ImageView getImage(Image image){
         ImageView imageView = new ImageView(image);
-        if(fitWidth)imageView.setFitWidth(WIDTH);
-        if(fitHeight)imageView.setFitHeight(HEIGHT);
+        imageView.setFitWidth(WIDTH);
+        imageView.setFitHeight(HEIGHT);
         return imageView;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates and spaces out the lasers if there are multiple.
+     * @param amount the amount of lasers
+     * @param isLaserPointer if it is a laser ray or a pointer
+     * @return A VBox containgen all lasers facing/shooting EAST.
+     */
     private VBox spaceOutLasers(int amount, boolean isLaserPointer){
         VBox box = new VBox();
         box.setAlignment(Pos.CENTER);
@@ -171,12 +197,30 @@ public class BoardBuildElement {
         rotate(box, laserRotation);
         return box;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Moves a node to the edge of the element's box, which is used for walls, laser-pointers and push elements.
+     * @param rotation an offSet rotation of that element
+     * @param node the node that needs to be moved to the edge
+     * @return the VBox that now holds the node at the EAST edge.
+     */
     private VBox getAtEdge(Node node, int rotation){
         return BoardBuildLogic.getAtEdge(node, rotation);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * rotates a Node 90 degrees an amount of times
+     * @param node the node that needs rotating
+     * @param rotation the amount that it needs to be rotated 90 degrees starting with 0 facing EAST
+     */
     private void rotate(Node node, int rotation){
         BoardBuildLogic.rotate(node, rotation);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * make the rotation variable for the different type of Element one more, but if going over 3 it sohuld be 0 instead.
+     * @param type types of elements with rotation = ["wall", "belt", "push", "laser"]
+     */
     public void nextRotation(String type){
         switch (type){
             case "wall":
@@ -197,6 +241,11 @@ public class BoardBuildElement {
                 break;
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * make the rotation variable for the different type of Element one less, but if going under 0 it sohuld be 3 instead.
+     * @param type type of element = ["wall", "belt", "push", "laser"]
+     */
     public void prevRotation(String type){
         switch (type){
             case "wall":
@@ -218,6 +267,10 @@ public class BoardBuildElement {
         }
     }
 
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Below is a lot of getters and setters for private variables in the class.
+     */
     public boolean isAntenna() {
         return antenna;
     }

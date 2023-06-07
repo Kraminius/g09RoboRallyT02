@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import java.util.*;
@@ -1235,6 +1234,8 @@ public class GameController {
 
     public void openUpgradeShop(){
         if(upgradeShop == null) upgradeShop = new UpgradeShop();
+        CommandCardField[] cardFields = upgradeShop.getCards(board.getPlayersNumber());
+        upgradeShop.setCardsForRound(cardFields);
         upgradeShop.openShop(board, this);
         startProgrammingPhase();
     }

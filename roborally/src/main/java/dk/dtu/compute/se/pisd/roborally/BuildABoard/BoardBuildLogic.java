@@ -13,7 +13,12 @@ import static java.lang.Integer.parseInt;
 public class BoardBuildLogic {
     private static ImageLoader imageLoader = new ImageLoader();
 
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * gets the current active elements on a field
+     * @param element the field holding all the data
+     * @return an arraylist of booleans either true or false if they have the data or not. always the same length.
+     */
     public static ArrayList<Boolean> getActiveElements(BoardBuildElement element){
         ArrayList<Boolean> arrayList = new ArrayList<>();
         arrayList.add(false); //Empty
@@ -48,7 +53,12 @@ public class BoardBuildLogic {
         return arrayList;
     }
 
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * checks if the input is a number and within the correct range of numbers, if not it can throw an error back.
+     * @param input A string array containing two strings
+     * @return [error message] or [null] if no errors found.
+     */
     public static String checkSizeInput(String[] input){
         int x = 0;
         int y = 0;
@@ -78,6 +88,11 @@ public class BoardBuildLogic {
         }
         else return null;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * gets the view of an element if the only thing on them is one of each type of element.
+     * @return ArrayList of StackPanes which is element views.
+     */
     public static ArrayList<StackPane> getBoardElementImages(){
         ArrayList<StackPane> images = new ArrayList<>();
         images.add(getElement("empty", 0).getView());
@@ -97,6 +112,13 @@ public class BoardBuildLogic {
         images.add(getElement("noField", 0).getView());
         return images;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * gets the next checkpoint in line. so if two checkpoints are on the board then the next will be three,
+     * but if instead two has been removed, and 1 and 4 is the only ones left then the next will be 2 and then 3
+     * @param build the build containing all the elements of a board.
+     * @return the number of the next checkpoint that should be put on the board.
+     */
     public static int getNextCheckpoint(BoardBuild build){
         ArrayList<Integer> existing = new ArrayList<>();
         for(ArrayList<BoardBuildElement> boardBuildElements : build.getCurrentBuild()){
@@ -109,6 +131,13 @@ public class BoardBuildLogic {
         }
         return 6;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * gets the next start-field in line. so if two start-fields are on the board then the next will be three,
+     * but if instead two has been removed, and 1 and 4 is the only ones left then the next will be 2 and then 3
+     * @param build the build containing all the elements of a board.
+     * @return the number of the next start-field that should be put on the board.
+     */
     public static int getNextStartField(BoardBuild build){
         ArrayList<Integer> existing = new ArrayList<>();
         for(ArrayList<BoardBuildElement> boardBuildElements : build.getCurrentBuild()){
@@ -121,6 +150,12 @@ public class BoardBuildLogic {
         }
         return 6;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Gets the different elements if they have a specific variant to show as an image.
+     * @param type the type that has variants to show.
+     * @return ArrayList of StackPanes which are the different views of elements.
+     */
     public static ArrayList<StackPane> getBoardVariants(int type){
         ArrayList<StackPane> images = new ArrayList<>();
         images.add(getElement("empty", 0).getView());
@@ -183,6 +218,13 @@ public class BoardBuildLogic {
         }
         return images;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Changes the variant on a field.
+     * @param type the type of element.
+     * @param element the field that has the element
+     * @param value the value it should be changed to.
+     */
     public static void changeElementVariant(BoardBuildElement element, int type, int value){
         switch (type){
             case 4: //Laser
@@ -231,6 +273,12 @@ public class BoardBuildLogic {
                 break;
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * checks if the type has any variants.
+     * @param type the type.
+     * @return true if it has variants false if not
+     */
     public static boolean hasVariant(int type){
         switch (type){
             case 4:
@@ -246,6 +294,13 @@ public class BoardBuildLogic {
                 return false;
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * gets which variant is active at the moment of that type
+     * @param element the element in question
+     * @param type the type
+     * @return ArrayList of Booleans true for the one that is active false for the rest.
+     */
     public static ArrayList<Boolean> getActiveVariant(BoardBuildElement element, int type){
         ArrayList<Boolean> actives = new ArrayList<>();
         switch (type){
@@ -315,9 +370,17 @@ public class BoardBuildLogic {
         }
         return actives;
     }
-    public static boolean addIfNotExistent(int index, BoardBuildElement element, BoardBuild build){
+    /**
+     * @Author Tobias Gørlyk s224271
+     * adds an element to a field
+     * @param type the type of element
+     * @param element the element that should have the type on it
+     * @param build the current build needed for checks
+     * @return true if it did added, false if it was already there
+     */
+    public static boolean addIfNotExistent(int type, BoardBuildElement element, BoardBuild build){
         element.setNoField(false);
-        switch (index){
+        switch (type){
             case 0: //Empty
                 element.setAntenna(false);
                 element.setEnergyField(false);
@@ -411,6 +474,14 @@ public class BoardBuildLogic {
         }
         return true;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * gets an element with only that specific type and variant.
+     * This does not come from the build but is new Elements used for showing what an element would look like if added.
+     * @param type the type of element
+     * @param variant the variant of that element
+     * @return the new BoardBuildElement with only that type and variant on it.
+     */
     public static BoardBuildElement getElement(String type, int variant){
         switch (type){
             case "antenna":
@@ -482,6 +553,13 @@ public class BoardBuildLogic {
                 return empty;
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Makes a vbox containing a node, and moves the node to the edge of the east side, and rotates it.
+     * @param node the node that is put to the edge
+     * @param rotation the rotation of that node
+     * @return the VBox containing the node
+     */
     public static VBox getAtEdge(Node node, int rotation){
         VBox box = new VBox();
         box.setMaxSize(55, 55);
@@ -490,53 +568,59 @@ public class BoardBuildLogic {
         box.getChildren().add(node);
         return box;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * rotates a node with a rotation
+     * @param rotation number between 0 and 3
+     * @param node the node that needs to be rotated.
+     */
     public static void rotate(Node node, int rotation){
         node.setRotate(rotation*90+180);
     }
 
-    public static boolean isIndexTrueForElement(int index, BoardBuildElement element){
-        if(element.isAntenna() && index == 1) return true;
-        if(element.isEnergyField() && index == 2) return true;
-        if(element.isHole() && index == 3) return true;
-        if(element.isLaserPointer() && index == 4) return true;
-        if(element.isRepair() && index == 5) return true;
-        if(element.isRespawn() && index == 6) return true;
-        if(element.getStartField() > 0 && index == 7) return true;
-        if(element.getCheckpoint() > 0 && index == 8) return true;
-        if(element.getWall() > 0 && index == 9) return true;
-        if(element.getPush() > 0 && index == 10) return true;
-        if(element.getGear() > 0 && index == 11) return true;
-        if(element.getGreenBelt() > 0 && index == 12) return true;
-        if(element.getBlueBelt() > 0 && index == 13) return true;
+    /**
+     * @Author Tobias Gørlyk s224271
+     * a check to see if the type is a type that can be rotated like a laser or belt, but not a thing like a checkpoint.
+     * @param type the type of element
+     * @return true if it can be turned, false if not
+     */
+    public static boolean isTurnAble(int type){
+        if(type == 4) return true; //Laser
+        if(type == 9) return true; //Wall
+        if(type == 10) return true; //Push
+        if(type == 12) return true; //Green Belt
+        if(type == 13) return true; //Blue Belt
         return false;
     }
-    public static String checkName(String name){
-
-        return null;
-    }
-    public static boolean shouldShowTurns(int index){
-        if(index == 4) return true; //Laser
-        if(index == 9) return true; //Wall
-        if(index == 10) return true; //Push
-        if(index == 12) return true; //Green Belt
-        if(index == 13) return true; //Blue Belt
-        return false;
-    }
-    public static void turn(BoardBuildElement element, int index, boolean direction){
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Turns an a specific type on a filed in a direction either left or right.
+     * @param element the element on the field
+     * @param type the type to be turned
+     * @param direction true = right, false = left
+     */
+    public static void turn(BoardBuildElement element, int type, boolean direction){
         if(direction) { //Right
-            if(index == 4) element.nextRotation("laser"); //Laser
-            if(index == 9) element.nextRotation("wall"); //Wall
-            if(index == 10) element.nextRotation("push"); //Push
-            if(index == 12) element.nextRotation("belt"); //Green Belt
-            if(index == 13) element.nextRotation("belt"); //Blue Belt
+            if(type == 4) element.nextRotation("laser"); //Laser
+            if(type == 9) element.nextRotation("wall"); //Wall
+            if(type == 10) element.nextRotation("push"); //Push
+            if(type == 12) element.nextRotation("belt"); //Green Belt
+            if(type == 13) element.nextRotation("belt"); //Blue Belt
         }else{ //Left
-            if(index == 4) element.prevRotation("laser"); //Laser
-            if(index == 9) element.prevRotation("wall"); //Wall
-            if(index == 10) element.prevRotation("push"); //Push
-            if(index == 12) element.prevRotation("belt"); //Green Belt
-            if(index == 13) element.prevRotation("belt"); //Blue Belt
+            if(type == 4) element.prevRotation("laser"); //Laser
+            if(type == 9) element.prevRotation("wall"); //Wall
+            if(type == 10) element.prevRotation("push"); //Push
+            if(type == 12) element.prevRotation("belt"); //Green Belt
+            if(type == 13) element.prevRotation("belt"); //Blue Belt
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * checks if you can build different types on this element.
+     * Example: you cannot build an antenna on top of a belt, but you can build laser on top of a belt.
+     * @param element the element that has the things on already
+     * @return an arraylist of booleans containing either true or false if you can build the different things on them or not.
+     */
     public static ArrayList<Boolean> getCanBuild(BoardBuildElement element){
         ArrayList<Boolean> canBuilds = new ArrayList<>();
         canBuilds.add(canBuild("empty", element));
@@ -554,26 +638,14 @@ public class BoardBuildLogic {
         canBuilds.add(canBuild("greenBelt", element));
         canBuilds.add(canBuild("blueBelt", element));
         canBuilds.add(canBuild("noField", element));
-
-        /*
-        empty
-        antenna
-        energyfield
-        hole
-        laser
-        repair
-        respawn
-        startField
-        checkpoint
-        wall
-        push
-        gear
-        greenbelt
-        bluebelt
-        nofield
-         */ //order
         return canBuilds;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * checks if a type can be built on an element
+     * @param element  the element with things on
+     * @param type the type to see if it can be added
+     */
     public static boolean canBuild(String type, BoardBuildElement element){
         switch (type){
             case "wall":
