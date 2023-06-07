@@ -211,16 +211,31 @@ public class MyRest {
 
     /**
      * @author Nicklas Christensen     s224314.dtu.dk
-     * @param space the space which the player is on
-     * @param player the number of the player we are saving the position of
-     * @return wether we succeded or not at recieving the game
+     * This method is used to send the current version of the game saved on the server
+     * @return a Load containing all the information about the game
      */
-    @PostMapping (value = "/playerPos/{player}")
-    public ResponseEntity<String> setPlayerPos(@PathVariable int player, @RequestBody Space space) {
+    @GetMapping(value = "/getSave/{saveName}")
+    public ResponseEntity<Load> getSave(@PathVariable String saveName) {
 
-        System.out.println("set Player: " + player + "position request recieved");
-        gameDataRep.setPlayerPosition(player , space.x, space.y);
-        return ResponseEntity.ok().body("playerSet");
+        System.out.println("we have been asked for : " + saveName + " saveFile");
+        Load load = gameDataRep.getSave(saveName);
+        System.out.println("We found file sending a Load of it");
+        return ResponseEntity.ok().body(load);
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     *
+     */
+    @PostMapping (value = "/addSave")
+    public ResponseEntity<String> instaGameData(@PathVariable String saveName, @RequestBody Load game) {
+
+        System.out.println("add a save request recieved for: " + saveName);
+        gameDataRep.instantiateGameState(game);
+        //gameDataRep.instantiateGameData(numberOfPlayers);
+        System.out.println("Save found!");
+
+        return ResponseEntity.ok().body("instantiated");
     }
 
 }

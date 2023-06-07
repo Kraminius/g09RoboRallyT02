@@ -83,5 +83,45 @@ public class MyClient {
         return result.equals("instantiated");
     }
 
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * @param saveName the name of the saved gameState we want
+     * @return the Load of the gameState we asked for
+     * @throws Exception
+     */
+    public static Load getSave(String saveName) throws Exception {
+        try{
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(URI.create("http://localhost:8080/getSave/" + saveName))
+                    .setHeader("User-Agent", "Product Client")
+                    .header("Content-Type", "application/json")
+                    .build();
+            CompletableFuture<HttpResponse<String>> response =
+                    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            String result = response.thenApply((r)->r.body()).get(5, TimeUnit.SECONDS);
+            Gson gson = new Gson();
+            Load load = gson.fromJson(result, Load.class);
+            return load;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     */
+    public static boolean setSave(String name,Load load) throws Exception {
+        String productJSON = new Gson().toJson(load);
+        HttpRequest request = HttpRequest.newBuilder()
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(productJSON))
+                .uri(URI.create("http://localhost:8080/addSave/" + name))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result.equals("instantiated");
+    }
 
 }

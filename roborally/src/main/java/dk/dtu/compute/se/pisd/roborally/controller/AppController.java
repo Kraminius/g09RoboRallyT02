@@ -273,14 +273,43 @@ public class AppController implements Observer {
         }
     }
 
-    public void sendPlayerInfo(){
+    /**
+     *
+     */
+    public void loadServerGame() throws Exception {
+        // XXX needs to be implemented eventually
+        // for now, we just create a new game
 
-        try {
-            System.out.println("We pushed a button :3");
-            //Call the method from a static class here
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        //These may be wrong check in on them
+        LoadGameWindow load = new LoadGameWindow();
+        String saveName = load.getLoadInput();
+        //We need a way to get the saveNames from the server
+        System.out.println("Loading " + saveName);
+        Load serverLoad = MyClient.getSave(saveName);
+        gameController = GameLoader.loadGameFromServer(serverLoad, this);
+
+        if(gameController == null) {
+            newGame();
         }
+    }
+
+    public void saveServerGame() {
+        // XXX needs to be implemented eventually
+        String saveName = "";
+        boolean nameChecksOut;
+        do{
+            Option option = new Option("Write the name of the save.");
+            saveName = option.getPromptedAnswer("eg. mySaveFile");
+            if(saveName.equals("")) nameChecksOut = false;
+            else nameChecksOut = true;
+        }while(!nameChecksOut);
+
+        System.out.println("Saving game under name: " + saveName);
+
+        GameSave gameSave =  new GameSave();
+        Load load = GameLoader.loadData(gameSave.jsonGame(this.gameController));
+
+        MyClient.setSave(saveName, load);
     }
 
 }
