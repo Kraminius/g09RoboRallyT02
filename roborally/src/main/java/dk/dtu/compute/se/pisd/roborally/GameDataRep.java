@@ -5,7 +5,7 @@ import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class GameDataRep {
@@ -240,11 +240,43 @@ public class GameDataRep {
         gameState.getPlayersYPosition()[playerNumber] = player.getY();
         gameState.getPlayerHeadings()[playerNumber] = player.getHeading();
 
-        /*for (int i = 0; i < player.getCards().length; i++) {
-            gameState.getPlayerProgrammingDeck()[playerNumber][i] = player.getCards()[i].getCard().command;
-        }*/
+        ArrayList<CommandCard> deck = new ArrayList<>();
+
+        deck = instaShuffleDeck(deck);
+
+        Command[][] temp = gameState.getPlayerProgrammingDeck();
+
+        if (temp[playerNumber] == null) {
+            temp[playerNumber] = new Command[deck.size()];
+        }
+
+        for (int i = 0; i < deck.size(); i++) {
+            temp[playerNumber][i] = deck.get(i).command;
+        }
+
+        gameState.setPlayerProgrammingDeck(temp);
 
         return gameState;
+
+    }
+
+    public ArrayList<CommandCard> instaShuffleDeck(ArrayList<CommandCard> playerDeck){
+
+        Set<Command> validCommands = EnumSet.of(Command.FORWARD, Command.FAST_FORWARD, Command.LEFT, Command.RIGHT, Command.SPRINT_FORWARD, Command.BACK_UP, Command.U_TURN, Command.AGAIN, Command.POWER_UP);
+
+        int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
+        int index = 0;
+        System.out.println(validCommands);
+        for(Command command : validCommands){
+            int count = counts[index];
+            for(int i = 0; i < count; i++){
+                playerDeck.add(new CommandCard(command));
+            }
+            index++;
+        }
+        Collections.shuffle(playerDeck);
+
+        return playerDeck;
 
     }
 
