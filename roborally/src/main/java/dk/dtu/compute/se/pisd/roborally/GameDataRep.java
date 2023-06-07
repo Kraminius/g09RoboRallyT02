@@ -41,6 +41,21 @@ public class GameDataRep {
 
     }
 
+    public boolean checkerAllPlayersPicked(){
+
+        for (int i = 0; i < gameData.getAllPickedList().length; i++) {
+
+            //System.out.println("This player picked: " + gameData.getAllPickedList()[i]);
+
+            if(!gameData.getAllPickedList()[i]){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
     public void createGame(String gameName, String creatorName, int numberOfplayers, String boardToPlay){
 
         gameData = new GameData(numberOfplayers);

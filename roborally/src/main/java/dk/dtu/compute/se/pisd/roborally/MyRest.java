@@ -233,4 +233,19 @@ public class MyRest {
         return ResponseEntity.ok(gameDataRep.gameState);
     }
 
+
+    @GetMapping(value = "/allPlayersPicked")
+    public ResponseEntity<Boolean> allPlayersPicked(){
+        Boolean temp = gameDataRep.checkerAllPlayersPicked();
+        return ResponseEntity.ok().body(temp);
+    }
+
+    @PostMapping(value = "/picked/{playerNumber}")
+    public ResponseEntity<Boolean> picked(@PathVariable("playerNumber") int playerNumber){
+        gameDataRep.gameData.getAllPickedList()[playerNumber] = true;
+        return ResponseEntity.ok().body(true);
+    }
+
+
+
 }

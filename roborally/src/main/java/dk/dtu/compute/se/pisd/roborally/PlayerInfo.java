@@ -7,6 +7,7 @@ public class PlayerInfo {
 
     private String gameId;
 
+
     //Needs to differentiate different games
     public PlayerInfo(String name, int playerId) {
         this.name = name;
@@ -38,4 +39,6 @@ public class PlayerInfo {
     public void setGameId(String gameId) {
         this.gameId = gameId;
     }
+
+
 }

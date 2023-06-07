@@ -153,6 +153,19 @@ public class AppController implements Observer {
         GameClient.addStartPosition(Integer.parseInt(positionWindow.getStartPosChoice().getValue()));
         GameClient.nextPlayer();
 
+        GameClient.picked();
+
+        if(GameClient.getPlayerNumber() == 0){
+            instantiateGame();
+        }
+        else{
+            sendPlayerInfo();
+        }
+
+
+        GameClient.startAllPickedStartPosition();
+
+
         gameController.startUpgradePhase();
 
     }

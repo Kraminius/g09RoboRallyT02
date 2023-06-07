@@ -45,10 +45,55 @@ public class GameClient {
 
     private static ScheduledFuture<?> pickStartPosition;
 
+    private static ScheduledFuture<?> allPickedStartPosition;
+
     //Waiting for start position
     public static void startWaitingForStartPosition(){
         pickStartPosition = executorService.scheduleAtFixedRate(GameClient::startPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);;
     }
+
+    public static void startAllPickedStartPosition(){
+        allPickedStartPosition =executorService.scheduleAtFixedRate(GameClient::pollAllPickedStartPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void pollAllPickedStartPosition(){
+
+
+        boolean temp = false;
+        try {
+            temp = allPlayersPicked();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+        if(temp){
+
+            System.out.println("we have updated the game");
+            javafx.application.Platform.runLater(() -> {
+                        RoboRally.getAppController().updateGame();
+                    });
+            allPickedStartPosition.cancel(false);
+        }else {
+            System.out.println("We are waiting for all players to pick");
+        }
+
+
+    }
+
+    public static boolean allPlayersPicked() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/allPlayersPicked"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return Boolean.parseBoolean(result);
+    }
+
+
 
     public static void startPosition(){
         int player;
@@ -77,6 +122,17 @@ public class GameClient {
 
         }
 
+    }
+
+    public static void picked() throws Exception{
+        int number = playerInfo.getPlayerId();
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/picked/" + number))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
     public static int addStartPosition(int pos) throws Exception {

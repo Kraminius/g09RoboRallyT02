@@ -20,6 +20,8 @@ public class GameData {
 
     private boolean isGameRunning = false;
 
+    private boolean[] allPickedList;
+
 
 
     public GameData(int numPlayers){
@@ -29,6 +31,12 @@ public class GameData {
 
         for (int i = 0; i < readyList.length; i++) {
             readyList[i] = false;
+        }
+
+        allPickedList = new boolean[numPlayers];
+
+        for (int i = 0; i < allPickedList.length; i++) {
+            allPickedList[i] = false;
         }
 
     }
@@ -75,5 +83,14 @@ public class GameData {
 
     public void setGameRunning(boolean gameRunning) {
         isGameRunning = gameRunning;
+    }
+
+
+    public boolean[] getAllPickedList() {
+        return allPickedList;
+    }
+
+    public void setAllPickedList(boolean[] allPickedList) {
+        this.allPickedList = allPickedList;
     }
 }
