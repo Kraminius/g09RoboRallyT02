@@ -1,27 +1,24 @@
-package dk.dtu.compute.se.pisd.roborally.chat;
+package dk.dtu.compute.se.pisd.roborally.chat.Server;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientHandler implements Runnable{
-    public static List<ClientHandler> clients = new ArrayList<>();
+    private static List<ClientHandler> activeClientHandlers = new ArrayList<>();
     private Socket clientSocket;
-    private String userName;
+    private String username;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    public ClientHandler(Socket clientSocket, BufferedReader bufferedReader, String username){
+    public ClientHandler(Socket clientSocket){
         try {
             this.clientSocket = clientSocket;
-            this.bufferedReader = bufferedReader;
+            this.bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            this.userName = username;
-            clients.add(this);
+            this.username = bufferedReader.readLine();
+            activeClientHandlers.add(this);
             broadcastMessage("SERVER: " + username + " has joined the chat!");
         } catch (IOException e){
             closeEverything(clientSocket, bufferedReader, bufferedWriter);
@@ -30,24 +27,28 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run() {
-        try{
-            String messageFromClient;
-            while((messageFromClient = bufferedReader.readLine()) != null) {;
-                System.out.println("Message passes to broadcast: " + messageFromClient);
-                broadcastMessage(messageFromClient);
+        String messageFromClient;
+        while(!clientSocket.isClosed()){
+            try {
+                    messageFromClient = bufferedReader.readLine();
+                    if(messageFromClient != null) {
+                        System.out.println("Message from client to be broadcasted: " + messageFromClient);
+                        broadcastMessage(messageFromClient);
+                    } else {
+                        closeEverything(clientSocket, bufferedReader, bufferedWriter);
+                    }
+            } catch (IOException e){
+                closeEverything(clientSocket, bufferedReader, bufferedWriter);
+                break;
             }
-        } catch (IOException e) {
-            closeEverything(clientSocket, bufferedReader, bufferedWriter);
         }
     }
 
     private void broadcastMessage(String message){
-        System.out.println("Broadcasting message = " + message);
-        System.out.println("From user = " + userName);
-        for (ClientHandler client : clients) {
+        System.out.println("Broadcasting message: " + message);
+        for (ClientHandler client : activeClientHandlers) {
             try {
-                if(!client.userName.equals(userName)){
-                    System.out.println("Sending message: " + message + " to client: " + client.userName);
+                if(!client.username.equals(this.username)) {
                     client.bufferedWriter.write(message);
                     client.bufferedWriter.newLine();
                     client.bufferedWriter.flush();
@@ -59,11 +60,12 @@ public class ClientHandler implements Runnable{
     }
 
     public void removeClientHandler(){
-        clients.remove(this);
-        broadcastMessage("SERVER: " + this.userName + " has left the chat!");
+        activeClientHandlers.remove(this);
+        broadcastMessage("SERVER: " + username + " has left the chat");
     }
 
     public void closeEverything(Socket socket, BufferedReader reader, BufferedWriter writer){
+        removeClientHandler();
         try {
             if(reader != null){
                 reader.close();
@@ -79,3 +81,4 @@ public class ClientHandler implements Runnable{
         }
     }
 }
+

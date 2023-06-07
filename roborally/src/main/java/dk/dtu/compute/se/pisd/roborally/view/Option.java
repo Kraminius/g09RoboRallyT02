@@ -69,11 +69,22 @@ public class Option {
         okButton.setOnAction(e -> close());
         show();
     }
-    public boolean getYESNO(){
+    public boolean getYESNO(String text){
         HBox panel = new HBox();
         panel.setPadding(new Insets(20, 20 ,20, 20));
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 14");
+        label.setAlignment(Pos.CENTER);
+        label.setWrapText(true);
+        label.setMaxWidth(300);
         Button yesButton = new Button("Yes");
         Button noButton = new Button("No");
+        VBox view = new VBox();
+        view.setAlignment(Pos.CENTER);
+        panel.setAlignment(Pos.CENTER);
+        view.setPadding(new Insets(5, 5, 5, 5));
+        panel.getChildren().addAll(yesButton, noButton);
+        view.getChildren().addAll(label, panel);
         panel.setSpacing(10);
         yesButton.setOnAction(e -> {
             yesNo = true;
@@ -83,6 +94,7 @@ public class Option {
             yesNo = false;
             close();
         });
+        window.getChildren().add(view);
         show();
         return yesNo;
     }
