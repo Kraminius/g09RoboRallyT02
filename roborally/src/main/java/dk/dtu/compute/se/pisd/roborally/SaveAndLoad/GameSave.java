@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 
+import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.json.simple.JSONArray;
@@ -180,8 +181,9 @@ public class GameSave {
         JSONArray playerUpgradeCards = new JSONArray();
         JSONArray playerEnergyCubes = new JSONArray();
         JSONArray mapEnergyCubes = new JSONArray();
-        for(int i = 0; i < board.getPlayersNumber(); i++){
-            Player player = board.getPlayer(i);
+        //for(int i = 0; i < board.getPlayersNumber(); i++){
+        int playerNum = GameClient.getPlayerNumber();
+            Player player = board.getPlayer(playerNum);
             playersName.add(player.getName());
             playersColor.add(player.getColor());
             playerEnergyCubes.add(player.getEnergyCubes());
@@ -217,7 +219,7 @@ public class GameSave {
             for(int j = 0; j < programmingDeck.size(); j++){
                 if(programmingDeck.get(j) != null) playersProgrammingDeck.add(programmingDeck.get(j).command.toString());
             }
-        }
+        //}
         JSONArray upgradeCardsDeck = new JSONArray();
         JSONArray upgradeDiscardDeck = new JSONArray();
         JSONArray upgradeOutDeck = new JSONArray();

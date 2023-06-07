@@ -251,10 +251,13 @@ public class AppController implements Observer {
     //Instantiate a gameState
     public void instantiateGame(){
         //we need to make a Load
+        System.out.println("vi kommer lol");
         GameSave gameSave = new GameSave();
         Load loadGame = GameLoader.loadData(gameSave.jsonGame(gameController));
         try {
+            System.out.println("kommer vi her");
             MyClient.instantiateGame(loadGame);
+            System.out.println();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

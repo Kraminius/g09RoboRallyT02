@@ -73,6 +73,7 @@ public class MyRest {
     public ResponseEntity<Integer> instaGameData(@RequestParam("numberOfPlayers") String playerNumStr) {
         int numberOfPlayers = Integer.parseInt(playerNumStr);
         gameDataRep.instantiateGameData(numberOfPlayers);
+        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings());
         System.out.println("Size: " + gameDataRep.gameData.getReadyList().length + "& " + gameDataRep.gameData.getGameSettings().getNumberOfPlayers());
         return ResponseEntity.ok().body(5);
     }
@@ -104,6 +105,7 @@ public class MyRest {
 
         gameDataRep.createGame(settings[0],settings[1], Integer.parseInt(settings[2]), settings[3]);
 
+        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings());
         //System.out.println(gameRepository.getGameSettings().toString());
 
         return ResponseEntity.ok("hej");
@@ -190,6 +192,9 @@ public class MyRest {
         gameDataRep.instantiateGameState(game);
         //gameDataRep.instantiateGameData(numberOfPlayers);
         System.out.println("Instantiated a gameState");
+
+        System.out.println(gameDataRep.gameState);
+
         return ResponseEntity.ok().body("instantiated");
     }
 

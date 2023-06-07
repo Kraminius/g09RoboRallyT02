@@ -4,6 +4,8 @@ import dk.dtu.compute.se.pisd.roborally.model.Command;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Phase;
 
+import java.util.Arrays;
+
 /**
  * @author Nicklas Christensen     s224314.dtu.dk
  * This class is used to hold all the information in a game within the server
@@ -264,4 +266,32 @@ public class GameState {
             this.playerProgrammingDeck[player] = commands;
         }
 
+
+    @Override
+    public String toString() {
+        return "GameState{" +
+                "playerAmount=" + playerAmount +
+                ", step=" + step +
+                ", phase=" + phase +
+                ", currentPlayer='" + currentPlayer + '\'' +
+                ", board='" + board + '\'' +
+                ", isStepmode=" + isStepmode +
+                ", upgradeDiscardDeck=" + Arrays.toString(upgradeDiscardDeck) +
+                ", upgradeOutDeck=" + Arrays.toString(upgradeOutDeck) +
+                ", upgradeCardsDeck=" + Arrays.toString(upgradeCardsDeck) +
+                ", playerNames=" + Arrays.toString(playerNames) +
+                ", playerColors=" + Arrays.toString(playerColors) +
+                ", playerEnergyCubes=" + Arrays.toString(playerEnergyCubes) +
+                ", playerCheckPoints=" + Arrays.toString(playerCheckPoints) +
+                ", playersXPosition=" + Arrays.toString(playersXPosition) +
+                ", playersYPosition=" + Arrays.toString(playersYPosition) +
+                ", mapCubePositions=" + Arrays.toString(mapCubePositions) +
+                ", playerHeadings=" + Arrays.toString(playerHeadings) +
+                ", playerProgrammingDeck=" + Arrays.toString(playerProgrammingDeck) +
+                ", playerCurrentProgram=" + Arrays.toString(playerCurrentProgram) +
+                ", playerDiscardPile=" + Arrays.toString(playerDiscardPile) +
+                ", playerUpgradeCards=" + Arrays.toString(playerUpgradeCards) +
+                ", playersPulledCards=" + Arrays.toString(playersPulledCards) +
+                '}';
+    }
 }
