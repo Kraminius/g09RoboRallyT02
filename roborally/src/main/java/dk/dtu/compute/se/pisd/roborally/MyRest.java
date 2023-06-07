@@ -1,8 +1,11 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.PlayerStartData;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -209,18 +212,25 @@ public class MyRest {
         return ResponseEntity.ok().body(game);
     }
 
-    /**
-     * @author Nicklas Christensen     s224314.dtu.dk
-     * @param space the space which the player is on
-     * @param player the number of the player we are saving the position of
-     * @return wether we succeded or not at recieving the game
-     */
-    @PostMapping (value = "/playerPos/{player}")
-    public ResponseEntity<String> setPlayerPos(@PathVariable int player, @RequestBody Space space) {
+    @PostMapping (value = "/sendStartData/{playerNumber}")
+    public ResponseEntity<GameState> sendStartData(@RequestBody String playerDataString, @PathVariable("playerNumber") int playerNumber){
 
-        System.out.println("set Player: " + player + "position request recieved");
-        gameDataRep.setPlayerPosition(player , space.x, space.y);
-        return ResponseEntity.ok().body("playerSet");
+        ObjectMapper objectMapper = new ObjectMapper();
+        PlayerStartData player;
+        try {
+            player = objectMapper.readValue(playerDataString, PlayerStartData.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build(); // return a 400 status in case of parsing error
+        }
+
+        System.out.println("Im sending data");
+        gameDataRep.sendStartGameData(player, playerNumber);
+        //System.out.println(player);
+        System.out.println("Printing Updated Data");
+        System.out.println(gameDataRep.gameState.toString());
+
+        return ResponseEntity.ok(gameDataRep.gameState);
     }
 
 }

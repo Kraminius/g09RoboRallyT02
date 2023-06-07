@@ -230,4 +230,23 @@ public class GameDataRep {
     }
 
 
+    public GameState sendStartGameData(PlayerStartData player, int playerNumber){
+
+        System.out.println("når vi her til");
+        gameState.getPlayerNames()[playerNumber] = player.getName();
+        gameState.getPlayerColors()[playerNumber] = player.getColor();
+        gameState.getPlayerEnergyCubes()[playerNumber] = 5;
+        gameState.getPlayersXPosition()[playerNumber] = player.getX();
+        gameState.getPlayersYPosition()[playerNumber] = player.getY();
+        gameState.getPlayerHeadings()[playerNumber] = player.getHeading();
+
+        /*for (int i = 0; i < player.getCards().length; i++) {
+            gameState.getPlayerProgrammingDeck()[playerNumber][i] = player.getCards()[i].getCard().command;
+        }*/
+
+        return gameState;
+
+    }
+
+
 }

@@ -21,9 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoader;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +39,7 @@ import static java.lang.Integer.parseInt;
  * @author Ekkart Kindler, ekki@dtu.dk
  *
  */
+
 public class Board extends Subject {
 
     public int width;
@@ -52,6 +51,7 @@ public class Board extends Subject {
     private Integer gameId;
 
     public Space[][] spaces;
+
 
     private final List<Player> players = new ArrayList<>();
 

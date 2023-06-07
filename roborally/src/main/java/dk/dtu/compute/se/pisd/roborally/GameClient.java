@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import dk.dtu.compute.se.pisd.roborally.model.CommandCardField;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
+import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.PlayerStartData;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 
@@ -389,6 +392,35 @@ public class GameClient {
 
     public static int getPlayerNumber(){
         return playerInfo.getPlayerId();
+    }
+
+
+    public static void sendStartData(PlayerStartData playerStartData) throws Exception{
+
+        int playerNumber = playerInfo.getPlayerId();
+
+        System.out.println("it mus be here somewhere1");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(playerStartData);
+
+        System.out.println("RequestBody: " + requestBody);
+        System.out.println("it mus be here somewhere2");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .uri(URI.create("http://localhost:8080/sendStartData/" + playerNumber))
+                .build();
+
+        System.out.println("it mus be here somewhere3");
+
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        System.out.println("it mus be here somewhere4");
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+
     }
 
 }

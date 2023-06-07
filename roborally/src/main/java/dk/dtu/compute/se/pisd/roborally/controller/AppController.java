@@ -64,7 +64,11 @@ public class AppController implements Observer {
     private GameController gameController;
     private GameSettings gameSettings;
 
+    private Board board;
+
     private StartPositionWindow positionWindow = new StartPositionWindow();
+
+    private Player clientPlayer;
 
 
     public AppController(@NotNull RoboRally roboRally, GameSettings gameSettings) {
@@ -114,8 +118,9 @@ public class AppController implements Observer {
         }*/
 
 
-        Board board = new Board(gameSettings.getBoardToPlay());
+        board = new Board(gameSettings.getBoardToPlay());
         gameController = new GameController(board);
+        int playerClient = GameClient.getPlayerNumber();
 
         for (int i = 0; i < no; i++) {
             String name;
@@ -125,6 +130,11 @@ public class AppController implements Observer {
             player.setEnergyCubes(5);
             gameController.fillStartDeck(player.getCardDeck());
             board.addPlayer(player);
+
+            if(i == playerClient){
+                System.out.println("vi gemmer player objected");
+                clientPlayer = player;
+            }
 
 
             //player.setSpace(board.getSpace(i % board.width, i));
@@ -278,6 +288,20 @@ public class AppController implements Observer {
         try {
             System.out.println("We pushed a button :3");
             //Call the method from a static class here
+
+
+            System.out.println(clientPlayer.getName());
+            System.out.println(clientPlayer.getSpace().getX());
+            System.out.println(clientPlayer.getSpace().getY());
+            System.out.println(clientPlayer.getColor());
+            System.out.println(clientPlayer.getCards());
+
+            PlayerStartData playerStartData = new PlayerStartData(clientPlayer.getName(), clientPlayer.getColor(),
+                    clientPlayer.getSpace().getX(), clientPlayer.getSpace().getY(),  clientPlayer.getHeading());
+
+            GameClient.sendStartData(playerStartData);
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
