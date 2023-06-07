@@ -81,6 +81,13 @@ public class GameLoader {
         return load;
     }
 
+    //New method for loading a game from a Load retrieved from server
+    public static GameController loadGameFromServer(Load load, AppController appController) {
+        gameController = LoadInstance.load(appController, load);
+        System.out.println("made a gameController from given Load");
+        return gameController;
+    }
+
 
 
 }

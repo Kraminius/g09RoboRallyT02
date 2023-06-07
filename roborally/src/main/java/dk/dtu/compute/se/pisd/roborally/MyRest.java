@@ -233,4 +233,33 @@ public class MyRest {
         return ResponseEntity.ok(gameDataRep.gameState);
     }
 
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * This method is used to send the current version of the game saved on the server
+     * @return a Load containing all the information about the game
+     */
+    @GetMapping(value = "/getSave/{saveName}")
+    public ResponseEntity<Load> getSave(@PathVariable String saveName) {
+
+        System.out.println("we have been asked for : " + saveName + " saveFile");
+        Load load = gameDataRep.getSave(saveName);
+        System.out.println("We found file sending a Load of it");
+        return ResponseEntity.ok().body(load);
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     *
+     */
+    @PostMapping (value = "/addSave/{saveName}")
+    public ResponseEntity<String> instaGameData(@PathVariable String saveName, @RequestBody Load game) {
+
+        System.out.println("add a save request recieved for: " + saveName);
+        gameDataRep.saveAGame(game, saveName);
+        //gameDataRep.instantiateGameData(numberOfPlayers);
+        System.out.println("Save made!");
+
+        return ResponseEntity.ok().body("instantiated");
+    }
+
 }
