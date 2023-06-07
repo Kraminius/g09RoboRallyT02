@@ -140,7 +140,6 @@ public class AppController implements Observer {
         positionWindow.getStartSpaces(board, GameClient.getPlayerNumber());
         positionWindow.showWindow();
         System.out.println("I picked this: " + positionWindow.getStartPosChoice().getValue());
-
         GameClient.addStartPosition(Integer.parseInt(positionWindow.getStartPosChoice().getValue()));
         GameClient.nextPlayer();
 

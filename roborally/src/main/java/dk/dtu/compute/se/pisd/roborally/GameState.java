@@ -167,6 +167,11 @@ public class GameState {
             this.playersXPosition = playersXPosition;
         }
 
+        public void setSpecificPlayerPosition(int playerNumber, int xPosition, int yPosition){
+            playersXPosition[playerNumber] = xPosition;
+            playersYPosition[playerNumber] = yPosition;
+        }
+
         public int[] getY() {
             return playersYPosition;
         }

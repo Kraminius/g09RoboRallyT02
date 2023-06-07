@@ -204,6 +204,11 @@ public class GameDataRep {
         return makeGameLoad(gameState);
     }
 
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * this method takes the Load of a game sent from a client
+     * and uses its information to make a gameState in the server.
+     */
     public void instantiateGameState(Load loadGame){
         GameState instantiatetedGameState = makeGameState(loadGame);
         this.gameState = instantiatetedGameState;
@@ -211,6 +216,17 @@ public class GameDataRep {
         System.out.println(gameState.getPlayerNames());
         System.out.println(String.valueOf(gameState.getPlayerHeadings()));
         System.out.println(gameState.getCurrentPlayer());
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * a method for changing the position of a player saved on the server.
+     * It needs the player number and so the one sending needs to know what player
+     * they are sending data about
+     */
+    public void setPlayerPosition(int player, int xPos, int yPos){
+        gameState.setSpecificPlayerPosition(player, xPos, yPos);
+        System.out.println("We have made the changes");
     }
 
 

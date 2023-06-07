@@ -2,6 +2,8 @@ package dk.dtu.compute.se.pisd.roborally;
 
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
+import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.Space;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -200,6 +202,20 @@ public class MyRest {
     public ResponseEntity<Load> getGame(){
         Load game = gameDataRep.getGame();
         return ResponseEntity.ok().body(game);
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * @param space the space which the player is on
+     * @param player the number of the player we are saving the position of
+     * @return wether we succeded or not at recieving the game
+     */
+    @PostMapping (value = "/playerPos/{player}")
+    public ResponseEntity<String> setPlayerPos(@PathVariable int player, @RequestBody Space space) {
+
+        System.out.println("set Player: " + player + "position request recieved");
+        gameDataRep.setPlayerPosition(player , space.x, space.y);
+        return ResponseEntity.ok().body("playerSet");
     }
 
 }
