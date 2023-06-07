@@ -21,6 +21,7 @@ public class MainMenuController {
     private VBox mainMenu;
     private VBox boardMenu;
     private VBox boardLoadMenu;
+    private HBox list = new HBox();
 
 
     public MainMenuController(MainMenuHandler handler){
@@ -77,7 +78,7 @@ public class MainMenuController {
         VBox buttons = new VBox();
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(20);
-        HBox list = makeBoardList();
+        makeBoardList(list);
         Button backToMenuButton = styleButton("Back To Menu",18);
         backToMenuButton.setOnAction(e->handler.backToMenu());
         buttons.getChildren().addAll(list, backToMenuButton);
@@ -85,7 +86,7 @@ public class MainMenuController {
         label.setStyle("-fx-font-size: 36; -fx-font-weight: bold");
         boardLoadMenu.getChildren().addAll(label, buttons);
     }
-    private HBox makeBoardList(){
+    private void makeBoardList(HBox holder){
         BoardLoadWindow loadGetter = new BoardLoadWindow();
         ComboBox<String> boards = new ComboBox<>();
         loadGetter.addFiles(boards);
@@ -93,9 +94,9 @@ public class MainMenuController {
         VBox box = new VBox();
         scrollPane.setContent(box);
         scrollPane.setPrefHeight(120);
-        HBox holder = new HBox();
+        holder.getChildren().clear();
         scrollPane.setStyle("-fx-background-color: #909090");
-        scrollPane.setPrefWidth(400);
+        scrollPane.setPrefWidth(288);
         holder.setAlignment(Pos.CENTER);
         holder.getChildren().addAll(scrollPane);
         for(String boardName : boards.getItems()){
@@ -108,8 +109,6 @@ public class MainMenuController {
             element.getChildren().addAll(load, delete);
             box.getChildren().add(element);
         }
-
-        return holder;
     }
     private Button styleButton(String text, int size){
         Button button = new Button(text);
@@ -134,6 +133,7 @@ public class MainMenuController {
     public void showBoardLoaderMenu(){
         root.getChildren().clear();
         root.getChildren().add(boardLoadMenu);
+        makeBoardList(list);
     }
     private VBox makeRoot(){
         VBox root = new VBox();
@@ -154,6 +154,8 @@ public class MainMenuController {
     }
     private void deleteBoard(String name){
         handler.deleteLoadedBoard(name);
+        list.getChildren().clear();
+        makeBoardList(list);
     }
 
 }

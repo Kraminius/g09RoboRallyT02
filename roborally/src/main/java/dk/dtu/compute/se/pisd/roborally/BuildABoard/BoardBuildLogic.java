@@ -97,6 +97,30 @@ public class BoardBuildLogic {
         images.add(getElement("noField", 0).getView());
         return images;
     }
+    public static int getNextCheckpoint(BoardBuild build){
+        ArrayList<Integer> existing = new ArrayList<>();
+        for(ArrayList<BoardBuildElement> boardBuildElements : build.getCurrentBuild()){
+            for(BoardBuildElement element : boardBuildElements){
+                if(element.getCheckpoint() > 0) existing.add(element.getCheckpoint());
+            }
+        }
+        for(int i = 1; i <=6; i++){
+            if(!existing.contains(i)) return i;
+        }
+        return 6;
+    }
+    public static int getNextStartField(BoardBuild build){
+        ArrayList<Integer> existing = new ArrayList<>();
+        for(ArrayList<BoardBuildElement> boardBuildElements : build.getCurrentBuild()){
+            for(BoardBuildElement element : boardBuildElements){
+                if(element.getStartField() > 0) existing.add(element.getStartField());
+            }
+        }
+        for(int i = 1; i <=6; i++){
+            if(!existing.contains(i)) return i;
+        }
+        return 6;
+    }
     public static ArrayList<StackPane> getBoardVariants(int type){
         ArrayList<StackPane> images = new ArrayList<>();
         images.add(getElement("empty", 0).getView());
@@ -147,7 +171,6 @@ public class BoardBuildLogic {
                 images.add(getElement("greenBelt", 4).getView());
                 images.add(getElement("greenBelt", 5).getView());
                 images.add(getElement("greenBelt", 6).getView());
-                images.add(getElement("greenBelt", 7).getView());
                 break;
             case 13: //Blue Belt
                 images.add(getElement("blueBelt", 1).getView());
@@ -156,7 +179,6 @@ public class BoardBuildLogic {
                 images.add(getElement("blueBelt", 4).getView());
                 images.add(getElement("blueBelt", 5).getView());
                 images.add(getElement("blueBelt", 6).getView());
-                images.add(getElement("blueBelt", 7).getView());
                 break;
         }
         return images;
@@ -197,6 +219,7 @@ public class BoardBuildLogic {
                 break;
             case 10: //Push
                 element.setPush(value);
+                break;
             case 11: //Gear
                 element.setGear(value);
                 break;
@@ -279,7 +302,6 @@ public class BoardBuildLogic {
                 actives.add(element.getGreenBelt() == 4);
                 actives.add(element.getGreenBelt() == 5);
                 actives.add(element.getGreenBelt() == 6);
-                actives.add(element.getGreenBelt() == 7);
                 break;
             case 13: //Blue Belt
                 actives.add(element.getBlueBelt() == 0);
@@ -289,12 +311,11 @@ public class BoardBuildLogic {
                 actives.add(element.getBlueBelt() == 4);
                 actives.add(element.getBlueBelt() == 5);
                 actives.add(element.getBlueBelt() == 6);
-                actives.add(element.getBlueBelt() == 7);
                 break;
         }
         return actives;
     }
-    public static boolean addIfNotExistent(int index, BoardBuildElement element){
+    public static boolean addIfNotExistent(int index, BoardBuildElement element, BoardBuild build){
         element.setNoField(false);
         switch (index){
             case 0: //Empty
@@ -348,12 +369,12 @@ public class BoardBuildLogic {
                 } else return false;
             case 7: //startField
                 if(element.getStartField() == 0){
-                    element.setStartField(1);
+                    element.setStartField(getNextStartField(build));
                     return true;
                 } else return false;
             case 8: //checkpoint
                 if(element.getCheckpoint() == 0){
-                    element.setCheckpoint(1);
+                    element.setCheckpoint(getNextCheckpoint(build));
                     return true;
                 } else return false;
             case 9: //wall
@@ -383,7 +404,7 @@ public class BoardBuildLogic {
                 } else return false;
             case 14: //noField
                 if(!element.isNoField()){
-                    addIfNotExistent(0, element);
+                    addIfNotExistent(0, element, build);
                     element.setNoField(true);
                     return true;
                 } else return false;
@@ -515,6 +536,247 @@ public class BoardBuildLogic {
             if(index == 12) element.prevRotation("belt"); //Green Belt
             if(index == 13) element.prevRotation("belt"); //Blue Belt
         }
+    }
+    public static ArrayList<Boolean> getCanBuild(BoardBuildElement element){
+        ArrayList<Boolean> canBuilds = new ArrayList<>();
+        canBuilds.add(canBuild("empty", element));
+        canBuilds.add(canBuild("antenna", element));
+        canBuilds.add(canBuild("energyField", element));
+        canBuilds.add(canBuild("hole", element));
+        canBuilds.add(canBuild("laser", element));
+        canBuilds.add(canBuild("repair", element));
+        canBuilds.add(canBuild("respawn", element));
+        canBuilds.add(canBuild("startField", element));
+        canBuilds.add(canBuild("checkpoint", element));
+        canBuilds.add(canBuild("wall", element));
+        canBuilds.add(canBuild("push", element));
+        canBuilds.add(canBuild("gear", element));
+        canBuilds.add(canBuild("greenBelt", element));
+        canBuilds.add(canBuild("blueBelt", element));
+        canBuilds.add(canBuild("noField", element));
+
+        /*
+        empty
+        antenna
+        energyfield
+        hole
+        laser
+        repair
+        respawn
+        startField
+        checkpoint
+        wall
+        push
+        gear
+        greenbelt
+        bluebelt
+        nofield
+         */ //order
+        return canBuilds;
+    }
+    public static boolean canBuild(String type, BoardBuildElement element){
+        switch (type){
+            case "wall":
+                if(element.getWall()>0) return true;
+                if(element.isNoField()) return false;
+                if(element.isAntenna()) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getCheckpoint() > 0) return false;
+                if(element.isHole()) return false;
+                break;
+            case "greenBelt":
+                if(element.getGreenBelt()>0) return true;
+                if(element.getBlueBelt()>0) return false;
+                if(element.isNoField()) return false;
+                if(element.isAntenna()) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getCheckpoint() > 0) return false;
+                if(element.getGear() > 0) return false;
+                if(element.isHole()) return false;
+                if(element.isEnergyField()) return false;
+                if(element.isRepair()) return false;
+
+                break;
+            case "blueBelt":
+                if(element.getBlueBelt()>0) return true;
+                if(element.getGreenBelt()>0) return false;
+                if(element.isNoField()) return false;
+                if(element.isAntenna()) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getCheckpoint() > 0) return false;
+                if(element.getGear() > 0) return false;
+                if(element.isHole()) return false;
+                if(element.isEnergyField()) return false;
+                if(element.isRepair()) return false;
+
+                break;
+            case "checkpoint":
+                if(element.getCheckpoint()>0) return true;
+                if(element.isNoField()) return false;
+                if(element.isAntenna()) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getGear() > 0) return false;
+                if(element.isHole()) return false;
+                if(element.isEnergyField()) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.getPush()>0) return false;
+                if(element.getWall() > 0) return false;
+                if(element.isRepair()) return false;
+                break;
+            case "laser":
+                if(element.isLaserRay()) return true;
+                if(element.isNoField()) return false;
+                if(element.isRespawn()) return false;
+                if(element.isAntenna()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getCheckpoint() > 0) return false;
+                break;
+            case "repair":
+                if(element.isRepair()) return true;
+                if(element.isAntenna()) return false;
+                if(element.isNoField()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getGear() > 0) return false;
+                if(element.isHole()) return false;
+                if(element.isEnergyField()) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.getPush()>0) return false;
+                if(element.getWall() > 0) return false;
+                break;
+            case "antenna":
+                if(element.isAntenna()) return true;
+                if(element.isNoField()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getGear() > 0) return false;
+                if(element.isHole()) return false;
+                if(element.isEnergyField()) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.getPush()>0) return false;
+                if(element.getWall() > 0) return false;
+                if(element.isLaserRay()) return false;
+                if(element.isRepair()) return false;
+
+
+                break;
+            case "push":
+                if(element.getPush()>0) return true;
+                if(element.isAntenna()) return false;
+                if(element.isNoField()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.isHole()) return false;
+                break;
+            case "energyField":
+                if(element.isEnergyField()) return true;
+                if(element.isAntenna()) return false;
+                if(element.isNoField()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.isRepair()) return false;
+                if(element.isHole()) return false;
+                if(element.getGear() > 0) return false;
+
+                break;
+            case "gear":
+                if(element.getGear()>0) return true;
+                if(element.isAntenna()) return false;
+                if(element.isNoField()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.isRepair()) return false;
+                if(element.isHole()) return false;
+                if(element.isEnergyField()) return false;
+
+                break;
+            case "hole":
+                if(element.isHole()) return true;
+                if(element.isNoField()) return false;
+                if(element.isAntenna()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.isRespawn()) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.getPush()>0) return false;
+                if(element.getGear()>0) return false;
+                if(element.isEnergyField()) return false;
+                if(element.getWall() > 0) return false;
+                if(element.isRepair()) return false;
+
+                break;
+            case "respawn":
+                if(element.isRespawn()) return true;
+                if(element.isNoField()) return false;
+                if(element.isAntenna()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.getPush()>0) return false;
+                if(element.getGear()>0) return false;
+                if(element.isEnergyField()) return false;
+                if(element.getWall() > 0) return false;
+                if(element.isRepair()) return false;
+                if(element.isHole()) return false;
+                if(element.isLaserRay()) return false;
+
+                break;
+            case "noField":
+                if(element.isNoField()) return true;
+                if(element.isAntenna()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.getStartField() > 0) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.getPush()>0) return false;
+                if(element.getGear()>0) return false;
+                if(element.isEnergyField()) return false;
+                if(element.getWall() > 0) return false;
+                if(element.isRespawn()) return false;
+                if(element.isRepair()) return false;
+                if(element.isHole()) return false;
+                if(element.isLaserRay()) return false;
+
+                break;
+            case "startField":
+                if(element.getStartField()>0) return true;
+                if(element.isNoField()) return false;
+                if(element.isAntenna()) return false;
+                if(element.getCheckpoint()>0) return false;
+                if(element.getBlueBelt()>0) return false;
+                if(element.getGreenBelt()>0) return false;
+                if(element.getPush()>0) return false;
+                if(element.getGear()>0) return false;
+                if(element.isEnergyField()) return false;
+                if(element.getWall() > 0) return false;
+                if(element.isRespawn()) return false;
+                if(element.isRepair()) return false;
+                if(element.isHole()) return false;
+                if(element.isLaserRay()) return false;
+
+                break;
+            case "empty":
+                return true;
+        }
+        return true;
     }
 
 }

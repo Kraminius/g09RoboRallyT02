@@ -24,11 +24,12 @@ public class CheckLogic {
         return null;
     }
     public static String isOriginal(String name){
+        name = name.toLowerCase();
         switch (name){
-            case "Chop Shop Challenge":
-            case "Dizzy Highway":
-            case "Fractionation":
-            case "TESTBOARD":
+            case "chop shop challenge":
+            case "dizzy highway":
+            case "fractionation":
+            case "testboard":
             case "testboardempty":
                 return "You cannot overwrite an original board. Please save under a new name.";
         }

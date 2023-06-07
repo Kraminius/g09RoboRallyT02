@@ -1,6 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally.BuildABoard;
 
 import dk.dtu.compute.se.pisd.roborally.model.ImageLoader;
+import dk.dtu.compute.se.pisd.roborally.view.BoardView;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -69,8 +70,10 @@ public class BoardBuildElement {
             ImageView pusher = new ImageView(ImageLoader.get().push[push-1]);
             pusher.setFitWidth(20);
             pusher.setFitHeight(HEIGHT);
-            holder.getChildren().add(getAtEdge(pusher, 0));
-            rotate(pusher, pushRotation);
+            VBox pushHolder = new VBox();
+            pushHolder.getChildren().add(getAtEdge(pusher, 0));
+            rotate(pushHolder, pushRotation);
+            holder.getChildren().add(pushHolder);
         }
         if(wall > 0){
             StackPane wallHolder = new StackPane();

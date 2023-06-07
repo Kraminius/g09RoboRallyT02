@@ -26,7 +26,8 @@ public class BoardBuild {
         setCoords();
     }
     public void loadBoard(String name){
-
+        System.out.println("Loading: " + name);
+        JSONtoBuild jsonToBuild = new JSONtoBuild(name, this);
     }
     private void setCoords(){
         for(int x = 0; x < currentBuild.size(); x++){

@@ -3,6 +3,7 @@ package dk.dtu.compute.se.pisd.roborally.BuildABoard;
 import dk.dtu.compute.se.pisd.roborally.model.ImageLoader;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -14,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
@@ -28,6 +30,7 @@ public class BuildABoardViewController {
     private TextField boardWidth = new TextField();
     private TextField boardHeight = new TextField();
     private Button saveBoard = new Button();
+    private Button exitBoard = new Button();
     private Button setSize = new Button();
     private VBox boardHolder = new VBox();
     ;
@@ -40,12 +43,19 @@ public class BuildABoardViewController {
 
     public BuildABoardViewController(BoardBuildHandler handler) {
         this.handler = handler;
+        if (window == null) createWindow();
+        if (stage == null) createScene();
     }
 
     public void show() {
-        if (window == null) createWindow();
-        if (stage == null) createScene();
         if (stage.isShowing()) return;
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                windowEvent.consume();
+                exitPressed();
+            }
+        });
         stage.showAndWait();
     }
 
@@ -95,8 +105,11 @@ public class BuildABoardViewController {
         HBox sizeHBox = new HBox();
         sizeHBox.setSpacing(5);
         setStyle(saveBoard);
+        setStyle(exitBoard);
         saveBoard.setText("Save Board");
+        exitBoard.setText("Exit Builder");
         saveBoard.setOnAction(e -> saveBoardPressed());
+        exitBoard.setOnAction(e -> exitPressed());
         setStyle(setSize);
         setSize.setText("Resize");
         setSize.setOnAction(e -> setSizePressed());
@@ -108,8 +121,9 @@ public class BuildABoardViewController {
         setSize.setPrefWidth(150);
         sizeVBox.setSpacing(5);
         VBox boardDescBox = new VBox();
-        boardDescBox.getChildren().addAll(nameBox, saveBoard);
+        boardDescBox.getChildren().addAll(nameBox, saveBoard, exitBoard);
         saveBoard.setPrefWidth(150);
+        exitBoard.setPrefWidth(150);
         boardDescBox.setSpacing(5);
         menu.getChildren().addAll(boardDescBox, sizeVBox);
         return menu;
@@ -222,6 +236,7 @@ public class BuildABoardViewController {
     private void updateElementBoxes(BoardBuildElement element) {
         ArrayList<StackPane> images = BoardBuildLogic.getBoardElementImages();
         ArrayList<Boolean> actives = BoardBuildLogic.getActiveElements(element);
+        ArrayList<Boolean> canBuilds = BoardBuildLogic.getCanBuild(element);
         for (int i = 0; i < spots.size(); i++) {
             spots.get(i).getChildren().clear();
             VBox background = new VBox();
@@ -237,10 +252,16 @@ public class BuildABoardViewController {
             button.setOnMouseExited(e->{border.setStyle("-fx-border-color: #404040; -fx-border-width: 1");});
             button.setOpacity(0);
             if(actives.get(i)) active.setStyle("-fx-background-color: #ffce00");
+            if(!canBuilds.get(i)) {
+                addAble.setStyle("-fx-background-color: #575757");
+                button.setDisable(true);
+            }
             background.setStyle("-fx-background-color: #dddddd");
             active.setOpacity(0.3);
+            addAble.setOpacity(0.6);
             button.setPrefSize(currentElement.WIDTH, currentElement.HEIGHT);
             active.setMaxSize(currentElement.WIDTH, currentElement.HEIGHT);
+            addAble.setMaxSize(currentElement.WIDTH, currentElement.HEIGHT);
             background.setMaxSize(currentElement.WIDTH, currentElement.HEIGHT);
             border.setMaxSize(currentElement.WIDTH, currentElement.HEIGHT);
             stackPane.getChildren().addAll(background, images.get(i), addAble, active, border, button);
@@ -320,5 +341,14 @@ public class BuildABoardViewController {
     private void rightPressed(){
         handler.turn(true, currentElement, currentType);
     }
-
+    public void setBoardName(String name){
+        boardName.setText(name);
+    }
+    public void setSizeText(int x, int y){
+        boardWidth.setText(x + "");
+        boardHeight.setText(y + "");
+    }
+    public void exitPressed(){
+        handler.exit();
+    }
 }

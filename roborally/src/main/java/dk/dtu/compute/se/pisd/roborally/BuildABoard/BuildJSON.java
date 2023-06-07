@@ -123,9 +123,6 @@ public class BuildJSON {
                     case 6: //Interweave East
                         beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()) + ";1");
                         break;
-                    case 7: //Interweave 2 West
-                        beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()+2) + ";1");
-                        break;
                 }
             }
             if(element.getBlueBelt() > 0){
@@ -147,9 +144,6 @@ public class BuildJSON {
                         break;
                     case 6: //Interweave East
                         beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()) + ";2");
-                        break;
-                    case 7: //Interweave 2 West
-                        beltArray.add(element.getX() + ";" + element.getY() + ";WEAVE;" + rotationToHeading(element.getBeltRotation()+2) + ";2");
                         break;
                 }
             }

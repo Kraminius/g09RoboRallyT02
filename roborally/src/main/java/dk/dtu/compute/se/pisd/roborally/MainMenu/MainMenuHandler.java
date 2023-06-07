@@ -41,7 +41,7 @@ public class MainMenuHandler {
     }
     public void editLoadedBoard(String name){
         controller.close();
-        toDo = "load;name";
+        toDo = "load;" + name;
     }
     public void deleteLoadedBoard(String name){
         if(CheckLogic.isOriginal(name) != null) {

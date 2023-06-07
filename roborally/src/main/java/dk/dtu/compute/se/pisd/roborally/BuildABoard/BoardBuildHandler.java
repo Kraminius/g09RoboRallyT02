@@ -1,5 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally.BuildABoard;
 
+import dk.dtu.compute.se.pisd.roborally.view.Option;
+
 import java.util.ArrayList;
 
 import static java.lang.Integer.parseInt;
@@ -16,6 +18,14 @@ public class BoardBuildHandler {
         view.show();
     }
     public void loadBoard(String name){
+        boardBuild = new BoardBuild();
+        boardBuild.getCurrentBuild();
+        boardBuild.loadBoard(name);
+        view = new BuildABoardViewController(this);
+        updateBoard();
+        view.setBoardName(name);
+        view.setSizeText(boardBuild.getWidth(), boardBuild.getHeight());
+        view.show();
 
     }
     public void saveBoard(String name){
@@ -47,7 +57,7 @@ public class BoardBuildHandler {
     public void elementClicked(int type, int x, int y){
         ArrayList<ArrayList<BoardBuildElement>> build = boardBuild.getCurrentBuild();
         BoardBuildElement element = build.get(x).get(y);
-        BoardBuildLogic.addIfNotExistent(type, element);
+        BoardBuildLogic.addIfNotExistent(type, element, boardBuild);
         updateBoard();
         if(BoardBuildLogic.shouldShowTurns(type)){
             view.showLeftRight(BoardBuildLogic.shouldShowTurns(type));
@@ -91,5 +101,11 @@ public class BoardBuildHandler {
 
         boardBuild.setSize(x, y);
         updateBoard();
+    }
+    public void exit(){
+        Option option = new Option("Exit Board Builder?");
+        if(option.getYESNO("Are you sure you want to exit the board builder? \nUnsaved work will be lost.")){
+            view.close();
+        }
     }
 }

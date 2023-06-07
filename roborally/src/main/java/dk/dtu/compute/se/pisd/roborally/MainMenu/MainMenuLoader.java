@@ -24,6 +24,7 @@ public class MainMenuLoader {
                         }
                         name = collectedName;
                     }
+                    else name = arr[1];
                     buildHandler.loadBoard(name);
                 }
                 return false;

@@ -89,6 +89,9 @@ public class Option {
         Button yesButton = new Button("Yes");
         Button noButton = new Button("No");
         VBox view = new VBox();
+        view.setAlignment(Pos.CENTER);
+        panel.setAlignment(Pos.CENTER);
+        view.setPadding(new Insets(5, 5, 5, 5));
         panel.getChildren().addAll(yesButton, noButton);
         view.getChildren().addAll(label, panel);
         panel.setSpacing(10);
