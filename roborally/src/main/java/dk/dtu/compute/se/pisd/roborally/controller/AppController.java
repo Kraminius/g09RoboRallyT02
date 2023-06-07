@@ -273,4 +273,14 @@ public class AppController implements Observer {
         }
     }
 
+    public void sendPlayerInfo(){
+
+        try {
+            System.out.println("We pushed a button :3");
+            //Call the method from a static class here
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

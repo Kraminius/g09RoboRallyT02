@@ -52,6 +52,8 @@ public class RoboRallyMenuBar extends MenuBar {
 
     private MenuItem instantiateGameState;
 
+    private MenuItem sendPlayerInfo;
+
     public RoboRallyMenuBar(AppController appController) {
         this.appController = appController;
 
@@ -97,6 +99,10 @@ public class RoboRallyMenuBar extends MenuBar {
         instantiateGameState = new MenuItem("Instantiate Game");
         instantiateGameState.setOnAction( e -> this.appController.instantiateGame());
         controlMenu.getItems().add(instantiateGameState);
+
+        sendPlayerInfo = new MenuItem("Send Player Info");
+        sendPlayerInfo.setOnAction( e -> this.appController.sendPlayerInfo());
+        controlMenu.getItems().add(sendPlayerInfo);
 
         controlMenu.setOnShowing(e -> update());
         controlMenu.setOnShown(e -> this.updateBounds());
