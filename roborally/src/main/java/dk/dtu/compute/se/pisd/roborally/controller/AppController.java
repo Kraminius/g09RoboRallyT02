@@ -277,6 +277,7 @@ public class AppController implements Observer {
         System.out.println("vi kommer lol");
         GameSave gameSave = new GameSave();
         Load loadGame = GameLoader.loadData(gameSave.jsonGame(gameController));
+        loadGame.setPhase(Phase.UPGRADE);
         try {
             System.out.println("kommer vi her");
             MyClient.instantiateGame(loadGame);
