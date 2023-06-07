@@ -231,7 +231,7 @@ public class MyRest {
     public ResponseEntity<String> instaGameData(@PathVariable String saveName, @RequestBody Load game) {
 
         System.out.println("add a save request recieved for: " + saveName);
-        gameDataRep.instantiateGameState(game);
+        gameDataRep.saveAGame(game, saveName);
         //gameDataRep.instantiateGameData(numberOfPlayers);
         System.out.println("Save found!");
 

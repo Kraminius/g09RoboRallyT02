@@ -276,7 +276,7 @@ public class AppController implements Observer {
     /**
      *
      */
-    public void loadServerGame() throws Exception {
+    public void loadServerGame(){
         // XXX needs to be implemented eventually
         // for now, we just create a new game
 
@@ -285,11 +285,15 @@ public class AppController implements Observer {
         String saveName = load.getLoadInput();
         //We need a way to get the saveNames from the server
         System.out.println("Loading " + saveName);
-        Load serverLoad = MyClient.getSave(saveName);
-        gameController = GameLoader.loadGameFromServer(serverLoad, this);
+        try {
+            Load serverLoad = MyClient.getSave(saveName);
+            gameController = GameLoader.loadGameFromServer(serverLoad, this);
 
-        if(gameController == null) {
-            newGame();
+            if(gameController == null) {
+                newGame();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -309,7 +313,11 @@ public class AppController implements Observer {
         GameSave gameSave =  new GameSave();
         Load load = GameLoader.loadData(gameSave.jsonGame(this.gameController));
 
-        MyClient.setSave(saveName, load);
+        try {
+            MyClient.setSave(saveName, load);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
