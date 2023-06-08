@@ -1233,10 +1233,10 @@ public class GameController {
     }
 
     public void openUpgradeShop(){
-        if(upgradeShop == null) upgradeShop = new UpgradeShop();
+        if(upgradeShop == null) upgradeShop = new UpgradeShop(this, board);
         CommandCardField[] cardFields = upgradeShop.getCards(board.getPlayersNumber());
         upgradeShop.setCardsForRound(cardFields);
-        upgradeShop.openShop(board, this);
+        upgradeShop.openShop();
         startProgrammingPhase();
     }
 

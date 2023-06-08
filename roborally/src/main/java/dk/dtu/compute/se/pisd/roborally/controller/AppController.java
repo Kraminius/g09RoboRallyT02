@@ -89,8 +89,6 @@ public class AppController implements Observer {
                 player.setEnergyCubes(5);
                 gameController.fillStartDeck(player.getCardDeck());
                 board.addPlayer(player);
-
-
                 //player.setSpace(board.getSpace(i % board.width, i));
             }
 

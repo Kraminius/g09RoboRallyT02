@@ -49,14 +49,18 @@ public class UpgradeShop {
      * @param board the board we are opening the shop for.
      * @param controller the controller we are using currently.
      */
-    public void openShop(Board board, GameController controller){
+    public void openShop(){
         this.board = board;
-        this.controller = controller;
+
 
         createWindow();
         playerOrder = -1;
         switchToNextPlayer();
 
+    }
+    public UpgradeShop(GameController controller, Board board){
+        this.controller = controller;
+        this.board = board;
     }
 
 
