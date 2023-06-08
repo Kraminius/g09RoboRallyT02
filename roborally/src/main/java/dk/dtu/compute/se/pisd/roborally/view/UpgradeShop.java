@@ -28,7 +28,7 @@ public class UpgradeShop {
     private VBox shop;
     private VBox playerInfo;
     private VBox cardHolder;
-    private Button nextPlayer;
+    private Button finishButton;
 
     private Button close;
     private FlowPane buyCards;
@@ -57,11 +57,10 @@ public class UpgradeShop {
         this.board = board;
     }
 
-    public void openShop(){
+    public void openShopFor(int player){
         this.board = board;
         createWindow();
-        playerOrder = -1;
-        switchToNextPlayer();
+        switchToPlayer(player);
 
     }
 
@@ -124,9 +123,9 @@ public class UpgradeShop {
         label.setAlignment(Pos.CENTER);
         label.setWrapText(true);
         label.setStyle("-fx-font-size: 32; -fx-font-weight: bold");
-        nextPlayer = new Button("Start Shopping!");
-        nextPlayer.setOnAction(e -> switchToNextPlayer());
-        nextPlayer.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
+        finishButton = new Button("Start Shopping!");
+        finishButton.setOnAction(e -> {stage.close();});
+        finishButton.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
         close = new Button("Close");
         close.setOnAction(e -> {
             try {
@@ -149,7 +148,7 @@ public class UpgradeShop {
         shop.getChildren().add(label);
         shop.getChildren().add(messageLabel);
         shop.getChildren().add(cardHolder);
-        shop.getChildren().add(nextPlayer);
+        shop.getChildren().add(finishButton);
         Scene scene = new Scene(window, 900, 800);
         stage = new Stage();
         stage.setTitle("Uprade Shop");
@@ -263,7 +262,7 @@ public class UpgradeShop {
      * finish upgrade phase first puts the remaining cards into the discarded upgrade cards pile.
      * Afterward it closes the page.
      */
-    private void finishUpgradePhase(){
+    public void finishUpgradePhase(){
         for(int i = 0; i < cardsToBuy.length; i++){
             if(cardsToBuy[i].getField().getCard() != null){
                 discarded.add(cardsToBuy[i].getField().getCard());
@@ -299,19 +298,11 @@ public class UpgradeShop {
      * The showForPlayer shows the players upgrade cards and how many energy cubes they have.
      * If the playerOrder is equal to the amount of players, they are the last player, and the button changes its text to display "finish upgrading", as there are no more players after.
      */
-    private void switchToNextPlayer(){
-        playerOrder += 1;
-        if(playerOrder > board.getPlayersNumber()) {
-            finishUpgradePhase();
-            return;
-        }
-        if(playerOrder > 0){
-            nextPlayer.setText("Next Player");
-            Player player = getPlayerPriority().get(playerOrder-1);
-            updateShopCards();
-            showForPlayer(player);
-        }
-        if(playerOrder ==  board.getPlayersNumber()) nextPlayer.setText("Finish Upgrading");
+    private void switchToPlayer(int playerNum){
+        finishButton.setText("Finish Upgrade Phase");
+        Player player = getPlayerPriority().get(playerNum);
+        updateShopCards();
+        showForPlayer(player);
     }
 
     /**
@@ -385,8 +376,7 @@ public class UpgradeShop {
         CommandCard card = cardField.getCard();
         discarded.add(card);
         cardField.setCard(null);
-        playerOrder--;
-        switchToNextPlayer();
+        switchToPlayer(currentPlayer.getId());
     }
     /**
      * @author Tobias - s224271@dtu.dk
@@ -427,7 +417,7 @@ public class UpgradeShop {
      * @param cardFieldView the card that the player has clicked buy at.
      */
     private void buyCard(CardFieldView cardFieldView){
-        if(nextPlayer.getText().equals("Start Shopping!")) return;
+        if(finishButton.getText().equals("Start Shopping!")) return;
         int freeIndex = -1;
         for(int i = 0; i < playerCards.length; i++){
             if(playerCards[i].getField().getCard() == null){
@@ -465,12 +455,7 @@ public class UpgradeShop {
                 currentPlayer.updateUpgradeCardView();
                 out.add(cardFieldView.getField().getCard());
                 cardFieldView.getField().setCard(null);
-
                 updatePowerUps(currentPlayer);
-
-                System.out.println();
-
-                switchToNextPlayer();
             }
             else messageLabel.setText("You cannot afford this item");
         }
