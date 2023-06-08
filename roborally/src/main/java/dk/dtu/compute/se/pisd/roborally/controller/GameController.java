@@ -1250,7 +1250,8 @@ public class GameController {
             System.out.println("Shop cards" + cardFields[i].getCard().command);
         }
         upgradeShop.openShopFor(2); //You can use this to say which player should open. Right now it's just player 2.
-        upgradeShop.finishUpgradePhase(); //You must call this to end the upgrade phase when all players have bought, this will discard the cards that have not been bought to a discarded pile.
+        CommandCard[] discardCards = null;
+        upgradeShop.finishUpgradePhase(discardCards); //You must call this to end the upgrade phase when all players have bought, this will discard the cards that have not been bought to a discarded pile.
         startProgrammingPhase();
     }
 

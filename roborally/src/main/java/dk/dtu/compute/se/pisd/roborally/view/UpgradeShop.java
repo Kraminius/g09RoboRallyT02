@@ -260,15 +260,13 @@ public class UpgradeShop {
     /**
      * @author Tobias - s224271@dtu.dk
      * finish upgrade phase first puts the remaining cards into the discarded upgrade cards pile.
-     * Afterward it closes the page.
      */
-    public void finishUpgradePhase(){
-        for(int i = 0; i < cardsToBuy.length; i++){
-            if(cardsToBuy[i].getField().getCard() != null){
-                discarded.add(cardsToBuy[i].getField().getCard());
-            }
+    public void finishUpgradePhase(CommandCard[] cardsToDiscard){
+        if(cardsToDiscard == null) return;
+        if(cardsToDiscard.length < 1) return;
+        for(int i = 0; i < cardsToDiscard.length; i++){
+            discarded.add(cardsToDiscard[i]);
         }
-        stage.close();
     }
 
     private void closeShop() throws Exception {
