@@ -56,7 +56,7 @@ public class LoadInstance {
         Command[] arrDeck = load.getUpgradeCardsDeck();
         Command[] arrOut = load.getUpgradeOutDeck();
         Command[] arrDiscard = load.getUpgradeDiscardDeck();
-        Command[] arrLoaded = load.getUpgradeDiscardDeck();
+        Command[] arrLoaded = load.getUpgradeShopCards();
         for(int i = 0; i < arrDeck.length; i++){
             deck.add(new CommandCard(arrDeck[i])); //Creates each card for the deck
         }
@@ -66,11 +66,14 @@ public class LoadInstance {
         for(int i = 0; i < arrDiscard.length; i++){
             discarded.add(new CommandCard(arrDiscard[i])); //Creates each card that has been discarded
         }
-        for(int i = 0; i < arrLoaded.length; i++){
-            CommandCardField field = new CommandCardField(null);
-            field.setCard(new CommandCard(arrLoaded[i]));
-            loadedCards.add(field); //Creates each card that has been loaded
+        if(arrLoaded != null){
+            for(int i = 0; i < arrLoaded.length; i++){
+                CommandCardField field = new CommandCardField(null);
+                field.setCard(new CommandCard(arrLoaded[i]));
+                loadedCards.add(field); //Creates each card that has been loaded
+            }
         }
+
         gameController.upgradeShop.setDeck(deck); //Sets the decks in the upgrade shop to be these decks.
         gameController.upgradeShop.setOut(out);
         gameController.upgradeShop.setDiscarded(discarded);

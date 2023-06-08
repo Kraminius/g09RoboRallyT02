@@ -149,6 +149,15 @@ public class MyRest {
 
     }
 
+    @GetMapping(value = "/isUpgradeShopOpen")
+    public ResponseEntity<Boolean> isUpgradeShopOpen(){
+
+
+
+        return ResponseEntity.ok().body(gameInfo.isOpenShop());
+
+    }
+
 
     @GetMapping(value = "/getCurrentPlayer")
     public ResponseEntity<Integer> getCurrentPlayer(){
@@ -252,6 +261,8 @@ public class MyRest {
         gameDataRep.gameState.setUpgradeShopCards(cards);
 
         System.out.println("Kommer upgrade kort " + gameDataRep.gameState);
+
+        gameInfo.setOpenShop(true);
 
         return ResponseEntity.ok().body(true);
     }

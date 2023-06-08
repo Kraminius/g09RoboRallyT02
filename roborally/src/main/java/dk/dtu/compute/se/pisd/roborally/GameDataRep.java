@@ -141,6 +141,12 @@ public class GameDataRep {
         Command[][] CplayerUpgradeCards = gameState1.getPlayerUpgradeCards();
         Command[][] CplayersPulledCards = gameState1.getPlayersPulledCards();
 
+        Command[] shopCards = null;
+        if(gameState1.getUpgradeShopCards() != null){
+            shopCards = gameState1.getUpgradeShopCards();
+        }
+
+
         Load load = new Load();
         load.setPlayerAmount(playerAmount);
         load.setStep(step);
@@ -164,6 +170,10 @@ public class GameDataRep {
         load.setPlayerDiscardPile(CplayerDiscardPile);
         load.setPlayerUpgradeCards(CplayerUpgradeCards);
         load.setPlayersPulledCards(CplayersPulledCards);
+        if(shopCards != null){
+            load.setUpgradeShopCards(shopCards);
+        }
+
         return load;
     }
 

@@ -43,6 +43,7 @@ public class GameClient {
     private static ScheduledFuture<?> pickStartPosition;
 
     private static ScheduledFuture<?> allPickedStartPosition;
+    private static ScheduledFuture<?> openedUpgradeShop;
 
     //Waiting for start position
     public static void startWaitingForStartPosition(){
@@ -52,6 +53,47 @@ public class GameClient {
     public static void startAllPickedStartPosition(){
         allPickedStartPosition =executorService.scheduleAtFixedRate(GameClient::pollAllPickedStartPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
+
+    public static void startWaitingForOpenShop(){
+        openedUpgradeShop = executorService.scheduleAtFixedRate(GameClient::pollOpenShop, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void pollOpenShop(){
+
+        boolean openShop;
+
+        try {
+            openShop = isUpgradeShopOpen();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        if(openShop){
+            System.out.println("we have updated the shop");
+            javafx.application.Platform.runLater(() -> {
+                RoboRally.getAppController().updateGame();
+            });
+
+            openedUpgradeShop.cancel(false);
+        }else {
+            System.out.println("we are waiting for first player to open shop");
+        }
+
+    }
+
+    public static Boolean isUpgradeShopOpen() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/isUpgradeShopOpen"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        Boolean result = Boolean.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
+        return result;
+    }
+
+
 
     public static void pollAllPickedStartPosition(){
 

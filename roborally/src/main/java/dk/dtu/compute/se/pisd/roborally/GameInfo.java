@@ -25,6 +25,8 @@ public class GameInfo {
 
     private ArrayList<Integer> chosenStartPlaces = new ArrayList<>();
 
+    private boolean openShop = false;
+
 
     public void instaGameInfo(String id, GameSettings gameSettings){
 
@@ -127,5 +129,13 @@ public class GameInfo {
 
     public void setChosenStartPlaces(ArrayList<Integer> chosenStartPlaces) {
         this.chosenStartPlaces = chosenStartPlaces;
+    }
+
+    public boolean isOpenShop() {
+        return openShop;
+    }
+
+    public void setOpenShop(boolean openShop) {
+        this.openShop = openShop;
     }
 }

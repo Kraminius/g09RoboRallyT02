@@ -83,6 +83,11 @@ public class GameController {
     // XXX: V2
     public void startUpgradePhase(){
         System.out.println("Upgrade Phase Started");
+        int playerNumber = GameClient.getPlayerNumber();
+        if(playerNumber != 0){
+            GameClient.startWaitingForOpenShop();
+        }
+
         board.setPhase(Phase.UPGRADE);
     }
 
