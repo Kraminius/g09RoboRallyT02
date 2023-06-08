@@ -40,28 +40,20 @@ public class UpgradeShop {
 
 
     private AntennaHandler antennaHandler = new AntennaHandler();
+    public UpgradeShop(GameController controller, Board board){
+        this.controller = controller;
+        this.board = board;
+    }
 
 
-    /**
-     * @author Tobias - s224271@dtu.dk
-     * Asserts the values of the parameters to the UpgradeShop class so it can get the values it needs from board and gamecontroller.
-     * Afterward it opens the shop with a window and gets ready to switch to next players.
-     * @param board the board we are opening the shop for.
-     * @param controller the controller we are using currently.
-     */
     public void openShop(){
         this.board = board;
-
-
         createWindow();
         playerOrder = -1;
         switchToNextPlayer();
 
     }
-    public UpgradeShop(GameController controller, Board board){
-        this.controller = controller;
-        this.board = board;
-    }
+
 
 
     private boolean checkIfLoad(){
