@@ -83,5 +83,70 @@ public class MyClient {
         return result.equals("instantiated");
     }
 
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     */
+    public static boolean setSave(String name) throws Exception {
+
+        System.out.println("We are about to send to our server");
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/addSave/" + name))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        System.out.println(result);
+        return result.equals("gameSaved");
+    }
+
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     */
+    public static String[] getSaveNames(){
+        try{
+            System.out.println("We are asking for saveGame names");
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(URI.create("http://localhost:8080/getSaveNames"))
+                    .setHeader("User-Agent", "Product Client")
+                    .header("Content-Type", "application/json")
+                    .build();
+            CompletableFuture<HttpResponse<String>> response =
+                    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            String result = response.thenApply((r)->r.body()).get(5, TimeUnit.SECONDS);
+            Gson gson = new Gson();
+            String[] strings  = gson.fromJson(result, String[].class);
+            return strings;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * @author Nicklas Christensen     s224314.dtu.dk
+     * @param saveName the name of the saved gameState we want
+     * @return the Load of the gameState we asked for
+     * @throws Exception
+     */
+    public static Load getSave(String saveName) {
+        try{
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(URI.create("http://localhost:8080/getSave/" + saveName))
+                    .setHeader("User-Agent", "Product Client")
+                    .header("Content-Type", "application/json")
+                    .build();
+            CompletableFuture<HttpResponse<String>> response =
+                    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            String result = response.thenApply((r)->r.body()).get(5, TimeUnit.SECONDS);
+            Gson gson = new Gson();
+            Load load = gson.fromJson(result, Load.class);
+            return load;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 }
