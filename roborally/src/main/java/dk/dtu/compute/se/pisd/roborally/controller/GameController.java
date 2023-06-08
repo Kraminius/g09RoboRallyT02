@@ -1245,7 +1245,7 @@ public class GameController {
             temp[i] = cardFields[i].getCard().command;
         }
 
-        GameClient.sendUpgradeCardsShop(temp);
+
 
         for (int i = 0; i < cardFields.length; i++) {
             System.out.println("Shop cards" + cardFields[i].getCard().command);

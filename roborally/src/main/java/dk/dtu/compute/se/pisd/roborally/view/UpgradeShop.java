@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
+import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import javafx.event.Event;
@@ -28,6 +29,8 @@ public class UpgradeShop {
     private VBox playerInfo;
     private VBox cardHolder;
     private Button nextPlayer;
+
+    private Button close;
     private FlowPane buyCards;
     private Label messageLabel;
     private int playerOrder;
@@ -124,8 +127,18 @@ public class UpgradeShop {
         nextPlayer = new Button("Start Shopping!");
         nextPlayer.setOnAction(e -> switchToNextPlayer());
         nextPlayer.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
+        close = new Button("Close");
+        close.setOnAction(e -> {
+            try {
+                closeShop();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        close.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
         cardHolder = new VBox();
         cardHolder.setAlignment(Pos.CENTER);
+
         buyCards = new FlowPane();
         buyCards.setPadding(new Insets(100, 10, 100, 10));
         buyCards.setHgap(80);
@@ -256,6 +269,24 @@ public class UpgradeShop {
                 discarded.add(cardsToBuy[i].getField().getCard());
             }
         }
+        stage.close();
+    }
+
+    private void closeShop() throws Exception {
+
+        for(int i = 0; i < cardsToBuy.length; i++){
+            if(cardsToBuy[i].getField().getCard() != null){
+                discarded.add(cardsToBuy[i].getField().getCard());
+            }
+        }
+
+        Command[] temp = new Command[cardsToBuy.length];
+
+        for (int i = 0; i < cardsToBuy.length; i++) {
+            temp[i] = cardsToBuy[i].getField().getCard().command;
+        }
+
+        GameClient.sendUpgradeCardsShop(temp);
         stage.close();
     }
 
