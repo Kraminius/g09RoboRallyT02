@@ -70,6 +70,13 @@ public class BuildJSON {
         }
         return "null";
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * gets the true rotation, as the rotation can only be between 0 and 3 if it is outside that range,
+     * then it has gone a full circle and we can add or subtract 4 to the number to get the true rotation.
+     * @param rotation the rotation
+     * @return true rotation
+     */
     private static int getTrueRotation(int rotation){
         while(rotation > 3){
             rotation -= 4;
@@ -79,6 +86,12 @@ public class BuildJSON {
         }
         return rotation;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of walls from the board build
+     * @param build build to save
+     * @return  JSONArray of walls
+     */
     private static JSONArray makeWalls(CheckBoardBuild build){
         JSONArray wallArray = new JSONArray();
         for(BoardBuildElement element : build.getWalls()){
@@ -111,6 +124,12 @@ public class BuildJSON {
         }
         return wallArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of belts from the board build
+     * @param build build to save
+     * @return  JSONArray of belts
+     */
     private static JSONArray makeBelts(CheckBoardBuild build){
         JSONArray beltArray = new JSONArray();
         for(BoardBuildElement element : build.getBelts()){
@@ -161,6 +180,12 @@ public class BuildJSON {
         }
         return beltArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of checkpoints from the board build
+     * @param build build to save
+     * @return  JSONArray of checkpoints
+     */
     private static JSONArray makeCheckPoints(CheckBoardBuild build){
         JSONArray checkpointArray = new JSONArray();
         for(BoardBuildElement element : build.getCheckpoints()){
@@ -170,6 +195,12 @@ public class BuildJSON {
         }
         return checkpointArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of lasers from the board build
+     * @param build build to save
+     * @return  JSONArray of lasers
+     */
     private static JSONArray makeLasers(CheckBoardBuild build){
         JSONArray laserArray = new JSONArray();
         for(BoardBuildElement element : build.getLasers()){
@@ -184,6 +215,12 @@ public class BuildJSON {
         }
         return laserArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of pushers from the board build
+     * @param build build to save
+     * @return  JSONArray of pushers
+     */
     private static JSONArray makePush(CheckBoardBuild build){
         JSONArray pushArray = new JSONArray();
         for(BoardBuildElement element : build.getPushers()){
@@ -198,6 +235,12 @@ public class BuildJSON {
         }
         return pushArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of energyFields from the board build
+     * @param build build to save
+     * @return  JSONArray of energyFields
+     */
     private static JSONArray makeEnergyFields(CheckBoardBuild build){
         JSONArray energyFieldArray = new JSONArray();
         for(BoardBuildElement element : build.getEnergyFields()){
@@ -207,6 +250,12 @@ public class BuildJSON {
         }
         return energyFieldArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of repairs from the board build
+     * @param build build to save
+     * @return  JSONArray of repairs
+     */
     private static JSONArray makeRepair(CheckBoardBuild build){
         JSONArray repairArray = new JSONArray();
         for(BoardBuildElement element : build.getRepair()){
@@ -216,6 +265,12 @@ public class BuildJSON {
         }
         return repairArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of noFields from the board build
+     * @param build build to save
+     * @return  JSONArray of noFields
+     */
     private static JSONArray makeNoFields(CheckBoardBuild build){
         JSONArray noFieldArray = new JSONArray();
         for(BoardBuildElement element : build.getNoFields()){
@@ -225,6 +280,12 @@ public class BuildJSON {
         }
         return noFieldArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of holes from the board build
+     * @param build build to save
+     * @return  JSONArray of holes
+     */
     private static JSONArray makeHole(CheckBoardBuild build){
         JSONArray holeArray = new JSONArray();
         for(BoardBuildElement element : build.getHoles()){
@@ -234,6 +295,12 @@ public class BuildJSON {
         }
         return holeArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of gears from the board build
+     * @param build build to save
+     * @return  JSONArray of gears
+     */
     private static JSONArray makeGear(CheckBoardBuild build){
         JSONArray gearArray = new JSONArray();
         for(BoardBuildElement element : build.getGears()){
@@ -246,6 +313,12 @@ public class BuildJSON {
         }
         return gearArray;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Make a JSON Array of startFields from the board build
+     * @param build build to save
+     * @return  JSONArray of startFields
+     */
     private static JSONArray makeStartFields(CheckBoardBuild build){
         JSONArray startFieldArray = new JSONArray();
         for(BoardBuildElement element : build.getStartFields()){
@@ -255,7 +328,5 @@ public class BuildJSON {
         }
         return startFieldArray;
     }
-
-    //Gear, Hole, NoField
 
 }

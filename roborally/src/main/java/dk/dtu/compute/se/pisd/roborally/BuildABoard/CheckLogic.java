@@ -5,12 +5,21 @@ import java.util.ArrayList;
 public class CheckLogic {
     private BoardBuild build;
     private CheckBoardBuild collection;
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Constructor for this class. Setting the curren build and the collection of ArrayList of different elements.
+     */
     public CheckLogic(BoardBuild build, CheckBoardBuild sortedBoardBuild) {
         this.build = build;
         this.collection = sortedBoardBuild;
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks a string to see if it can be a name for the board.
+     * It both checks if it is trying to overwrite an original board which they shouldn't and also if the first character in the name cant be in the file name.
+     * @param name name of the board
+     * @return The error string if it is wrong, null if all is okay
+     */
     public static String checkName(String name){
         if(name == null || name.equals("")){ //Check if no name has been written in input
             return "You have not written a name for your board. Please input a name.";
@@ -23,6 +32,12 @@ public class CheckLogic {
         if(original != null) return original;
         return null;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks if a string is an original board.
+     * @param name the name
+     * @return the error string, or null if all is okay.
+     */
     public static String isOriginal(String name){
         name = name.toLowerCase();
         switch (name){
@@ -35,6 +50,14 @@ public class CheckLogic {
         }
         return null;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks the board if it has the correct numbers on the checkpoint
+     * Checks the board if it has the correct numbers on the startFields
+     * Checks the board if it has an antenna
+     * Checks the board if it has a respawnField
+     * @return String error, null if no errors.
+     */
     public String checkBoard(){
         String checkpointCheck = checkCheckPoints();
         if(checkpointCheck != null) return checkpointCheck;
@@ -46,6 +69,11 @@ public class CheckLogic {
         if(startFieldCheck != null) return startFieldCheck;
         return null;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks the board if it has the correct numbers on the checkpoint
+     * @return String error, null if no errors.
+     */
     private String checkCheckPoints(){
         int amount = collection.getCheckpoints().size();
         if(amount < 1) return "You must have at least one checkpoint";
@@ -63,19 +91,33 @@ public class CheckLogic {
         if(next != amount+1) return "You dont have the full range of checkpoints. You cannot skip checkpoints. ex: 1-2-4 is not allowed. You must use 1-2-3.";
         return null;
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks the board if it has an antenna
+     * @return String error, null if no errors.
+     */
     private String checkAntenna(){
         int size = collection.getAntenna().size();
         if(size == 0) return "You do not have an antenna on your board. You must have one to save and play on the board.";
         if(size == 1) return null;
         return "You have too many antennas on your board. You cannot have more than one.";
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks the board if it has a respawnField
+     * @return String error, null if no errors.
+     */
     private String checkRespawn(){
         int size = collection.getRespawn().size();
         if(size == 0) return "You do not have a reboot field on your board. You must have one to save and play on the board.";
         if(size == 1) return null;
         return "You have too many reboot fields on your board. You cannot have more than one.";
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks the board if it has the correct numbers on the startFields
+     * @return String error, null if no errors.
+     */
     private String checkStartFields(){
         int amount = collection.getStartFields().size();
         if(amount < 6) return "You must have all six start fields on your board, to accommodate for games with up to six players.";

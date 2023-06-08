@@ -23,11 +23,19 @@ public class MainMenuController {
     private VBox boardLoadMenu;
     private HBox list = new HBox();
 
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Constructor for the controller,that sets the handler for the controller and creates the window.
+     * @param handler the main menu handler
+     */
     public MainMenuController(MainMenuHandler handler){
         this.handler = handler;
         createWindow();
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates the window by creating different parts of the window and putting them in.
+     */
     private void createWindow(){
         root = makeRoot();
         stage = makeStage(root);
@@ -35,6 +43,10 @@ public class MainMenuController {
         createBoardBuilderMenu();
         createBoardLoaderMenu();
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates the main menu labels and buttons
+     */
     private void createMainMenu(){
         mainMenu = new VBox();
         mainMenu.setSpacing(40);
@@ -53,6 +65,10 @@ public class MainMenuController {
         label.setStyle("-fx-font-size: 36; -fx-font-weight: bold");
         mainMenu.getChildren().addAll(label, buttons);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * creates the boardbuilder menu
+     */
     private void createBoardBuilderMenu(){
         boardMenu = new VBox();
         boardMenu.setSpacing(40);
@@ -71,6 +87,10 @@ public class MainMenuController {
         label.setStyle("-fx-font-size: 36; -fx-font-weight: bold");
         boardMenu.getChildren().addAll(label, buttons);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates the boardLoader window
+     */
     private void createBoardLoaderMenu(){
         boardLoadMenu = new VBox();
         boardLoadMenu.setSpacing(40);
@@ -78,7 +98,7 @@ public class MainMenuController {
         VBox buttons = new VBox();
         buttons.setAlignment(Pos.CENTER);
         buttons.setSpacing(20);
-        makeBoardList(list);
+        updateBoardList(list);
         Button backToMenuButton = styleButton("Back To Menu",18);
         backToMenuButton.setOnAction(e->handler.backToMenu());
         buttons.getChildren().addAll(list, backToMenuButton);
@@ -86,7 +106,12 @@ public class MainMenuController {
         label.setStyle("-fx-font-size: 36; -fx-font-weight: bold");
         boardLoadMenu.getChildren().addAll(label, buttons);
     }
-    private void makeBoardList(HBox holder){
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Updates the board list along with a scrollpane and buttons
+     * @param holder the holder in which to put the list.
+     */
+    private void updateBoardList(HBox holder){
         BoardLoadWindow loadGetter = new BoardLoadWindow();
         ComboBox<String> boards = new ComboBox<>();
         loadGetter.addFiles(boards);
@@ -110,31 +135,61 @@ public class MainMenuController {
             box.getChildren().add(element);
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates a button in a specific style
+     * @param size size of button
+     * @param text the text to display on the button
+     * @return the button
+     */
     private Button styleButton(String text, int size){
         Button button = new Button(text);
         button.setStyle("-fx-font-size: " + size);
         button.setPrefSize(200, size*2);
         return button;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * makes the stage
+     * @param root the root of the window
+     * @return Stage
+     */
     private Stage makeStage(VBox root){
         Stage stage = new Stage();
         Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(scene);
         return stage;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Shows the main menu but clearing the root and adding the main menu into it.
+     */
     public void showMain(){
         root.getChildren().clear();
         root.getChildren().add(mainMenu);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Shows the main board menu but clearing the root and adding the board menu into it.
+     */
     public void showBoardBuilderMenu(){
         root.getChildren().clear();
         root.getChildren().add(boardMenu);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Shows the load board menu but clearing the root and adding the board load menu into it.
+     */
     public void showBoardLoaderMenu(){
         root.getChildren().clear();
         root.getChildren().add(boardLoadMenu);
-        makeBoardList(list);
+        updateBoardList(list);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates the root
+     * @return the VBox of the root
+     */
     private VBox makeRoot(){
         VBox root = new VBox();
         root.setAlignment(Pos.CENTER);
@@ -142,20 +197,37 @@ public class MainMenuController {
         root.setStyle("-fx-background-color: #cccccc");
         return root;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Shows the stage if not already showing
+     */
     public void show(){
         if(!stage.isShowing()) stage.showAndWait();
-
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Closes the stage if is it showing
+     */
     public void close(){
         if(stage.isShowing()) stage.close();
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Loads a board with specific name
+     * @param name the name to laod
+     */
     private void loadBoard(String name){
         handler.editLoadedBoard(name);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Deletes a board with a specific name
+     * @param name name of board
+     */
     private void deleteBoard(String name){
         handler.deleteLoadedBoard(name);
         list.getChildren().clear();
-        makeBoardList(list);
+        updateBoardList(list);
     }
 
 }
