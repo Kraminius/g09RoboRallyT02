@@ -36,6 +36,8 @@ public class UpgradeShop {
     private ArrayList<CommandCard> deck;
     private ArrayList<CommandCard> discarded;
     private ArrayList<CommandCard> out;
+    private ArrayList<CommandCardField> loadedCards;
+
 
     private AntennaHandler antennaHandler = new AntennaHandler();
 
@@ -47,10 +49,13 @@ public class UpgradeShop {
      * @param board the board we are opening the shop for.
      * @param controller the controller we are using currently.
      */
-    public void openShop(Board board, GameController controller){
-        this.board = board;
+    public UpgradeShop(GameController controller, Board board){
         this.controller = controller;
+        this.board = board;
+    }
 
+    public void openShop(){
+        this.board = board;
         createWindow();
         playerOrder = -1;
         switchToNextPlayer();
@@ -58,9 +63,34 @@ public class UpgradeShop {
     }
 
 
+    private boolean checkIfLoad(){
+        if(loadedCards.size() != 0) return true;
+        else return false;
+    }
+    public CommandCardField[] getCards(int amount){
+        if(checkIfLoad()){
+            CommandCardField[] cards = new CommandCardField[loadedCards.size()];
+            for(int i = 0; i < loadedCards.size(); i++){
+                cards[i] = loadedCards.get(i);
+            }
+            return cards;
+        }
+        else{
+            CommandCardField[] cards = new CommandCardField[amount];
+            for(int i = 0; i < cards.length; i++){
+                cards[i] = getNextCardField();
+            }
+            return cards;
+        }
 
+    }
 
-
+    public void setCardsForRound(CommandCardField[] cards){
+        cardsToBuy = new CardFieldView[cards.length];
+        for(int i = 0; i < board.getPlayersNumber(); i++){
+            cardsToBuy[i] = new CardFieldView(controller, cards[i]);
+        }
+    }
     //region javaFX
     /**
      * @author Tobias - s224271@dtu.dk
@@ -101,10 +131,7 @@ public class UpgradeShop {
         buyCards.setHgap(80);
         buyCards.setVgap(130);
         buyCards.setAlignment(Pos.TOP_CENTER);
-        cardsToBuy = new CardFieldView[board.getPlayersNumber()];
-        for(int i = 0; i < board.getPlayersNumber(); i++){
-            cardsToBuy[i] = new CardFieldView(controller, getNextCardField());
-        }
+
         updateShopCards();
         shop.getChildren().add(label);
         shop.getChildren().add(messageLabel);
@@ -459,7 +486,11 @@ public class UpgradeShop {
     public void setOut(ArrayList<CommandCard> out) {
         this.out = out;
     }
+    public void setLoadedCards(ArrayList<CommandCardField> cards){
+        loadedCards = cards;
+    }
+    public ArrayList<CommandCardField> getLoadedCards(){
+        return loadedCards;
+    }
 }
-
-
 

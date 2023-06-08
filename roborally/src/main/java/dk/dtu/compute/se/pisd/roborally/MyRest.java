@@ -3,10 +3,7 @@ package dk.dtu.compute.se.pisd.roborally;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
-import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
-import dk.dtu.compute.se.pisd.roborally.model.Player;
-import dk.dtu.compute.se.pisd.roborally.model.PlayerStartData;
-import dk.dtu.compute.se.pisd.roborally.model.Space;
+import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -144,6 +141,9 @@ public class MyRest {
     @GetMapping(value = "/isGameRunning")
     public ResponseEntity<Boolean> isGameRunning(){
 
+        if(gameDataRep.gameData == null){
+            return ResponseEntity.ok().body(false);
+        }
 
         return ResponseEntity.ok().body(gameDataRep.gameData.isGameRunning());
 
@@ -246,6 +246,15 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+
+    @PostMapping(value = "/sendUpgradeCardsShop")
+    public ResponseEntity<Boolean> sendUpgradeCardsShop(@RequestBody Command[] cards){
+        gameDataRep.gameState.setUpgradeShopCards(cards);
+
+        System.out.println("Kommer upgrade kort " + gameDataRep.gameState);
+
+        return ResponseEntity.ok().body(true);
+    }
 
 
 }

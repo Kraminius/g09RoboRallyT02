@@ -26,6 +26,7 @@ public class GameState {
         Command[] upgradeDiscardDeck;
         Command[] upgradeOutDeck;
         Command[] upgradeCardsDeck;
+        Command[] upgradeShopCards;
 
 
         //Player Info
@@ -266,6 +267,13 @@ public class GameState {
             this.playerProgrammingDeck[player] = commands;
         }
 
+    public Command[] getUpgradeShopCards() {
+        return upgradeShopCards;
+    }
+
+    public void setUpgradeShopCards(Command[] upgradeShopCards) {
+        this.upgradeShopCards = upgradeShopCards;
+    }
 
     @Override
     public String toString() {
@@ -279,6 +287,7 @@ public class GameState {
                 ", upgradeDiscardDeck=" + Arrays.toString(upgradeDiscardDeck) +
                 ", upgradeOutDeck=" + Arrays.toString(upgradeOutDeck) +
                 ", upgradeCardsDeck=" + Arrays.toString(upgradeCardsDeck) +
+                ", upgradeShopCards=" + Arrays.toString(upgradeShopCards) +
                 ", playerNames=" + Arrays.toString(playerNames) +
                 ", playerColors=" + Arrays.toString(playerColors) +
                 ", playerEnergyCubes=" + Arrays.toString(playerEnergyCubes) +

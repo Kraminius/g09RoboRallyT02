@@ -18,6 +18,7 @@ public class Load {
     Command[] upgradeDiscardDeck;
     Command[] upgradeOutDeck;
     Command[] upgradeCardsDeck;
+    Command[] upgradeShopCards;
 
 
     //Player Info
@@ -217,5 +218,13 @@ public class Load {
 
     public void setMapCubePositions(int[] mapCubePositions) {
         this.mapCubePositions = mapCubePositions;
+    }
+
+    public Command[] getUpgradeShopCards() {
+        return upgradeShopCards;
+    }
+
+    public void setUpgradeShopCards(Command[] upgradeShopCards) {
+        this.upgradeShopCards = upgradeShopCards;
     }
 }

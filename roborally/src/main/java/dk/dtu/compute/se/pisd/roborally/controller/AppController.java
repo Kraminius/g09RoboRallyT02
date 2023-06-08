@@ -156,6 +156,7 @@ public class AppController implements Observer {
         GameClient.picked();
 
         if(GameClient.getPlayerNumber() == 0){
+            System.out.println("vi instantiate the game" );
             instantiateGame();
         }
         else{
@@ -277,6 +278,7 @@ public class AppController implements Observer {
         System.out.println("vi kommer lol");
         GameSave gameSave = new GameSave();
         Load loadGame = GameLoader.loadData(gameSave.jsonGame(gameController));
+        //Temporary
         loadGame.setPhase(Phase.UPGRADE);
         try {
             System.out.println("kommer vi her");

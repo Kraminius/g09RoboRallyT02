@@ -44,4 +44,12 @@ public class CommandCard extends Subject {
     public String getDescription(){
         return command.description;
     }
+
+
+    @Override
+    public String toString() {
+        return "CommandCard{" +
+                "command=" + command +
+                '}';
+    }
 }

@@ -100,10 +100,12 @@ public class GameSave {
         JSONArray upgradeCardsDeck = new JSONArray();
         JSONArray upgradeDiscardDeck = new JSONArray();
         JSONArray upgradeOutDeck = new JSONArray();
+        JSONArray upgradeLoadDeck = new JSONArray();
         if(controller.upgradeShop != null){
             ArrayList<CommandCard> outUpgradeCards = controller.upgradeShop.getOut();
             ArrayList<CommandCard> discardUpgradeCards = controller.upgradeShop.getDiscarded();
             ArrayList<CommandCard> upgradeDeck = controller.upgradeShop.getDeck();
+            ArrayList<CommandCardField> loadDeck = controller.upgradeShop.getLoadedCards();
 
 
             for(CommandCard c : outUpgradeCards){
@@ -114,6 +116,9 @@ public class GameSave {
             }
             for(CommandCard c : upgradeDeck){
                 upgradeCardsDeck.add(c.command.toString());
+            }
+            for(CommandCardField c : loadDeck){
+                upgradeLoadDeck.add(c.getCard().command.toString());
             }
         }
 
@@ -136,6 +141,7 @@ public class GameSave {
         obj.put("upgradeCardsDeck", upgradeCardsDeck);
         obj.put("upgradeDiscardDeck", upgradeDiscardDeck);
         obj.put("upgradeOutDeck", upgradeOutDeck);
+        obj.put("upgradeLoadDeck", upgradeLoadDeck);
         obj.put("mapCubes", mapEnergyCubes);
 
         json.save(name, obj, "game");
@@ -156,6 +162,7 @@ public class GameSave {
         }
         return reached;
     }
+
 
     //Used when using POST game to server
     public JSONObject jsonGame(GameController controller){
@@ -183,42 +190,42 @@ public class GameSave {
         JSONArray mapEnergyCubes = new JSONArray();
         //for(int i = 0; i < board.getPlayersNumber(); i++){
         int playerNum = GameClient.getPlayerNumber();
-            Player player = board.getPlayer(playerNum);
-            playersName.add(player.getName());
-            playersColor.add(player.getColor());
-            playerEnergyCubes.add(player.getEnergyCubes());
-            playersX.add(player.getSpace().x);
-            playersY.add(player.getSpace().y);
-            playersHeading.add(headingToString(player.getHeading()));
-            playersCheckpoints.add(getCheckpointReached(player.getCheckpointReadhed()));
-            CommandCardField[] program = player.getProgram();
-            CommandCardField[] pulled = player.getCards();
-            CommandCardField[] upgradeCards = player.getUpgradeCards();
-            ArrayList<CommandCard> discardPile = player.getDiscardPile();
-            ArrayList<CommandCard> programmingDeck = player.getCardDeck();
+        Player player = board.getPlayer(playerNum);
+        playersName.add(player.getName());
+        playersColor.add(player.getColor());
+        playerEnergyCubes.add(player.getEnergyCubes());
+        playersX.add(player.getSpace().x);
+        playersY.add(player.getSpace().y);
+        playersHeading.add(headingToString(player.getHeading()));
+        playersCheckpoints.add(getCheckpointReached(player.getCheckpointReadhed()));
+        CommandCardField[] program = player.getProgram();
+        CommandCardField[] pulled = player.getCards();
+        CommandCardField[] upgradeCards = player.getUpgradeCards();
+        ArrayList<CommandCard> discardPile = player.getDiscardPile();
+        ArrayList<CommandCard> programmingDeck = player.getCardDeck();
 
 
-            playersProgram.add("#");
-            for(int j = 0; j < program.length; j++){
-                if(program[j].getCard() != null) playersProgram.add(program[j].getCard().command.toString());
-            }
+        playersProgram.add("#");
+        for(int j = 0; j < program.length; j++){
+            if(program[j].getCard() != null) playersProgram.add(program[j].getCard().command.toString());
+        }
 
-            playersPulledCards.add("#");
-            for(int j = 0; j < pulled.length; j++){
-                if(pulled[j].getCard() != null) playersPulledCards.add(pulled[j].getCard().command.toString());
-            }
-            playerUpgradeCards.add("#");
-            for(int j = 0; j < upgradeCards.length; j++){
-                if(upgradeCards[j].getCard() != null) playerUpgradeCards.add(upgradeCards[j].getCard().command.toString());
-            }
-            playersDiscardCards.add("#");
-            for(int j = 0; j < discardPile.size(); j++){
-                if(discardPile.get(j) != null) playersDiscardCards.add(discardPile.get(j).command.toString());
-            }
-            playersProgrammingDeck.add("#");
-            for(int j = 0; j < programmingDeck.size(); j++){
-                if(programmingDeck.get(j) != null) playersProgrammingDeck.add(programmingDeck.get(j).command.toString());
-            }
+        playersPulledCards.add("#");
+        for(int j = 0; j < pulled.length; j++){
+            if(pulled[j].getCard() != null) playersPulledCards.add(pulled[j].getCard().command.toString());
+        }
+        playerUpgradeCards.add("#");
+        for(int j = 0; j < upgradeCards.length; j++){
+            if(upgradeCards[j].getCard() != null) playerUpgradeCards.add(upgradeCards[j].getCard().command.toString());
+        }
+        playersDiscardCards.add("#");
+        for(int j = 0; j < discardPile.size(); j++){
+            if(discardPile.get(j) != null) playersDiscardCards.add(discardPile.get(j).command.toString());
+        }
+        playersProgrammingDeck.add("#");
+        for(int j = 0; j < programmingDeck.size(); j++){
+            if(programmingDeck.get(j) != null) playersProgrammingDeck.add(programmingDeck.get(j).command.toString());
+        }
         //}
         JSONArray upgradeCardsDeck = new JSONArray();
         JSONArray upgradeDiscardDeck = new JSONArray();
@@ -265,3 +272,4 @@ public class GameSave {
         return obj;
     }
 }
+

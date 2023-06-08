@@ -255,18 +255,27 @@ public class GameDataRep {
         gameState.getPlayersYPosition()[playerNumber] = player.getY();
         gameState.getPlayerHeadings()[playerNumber] = player.getHeading();
 
-        ArrayList<CommandCard> deck = new ArrayList<>();
-
-        deck = instaShuffleDeck(deck);
-
+        // Assume temp is Command[][]
         Command[][] temp = gameState.getPlayerProgrammingDeck();
 
-        if (temp[playerNumber] == null) {
-            temp[playerNumber] = new Command[deck.size()];
-        }
+// Create deck outside the loop. This way, you're not creating a new deck
+// on each iteration -- just when it's needed.
+        ArrayList<CommandCard> deck;
 
-        for (int i = 0; i < deck.size(); i++) {
-            temp[playerNumber][i] = deck.get(i).command;
+// Iterate over each array in temp.
+        for (int i = 0; i < temp.length; i++) {
+            // Check if the array at temp[i] is null or any of its elements are null.
+            if (temp[i] == null || Arrays.stream(temp[i]).anyMatch(Objects::isNull)) {
+                // If it is, create a new deck and shuffle it.
+                deck = new ArrayList<>();
+                deck = instaShuffleDeck(deck);
+
+                // Convert the deck to a new array and assign it to temp[i].
+                temp[i] = new Command[deck.size()];
+                for (int j = 0; j < deck.size(); j++) {
+                    temp[i][j] = deck.get(j).command;
+                }
+            }
         }
 
         gameState.setPlayerProgrammingDeck(temp);
@@ -281,7 +290,7 @@ public class GameDataRep {
 
         int[] counts = {5, 3, 3, 3, 1, 1, 1, 2, 1};
         int index = 0;
-        System.out.println(validCommands);
+        //System.out.println(validCommands);
         for(Command command : validCommands){
             int count = counts[index];
             for(int i = 0; i < count; i++){

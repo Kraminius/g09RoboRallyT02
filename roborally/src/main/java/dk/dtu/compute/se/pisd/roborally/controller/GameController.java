@@ -22,6 +22,7 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
+import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
@@ -1228,11 +1229,27 @@ public class GameController {
         } //No card at that spot, so nothing happens.
     }
 
-    public void openUpgradeShop(){
-        if(upgradeShop == null) upgradeShop = new UpgradeShop();
-        upgradeShop.openShop(board, this);
+    public void openUpgradeShop() throws Exception {
+        if(upgradeShop == null) upgradeShop = new UpgradeShop(this, board);
+        CommandCardField[] cardFields = upgradeShop.getCards(board.getPlayersNumber());
+        upgradeShop.setCardsForRound(cardFields);
+
+        Command[] temp = new Command[cardFields.length];
+
+        for (int i = 0; i < cardFields.length; i++) {
+            temp[i] = cardFields[i].getCard().command;
+        }
+
+        GameClient.sendUpgradeCardsShop(temp);
+
+        for (int i = 0; i < cardFields.length; i++) {
+            System.out.println("Shop cards" + cardFields[i].getCard().command);
+        }
+
+        upgradeShop.openShop();
         startProgrammingPhase();
     }
+
 
 
     public void rammingGearFunctionality(Player player, Player playerToMove){

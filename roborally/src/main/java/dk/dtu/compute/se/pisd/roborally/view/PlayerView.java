@@ -125,7 +125,13 @@ public class PlayerView extends Tab implements ViewObserver {
         stepButton.setOnAction( e-> gameController.executeStep());
 
         openShopButton = new Button("Open Upgrade Shop");
-        openShopButton.setOnAction( e-> gameController.openUpgradeShop());
+        openShopButton.setOnAction( e-> {
+            try {
+                gameController.openUpgradeShop();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
 
 

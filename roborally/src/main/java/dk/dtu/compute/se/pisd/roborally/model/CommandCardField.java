@@ -64,4 +64,14 @@ public class CommandCardField extends Subject {
             notifyChange();
         }
     }
+
+
+    @Override
+    public String toString() {
+        return "CommandCardField{" +
+                "player=" + player +
+                ", card=" + card +
+                ", visible=" + visible +
+                '}';
+    }
 }

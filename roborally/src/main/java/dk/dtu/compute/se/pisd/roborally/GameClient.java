@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import dk.dtu.compute.se.pisd.roborally.model.CommandCardField;
-import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
-import dk.dtu.compute.se.pisd.roborally.model.Player;
-import dk.dtu.compute.se.pisd.roborally.model.PlayerStartData;
+import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 
@@ -474,6 +471,25 @@ public class GameClient {
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         System.out.println("it mus be here somewhere4");
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+
+    }
+
+
+    public static void sendUpgradeCardsShop(Command[] cards) throws Exception{
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(cards);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .uri(URI.create("http://localhost:8080/sendUpgradeCardsShop"))
+                .header("Content-Type", "application/json")
+                .build();
+
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
 
