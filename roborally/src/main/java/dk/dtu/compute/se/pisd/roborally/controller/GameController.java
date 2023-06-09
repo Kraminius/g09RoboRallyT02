@@ -1249,9 +1249,15 @@ public class GameController {
         for (int i = 0; i < cardFields.length; i++) {
             System.out.println("Shop cards" + cardFields[i].getCard().command);
         }
-        upgradeShop.openShopFor(2); //You can use this to say which player should open. Right now it's just player 2.
-        CommandCard[] discardCards = null;
-        upgradeShop.finishUpgradePhase(discardCards); //You must call this to end the upgrade phase when all players have bought, this will discard the cards that have not been bought to a discarded pile.
+
+        int playerTurn = GameClient.getCurrentPlayer();
+        System.out.println("Its this player's turn: " + playerTurn);
+
+        upgradeShop.openShopFor(playerTurn); //You can use this to say which player should open. Right now it's just player 2.
+
+        //Commented out for now, will use it for the last player
+        //CommandCard[] discardCards = null;
+        //upgradeShop.finishUpgradePhase(discardCards); //You must call this to end the upgrade phase when all players have bought, this will discard the cards that have not been bought to a discarded pile.
         startProgrammingPhase();
     }
 
