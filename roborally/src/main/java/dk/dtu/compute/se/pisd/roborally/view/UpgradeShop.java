@@ -89,7 +89,7 @@ public class UpgradeShop {
 
     public void setCardsForRound(CommandCardField[] cards){
         cardsToBuy = new CardFieldView[cards.length];
-        for(int i = 0; i < board.getPlayersNumber(); i++){
+        for(int i = 0; i < cards.length; i++){
             cardsToBuy[i] = new CardFieldView(controller, cards[i]);
         }
     }
@@ -282,7 +282,7 @@ public class UpgradeShop {
             temp[i] = cardsToBuy[i].getField().getCard().command;
         }
 
-        GameClient.sendUpgradeCardsShop(temp);
+
         stage.close();
     }
 
@@ -450,6 +450,7 @@ public class UpgradeShop {
                 currentPlayer.setEnergyCubes(currentPlayer.getEnergyCubes() - getPrice(cardFieldView.getField().getCard().command));
                 currentPlayer.updateUpgradeCardView();
                 out.add(cardFieldView.getField().getCard());
+                removeInstanceFromCardsToBuy(cardFieldView);
                 cardFieldView.getField().setCard(null);
                 updatePowerUps(currentPlayer);
                 stage.close();
@@ -480,6 +481,19 @@ public class UpgradeShop {
         }
     }
 
+    public void removeInstanceFromCardsToBuy(CardFieldView commandCardField){
+        int newSize = cardsToBuy.length - 1;
+        CardFieldView[] newCardsToBuy = new CardFieldView[newSize];
+
+
+        for (int i = 0, j = 0; i < cardsToBuy.length; i++) {
+            if (cardsToBuy[i] != commandCardField) {
+                newCardsToBuy[j++] = cardsToBuy[i];
+            }
+        }
+        cardsToBuy = newCardsToBuy;
+    }
+
     public void setDeck(ArrayList<CommandCard> deck) {
         this.deck = deck;
     }
@@ -504,6 +518,14 @@ public class UpgradeShop {
     }
     public ArrayList<CommandCardField> getLoadedCards(){
         return loadedCards;
+    }
+
+    public CardFieldView[] getCardsToBuy() {
+        return cardsToBuy;
+    }
+
+    public void setCardsToBuy(CardFieldView[] cardsToBuy) {
+        this.cardsToBuy = cardsToBuy;
     }
 }
 

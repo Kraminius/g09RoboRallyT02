@@ -67,9 +67,18 @@ public class GameClient {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        int temp;
+        try {
+             temp = getCurrentPlayer();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("this is temp: " + temp + " and this is myPlayerId; " + playerInfo.getPlayerId());
+
+        if(openShop && temp == playerInfo.getPlayerId()){
 
 
-        if(openShop){
             System.out.println("we have updated the shop");
             javafx.application.Platform.runLater(() -> {
                 RoboRally.getAppController().updateGame();
@@ -77,7 +86,7 @@ public class GameClient {
 
             openedUpgradeShop.cancel(false);
         }else {
-            System.out.println("we are waiting for first player to open shop");
+            System.out.println("waiting for players before to buy");
         }
 
     }
@@ -111,7 +120,8 @@ public class GameClient {
 
             System.out.println("we have updated the game");
             javafx.application.Platform.runLater(() -> {
-                        RoboRally.getAppController().updateGame();
+                        RoboRally.getAppController().updateGame(true);
+
                     });
             allPickedStartPosition.cancel(false);
         }else {
@@ -519,10 +529,14 @@ public class GameClient {
     }
 
 
-    public static void sendUpgradeCardsShop(Command[] cards) throws Exception{
+    public static void sendUpgradeCardsShop(Command[] cards, int nextPlayer, int currentPlayer) throws Exception{
+        UpgradeCardsShopRequest requestObj = new UpgradeCardsShopRequest();
+        requestObj.setCards(cards);
+        requestObj.setNextPlayer(nextPlayer);
+        requestObj.setCurrentPlayer(currentPlayer);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String requestBody = objectMapper.writeValueAsString(cards);
+        String requestBody = objectMapper.writeValueAsString(requestObj);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
@@ -533,8 +547,21 @@ public class GameClient {
         CompletableFuture<HttpResponse<String>> response =
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
-        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
 
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+    }
+
+
+    public static int turnNumber ()throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/turnNumber"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        int result = Integer.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
+        return result;
     }
 
 }

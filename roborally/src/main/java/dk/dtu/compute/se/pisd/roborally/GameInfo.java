@@ -28,12 +28,16 @@ public class GameInfo {
     private boolean openShop = false;
 
 
+
+
     public void instaGameInfo(String id, GameSettings gameSettings){
 
         this.id = id;
         this.gameSettings = gameSettings;
         gameIsRunning = true;
         currentPlayer = 0;
+
+
     }
 
     public boolean isGameRunning(){
@@ -96,6 +100,10 @@ public class GameInfo {
                 "id='" + id + '\'' +
                 ", gameSettings=" + gameSettings +
                 ", gameIsRunning=" + gameIsRunning +
+                ", joinButtonPressed=" + joinButtonPressed +
+                ", currentPlayer=" + currentPlayer +
+                ", chosenStartPlaces=" + chosenStartPlaces +
+                ", openShop=" + openShop +
                 '}';
     }
 

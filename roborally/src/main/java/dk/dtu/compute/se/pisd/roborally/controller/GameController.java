@@ -82,12 +82,10 @@ public class GameController {
     // XXX: V2
     public void startUpgradePhase(){
         System.out.println("Upgrade Phase Started");
-        int playerNumber = GameClient.getPlayerNumber();
-        if(playerNumber != 0){
-            GameClient.startWaitingForOpenShop();
-        }
+
 
         board.setPhase(Phase.UPGRADE);
+
     }
 
     public void startProgrammingPhase() {
@@ -886,6 +884,20 @@ public class GameController {
         }
     }
 
+
+    public void allPlayerHaveJoinedInstantiate(){
+        int playerNumber = GameClient.getPlayerNumber();
+        int temp = antennaHandler.findPlayerSequence(board.getAntenna(), board).get(0).getId()-1;
+        if(playerNumber != temp){
+            GameClient.startWaitingForOpenShop();
+        }
+        else{
+            System.out.println("its my turn");
+        }
+    }
+
+
+
     /**
      * @author Tobias Gørlyk     s223271.dtu.dk
      * Activates the belts on the board for all players one at a time but right after each other. While a player is on a belt they don't have any push collision.
@@ -1235,25 +1247,51 @@ public class GameController {
 
     public void openUpgradeShop() throws Exception {
         if(upgradeShop == null) upgradeShop = new UpgradeShop(this, board);
-        CommandCardField[] cardFields = upgradeShop.getCards(board.getPlayersNumber());
+
+        int turnNumber = GameClient.turnNumber();
+
+        if(turnNumber != 0){
+            int playerTurn = GameClient.getCurrentPlayer();
+        }
+
+        List<Player> players = antennaHandler.findPlayerSequence(board.getAntenna(), board);
+
+        int playerTurn = players.get(turnNumber).getId()-1;
+
+
+        CommandCardField[] cardFields = upgradeShop.getCards(board.getPlayersNumber()-turnNumber);
         upgradeShop.setCardsForRound(cardFields);
 
-        Command[] temp = new Command[cardFields.length];
 
-        for (int i = 0; i < cardFields.length; i++) {
-            temp[i] = cardFields[i].getCard().command;
-        }
-
-
-
-        for (int i = 0; i < cardFields.length; i++) {
-            System.out.println("Shop cards" + cardFields[i].getCard().command);
-        }
-
-        int playerTurn = GameClient.getCurrentPlayer();
         System.out.println("Its this player's turn: " + playerTurn);
 
-        upgradeShop.openShopFor(playerTurn); //You can use this to say which player should open. Right now it's just player 2.
+        upgradeShop.openShopFor(turnNumber); //You can use this to say which player should open. Right now it's just player 2.
+
+
+        Command[] temp = new Command[upgradeShop.getCardsToBuy().length];
+
+        for (int i = 0; i < upgradeShop.getCardsToBuy().length; i++) {
+            temp[i] = upgradeShop.getCardsToBuy()[i].getField().getCard().command;
+        }
+
+
+        for (int i = 0; i < temp.length; i++) {
+            System.out.println("Shop cards" + temp[i]);
+        }
+
+
+        int nextPlayer;
+        if(turnNumber + 1 < players.size()){
+            nextPlayer = players.get(turnNumber+1).getId()-1;
+        }
+        else {
+            nextPlayer = 99;
+        }
+
+
+
+        GameClient.sendUpgradeCardsShop(temp, nextPlayer, playerTurn);
+        //GameClient.nextPlayer();
 
         //Commented out for now, will use it for the last player
         //CommandCard[] discardCards = null;

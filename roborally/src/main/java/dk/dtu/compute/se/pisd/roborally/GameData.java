@@ -22,6 +22,8 @@ public class GameData {
 
     private boolean[] allPickedList;
 
+    private boolean[] allPlayerUpgrade;
+
 
 
     public GameData(int numPlayers){
@@ -37,6 +39,12 @@ public class GameData {
 
         for (int i = 0; i < allPickedList.length; i++) {
             allPickedList[i] = false;
+        }
+
+        allPlayerUpgrade = new boolean[numPlayers];
+
+        for (int i = 0; i < allPlayerUpgrade.length; i++) {
+            allPlayerUpgrade[i] = false;
         }
 
     }
@@ -92,5 +100,14 @@ public class GameData {
 
     public void setAllPickedList(boolean[] allPickedList) {
         this.allPickedList = allPickedList;
+    }
+
+
+    public boolean[] getAllPlayerUpgrade() {
+        return allPlayerUpgrade;
+    }
+
+    public void setAllPlayerUpgrade(boolean[] allPlayerUpgrade) {
+        this.allPlayerUpgrade = allPlayerUpgrade;
     }
 }

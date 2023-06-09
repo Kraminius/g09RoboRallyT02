@@ -56,6 +56,22 @@ public class GameDataRep {
 
     }
 
+    public int checkerAllPlayersUpgrade(){
+
+        int j = 0;
+        for (int i = 0; i < gameData.getAllPlayerUpgrade().length; i++) {
+
+            //System.out.println("This player picked: " + gameData.getAllPickedList()[i]);
+
+            if(gameData.getAllPlayerUpgrade()[i]){
+               j++;
+            }
+        }
+
+        return j;
+
+    }
+
     public void createGame(String gameName, String creatorName, int numberOfplayers, String boardToPlay){
 
         gameData = new GameData(numberOfplayers);

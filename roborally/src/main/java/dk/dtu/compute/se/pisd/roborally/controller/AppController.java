@@ -262,6 +262,12 @@ public class AppController implements Observer {
         }
     }
 
+    public void restStartUpgradePhase(){
+        if(board.getPhase() == Phase.UPGRADE){
+            gameController.allPlayerHaveJoinedInstantiate();
+        }
+    }
+
     public boolean isGameRunning() {
         return gameController != null;
     }
@@ -294,6 +300,15 @@ public class AppController implements Observer {
 
         try {
             LoadInstance.load(this,MyClient.update());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateGame(boolean startOfUpgradePhase){
+
+        try {
+            LoadInstance.load(this,MyClient.update(),startOfUpgradePhase);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

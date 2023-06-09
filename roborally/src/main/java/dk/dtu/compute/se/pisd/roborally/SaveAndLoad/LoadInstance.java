@@ -20,6 +20,27 @@ public class LoadInstance {
 
 
 
+
+
+        return gameController;
+    }
+
+    public static GameController load(AppController appController, Load load, boolean startOfUpgradePhase){
+        Board board = createBoard(appController, load);
+        GameController gameController = new GameController(board); //Creates new gamecontroller with the new board.
+        initUpgradeShopAndCards(gameController, load);
+        loadPlayer(load, gameController);
+        loadCurrentState(load, board);
+        initBoardView(appController, gameController);
+        loadCubesOnBoard(load, board);
+
+        if(startOfUpgradePhase){
+            gameController.allPlayerHaveJoinedInstantiate();
+        }
+
+
+
+
         return gameController;
     }
 
