@@ -61,7 +61,7 @@ public class UpgradeShop {
         this.board = board;
         createWindow();
         switchToPlayer(player);
-
+        stage.showAndWait();
     }
 
 
@@ -123,7 +123,7 @@ public class UpgradeShop {
         label.setAlignment(Pos.CENTER);
         label.setWrapText(true);
         label.setStyle("-fx-font-size: 32; -fx-font-weight: bold");
-        finishButton = new Button("Start Shopping!");
+        finishButton = new Button("Exit Upgrade Shop");
         finishButton.setOnAction(e -> {stage.close();});
         finishButton.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
         close = new Button("Close");
@@ -157,7 +157,6 @@ public class UpgradeShop {
         stage.setY(5);
         stage.initModality(Modality.APPLICATION_MODAL); //Make other window useless.
         stage.setOnCloseRequest(Event::consume);
-        stage.showAndWait();
     }
     /**
      * @author Tobias - s224271@dtu.dk
@@ -415,7 +414,6 @@ public class UpgradeShop {
      * @param cardFieldView the card that the player has clicked buy at.
      */
     private void buyCard(CardFieldView cardFieldView){
-        if(finishButton.getText().equals("Start Shopping!")) return;
         int freeIndex = -1;
         for(int i = 0; i < playerCards.length; i++){
             if(playerCards[i].getField().getCard() == null){
@@ -454,6 +452,7 @@ public class UpgradeShop {
                 out.add(cardFieldView.getField().getCard());
                 cardFieldView.getField().setCard(null);
                 updatePowerUps(currentPlayer);
+                stage.close();
             }
             else messageLabel.setText("You cannot afford this item");
         }
