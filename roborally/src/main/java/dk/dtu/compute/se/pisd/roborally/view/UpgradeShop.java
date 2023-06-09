@@ -58,9 +58,9 @@ public class UpgradeShop {
     }
 
     public void openShopFor(int player){
-        this.board = board;
         createWindow();
         switchToPlayer(player);
+        currentPlayer=board.getPlayer(player);
         stage.showAndWait();
     }
 
