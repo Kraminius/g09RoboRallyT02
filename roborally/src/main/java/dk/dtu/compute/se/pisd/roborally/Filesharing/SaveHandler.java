@@ -1,6 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally.Filesharing;
 
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LocateJSONFile;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.ReaderAndWriter;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class SaveHandler {
     }
     public void permSave(int id){
         SaveData data = saveData.get(getIndexOfData(id));
-        permData.writeJSON(data.getId()+"", permData.createJSON(data.getFile()), "saveData");
+        permData.writeJSON(data.getId()+"", LocateJSONFile.createJSON(data.getFile()), "saveData");
     }
     public File loadFromPermanent(int id){
         try{
