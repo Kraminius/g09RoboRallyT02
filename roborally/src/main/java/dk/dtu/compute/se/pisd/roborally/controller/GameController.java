@@ -1263,6 +1263,7 @@ public class GameController {
         upgradeShop.setCardsForRound(cardFields);
 
 
+
         System.out.println("Its this player's turn: " + playerTurn);
 
         upgradeShop.openShopFor(turnNumber); //You can use this to say which player should open. Right now it's just player 2.
@@ -1279,7 +1280,33 @@ public class GameController {
             System.out.println("Shop cards" + temp[i]);
         }
 
+        CommandCardField[] newCards = players.get(turnNumber).getUpgradeCards();
 
+        int size = 0;
+
+        for (int i = 0; i < newCards.length; i++) {
+            if(players.get(turnNumber).getUpgradeCards()[i].getCard() != null){
+                size++;
+            }
+        }
+
+        Command[] bought = new Command[size];
+
+        size = 0;
+
+        for (int i = 0; i < newCards.length; i++) {
+            if(players.get(turnNumber).getUpgradeCards()[i].getCard() != null){
+                bought[size] = newCards[i].getCard().command;
+                size++;
+            }
+            else{
+                //bought[i] = null;
+            }
+
+        }
+
+        GameClient.sendBoughtUpgradeCards(bought);
+        System.out.println("vi sender købte kort");
         int nextPlayer;
         if(turnNumber + 1 < players.size()){
             nextPlayer = players.get(turnNumber+1).getId()-1;
@@ -1287,6 +1314,7 @@ public class GameController {
         else {
             nextPlayer = 99;
         }
+
 
 
 

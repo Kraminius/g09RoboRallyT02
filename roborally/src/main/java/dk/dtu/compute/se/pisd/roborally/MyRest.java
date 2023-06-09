@@ -293,6 +293,29 @@ public class MyRest {
         return ResponseEntity.ok().body(turn);
 
     }
+    @PostMapping(value = "/sendBoughtUpgradeCard")
+    public ResponseEntity<Boolean> sendBoughtUpgradeCard(@RequestBody SendUpgradeCards playerUpgradeCards){
+        Command[][] newUpgradeCard = gameDataRep.gameState.getPlayerUpgradeCards();
 
+        newUpgradeCard[playerUpgradeCards.getPlayerNumber()]= playerUpgradeCards.getCommands();
+
+        gameDataRep.gameState.setPlayerUpgradeCards(newUpgradeCard);
+
+        System.out.println("upgs: " + gameDataRep.gameState.toString());
+
+        return ResponseEntity.ok().body(true);
+    }
+
+    @GetMapping(value = "/allPlayersUpgraded")
+    public ResponseEntity<Boolean> allPlayersUpgraded(){
+
+        boolean temp = false;
+        if(gameDataRep.checkerAllPlayersUpgrade() == gameDataRep.gameData.getGameSettings().getNumberOfPlayers()){
+            temp = true;
+        }
+
+
+        return ResponseEntity.ok().body(temp);
+    }
 
 }

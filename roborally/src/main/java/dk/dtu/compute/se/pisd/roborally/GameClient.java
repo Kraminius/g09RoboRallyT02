@@ -44,6 +44,7 @@ public class GameClient {
 
     private static ScheduledFuture<?> allPickedStartPosition;
     private static ScheduledFuture<?> openedUpgradeShop;
+    private static ScheduledFuture<?> updateAllPlayersUpgradeCards;
 
     //Waiting for start position
     public static void startWaitingForStartPosition(){
@@ -56,6 +57,32 @@ public class GameClient {
 
     public static void startWaitingForOpenShop(){
         openedUpgradeShop = executorService.scheduleAtFixedRate(GameClient::pollOpenShop, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void startWaitingForUpgradeCards(){
+        updateAllPlayersUpgradeCards =executorService.scheduleAtFixedRate(GameClient::pollUpgradeCards, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void pollUpgradeCards(){
+
+        boolean temp;
+
+        try {
+            temp = allPlayersUpgraded();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        if(temp){
+            System.out.println("we are updating upgrade cards");
+            javafx.application.Platform.runLater(() -> {
+                RoboRally.getAppController().updateGame();
+            });
+            updateAllPlayersUpgradeCards.cancel(false);
+        }
+        else{
+            System.out.println("we are waiting to update upgrade carads");
+        }
     }
 
     public static void pollOpenShop(){
@@ -84,7 +111,11 @@ public class GameClient {
                 RoboRally.getAppController().updateGame();
             });
 
+
+
             openedUpgradeShop.cancel(false);
+
+
         }else {
             System.out.println("waiting for players before to buy");
         }
@@ -552,6 +583,32 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    public static void sendBoughtUpgradeCards(Command[] command) throws Exception{
+
+        int playerNumber = playerInfo.getPlayerId();
+
+        SendUpgradeCards playerUpgradeCards = new SendUpgradeCards();
+        playerUpgradeCards.setCommands(command);
+        playerUpgradeCards.setPlayerNumber(playerNumber);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(playerUpgradeCards);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .uri(URI.create("http://localhost:8080/sendBoughtUpgradeCard"))
+                .header("Content-Type", "application/json")
+                .build();
+
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+
+        startWaitingForUpgradeCards();
+    }
+
+
 
     public static int turnNumber ()throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
@@ -561,6 +618,17 @@ public class GameClient {
         CompletableFuture<HttpResponse<String>> response =
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
         int result = Integer.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
+        return result;
+    }
+
+    public static Boolean allPlayersUpgraded() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/allPlayersUpgraded"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        Boolean result = Boolean.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
         return result;
     }
 
