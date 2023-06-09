@@ -33,7 +33,7 @@ public class LocateJSONFile {
      * @param name the name of the file
      * @return a File under that name, null if there is an error in creating it.
      */
-    public static File getJSON(String name, String type) {
+    public static File overWriteOrCreate(String name, String type) {
         try {
             File directory = null;
             if(type.equals( "board")) directory = new File("roborally/src/main/resources/boards/");

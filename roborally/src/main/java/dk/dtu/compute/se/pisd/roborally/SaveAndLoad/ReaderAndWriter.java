@@ -15,7 +15,7 @@ public class ReaderAndWriter {
      * @param jsonObject the object to save
      */
     public void writeJSON(String name, JSONObject jsonObject, String type){
-        File file = LocateJSONFile.getJSON(name, type);
+        File file = LocateJSONFile.overWriteOrCreate(name, type);
         if(file == null){
             System.out.println("Cannot save json " + name + ". unable to find or create file.");
             return;
