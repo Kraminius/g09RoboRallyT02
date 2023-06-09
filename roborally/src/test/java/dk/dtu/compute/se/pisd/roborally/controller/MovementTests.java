@@ -1,9 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
-import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
-import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoader;
+import dk.dtu.compute.se.pisd.roborally.controller.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.SpaceElement;
@@ -11,9 +9,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
 
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;

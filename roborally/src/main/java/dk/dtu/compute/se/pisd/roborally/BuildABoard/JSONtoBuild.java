@@ -12,7 +12,12 @@ public class JSONtoBuild {
     private JSONHandler jsonHandler = new JSONHandler();
     private BoardBuild build;
     private JSONObject obj;
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Constructor that Loads a board with a specific name into a build
+     * @param name name of the file to load and the board name
+     * @param build the build to load it into
+     */
     public JSONtoBuild(String name, BoardBuild build){
         obj = jsonHandler.load(name, "board");
         if(obj != null){
@@ -20,12 +25,22 @@ public class JSONtoBuild {
             loadBoard();
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * load the board
+     */
     private void loadBoard(){
         build.setSize(parseInt((String)obj.get("width")), parseInt((String)obj.get("height"))); //Set the size and changes the build to have all the spaces. It also sets coords.
         for(Object key : obj.keySet()){
             insert(obj.get(key), (String) key);
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Inserts an object value into a specific variable for the board build
+     * @param value the object value to convert
+     * @param varName the name of the variable
+     */
 
     private void insert(Object value, String varName){
         if(value == null) return;
@@ -240,6 +255,12 @@ public class JSONtoBuild {
                 break;
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Converts a JSON array into a String arrayList.
+     * @param arr the JSON array
+     * @return the String arrayList
+     */
     private ArrayList<String> getList(JSONArray arr){
         ArrayList<String> list = new ArrayList<>();
         for(int i = 0; i < arr.size(); i++){
@@ -247,9 +268,22 @@ public class JSONtoBuild {
         }
         return list;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Gets the BoardBuildElement at coordinates x and y
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return the BoardBuildElement at those coordinates
+     */
     private BoardBuildElement getElementAt(String x, String y){
             return build.getCurrentBuild().get(parseInt(x)).get(parseInt(y));
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * gets an int rotation from a string rotation
+     * @param rotation String rotation being either of the following [EAST, SOUTH, WEST, NORTH]
+     * @return integer between 0 and 3 [EAST = 0, SOUTH = 1, WEST = 2, NORTH = 3]
+     */
     private int getRotation(String rotation){
         switch (rotation){
             case "EAST": return 0;
@@ -259,6 +293,12 @@ public class JSONtoBuild {
         }
         return 0;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Formats an integer to be between 0 and 3 and subtracs or adds 4 if its outside.
+     * @param toFormat the integer to format
+     * @return final integer between 0 and 3
+     */
     private int formatInt(int toFormat){
         while(toFormat > 3) toFormat -= 4;
         while(toFormat < 0) toFormat -= 4;

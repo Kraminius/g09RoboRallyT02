@@ -2,10 +2,8 @@ package dk.dtu.compute.se.pisd.roborally.BuildABoard;
 
 import dk.dtu.compute.se.pisd.roborally.model.ImageLoader;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -40,13 +38,21 @@ public class BuildABoardViewController {
     private ArrayList<VBox> spots = new ArrayList<>();
     private BoardBuildElement currentElement;
     private int currentType;
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Constructor of the controllerView of the build a board window.
+     * @param handler the handler that clicks and presses should use.
+     */
     public BuildABoardViewController(BoardBuildHandler handler) {
         this.handler = handler;
         if (window == null) createWindow();
         if (stage == null) createScene();
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks to see if the window is already shown,
+     * It shows it along with setting the onClose request so the player cannot accidentally close board without saving.
+     */
     public void show() {
         if (stage.isShowing()) return;
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -58,23 +64,36 @@ public class BuildABoardViewController {
         });
         stage.showAndWait();
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * closes the stage
+     */
     public void close() {
         stage.close();
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates an error box with a specific error.
+     * @param text the text that should be displayed in the error.
+     */
     public void showError(String text) {
         Option option = new Option("ERROR");
         option.getOKPressed(text);
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * creates the stage and scene and inserts the scene along with making other windows useless.
+     */
     private void createScene() {
         stage = new Stage();
         stage.setScene(new Scene(window, SCREEN_WIDTH, SCREEN_HEIGHT));
         stage.initModality(Modality.APPLICATION_MODAL); //Make other window useless.
         //stage.setOnCloseRequest(Event::consume);
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * creates the main window and put the menu and boardholder where it should be.
+     */
     private void createWindow() {
         window = new HBox();
         VBox menu = createMenu();
@@ -83,13 +102,20 @@ public class BuildABoardViewController {
         window.getChildren().addAll(boardHolder, menu);
         showLeftRight(false);
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * creates the boardHolder that holds the board grid.
+     */
     private void createBoardHolder() {
         boardHolder.setAlignment(Pos.CENTER);
         boardHolder.setStyle("-fx-background-color: #909090");
         boardHolder.setPrefWidth(SCREEN_WIDTH - 150);
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates and stylizes a board description, which is the board name, width and height along with the buttons to save and exit.
+     * @return VBox holding labels and buttons.
+     */
     private VBox createBoardDescription() {
         VBox menu = new VBox();
         menu.setAlignment(Pos.CENTER);
@@ -128,7 +154,11 @@ public class BuildABoardViewController {
         menu.getChildren().addAll(boardDescBox, sizeVBox);
         return menu;
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates the menu on the right side of the screen and adds the board description along with the element window and the bottom part.
+     * @return the menu VBox
+     */
     private VBox createMenu() {
         VBox menu = new VBox();
         VBox boardDescription = createBoardDescription();
@@ -139,7 +169,11 @@ public class BuildABoardViewController {
         menu.setStyle("-fx-border-color: #909090; -fx-background-color: #dddddd");
         return menu;
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates the bottom of the menu which holds the turnbuttons.
+     * @return a HBox that holds the bottom of the menu.
+     */
     private HBox createBottom() {
         HBox box = new HBox();
         box.setAlignment(Pos.CENTER);
@@ -147,7 +181,11 @@ public class BuildABoardViewController {
         box.getChildren().add(turnButtons);
         return box;
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Updates the grid by clearing the boardholder and creating a new grid from the info sent from the handler.
+     * @param board a Two-Dimensional ArrayList of BoardBuildElements that is sent from the handler.
+     */
     public void updateGrid(ArrayList<ArrayList<BoardBuildElement>> board) {
         boardHolder.getChildren().clear();
         HBox widthBox = new HBox();
@@ -171,18 +209,33 @@ public class BuildABoardViewController {
         }
         boardHolder.getChildren().add(widthBox);
     }
-    public void updateElementVariants(BoardBuildElement element, int index){
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Update the element menu to show only the different variants from that type.
+     * @param element the Element that will be changed
+     * @param type the type of element we need to fetch variants for.
+     */
+    public void updateElementVariants(BoardBuildElement element, int type){
         currentElement = element;
-        currentType = index;
+        currentType = type;
         updateElementVariantBoxes();
         formatElementBoxes();
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Updates the element menu to show the different element that can be put onto a field.
+     * @param element the field's element.
+     */
     public void updateElementGrid(BoardBuildElement element){
         if(spots.size() == 0) spots = createGrid();
         currentElement = element;
         updateElementBoxes(element);
         formatElementBoxes();
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Formats the element menu into a showable Element-window.
+     */
     private void formatElementBoxes(){
         elementWindow.getChildren().clear();
         for(int i = 0; i < 2; i++){
@@ -202,6 +255,10 @@ public class BuildABoardViewController {
             elementWindow.getChildren().add(vBox);
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Updates the element variant boxes, formats them in ways to check if that variant is currently active and adds the image of that variant.
+     */
     private void updateElementVariantBoxes() {
         ArrayList<StackPane> images = BoardBuildLogic.getBoardVariants(currentType);
         ArrayList<Boolean> actives = BoardBuildLogic.getActiveVariant(currentElement, currentType);
@@ -232,7 +289,11 @@ public class BuildABoardViewController {
             spots.get(i).getChildren().add(stackPane);
         }
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Updates the element boxes of a specific element to show which elements are active on that field and which can and cannot be put onto it.
+     * @param element the element on the field
+     */
     private void updateElementBoxes(BoardBuildElement element) {
         ArrayList<StackPane> images = BoardBuildLogic.getBoardElementImages();
         ArrayList<Boolean> actives = BoardBuildLogic.getActiveElements(element);
@@ -268,6 +329,11 @@ public class BuildABoardViewController {
             spots.get(i).getChildren().add(stackPane);
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * creates a grid of spots for the elements in the element window. There are 15 different elements.
+     * @return ArrayList of VBoxes to share
+     */
     private ArrayList<VBox> createGrid(){
         ArrayList<VBox> spots = new ArrayList<>();
         for(int i = 0; i < 15; i++){
@@ -276,7 +342,13 @@ public class BuildABoardViewController {
         }
         return spots;
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates a VBox holding a given node, with a label above it with a given string
+     * @param node Node to have label over
+     * @param labelText the text to into the label
+     * @return a VBox containing the node and label
+     */
     private VBox addLabelInBox(Node node, String labelText){
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
@@ -285,6 +357,11 @@ public class BuildABoardViewController {
         vbox.getChildren().addAll(label, node);
         return vbox;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Either shows or hides the left and right button
+     * @param show true to show, false to hide.
+     */
     public void showLeftRight(boolean show){
         if(show){
             turnButtons.setDisable(false);
@@ -295,6 +372,10 @@ public class BuildABoardViewController {
             turnButtons.setOpacity(0);
         }
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Creates the left and right buttons and puts them into the turnButtons Hbox
+     */
     private void createLeftRight(){
         turnButtons = new HBox();
         Button left = new Button("Turn Left");
@@ -310,42 +391,98 @@ public class BuildABoardViewController {
         turnButtons.getChildren().addAll(left, right);
         turnButtons.setPadding(new Insets(10, 0, 0, 0));
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Sets the style of a node to a specific style that we wanted for the buttons.
+     */
     private void setStyle(Node node){
         node.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: center");
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Tells the handler that an element on the board was clicked.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     */
     private void fieldPressed(int x, int y){
         handler.showElementMenuFor(x, y);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Tells the handler that the SaveBoard button has been pressed
+     */
     private void saveBoardPressed(){
         handler.saveBoard(boardName.getText());
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Tells the handler that SetSize has been pressed and giving it the string inputs for the two textAreas.
+     */
     private void setSizePressed(){
         String[] input = new String[2];
         input[0] = boardWidth.getText();
         input[1] = boardHeight.getText();
         handler.resizeBoard(input);
     }
-    private void elementPressed(int index, int x, int y){
-        handler.elementClicked(index, x ,y);
-        currentType = index;
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Tells the handler that an element in the element Window has been pressed.
+     * @param type The type of element pressed.
+     * @param x the x coordinate of the element that is being changed
+     * @param y the y coordinate of the element that is being changed
+     *
+     */
+    private void elementPressed(int type, int x, int y){
+        handler.elementClicked(type, x ,y);
+        currentType = type;
     }
-    private void elementVariantPressed(int type, int index, int x, int y){
-        handler.elementVariantClicked(type, index, x ,y);
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Tells the handler that an element variant in the element Window has been pressed.
+     * @param type The type of element pressed.
+     * @param value The variant pressed.
+     * @param x the x coordinate of the element that is being changed
+     * @param y the y coordinate of the element that is being changed
+     */
+    private void elementVariantPressed(int type, int value, int x, int y){
+        handler.elementVariantClicked(type, value, x ,y);
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Tells the handler that the left button has been pressed and turn the current chosen element.
+     */
     private void leftPressed(){
         handler.turn(false, currentElement, currentType);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Tells the handler that the right button has been pressed and turn the current chosen element.
+     */
     private void rightPressed(){
         handler.turn(true, currentElement, currentType);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * sets the boardName textArea to have a given string in it.
+     * @param name the name to insert into the textArea.
+     */
     public void setBoardName(String name){
         boardName.setText(name);
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Sets the size of the size TextAreas
+     * @param x width
+     * @param y height
+     */
     public void setSizeText(int x, int y){
         boardWidth.setText(x + "");
         boardHeight.setText(y + "");
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * tells the handler that the exit button or the x in the top right corner has been pressed
+     */
     public void exitPressed(){
         handler.exit();
     }

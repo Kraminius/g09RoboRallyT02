@@ -21,12 +21,22 @@ public class CheckBoardBuild {
     private ArrayList<BoardBuildElement> startFields;
     private ArrayList<BoardBuildElement> repair;
 
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Checks the board if it will be able to load it, if it has checkpoint for win-conditions and the start-fields for all six players
+     * @param build the build to check
+     * @return A string error message if there is an error. returns null if no error was found.
+     */
     public String checkBoard(BoardBuild build){
         CheckLogic logic = new CheckLogic(build, getSortedBoardBuild(build));
         return logic.checkBoard();
     }
-
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Sorts all the elements into array lists so it will be easier to create a jsonfile.
+     * @param build the current build
+     * @return an instance of this class, with all the arraylist sorted.
+     */
     public CheckBoardBuild getSortedBoardBuild(BoardBuild build){
         name = build.getName();
         width = build.getWidth();
@@ -65,6 +75,10 @@ public class CheckBoardBuild {
         }
         return this;
     }
+    /**
+     * @Author Tobias Gørlyk s224271
+     * The following methods are just a lot of getters and setters for private variables in this class
+     */
     public String getName(){
         return name;
     }
@@ -74,7 +88,6 @@ public class CheckBoardBuild {
     public int getHeight(){
         return height;
     }
-
     public ArrayList<BoardBuildElement> getAntenna(){
 
         return antenna;

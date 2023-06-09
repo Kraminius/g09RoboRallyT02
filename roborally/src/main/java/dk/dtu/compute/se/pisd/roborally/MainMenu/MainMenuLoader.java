@@ -4,6 +4,11 @@ import dk.dtu.compute.se.pisd.roborally.BuildABoard.BoardBuildHandler;
 
 public class MainMenuLoader {
 
+    /**
+     * @Author Tobias Gørlyk s224271
+     * Runs the main menu, depending on the choice done in the menu, when it closes different things should happen.
+     * @return false if main menu should open again, true if the game should start.
+     */
     public boolean run(){
         BoardBuildHandler buildHandler = new BoardBuildHandler();
         MainMenuHandler mainMenu = new MainMenuHandler();

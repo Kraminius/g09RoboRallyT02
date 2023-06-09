@@ -48,7 +48,7 @@ public class LoadInstance {
         appController.roboRally.createBoardView(gameController); //register the new gamecontroller in the appcontroller
     }
     private static void initUpgradeShopAndCards(GameController gameController, Load load){
-        gameController.upgradeShop = new UpgradeShop();
+        gameController.upgradeShop = new UpgradeShop(gameController, gameController.board);
         ArrayList<CommandCard> deck = new ArrayList<>();
         ArrayList<CommandCard> out = new ArrayList<>();
         ArrayList<CommandCard> discarded = new ArrayList<>();
