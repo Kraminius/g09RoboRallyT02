@@ -89,11 +89,14 @@ public class GameController {
     }
 
     public void startProgrammingPhase() {
+        System.out.println("kommer vi overhoved her");
         board.setPhase(Phase.PROGRAMMING);
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
         setGameStateUpgradeCards();
+
+        Command[][] playersPulledCards = new Command[board.getPlayersNumber()][9];
 
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -109,11 +112,41 @@ public class GameController {
                 }
                 for (int j = 0; j < Player.NO_CARDS; j++) {
                     CommandCardField field = player.getCardField(j);
-                    field.setCard(drawTopCard(player));
+                    CommandCard commandCard = drawTopCard(player);
+                    field.setCard(commandCard);
+                    playersPulledCards[i][j] = commandCard.command;
                     field.setVisible(true);
                 }
             }
         }
+
+        /*for (int i = 0; i < playersPulledCards.length; i++) {
+            for (int j = 0; j < playersPulledCards[i].length; j++) {
+                Command command = playersPulledCards[i][j];
+                if (command != null) {
+                    System.out.println( "Player "+i+" pulledCards: " + command.toString() + " " + j);
+                } else {
+                    System.out.println("Null command at [" + i + "][" + j + "]");
+                }
+            }
+        }*/
+
+        int thisPlayer = GameClient.getPlayerNumber();
+        int currPlayer = antennaHandler.findPlayerSequence(board.getAntenna(), board).get(0).getId() - 1;
+
+        if(thisPlayer == currPlayer){
+
+            System.out.println("We are sending the pulled cards");
+
+            try {
+                GameClient.sendPlayersPulledCards(playersPulledCards);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+
     }
 
     public void setGameStateUpgradeCards(){

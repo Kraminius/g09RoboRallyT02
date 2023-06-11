@@ -318,4 +318,22 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    @PostMapping(value = "/changePhase")
+    public ResponseEntity<Boolean> changePhase(@RequestBody Phase phase) {
+        System.out.println("Changed game state to " + phase.name());
+
+        gameDataRep.gameState.setPhase(phase);
+
+        return ResponseEntity.ok().body(true);
+    }
+
+    @PostMapping(value = "/sendPlayersPulledCards")
+    public ResponseEntity<Boolean> sendPlayersPulledCards(@RequestBody Command[][] pulledCards) {
+
+
+        gameDataRep.gameState.setPlayersPulledCards(pulledCards);
+
+        return ResponseEntity.ok().body(true);
+    }
+
 }

@@ -338,4 +338,12 @@ public class AppController implements Observer {
         }
     }
 
+
+    public GameController getGameController() {
+        return gameController;
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
+    }
 }

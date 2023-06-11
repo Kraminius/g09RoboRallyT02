@@ -75,9 +75,24 @@ public class GameClient {
 
         if(temp){
             System.out.println("we are updating upgrade cards");
+
+            try {
+                changePhase(Phase.PROGRAMMING);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+
             javafx.application.Platform.runLater(() -> {
                 RoboRally.getAppController().updateGame();
+                //RoboRally.getAppController().getGameController().startProgrammingPhase();
             });
+
+
+
+
+
+
             updateAllPlayersUpgradeCards.cancel(false);
         }
         else{
@@ -151,8 +166,8 @@ public class GameClient {
 
             System.out.println("we have updated the game");
             javafx.application.Platform.runLater(() -> {
-                        RoboRally.getAppController().updateGame(true);
-
+                       RoboRally.getAppController().updateGame(true);
+                        //RoboRally.getAppController().getGameController().startProgrammingPhase();
                     });
             allPickedStartPosition.cancel(false);
         }else {
@@ -605,6 +620,8 @@ public class GameClient {
 
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
 
+
+
         startWaitingForUpgradeCards();
     }
 
@@ -631,5 +648,41 @@ public class GameClient {
         Boolean result = Boolean.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
         return result;
     }
+
+    public static void changePhase(Phase phase) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String jsonPhase = objectMapper.writeValueAsString(phase); // convert phase into JSON string
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPhase)) // send JSON string in request
+                .uri(URI.create("http://localhost:8080/changePhase"))
+                .header("Content-Type", "application/json")
+                .build();
+
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+    }
+
+    public static void sendPlayersPulledCards(Command[][] cards) throws Exception{
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String jsonPhase = objectMapper.writeValueAsString(cards); // convert phase into JSON string
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPhase)) // send JSON string in request
+                .uri(URI.create("http://localhost:8080/sendPlayersPulledCards"))
+                .header("Content-Type", "application/json")
+                .build();
+
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+    }
+
+
 
 }
