@@ -442,4 +442,12 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    @PostMapping (value = "/removeCurrProgram")
+    public ResponseEntity<Integer> removeCurrProgram() {
+
+        gameDataRep.removeCurrProgram();
+
+        return ResponseEntity.ok().body(5);
+    }
+
 }

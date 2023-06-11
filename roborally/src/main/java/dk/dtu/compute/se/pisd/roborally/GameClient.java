@@ -654,25 +654,18 @@ public class GameClient {
 
         int playerNumber = playerInfo.getPlayerId();
 
-        System.out.println("it mus be here somewhere1");
-
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(playerStartData);
-
-        System.out.println("RequestBody: " + requestBody);
-        System.out.println("it mus be here somewhere2");
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .uri(URI.create("http://localhost:8080/sendStartData/" + playerNumber))
                 .build();
 
-        System.out.println("it mus be here somewhere3");
 
         CompletableFuture<HttpResponse<String>> response =
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println("it mus be here somewhere4");
 
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
 
@@ -909,5 +902,18 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
         return result.equals("something");
     }
+
+    public static String removeCurrProgram() throws Exception {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .uri(URI.create("http://localhost:8080/removeCurrProgram"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return "something";
+    }
+
 
 }

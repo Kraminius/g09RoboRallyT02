@@ -113,6 +113,17 @@ public class GameDataRep {
 
     }
 
+    public void removeCurrProgram(){
+
+        Command[][] temp = gameState.getPlayerCurrentProgram();
+        for (int i = 0; i < temp.length; i++) {
+            for (int j = 0; j < temp[i].length; j++) {
+                temp[i][j] = null;
+            }
+        }
+
+    }
+
     public void createGame(String gameName, String creatorName, int numberOfplayers, String boardToPlay){
 
         gameData = new GameData(numberOfplayers);

@@ -489,6 +489,13 @@ public class GameController {
                             }
 
                         }
+                        //Removing currProgram
+                        //Just here for now
+                        try {
+                            GameClient.removeCurrProgram();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
 
 
                         startUpgradePhase();
