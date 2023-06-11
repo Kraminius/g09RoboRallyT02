@@ -64,6 +64,31 @@ public class GameDataRep {
 
     }
 
+    public boolean checkerAllPlayerReset(){
+        for (int i = 0; i < gameData.getResetCounter().length; i++) {
+
+            //System.out.println("This player picked: " + gameData.getAllPickedList()[i]);
+
+            if(!gameData.getResetCounter()[i]){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    public void readyAndReset(){
+
+        for (int i = 0; i < gameData.getReadyList().length; i++) {
+
+            gameData.getReadyList()[i] = false;
+            gameData.getResetCounter()[i] = false;
+
+        }
+
+    }
+
     public int checkerAllPlayersUpgrade(){
 
         int j = 0;
@@ -77,6 +102,14 @@ public class GameDataRep {
         }
 
         return j;
+
+    }
+
+    public void resetAllUpgrade(){
+
+        for (int i = 0; i < gameData.getAllPlayerUpgrade().length; i++) {
+            gameData.getAllPlayerUpgrade()[i] = false;
+        }
 
     }
 

@@ -312,6 +312,9 @@ public class AppController implements Observer {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        //GameClient.startWaitingForOpenShop();
+
     }
 
     public void sendPlayerInfo(){

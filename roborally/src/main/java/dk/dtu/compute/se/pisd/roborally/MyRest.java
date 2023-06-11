@@ -272,6 +272,7 @@ public class MyRest {
             gameInfo.setCurrentPlayer(request.getNextPlayer());
         }else {
             System.out.println("købe runden er færdig");
+
         }
 
 
@@ -302,6 +303,8 @@ public class MyRest {
         gameDataRep.gameState.setPlayerUpgradeCards(newUpgradeCard);
 
         System.out.println("upgs: " + gameDataRep.gameState.toString());
+
+
 
         return ResponseEntity.ok().body(true);
     }
@@ -360,8 +363,83 @@ public class MyRest {
 
         gameDataRep.resetReadyList();
 
+
+
         return ResponseEntity.ok().body(true);
     }
 
+
+    @PostMapping(value = "/readyToReset/{playerNumber}")
+    public ResponseEntity<Boolean> readyToReset(@PathVariable int playerNumber) {
+
+        gameDataRep.gameData.getResetCounter()[playerNumber] = true;
+
+        if(gameDataRep.checkerAllPlayerReset()){
+            gameDataRep.readyAndReset();
+        }
+
+        return ResponseEntity.ok().body(true);
+    }
+
+    @PostMapping(value = "/readyReady/{playerNumber}")
+    public ResponseEntity<Boolean> readyReady(@PathVariable int playerNumber) {
+
+        System.out.println("the number in server: " + playerNumber);
+
+        gameDataRep.gameData.getReadyList()[playerNumber] = true;
+
+        System.out.println("Test1: " + gameDataRep.gameData.getReadyList()[0]);
+        System.out.println("Test2: " + gameDataRep.gameData.getReadyList()[1]);
+
+
+        return ResponseEntity.ok().body(true);
+    }
+
+    @PostMapping(value = "/sendPosition")
+    public ResponseEntity<Boolean> sendPosition(@RequestBody Map<String, Object> payload) {
+        int playerNumber = (int) payload.get("playerNumber");
+        int x = (int) payload.get("x");
+        int y = (int) payload.get("y");
+        int currUpgrade = (int) payload.get("currUpgrade");
+        Heading heading = Heading.valueOf((String) payload.get("heading")); // .valueOf() method returns the enum constant of the specified enum type with the specified name
+
+        gameDataRep.gameState.getPlayersXPosition()[playerNumber] = x;
+        gameDataRep.gameState.getPlayersYPosition()[playerNumber] = y;
+        gameDataRep.gameState.getPlayerHeadings()[playerNumber] = heading;
+
+        gameDataRep.gameData.setCurrentPlayerUpgrade(currUpgrade);
+
+        gameInfo.setOpenShop(false);
+
+        return ResponseEntity.ok().body(true);
+    }
+
+    @PostMapping(value = "/resetUpgradeList")
+    public ResponseEntity<Boolean> resetUpgraddeList() {
+
+        gameDataRep.resetAllUpgrade();
+
+
+
+        return ResponseEntity.ok().body(true);
+    }
+
+    @PostMapping (value = "/setCurrentUpgradePlayer")
+    public ResponseEntity<Integer> setCurrentUpgradePlayer(@RequestParam("player") String player) {
+        int numberPlayer = Integer.parseInt(player);
+
+        gameDataRep.gameData.setCurrentPlayerUpgrade(numberPlayer);
+
+        return ResponseEntity.ok().body(5);
+    }
+
+    @GetMapping(value = "/currentUpgradePlayer")
+    public ResponseEntity<Integer> currentUpgradePlayer(){
+
+        int temp = gameDataRep.gameData.getCurrentPlayerUpgrade();
+
+
+        return ResponseEntity.ok().body(temp);
+    }
 
 }

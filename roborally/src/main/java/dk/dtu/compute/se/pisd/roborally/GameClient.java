@@ -17,16 +17,17 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
 
 public class GameClient {
 
 
-
     public static ArrayList<String> players = new ArrayList<>();
 
     private static PlayerInfo playerInfo;
-
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
@@ -34,7 +35,7 @@ public class GameClient {
             .build();
 
     private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-    private static final int POLLING_INTERVAL_SECONDS = 5;
+    private static final int POLLING_INTERVAL_SECONDS = 2;
 
     //Tasks for polling. Can be closed
     private static ScheduledFuture<?> playerNamesPollingTask;
@@ -46,29 +47,37 @@ public class GameClient {
     private static ScheduledFuture<?> openedUpgradeShop;
     private static ScheduledFuture<?> updateAllPlayersUpgradeCards;
     private static ScheduledFuture<?> waitingForAllPlayersToPickCards;
+    private static ScheduledFuture<?> waitingForAllPlayersToExecute;
 
     //Waiting for start position
-    public static void startWaitingForStartPosition(){
-        pickStartPosition = executorService.scheduleAtFixedRate(GameClient::startPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);;
+    public static void startWaitingForStartPosition() {
+        pickStartPosition = executorService.scheduleAtFixedRate(GameClient::startPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
-    public static void startAllPickedStartPosition(){
-        allPickedStartPosition =executorService.scheduleAtFixedRate(GameClient::pollAllPickedStartPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    public static void startWaitingForExecution() {
+        waitingForAllPlayersToExecute = executorService.scheduleAtFixedRate(GameClient::pollForExecution, 2, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
-    public static void startWaitingForOpenShop(){
-        openedUpgradeShop = executorService.scheduleAtFixedRate(GameClient::pollOpenShop, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    public static void startAllPickedStartPosition() {
+        allPickedStartPosition = executorService.scheduleAtFixedRate(GameClient::pollAllPickedStartPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
-    public static void startWaitingForUpgradeCards(){
-        updateAllPlayersUpgradeCards =executorService.scheduleAtFixedRate(GameClient::pollUpgradeCards, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    public static void startWaitingForOpenShop() {
+        openedUpgradeShop = executorService.scheduleAtFixedRate(GameClient::pollOpenShop, 2, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
-    public static void startWaitingForAllPlayersToPickCards(){
+    public static void startWaitingForUpgradeCards() {
+        updateAllPlayersUpgradeCards = executorService.scheduleAtFixedRate(GameClient::pollUpgradeCards, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void startWaitingForAllPlayersToPickCards() {
         waitingForAllPlayersToPickCards = executorService.scheduleAtFixedRate(GameClient::pollWaitingForPickedCards, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
-    public static void pollWaitingForPickedCards(){
+    public static void pollForExecution() {
+
+        System.out.println("går vi i gang");
+
         boolean temp;
 
         try {
@@ -77,7 +86,62 @@ public class GameClient {
             throw new RuntimeException(e);
         }
 
-        if(temp){
+        if (temp) {
+
+            try {
+                changePhase(Phase.UPGRADE);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("WE ARE DONE WITH EXE");
+            System.out.println("all players have executed");
+            javafx.application.Platform.runLater(() -> {
+                RoboRally.getAppController().updateGame();
+                // RoboRally.getAppController().startActivationPhaseWithRest();
+            });
+
+            try {
+                readyToReset();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            int currId;
+            try {
+                currId = currentUpgradePlayer();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            if(currId != playerInfo.getPlayerId()){
+                startWaitingForOpenShop();
+            }
+            else {
+                System.out.println("its my turn");
+            }
+
+            waitingForAllPlayersToExecute.cancel(false);
+
+
+
+        } else {
+            System.out.println("we are waiting for all player to execute");
+        }
+
+
+    }
+
+    public static void pollWaitingForPickedCards() {
+        boolean temp;
+
+
+        try {
+            temp = areAllConnected();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        if (temp) {
 
             try {
                 changePhase(Phase.ACTIVATION);
@@ -85,23 +149,29 @@ public class GameClient {
                 throw new RuntimeException(e);
             }
 
-            System.out.println("all players have picked their cards and updating");
             javafx.application.Platform.runLater(() -> {
                 RoboRally.getAppController().updateGame();
-               // RoboRally.getAppController().startActivationPhaseWithRest();
             });
+
+
+            try {
+                readyToReset();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            startWaitingForExecution();
 
             RoboRally.getAppController().getGameController().finishProgrammingPhase2();
             waitingForAllPlayersToPickCards.cancel(false);
-        }
-        else{
+        } else {
             System.out.println("we are waiting for all player to pick cards");
         }
 
 
     }
 
-    public static void pollUpgradeCards(){
+    public static void pollUpgradeCards() {
 
         boolean temp;
 
@@ -111,7 +181,7 @@ public class GameClient {
             throw new RuntimeException(e);
         }
 
-        if(temp){
+        if (temp) {
             System.out.println("we are updating upgrade cards");
 
             try {
@@ -128,17 +198,16 @@ public class GameClient {
 
 
 
-
-
-
             updateAllPlayersUpgradeCards.cancel(false);
-        }
-        else{
+        } else {
             System.out.println("we are waiting to update upgrade carads");
         }
     }
 
-    public static void pollOpenShop(){
+    public static void pollOpenShop() {
+
+
+
 
         boolean openShop;
 
@@ -149,14 +218,16 @@ public class GameClient {
         }
         int temp;
         try {
-             temp = getCurrentPlayer();
+            temp = getCurrentPlayer();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+        System.out.println("open;" + openShop);
+
         System.out.println("this is temp: " + temp + " and this is myPlayerId; " + playerInfo.getPlayerId());
 
-        if(openShop && temp == playerInfo.getPlayerId()){
+        if (openShop && temp == playerInfo.getPlayerId()) {
 
 
             System.out.println("we have updated the shop");
@@ -165,11 +236,10 @@ public class GameClient {
             });
 
 
-
             openedUpgradeShop.cancel(false);
 
 
-        }else {
+        } else {
             System.out.println("waiting for players before to buy");
         }
 
@@ -187,8 +257,7 @@ public class GameClient {
     }
 
 
-
-    public static void pollAllPickedStartPosition(){
+    public static void pollAllPickedStartPosition() {
 
 
         boolean temp = false;
@@ -197,15 +266,15 @@ public class GameClient {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        if(temp){
+        if (temp) {
 
             System.out.println("we have updated the game");
             javafx.application.Platform.runLater(() -> {
-                       RoboRally.getAppController().updateGame(true);
-                        //RoboRally.getAppController().getGameController().startProgrammingPhase();
-                    });
+                RoboRally.getAppController().updateGame(true);
+                //RoboRally.getAppController().getGameController().startProgrammingPhase();
+            });
             allPickedStartPosition.cancel(false);
-        }else {
+        } else {
             System.out.println("We are waiting for all players to pick");
         }
 
@@ -224,20 +293,19 @@ public class GameClient {
     }
 
 
-
-    public static void startPosition(){
+    public static void startPosition() {
         int player;
         try {
-             player = getCurrentPlayer();
+            player = getCurrentPlayer();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        if(playerInfo.getPlayerId() == player){
+        if (playerInfo.getPlayerId() == player) {
             System.out.println("Yeah its my turn" + playerInfo.getPlayerId());
             javafx.application.Platform.runLater(() -> {
                 ArrayList<Integer> liste;
                 try {
-                     liste = getStartPosition();
+                    liste = getStartPosition();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } catch (ExecutionException e) {
@@ -254,8 +322,10 @@ public class GameClient {
 
     }
 
-    public static void picked() throws Exception{
+    public static void picked() throws Exception {
         int number = playerInfo.getPlayerId();
+
+
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .uri(URI.create("http://localhost:8080/picked/" + number))
@@ -287,12 +357,13 @@ public class GameClient {
 
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
 
-        Type listType = new TypeToken<ArrayList<Integer>>(){}.getType();
+        Type listType = new TypeToken<ArrayList<Integer>>() {
+        }.getType();
 
         return new Gson().fromJson(result, listType);
     }
 
-    public static int getCurrentPlayer() throws Exception{
+    public static int getCurrentPlayer() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create("http://localhost:8080/getCurrentPlayer"))
@@ -303,7 +374,7 @@ public class GameClient {
         return Integer.parseInt(result);
     }
 
-    public static String nextPlayer() throws Exception{
+    public static String nextPlayer() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .uri(URI.create("http://localhost:8080/nextPlayer"))
@@ -326,7 +397,7 @@ public class GameClient {
         Boolean allConnected = false;
         allConnected = areAllConnected();
 
-        if(allConnected){
+        if (allConnected) {
             System.out.println("We are all connected");
         }
         return allConnected;
@@ -337,13 +408,12 @@ public class GameClient {
         try {
             ArrayList<String> playerNames = getPlayerNames();
 
-            if(players.size() == 0){
+            if (players.size() == 0) {
                 players = playerNames;
             }
 
 
-
-            if(players.size() != playerNames.size()){
+            if (players.size() != playerNames.size()) {
 
                 javafx.application.Platform.runLater(() -> {
                     GameLobby gameLobby = null;
@@ -354,27 +424,26 @@ public class GameClient {
                     }
                     RoboRally.getLobby().updateJoinWindow(gameLobby);
                     players = playerNames;
-                    });
+                });
 
             }
-
 
 
             // Process the player names as needed
             System.out.println("Player Names pulled: " + playerNames);
 
-            if(pollAllConnected()){
+            if (pollAllConnected()) {
                 playerNamesPollingTask.cancel(false);
-                if(playerInfo.getPlayerId() == 0){
-                javafx.application.Platform.runLater(() -> {
-                    System.out.println("this is the first player");
-                    try {
-                        RoboRally.getLobby().showStartButton(getLobbyId());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });}
-                else {
+                if (playerInfo.getPlayerId() == 0) {
+                    javafx.application.Platform.runLater(() -> {
+                        System.out.println("this is the first player");
+                        try {
+                            RoboRally.getLobby().showStartButton(getLobbyId());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                } else {
                     waitingForJoinButton();
                 }
             }
@@ -385,7 +454,7 @@ public class GameClient {
         }
     }
 
-    public static void waitingForJoinButton(){
+    public static void waitingForJoinButton() {
         waitingForJoinButtonPress = executorService.scheduleAtFixedRate(GameClient::pollJoinButton, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
@@ -399,7 +468,7 @@ public class GameClient {
 
         System.out.println("Polling Join Button");
 
-        if(temp){
+        if (temp) {
 
             System.out.println("We are also starting now");
             waitingForJoinButtonPress.cancel(false);
@@ -410,7 +479,7 @@ public class GameClient {
     }
 
 
-    public static String pressJoinButton() throws Exception{
+    public static String pressJoinButton() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
@@ -423,7 +492,7 @@ public class GameClient {
 
     }
 
-    public static boolean isJoinButton() throws Exception{
+    public static boolean isJoinButton() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -436,7 +505,7 @@ public class GameClient {
     }
 
 
-    public static String getLobbyId() throws Exception{
+    public static String getLobbyId() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -469,7 +538,6 @@ public class GameClient {
     }
 
 
-
     public static boolean areAllConnected() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -481,7 +549,7 @@ public class GameClient {
         return Boolean.parseBoolean(result);
     }
 
-    public static boolean instaGameData(int numberOfPlayers) throws Exception{
+    public static boolean instaGameData(int numberOfPlayers) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .uri(URI.create("http://localhost:8080/instaGameData?numberOfPlayers=" + numberOfPlayers))
@@ -492,7 +560,7 @@ public class GameClient {
         return result.equals("something");
     }
 
-    public static String addMapName(String mapName) throws Exception{
+    public static String addMapName(String mapName) throws Exception {
         String encodedMapName = URLEncoder.encode(mapName, StandardCharsets.UTF_8.toString());
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
@@ -571,17 +639,18 @@ public class GameClient {
 
         // Use ObjectMapper to convert the JSON string into an ArrayList<String>
         ObjectMapper objectMapper = new ObjectMapper();
-        ArrayList<String> result = objectMapper.readValue(jsonResponse, new TypeReference<ArrayList<String>>() {});
+        ArrayList<String> result = objectMapper.readValue(jsonResponse, new TypeReference<ArrayList<String>>() {
+        });
 
         return result;
     }
 
-    public static int getPlayerNumber(){
+    public static int getPlayerNumber() {
         return playerInfo.getPlayerId();
     }
 
 
-    public static void sendStartData(PlayerStartData playerStartData) throws Exception{
+    public static void sendStartData(PlayerStartData playerStartData) throws Exception {
 
         int playerNumber = playerInfo.getPlayerId();
 
@@ -610,7 +679,7 @@ public class GameClient {
     }
 
 
-    public static void sendUpgradeCardsShop(Command[] cards, int nextPlayer, int currentPlayer) throws Exception{
+    public static void sendUpgradeCardsShop(Command[] cards, int nextPlayer, int currentPlayer) throws Exception {
         UpgradeCardsShopRequest requestObj = new UpgradeCardsShopRequest();
         requestObj.setCards(cards);
         requestObj.setNextPlayer(nextPlayer);
@@ -629,11 +698,10 @@ public class GameClient {
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
 
-
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
-    public static void sendBoughtUpgradeCards(Command[] command) throws Exception{
+    public static void sendBoughtUpgradeCards(Command[] command) throws Exception {
 
         int playerNumber = playerInfo.getPlayerId();
 
@@ -656,13 +724,11 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
 
 
-
         startWaitingForUpgradeCards();
     }
 
 
-
-    public static int turnNumber ()throws Exception {
+    public static int turnNumber() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create("http://localhost:8080/turnNumber"))
@@ -701,7 +767,7 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
-    public static void sendPlayersPulledCards(Command[][] cards) throws Exception{
+    public static void sendPlayersPulledCards(Command[][] cards) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
         String jsonPhase = objectMapper.writeValueAsString(cards); // convert phase into JSON string
@@ -741,7 +807,7 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
-    public static String resetReadyList() throws Exception{
+    public static String resetReadyList() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
@@ -754,5 +820,94 @@ public class GameClient {
 
     }
 
+    public static String resetUpgradeList() throws Exception {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/resetUpgradeList"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return "something";
+
+    }
+
+    public static String readyToReset() throws Exception {
+        int playerNumber = playerInfo.getPlayerId();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .uri(URI.create("http://localhost:8080/readyToReset/" + playerNumber))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return "something";
+    }
+
+    public static String readyReady() throws Exception {
+        int playerNumber = playerInfo.getPlayerId();
+
+        System.out.println(playerNumber + " is ready");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .uri(URI.create("http://localhost:8080/readyReady/" + playerNumber))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return "something";
+    }
+
+
+    public static void sendPosition(int playerNumber, int x, int y, Heading heading, int currUpgrade) throws Exception {
+        Map<String, Object> values = new HashMap<String, Object>() {{
+            put("playerNumber", playerNumber);
+            put("x", x);
+            put("y", y);
+            put("heading", heading.name()); // .name() method returns the name of this enum constant, as contained in the declaration
+            put("currUpgrade", currUpgrade);
+        }};
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(values);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .uri(URI.create("http://localhost:8080/sendPosition"))
+                .header("Content-Type", "application/json")
+                .build();
+
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+
+
+    }
+
+    public static int currentUpgradePlayer() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/currentUpgradePlayer"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        int result = Integer.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
+        return result;
+    }
+
+    public static boolean setCurrentUpgradePlayer(int player) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/setCurrentUpgradePlayer?numberOfPlayers=" + player))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result.equals("something");
+    }
 
 }

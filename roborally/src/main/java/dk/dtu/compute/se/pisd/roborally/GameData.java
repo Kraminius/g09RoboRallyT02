@@ -12,6 +12,8 @@ public class GameData {
 
     private String id;
 
+    private boolean[] resetCounter;
+
     private boolean[] readyList;
 
     private GameSettings gameSettings;
@@ -23,6 +25,8 @@ public class GameData {
     private boolean[] allPickedList;
 
     private boolean[] allPlayerUpgrade;
+
+    private int currentPlayerUpgrade;
 
 
 
@@ -45,6 +49,12 @@ public class GameData {
 
         for (int i = 0; i < allPlayerUpgrade.length; i++) {
             allPlayerUpgrade[i] = false;
+        }
+
+        resetCounter = new boolean[numPlayers]
+
+        ;for (int i = 0; i < resetCounter.length; i++) {
+            resetCounter[i] = false;
         }
 
     }
@@ -109,5 +119,21 @@ public class GameData {
 
     public void setAllPlayerUpgrade(boolean[] allPlayerUpgrade) {
         this.allPlayerUpgrade = allPlayerUpgrade;
+    }
+
+    public boolean[] getResetCounter() {
+        return resetCounter;
+    }
+
+    public void setResetCounter(boolean[] resetCounter) {
+        this.resetCounter = resetCounter;
+    }
+
+    public int getCurrentPlayerUpgrade() {
+        return currentPlayerUpgrade;
+    }
+
+    public void setCurrentPlayerUpgrade(int currentPlayerUpgrade) {
+        this.currentPlayerUpgrade = currentPlayerUpgrade;
     }
 }

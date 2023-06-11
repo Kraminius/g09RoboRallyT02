@@ -336,7 +336,7 @@ public class GameController {
         }
 
         try {
-            GameClient.picked();
+            //GameClient.readyReady();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -423,11 +423,24 @@ public class GameController {
 
     // XXX: V2
     private void executeNextStep() {
+
+
         //Testing
         if(once){
             sequence = antennaHandler.antennaPriority(board);
             board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+            System.out.println("why is it not starting?");
+            //GameClient.startWaitingForExecution();
+
+            try {
+                GameClient.resetUpgradeList();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
             once = false;
+
+
         }
 
 
@@ -458,6 +471,26 @@ public class GameController {
 
                     } else {
                         //Probably upgrade phase here?
+                        //startUpgradePhase();
+                        try {
+                            GameClient.readyReady();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        //Sending over positions to server
+                        //Just here for now
+                        List<Player> liste =antennaHandler.findPlayerSequence(board.getAntenna(), board);
+                        for (int i = 0; i < liste.size() ; i++) {
+
+                            try {
+                                GameClient.sendPosition(liste.get(i).getId()-1, liste.get(i).getSpace().getX(), liste.get(i).getSpace().getY(), liste.get(i).getHeading(), liste.get(0).getId()-1);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+
+                        }
+
+
                         startUpgradePhase();
                     }
                 }else{
@@ -1331,6 +1364,12 @@ public class GameController {
             }
 
         } //No card at that spot, so nothing happens.
+    }
+
+    public int testSeq(){
+        List<Player> players = antennaHandler.findPlayerSequence(board.getAntenna(), board);
+
+        return players.get(0).getId()-1;
     }
 
     public void openUpgradeShop() throws Exception {
