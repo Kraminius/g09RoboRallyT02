@@ -1,4 +1,4 @@
-package dk.dtu.compute.se.pisd.roborally.Exceptions;
+package dk.dtu.compute.se.pisd.roborally.controller.Exceptions;
 
 public class OutsideBoardException extends Exception{
 

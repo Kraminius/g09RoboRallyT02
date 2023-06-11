@@ -21,7 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
-import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
+import dk.dtu.compute.se.pisd.roborally.controller.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import java.util.*;
@@ -1234,8 +1233,10 @@ public class GameController {
     }
 
     public void openUpgradeShop(){
-        if(upgradeShop == null) upgradeShop = new UpgradeShop();
-        upgradeShop.openShop(board, this);
+        if(upgradeShop == null) upgradeShop = new UpgradeShop(this, board);
+        CommandCardField[] cardFields = upgradeShop.getCards(board.getPlayersNumber());
+        upgradeShop.setCardsForRound(cardFields);
+        upgradeShop.openShop();
         startProgrammingPhase();
     }
 

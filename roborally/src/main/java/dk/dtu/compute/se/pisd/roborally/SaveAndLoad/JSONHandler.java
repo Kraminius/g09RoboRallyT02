@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class JSONHandler {
 
-    ReaderAndWriter raw = new ReaderAndWriter();
+    public ReaderAndWriter raw = new ReaderAndWriter();
 
     private void testJSON(){
         JSONObject jsonObject = new JSONObject();
@@ -63,6 +63,10 @@ public class JSONHandler {
         }
     }
 
+    public boolean deleteFile(String name, String type){
+        raw.deleteFile(name, type);
+        return true;
+    }
 
 
 

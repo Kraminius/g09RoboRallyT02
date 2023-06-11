@@ -89,8 +89,6 @@ public class AppController implements Observer {
                 player.setEnergyCubes(5);
                 gameController.fillStartDeck(player.getCardDeck());
                 board.addPlayer(player);
-
-
                 //player.setSpace(board.getSpace(i % board.width, i));
             }
 
@@ -128,13 +126,18 @@ public class AppController implements Observer {
 
     }
 
-    public void loadGame() {
+    public void loadGame(String name) {
+        String saveName;
+        if(name.equals("")){
+            LoadGameWindow load = new LoadGameWindow();
+            saveName = load.getLoadInput();
+            System.out.println("Loading " + saveName);
+        }
+        else{
+            saveName = name;
+        }
         // XXX needs to be implemented eventually
         // for now, we just create a new game
-
-        LoadGameWindow load = new LoadGameWindow();
-        String saveName = load.getLoadInput();
-        System.out.println("Loading " + saveName);
         gameController = GameLoader.loadGame(saveName, this);
 
         if(gameController == null) {
