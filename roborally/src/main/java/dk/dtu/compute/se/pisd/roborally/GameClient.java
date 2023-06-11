@@ -45,6 +45,7 @@ public class GameClient {
     private static ScheduledFuture<?> allPickedStartPosition;
     private static ScheduledFuture<?> openedUpgradeShop;
     private static ScheduledFuture<?> updateAllPlayersUpgradeCards;
+    private static ScheduledFuture<?> waitingForAllPlayersToPickCards;
 
     //Waiting for start position
     public static void startWaitingForStartPosition(){
@@ -61,6 +62,35 @@ public class GameClient {
 
     public static void startWaitingForUpgradeCards(){
         updateAllPlayersUpgradeCards =executorService.scheduleAtFixedRate(GameClient::pollUpgradeCards, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void startWaitingForAllPlayersToPickCards(){
+        waitingForAllPlayersToPickCards = executorService.scheduleAtFixedRate(GameClient::pollWaitingForPickedCards, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void pollWaitingForPickedCards(){
+        boolean temp;
+
+        try {
+            temp = areAllConnected();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        if(temp){
+
+            System.out.println("all players have picked their cards and updating");
+            javafx.application.Platform.runLater(() -> {
+                RoboRally.getAppController().updateGame();
+                //RoboRally.getAppController().getGameController().startProgrammingPhase();
+            });
+            waitingForAllPlayersToPickCards.cancel(false);
+        }
+        else{
+            System.out.println("we are waiting for all player to pick cards");
+        }
+
+
     }
 
     public static void pollUpgradeCards(){
@@ -159,9 +189,6 @@ public class GameClient {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
-
         if(temp){
 
             System.out.println("we have updated the game");
@@ -683,6 +710,41 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    public static void sendOverPickedCards(Command[] playerPicked) throws Exception {
+        int playerNumber = playerInfo.getPlayerId();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        SendCurrentCards info = new SendCurrentCards();
+        info.setPlayerNumber(playerNumber);
+        info.setPickedCards(playerPicked);
+
+        String jsonInfo = objectMapper.writeValueAsString(info);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(jsonInfo))
+                .uri(URI.create("http://localhost:8080/sendOverPickedCards"))
+                .header("Content-Type", "application/json")
+                .build();
+
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+    }
+
+    public static String resetReadyList() throws Exception{
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://localhost:8080/resetReadyList"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return "something";
+
+    }
 
 
 }

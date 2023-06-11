@@ -154,13 +154,19 @@ public class LoadInstance {
         if(playerCurrentProgram[index] != null) {
             for (int i = 0; i < playerCurrentProgram[index].length; i++) {
                 currentProgram[i] = new CommandCardField(player);
-                currentProgram[i].setCard(new CommandCard(playerCurrentProgram[index][i]));
+                if(playerCurrentProgram[index][i] != null){
+                    currentProgram[i].setCard(new CommandCard(playerCurrentProgram[index][i]));
+                }
+
             }
         }
         if(playerPulledCards[index] != null){
             for(int i = 0; i < playerPulledCards[index].length; i++){
                 pulledCards[i] = new CommandCardField (player);
-                pulledCards[i].setCard(new CommandCard(playerPulledCards[index][i]));
+                if(playerPulledCards[index][i] != null){
+                    pulledCards[i].setCard(new CommandCard(playerPulledCards[index][i]));
+                }
+
             }
         }
         if(playerUpgradeCards[index] != null){

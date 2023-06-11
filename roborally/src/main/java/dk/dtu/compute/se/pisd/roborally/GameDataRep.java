@@ -25,6 +25,13 @@ public class GameDataRep {
     }
 
 
+    public void resetReadyList(){
+
+        for (int i = 0; i < gameData.getReadyList().length; i++) {
+            gameData.getReadyList()[i] = false;
+        }
+
+    }
 
     public boolean checkerPlayersConnected(){
 
@@ -36,6 +43,7 @@ public class GameDataRep {
                 return false;
             }
         }
+
 
         return true;
 
@@ -327,6 +335,29 @@ public class GameDataRep {
         Collections.shuffle(playerDeck);
 
         return playerDeck;
+
+    }
+
+    public Command[][] removeCardPickedFromPulled(Command[] cardsPicked, int playerNumber){
+
+        Command[] temp = Arrays.copyOf(cardsPicked, cardsPicked.length);
+
+        Command[][] allCards = gameState.getPlayersPulledCards();
+
+        for (int i = 0; i < allCards[playerNumber].length; i++) {
+
+            for (int j = 0; j < cardsPicked.length; j++) {
+                if(temp[j] == allCards[playerNumber][i]){
+                    temp[j] = null;
+                    allCards[playerNumber][i] = null;
+                }
+            }
+
+        }
+
+        return allCards;
+
+
 
     }
 

@@ -336,4 +336,32 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+
+    @PostMapping(value = "/sendOverPickedCards")
+    public ResponseEntity<Boolean> sendPlayersPulledCards(@RequestBody SendCurrentCards info) {
+
+        Command[][] currentProgram = gameDataRep.gameState.getPlayerCurrentProgram();
+        currentProgram[info.getPlayerNumber()] = info.getPickedCards();
+
+        gameDataRep.gameState.setPlayerCurrentProgram(currentProgram);
+        gameDataRep.gameData.getReadyList()[info.getPlayerNumber()] = true;
+
+        System.out.println("1" + gameDataRep.gameState.getPlayerCurrentProgram()[info.getPlayerNumber()]);
+
+        gameDataRep.gameState.setPlayersPulledCards(gameDataRep.removeCardPickedFromPulled(info.getPickedCards(), info.getPlayerNumber()));
+
+        System.out.println(gameDataRep.gameState.getPlayerCurrentProgram()[info.getPlayerNumber()]);
+
+        return ResponseEntity.ok().body(true);
+    }
+
+    @PostMapping(value = "/resetReadyList")
+    public ResponseEntity<Boolean> resetReadyList() {
+
+        gameDataRep.resetReadyList();
+
+        return ResponseEntity.ok().body(true);
+    }
+
+
 }

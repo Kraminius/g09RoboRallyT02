@@ -145,6 +145,13 @@ public class GameController {
             }
 
         }
+        try {
+            GameClient.resetReadyList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        GameClient.startWaitingForAllPlayersToPickCards();
 
 
     }
@@ -306,8 +313,45 @@ public class GameController {
             }
         }
     }
+
+    public void sendingOverPickedCards(){
+
+        int thisPlayer = GameClient.getPlayerNumber();
+        Command[] currentProgram = new Command[5];
+
+        for (int i = 0; i < 5; i++) {
+            if(board.getPlayer(thisPlayer).getProgramField(i).getCard() != null){
+                currentProgram[i] = board.getPlayer(thisPlayer).getProgramField(i).getCard().command;
+                System.out.println(currentProgram[i]);
+            }
+
+        }
+
+        try {
+            GameClient.sendOverPickedCards(currentProgram);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            GameClient.picked();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        //CommandCard card = currentPlayer.getProgramField(step).getCard();
+
+    }
+
     // XXX: V2
     public void finishProgrammingPhase() {
+
+        sendingOverPickedCards();
+    }
+
+
+    public void finishProgrammingPhase2() {
 
         discardUnusedCards();
         //Checks who have priority
@@ -320,6 +364,7 @@ public class GameController {
         //board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
     }
+
 
     // XXX: V2
     private void makeProgramFieldsVisible(int register) {
