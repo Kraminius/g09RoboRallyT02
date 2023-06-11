@@ -79,11 +79,19 @@ public class GameClient {
 
         if(temp){
 
+            try {
+                changePhase(Phase.ACTIVATION);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
             System.out.println("all players have picked their cards and updating");
             javafx.application.Platform.runLater(() -> {
                 RoboRally.getAppController().updateGame();
-                //RoboRally.getAppController().getGameController().startProgrammingPhase();
+               // RoboRally.getAppController().startActivationPhaseWithRest();
             });
+
+            RoboRally.getAppController().getGameController().finishProgrammingPhase2();
             waitingForAllPlayersToPickCards.cancel(false);
         }
         else{

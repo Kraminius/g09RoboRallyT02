@@ -52,6 +52,8 @@ public class GameController {
 
    private List<Player> sequence;
 
+   private boolean once = true;
+
     /**
      * @param board the board which the game is played on
      */
@@ -421,6 +423,14 @@ public class GameController {
 
     // XXX: V2
     private void executeNextStep() {
+        //Testing
+        if(once){
+            sequence = antennaHandler.antennaPriority(board);
+            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+            once = false;
+        }
+
+
         int step = board.getStep();
         Player currentPlayer = board.getCurrentPlayer();
         sequence.remove(0);

@@ -338,6 +338,9 @@ public class AppController implements Observer {
         }
     }
 
+    public void startActivationPhaseWithRest(){
+        gameController.finishProgrammingPhase2();
+    }
 
     public GameController getGameController() {
         return gameController;
