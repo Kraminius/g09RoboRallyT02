@@ -118,5 +118,13 @@ public enum Command {
         return options;
     }
 
+    @Override
+    public String toString() {
+        return "Command{" +
+                "displayName='" + displayName + '\'' +
+                ", description='" + description + '\'' +
+                ", options=" + options +
+                '}';
+    }
 }
 

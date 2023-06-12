@@ -48,6 +48,12 @@ public class RoboRallyMenuBar extends MenuBar {
 
     private MenuItem exitApp;
 
+    private MenuItem updateGame;
+
+    private MenuItem instantiateGameState;
+
+    private MenuItem sendPlayerInfo;
+
     public RoboRallyMenuBar(AppController appController) {
         this.appController = appController;
 
@@ -55,7 +61,13 @@ public class RoboRallyMenuBar extends MenuBar {
         this.getMenus().add(controlMenu);
 
         newGame = new MenuItem("New Game");
-        newGame.setOnAction( e -> this.appController.newGame());
+        newGame.setOnAction( e -> {
+            try {
+                this.appController.newGame();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         controlMenu.getItems().add(newGame);
 
         stopGame = new MenuItem("Stop Game");
@@ -67,12 +79,30 @@ public class RoboRallyMenuBar extends MenuBar {
         controlMenu.getItems().add(saveGame);
 
         loadGame = new MenuItem("Load Game");
-        loadGame.setOnAction( e -> this.appController.loadGame(""));
+        loadGame.setOnAction( e -> {
+            try {
+                this.appController.loadGame();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         controlMenu.getItems().add(loadGame);
 
         exitApp = new MenuItem("Exit");
         exitApp.setOnAction( e -> this.appController.exit());
         controlMenu.getItems().add(exitApp);
+
+        updateGame = new MenuItem("Update");
+        updateGame.setOnAction( e -> this.appController.updateGame());
+        controlMenu.getItems().add(updateGame);
+
+        instantiateGameState = new MenuItem("Instantiate Game");
+        instantiateGameState.setOnAction( e -> this.appController.instantiateGame());
+        controlMenu.getItems().add(instantiateGameState);
+
+        sendPlayerInfo = new MenuItem("Send Player Info");
+        sendPlayerInfo.setOnAction( e -> this.appController.sendPlayerInfo());
+        controlMenu.getItems().add(sendPlayerInfo);
 
         controlMenu.setOnShowing(e -> update());
         controlMenu.setOnShown(e -> this.updateBounds());

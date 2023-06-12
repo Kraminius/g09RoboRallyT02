@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.SaveAndLoad;
 
+import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
@@ -58,7 +59,8 @@ public class GameLoader {
         String[][] playerUpgradeCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playerUpgradeCards")), "#");
         String[][] playersDiscardCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersDiscardCards")), "#");
         String[][] playersPulledCards = Converter.splitSeries(Converter.jsonArrToString((JSONArray)obj.get("playersPulledCards")), "#");
-        for(int i = 0; i < amount; i++){
+        //for(int i = 0; i < amount; i++){
+        int i = 0;
             load.getPlayerNames()[i] = Converter.jsonArrToString((JSONArray)obj.get("playersName"))[i];
             load.getPlayerColors()[i] = Converter.jsonArrToString((JSONArray)obj.get("playerColor"))[i];
             load.getX()[i] = Converter.jsonArrToInt((JSONArray)obj.get("playersX"))[i];
@@ -71,7 +73,7 @@ public class GameLoader {
             load.getPlayerUpgradeCards()[i] = Converter.getCommands(playerUpgradeCards[i]);
             load.getPlayerDiscardPile()[i] = Converter.getCommands(playersDiscardCards[i]);
             load.getPlayersPulledCards()[i] = Converter.getCommands(playersPulledCards[i]);
-        }
+        //}
         load.setMapCubePositions(Converter.jsonArrToInt((JSONArray)obj.get("mapCubes")));
         load.setUpgradeCardsDeck(Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeCardsDeck"))));
         load.setUpgradeOutDeck(Converter.getCommands(Converter.jsonArrToString((JSONArray)obj.get("upgradeOutDeck"))));

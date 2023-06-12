@@ -21,14 +21,15 @@
  */
 package dk.dtu.compute.se.pisd.roborally;
 
-import dk.dtu.compute.se.pisd.roborally.BuildABoard.BoardBuildHandler;
-import dk.dtu.compute.se.pisd.roborally.Filesharing.SaveHandler;
-import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuHandler;
-import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuLoader;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
+import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
+import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
+import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
+import dk.dtu.compute.se.pisd.roborally.view.Lobby;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.RoboRallyMenuBar;
 import javafx.application.Application;
@@ -46,12 +47,17 @@ import javafx.stage.Stage;
 public class RoboRally extends Application {
 
     private static final int MIN_APP_WIDTH = 600;
+    private static RoboRally instance;
 
     private Stage stage;
     private BorderPane boardRoot;
+
+    private static Lobby lobby;
     // private RoboRallyMenuBar menuBar;
 
     // private AppController appController;
+
+    private static AppController appController;
 
     @Override
     public void init() throws Exception {
@@ -59,16 +65,32 @@ public class RoboRally extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        MainMenuLoader mainMenu;
-        do{
-            mainMenu = new MainMenuLoader();
-        }while(!mainMenu.run()); //Returns true when playing game.
-        //Everything that will run after the main menu, is what happens when the player has pressed Play Game.
-        stage = primaryStage;
+    public void start(Stage primaryStage) throws Exception {
 
-        AppController appController = new AppController(this);
-        //SaveHandler saveHandler = new SaveHandler(appController, this);
+        instance = this;
+
+        LobbyManager lobbyManager = new LobbyManager();
+
+        lobby = new Lobby(lobbyManager);
+
+        if(GameClient.isGameRunning()){
+            System.out.println("Vi kommer her");
+            GameLobby gameLobby = GameClient.getGame();
+            System.out.println(gameLobby.toString());
+            lobbyManager.createGame(gameLobby);
+            lobby.addLobbyToLobby(gameLobby);
+            lobby.getGameLobbyMap().put(gameLobby.getLobbyId(), gameLobby);
+        }
+
+        lobby.show();
+
+        stage = primaryStage;
+    }
+
+
+    public void startGame(GameSettings gameSettings, Stage primaryStage) throws Exception {
+        stage = primaryStage;
+        appController = new AppController(this, gameSettings);
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
         // when the user creates a new game or loads a game
@@ -77,6 +99,7 @@ public class RoboRally extends Application {
         VBox vbox = new VBox(menuBar, boardRoot);
         vbox.setMinWidth(MIN_APP_WIDTH);
         Scene primaryScene = new Scene(vbox);
+
         stage.setScene(primaryScene);
         stage.setTitle("RoboRally");
         stage.setOnCloseRequest(
@@ -88,6 +111,8 @@ public class RoboRally extends Application {
         stage.setX(700);
         stage.setY(100);
         stage.show();
+        System.out.println("Test ny");
+        appController.newGame();
     }
 
     public void createBoardView(GameController gameController) {
@@ -116,5 +141,15 @@ public class RoboRally extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    public static RoboRally getInstance() { // And add this method
+        return instance;
+    }
+
+    public static Lobby getLobby(){
+        return lobby;
+    }
+
+    public static AppController getAppController(){return appController;}
 
 }
