@@ -21,6 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally;
 
+import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuLoader;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
@@ -66,6 +67,12 @@ public class RoboRally extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        MainMenuLoader mainMenu;
+        do{
+            mainMenu = new MainMenuLoader();
+        }while(!mainMenu.run()); //Returns true when playing game.
+        //Everything that will run after the main menu, is what happens when the player has pressed Play Game.
+
 
         instance = this;
 
