@@ -23,7 +23,7 @@ public class SaveHandler {
         this.main = main;
     }*/
 
-    @GetMapping("/data/{id}")
+    /*@GetMapping("/data/{id}")
     public File getData(int id){
         for(SaveData data : saveData){
             if(data.getId() == id) return data.getFile();
@@ -74,7 +74,7 @@ public class SaveHandler {
     @DeleteMapping("/data")
     public void clearSessionData(){
         saveData.clear();
-    }
+    }*/
     public void permSave(int id){
         SaveData data = saveData.get(getIndexOfData(id));
         permData.writeJSON(data.getId()+"", LocateJSONFile.createJSON(data.getFile()), "saveData");
@@ -88,7 +88,11 @@ public class SaveHandler {
         }
     }
     public void loadGame(String name){
-        appController.loadGame("");
+        try {
+            appController.loadGame();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private int getIndexOfData(int id){

@@ -78,14 +78,22 @@ public class LoadInstance {
         Command[] arrOut = load.getUpgradeOutDeck();
         Command[] arrDiscard = load.getUpgradeDiscardDeck();
         Command[] arrLoaded = load.getUpgradeShopCards();
-        for(int i = 0; i < arrDeck.length; i++){
-            deck.add(new CommandCard(arrDeck[i])); //Creates each card for the deck
+        if(arrDeck != null){
+            for(int i = 0; i < arrDeck.length; i++){
+                deck.add(new CommandCard(arrDeck[i])); //Creates each card for the deck
+            }
         }
-        for(int i = 0; i < arrOut.length; i++){
-            out.add(new CommandCard(arrOut[i])); //Creates each card for the out
+
+        if(arrOut != null){
+            for(int i = 0; i < arrOut.length; i++){
+                out.add(new CommandCard(arrOut[i])); //Creates each card for the out
+            }
         }
-        for(int i = 0; i < arrDiscard.length; i++){
-            discarded.add(new CommandCard(arrDiscard[i])); //Creates each card that has been discarded
+
+        if(arrDiscard != null){
+            for(int i = 0; i < arrDiscard.length; i++){
+                discarded.add(new CommandCard(arrDiscard[i])); //Creates each card that has been discarded
+            }
         }
         if(arrLoaded != null){
             for(int i = 0; i < arrLoaded.length; i++){

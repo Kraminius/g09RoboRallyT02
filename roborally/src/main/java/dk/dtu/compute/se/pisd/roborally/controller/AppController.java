@@ -23,30 +23,23 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Observer;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
-
 import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
-
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameLoader;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameSave;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LoadInstance;
-import dk.dtu.compute.se.pisd.roborally.view.BoardLoadWindow;
-import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.GameSave;
 import dk.dtu.compute.se.pisd.roborally.model.*;
-
 import dk.dtu.compute.se.pisd.roborally.view.LoadGameWindow;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.StartPositionWindow;
 import javafx.application.Platform;
-import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * ...
@@ -204,6 +197,8 @@ public class AppController implements Observer {
     public void loadGame() throws Exception {
         // XXX needs to be implemented eventually
         // for now, we just create a new game
+
+
 
         LoadGameWindow load = new LoadGameWindow();
         String saveName = load.getLoadInput();
