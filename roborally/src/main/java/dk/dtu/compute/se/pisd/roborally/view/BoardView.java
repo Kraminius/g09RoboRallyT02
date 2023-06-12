@@ -124,8 +124,8 @@ public class BoardView extends VBox implements ViewObserver {
         }
 
     }
-    public void disablePlayerViews(int exceptionPlayerID){
-        playersView.disablePlayerViews(exceptionPlayerID);
+    public void disablePlayerViews(){
+        playersView.disablePlayerViews();
     }
 
 }
