@@ -66,7 +66,7 @@ public class LoadInstance {
         }
     }
     private static void initBoardView(AppController appController, GameController gameController){
-        appController.roboRally.createBoardView(gameController); //register the new gamecontroller in the appcontroller
+        appController.roboRally.createBoardView(gameController, appController.clientPlayer.getId()); //register the new gamecontroller in the appcontroller
     }
     private static void initUpgradeShopAndCards(GameController gameController, Load load){
         gameController.upgradeShop = new UpgradeShop(gameController, gameController.board);

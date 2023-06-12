@@ -61,7 +61,7 @@ public class AppController implements Observer {
 
     private StartPositionWindow positionWindow = new StartPositionWindow();
 
-    private Player clientPlayer;
+    public Player clientPlayer;
 
 
     public AppController(@NotNull RoboRally roboRally, GameSettings gameSettings) {
@@ -138,7 +138,7 @@ public class AppController implements Observer {
         //gameController.startProgrammingPhase();
         GameClient.startWaitingForStartPosition();
         board.setCurrentPlayer(board.getPlayer(0));
-        roboRally.createBoardView(gameController);
+        roboRally.createBoardView(gameController, clientPlayer.getId());
 
         positionWindow.getStartSpaces(board, GameClient.getPlayerNumber());
         positionWindow.showWindow();
@@ -222,7 +222,7 @@ public class AppController implements Observer {
     public boolean stopGame() {
         if (gameController != null) {
             gameController = null;
-            roboRally.createBoardView(null);
+            roboRally.createBoardView(null, 7);
             return true;
         }
         return false;
