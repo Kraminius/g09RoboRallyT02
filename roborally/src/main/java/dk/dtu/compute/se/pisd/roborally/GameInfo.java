@@ -27,15 +27,22 @@ public class GameInfo {
 
     private boolean openShop = false;
 
+    private boolean loadedGame;
+
+    private int currLoaded = 0;
 
 
 
-    public void instaGameInfo(String id, GameSettings gameSettings){
+
+    public void instaGameInfo(String id, GameSettings gameSettings, boolean loadedGame){
 
         this.id = id;
         this.gameSettings = gameSettings;
         gameIsRunning = true;
         currentPlayer = 0;
+        this.loadedGame = loadedGame;
+
+        currLoaded = 1;
 
 
     }
@@ -145,5 +152,21 @@ public class GameInfo {
 
     public void setOpenShop(boolean openShop) {
         this.openShop = openShop;
+    }
+
+    public boolean isLoadedGame() {
+        return loadedGame;
+    }
+
+    public void setLoadedGame(boolean loadedGame) {
+        this.loadedGame = loadedGame;
+    }
+
+    public int getCurrLoaded() {
+        return currLoaded;
+    }
+
+    public void setCurrLoaded(int currLoaded) {
+        this.currLoaded = currLoaded;
     }
 }

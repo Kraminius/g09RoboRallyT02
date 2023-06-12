@@ -206,9 +206,6 @@ public class GameClient {
 
     public static void pollOpenShop() {
 
-
-
-
         boolean openShop;
 
         try {
@@ -472,9 +469,26 @@ public class GameClient {
 
             System.out.println("We are also starting now");
             waitingForJoinButtonPress.cancel(false);
-            javafx.application.Platform.runLater(() -> {
-                RoboRally.getLobby().startingGame();
-            });
+
+            boolean loaded;
+
+            try {
+                loaded = isLoadedGame();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            if (loaded) {
+                javafx.application.Platform.runLater(() -> {
+                    RoboRally.getLobby().startingGame(true);
+                });
+            }
+            else{
+                javafx.application.Platform.runLater(() -> {
+                    RoboRally.getLobby().startingGame(false);
+                });
+            }
+
         }
     }
 
@@ -584,9 +598,12 @@ public class GameClient {
     }
 
 
-    public static String addGame(String[] settings) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String requestBody = objectMapper.writeValueAsString(settings);
+    public static String addGame(String[] settings, boolean loadedGame) throws Exception {
+        // Convert settings array to JSON Array
+        String settingsJsonArray = new ObjectMapper().writeValueAsString(settings);
+
+        // Prepare the requestBody
+        String requestBody = String.format("{\"settings\": %s, \"loadedGame\": %s}", settingsJsonArray, loadedGame);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
@@ -913,6 +930,32 @@ public class GameClient {
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
         return "something";
+    }
+
+    public static boolean isLoadedGame() throws Exception {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/isLoadedGame"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        boolean result = Boolean.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
+        return result;
+
+    }
+
+    public static int getCurrLoaded() throws Exception{
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getCurrLoaded"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        int result = Integer.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
+        return result;
+
     }
 
 

@@ -73,7 +73,7 @@ public class MyRest {
     public ResponseEntity<Integer> instaGameData(@RequestParam("numberOfPlayers") String playerNumStr) {
         int numberOfPlayers = Integer.parseInt(playerNumStr);
         gameDataRep.instantiateGameData(numberOfPlayers);
-        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings());
+        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings(), false);
         System.out.println("Size: " + gameDataRep.gameData.getReadyList().length + "& " + gameDataRep.gameData.getGameSettings().getNumberOfPlayers());
         return ResponseEntity.ok().body(5);
     }
@@ -101,11 +101,16 @@ public class MyRest {
     }
 
     @PostMapping(value = "/addGame")
-    public ResponseEntity<String> addGame(@RequestBody String[] settings){
+    public ResponseEntity<String> addGame(@RequestBody Map<String, Object> payload){
 
-        gameDataRep.createGame(settings[0],settings[1], Integer.parseInt(settings[2]), settings[3]);
+        ArrayList<String> settings = (ArrayList<String>) payload.get("settings");
+        boolean loadedGame = (Boolean) payload.get("loadedGame");
 
-        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings());
+        gameDataRep.createGame(settings.get(0),settings.get(1), Integer.parseInt(settings.get(2)), settings.get(3));
+
+        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings(), loadedGame);
+
+
         //System.out.println(gameRepository.getGameSettings().toString());
 
         return ResponseEntity.ok("hej");
@@ -488,5 +493,25 @@ public class MyRest {
         System.out.println("We have found saveGames: " + strings.toString());
         return ResponseEntity.ok().body(strings);
     }
+
+
+    @GetMapping(value = "/isLoadedGame")
+    public ResponseEntity<Boolean> isLoadedGame() {
+
+        boolean temp = gameInfo.isLoadedGame();
+
+        return ResponseEntity.ok().body(temp);
+    }
+
+    @GetMapping(value = "/getCurrLoaded")
+    public ResponseEntity<Integer> getCurrLoaded() {
+
+        int temp = gameInfo.getCurrLoaded();
+
+        gameInfo.setCurrLoaded(gameInfo.getCurrLoaded() + 1);
+
+        return ResponseEntity.ok().body(temp);
+    }
+
 
 }

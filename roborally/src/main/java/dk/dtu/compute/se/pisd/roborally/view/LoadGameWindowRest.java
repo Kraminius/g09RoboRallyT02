@@ -1,6 +1,7 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.roborally.MyClient;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -12,20 +13,7 @@ public class LoadGameWindowRest {
     String saveName;
     Stage stage;
 
-    /**@Author Tobias Gørlyk - s224271@dtu.dk
-     * Removes an extension from the end of the file name.
-     * @param val the string to remove the extension of
-     * @return the name of the file with no extension
-     */
-    private String removeExtension(String val){
-        String[] split = val.split("\\.");
-        String toReturn = "";
-        for(int i = 0; i < split.length-1; i++){
-            if(i > 0) toReturn += ".";
-            toReturn += split[i];
-        }
-        return toReturn;
-    }
+
     /**@Author Tobias Gørlyk - s224271@dtu.dk
      * Looks in the file folder to see all games, it then adds it to the combobox, so we can choose between them.
      * @param box the combobox to add the files to
@@ -65,4 +53,25 @@ public class LoadGameWindowRest {
         saveName = value;
         stage.close();
     }
+
+    public String[] playerNames(String saveName){
+
+        Load serverLoad = MyClient.getSave(saveName);
+
+        String[] names = serverLoad.getPlayerNames();
+
+
+        return names;
+
+    }
+
+    public String mapName(String saveName){
+        Load serverLoad = MyClient.getSave(saveName);
+
+        String mapName = serverLoad.getBoard();
+
+        return mapName;
+    }
+
+
 }

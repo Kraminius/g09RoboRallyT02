@@ -363,6 +363,27 @@ public class AppController implements Observer {
         }
     }
 
+    public void loadServerGameFromStart(String saveName){
+        // XXX needs to be implemented eventually
+        // for now, we just create a new game
+
+        //These may be wrong check in on them
+        LoadGameWindowRest load = new LoadGameWindowRest();
+        //We need a way to get the saveNames from the server
+        System.out.println("Loading " + saveName);
+        try {
+            Load serverLoad = MyClient.getSave(saveName);
+            gameController = LoadInstance.load(this, serverLoad);
+            //gameController = GameLoader.loadGameFromServer(serverLoad, this);
+
+            if(gameController == null) {
+                newGame();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void saveServerGame() {
         String saveName = "";
         boolean nameChecksOut;
