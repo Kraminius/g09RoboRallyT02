@@ -4,27 +4,71 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * @author Freja Egelund Grønnemose, s224286@dtu.dk
+ * Class representing the clienthandler
+ */
 public class ClientHandler implements Runnable{
-    private static List<ClientHandler> activeClientHandlers = new ArrayList<>();
     private Socket clientSocket;
     private String username;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
+    private ChatServer server;
 
-    public ClientHandler(Socket clientSocket){
+    /**
+     * @author Freja Egelund Grønnemose, s224286
+     * Constructs a new ClientHandler object with the given clientSocket and server.
+     * @param clientSocket the Socket representing the client connection
+     * @param server the ChatServer object managing the chat session
+     */
+    public ClientHandler(Socket clientSocket, ChatServer server){
         try {
             this.clientSocket = clientSocket;
             this.bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             this.username = bufferedReader.readLine();
-            activeClientHandlers.add(this);
+            this.server = server;
             broadcastMessage("SERVER: " + username + " has joined the chat!");
+            welcomeMessage();
         } catch (IOException e){
-            closeEverything(clientSocket, bufferedReader, bufferedWriter);
+            closeEverything();
         }
     }
 
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * Sends a welcome message to the client upon joining the chat.
+     * The message includes information about the current online players.
+     */
+    public void welcomeMessage(){
+        List<ClientHandler> activeClientHandlers = server.getActiveHandlers();
+        try{
+            bufferedWriter.write("SERVER: Welcome to the RoboRally Chat!\nOnline players: ");
+            bufferedWriter.newLine();
+            int x = 0;
+            for(ClientHandler clientHandler : activeClientHandlers){
+                if(!clientHandler.username.equals(this.username)) {
+                    x++;
+                    bufferedWriter.write(clientHandler.username);
+                    bufferedWriter.newLine();
+                }
+            }
+            if(x == 0){
+                bufferedWriter.write("None.");
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+        } catch (IOException e){
+            closeEverything();
+        }
+    }
+
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * Overrides the run() method of the Thread class.
+     * Listens for messages from the client and broadcasts them to other clients in the chat.
+     * Closes the connection if an error occurs or the client socket is closed.
+     */
     @Override
     public void run() {
         String messageFromClient;
@@ -35,16 +79,22 @@ public class ClientHandler implements Runnable{
                         System.out.println("Message from client to be broadcasted: " + messageFromClient);
                         broadcastMessage(messageFromClient);
                     } else {
-                        closeEverything(clientSocket, bufferedReader, bufferedWriter);
+                        closeEverything();
                     }
             } catch (IOException e){
-                closeEverything(clientSocket, bufferedReader, bufferedWriter);
+                closeEverything();
                 break;
             }
         }
     }
 
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * Broadcasts a message to all active clients except the current client.
+     * @param message the message to be broadcasted
+     */
     private void broadcastMessage(String message){
+        List<ClientHandler> activeClientHandlers = server.getActiveHandlers();
         System.out.println("Broadcasting message: " + message);
         for (ClientHandler client : activeClientHandlers) {
             try {
@@ -54,27 +104,38 @@ public class ClientHandler implements Runnable{
                     client.bufferedWriter.flush();
                 }
             }catch (IOException e){
-                closeEverything(clientSocket, bufferedReader, bufferedWriter);
+                closeEverything();
             }
         }
     }
 
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * Removes the current ClientHandler from the list of active client handlers in the server.
+     * Broadcasts a message to inform other clients about the departure of the current client.
+     */
     public void removeClientHandler(){
+        List<ClientHandler> activeClientHandlers = server.getActiveHandlers();
         activeClientHandlers.remove(this);
         broadcastMessage("SERVER: " + username + " has left the chat");
     }
 
-    public void closeEverything(Socket socket, BufferedReader reader, BufferedWriter writer){
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * Closes all resources associated with the client connection and removes the client handler from the server.
+     * This method is called when an error occurs or when the client socket is closed.
+     */
+    public void closeEverything(){
         removeClientHandler();
         try {
-            if(reader != null){
-                reader.close();
+            if(this.bufferedWriter != null){
+                bufferedWriter.close();
             }
-            if(writer != null){
-                writer.close();
+            if(this.bufferedReader != null){
+                bufferedReader.close();
             }
-            if(socket != null){
-                socket.close();
+            if(this.clientSocket != null){
+                clientSocket.close();
             }
         } catch (IOException e){
             e.printStackTrace();

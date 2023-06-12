@@ -12,19 +12,34 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.IOException;
 
+/**
+ * @author Freja Egelund Grønnemose, s224286@dtu.dk
+ * Class representing the chatview
+ * Implements the ViewListener interface to listen for message received events.
+ */
 public class ChatView implements ViewListener {
     private Stage stage;
     private TextArea chatBox;
     private TextField messageField;
     private Button sendButton;
-    private ChatListener chatListener;
+    private ChatController chatController;
 
-    public ChatView(ChatListener chatListener) {
-        this.chatListener = chatListener;
-        System.out.println("ChatListener created");
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * Constructs a new ChatView object with the given ChatController.
+     * Initializes the ChatView by creating the chat room stage.
+     * @param chatController the ChatController object to handle chat interactions
+     */
+    public ChatView(ChatController chatController) {
+        this.chatController = chatController;
         createChatRoomStage();
     }
 
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * Creates the chat room stage and initializes the UI elements.
+     * Sets up event handlers for the send button and the window close request.
+     */
     private void createChatRoomStage() {
         VBox chatRoomView = new VBox(10);
         chatRoomView.setPadding(new Insets(10));
@@ -46,11 +61,7 @@ public class ChatView implements ViewListener {
         stage.setOnCloseRequest(e -> {
             Option option = new Option("Leave RoboRally chat");
             if(option.getYESNO("Would you like to leave the chat room?")){
-                try {
-                    chatListener.disconnectClient();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                chatController.disconnectClient();
                 stage.close();
             } else {
                 e.consume();
@@ -58,15 +69,18 @@ public class ChatView implements ViewListener {
         });
         sendButton.setOnAction(actionEvent -> {
             String message = messageField.getText();
-            if (chatListener != null) {
-                chatListener.onMessageSent(message);
-                displayMessage(message);
-            }
+            chatController.onMessageSent(message);
+            displayMessage(message);
             messageField.clear();
         });
         stage.show();
     }
 
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * Displays a message in the chat box.
+     * @param message
+     */
     private void displayMessage(String message) {
         chatBox.appendText(message + "\n");
         if(message.contains("barrel roll") || message.contains("BARREL ROLL") || message.contains("Barrel roll")){
@@ -82,6 +96,12 @@ public class ChatView implements ViewListener {
         rotateTransition.play();
     }
 
+    /**
+     * @author Freja Egelund Grønnemose, s224286@dtu.dk
+     * method invoked when a new message is received from the server.
+     * Displays the received message in the chat box.
+     * @param message the message received from the server
+     */
     @Override
     public void onMessageReceived(String message) {
         displayMessage(message);
