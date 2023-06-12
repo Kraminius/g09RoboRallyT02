@@ -150,6 +150,7 @@ public class LoadInstance {
         if(playerProgrammingDeck[index] != null){
             deck.clear();
             for(int i = 0; i < playerProgrammingDeck[index].length; i++){
+                if(playerProgrammingDeck[index][i] != null)
                 deck.add(new CommandCard(playerProgrammingDeck[index][i]));
             }
         }
