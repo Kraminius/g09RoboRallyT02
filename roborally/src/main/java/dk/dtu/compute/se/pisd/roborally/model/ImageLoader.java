@@ -28,6 +28,7 @@ public class ImageLoader {
     public Image[] push;
     public Image[] players;
     public Image winner;
+    public Image waiting;
 
     private static ImageLoader loader;
 
@@ -93,6 +94,7 @@ public class ImageLoader {
         push[0] = loadImage("push24.png");
         push[1] = loadImage("push135.png");
         winner = loadImage("robot-dancing.gif");
+        waiting = loadImage("waiting.gif");
     }
 
 
