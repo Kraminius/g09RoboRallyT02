@@ -32,6 +32,7 @@ import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.LoadInstance;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.view.LoadGameWindow;
+import dk.dtu.compute.se.pisd.roborally.view.LoadGameWindowRest;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.StartPositionWindow;
 import javafx.application.Platform;
@@ -336,6 +337,50 @@ public class AppController implements Observer {
             throw new RuntimeException(e);
         }
     }
+
+    //Server save and load
+
+
+    public void loadServerGame(){
+        // XXX needs to be implemented eventually
+        // for now, we just create a new game
+
+        //These may be wrong check in on them
+        LoadGameWindowRest load = new LoadGameWindowRest();
+        String saveName = load.getLoadInput();
+        //We need a way to get the saveNames from the server
+        System.out.println("Loading " + saveName);
+        try {
+            Load serverLoad = MyClient.getSave(saveName);
+            gameController = LoadInstance.load(this, serverLoad);
+            //gameController = GameLoader.loadGameFromServer(serverLoad, this);
+
+            if(gameController == null) {
+                newGame();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveServerGame() {
+        String saveName = "";
+        boolean nameChecksOut;
+        do{
+            Option option = new Option("Write the name of the save.");
+            saveName = option.getPromptedAnswer("eg. mySaveFile");
+            if(saveName.equals("")) nameChecksOut = false;
+            else nameChecksOut = true;
+        }while(!nameChecksOut);
+
+        try {
+            MyClient.setSave(saveName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    //no more server save and load
+
 
     public void startActivationPhaseWithRest(){
         gameController.finishProgrammingPhase2();
