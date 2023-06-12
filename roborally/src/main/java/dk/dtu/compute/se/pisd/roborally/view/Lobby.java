@@ -762,11 +762,29 @@ public class Lobby {
             GameSettings gameSettings = theGame.getGameSettings();
 
             // Call the startGame method with these GameSettings
+            boolean temp;
             try {
-                RoboRally.getInstance().startLoadedGame(gameSettings, stage, gameSettings.getGameName());
+                temp = GameClient.isLoadedGame();
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
+
+            if(temp){
+                try {
+                    RoboRally.getInstance().startLoadedGame(gameSettings, stage, gameSettings.getGameName());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            else {
+                try {
+                    RoboRally.getInstance().startGame(gameSettings, stage);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+
 
         });
 

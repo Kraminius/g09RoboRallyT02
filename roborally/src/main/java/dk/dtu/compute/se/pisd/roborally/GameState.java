@@ -284,23 +284,25 @@ public class GameState {
                 ", currentPlayer='" + currentPlayer + '\'' +
                 ", board='" + board + '\'' +
                 ", isStepmode=" + isStepmode +
-                ", upgradeDiscardDeck=" + Arrays.toString(upgradeDiscardDeck) +
-                ", upgradeOutDeck=" + Arrays.toString(upgradeOutDeck) +
-                ", upgradeCardsDeck=" + Arrays.toString(upgradeCardsDeck) +
-                ", upgradeShopCards=" + Arrays.toString(upgradeShopCards) +
-                ", playerNames=" + Arrays.toString(playerNames) +
-                ", playerColors=" + Arrays.toString(playerColors) +
-                ", playerEnergyCubes=" + Arrays.toString(playerEnergyCubes) +
-                ", playerCheckPoints=" + Arrays.toString(playerCheckPoints) +
-                ", playersXPosition=" + Arrays.toString(playersXPosition) +
-                ", playersYPosition=" + Arrays.toString(playersYPosition) +
-                ", mapCubePositions=" + Arrays.toString(mapCubePositions) +
-                ", playerHeadings=" + Arrays.toString(playerHeadings) +
-                ", playerProgrammingDeck=" + Arrays.toString(playerProgrammingDeck) +
-                ", playerCurrentProgram=" + Arrays.toString(playerCurrentProgram) +
-                ", playerDiscardPile=" + Arrays.toString(playerDiscardPile) +
-                ", playerUpgradeCards=" + Arrays.toString(playerUpgradeCards) +
-                ", playersPulledCards=" + Arrays.toString(playersPulledCards) +
-                '}';
+                ", upgradeDiscardDeck=" + Converter.commandArrayToString(upgradeDiscardDeck) +
+                ", upgradeOutDeck=" + Converter.commandArrayToString(upgradeOutDeck) +
+                ", upgradeCardsDeck=" + Converter.commandArrayToString(upgradeCardsDeck) +
+                ", upgradeShopCards=" + Converter.commandArrayToString(upgradeShopCards) +
+                ", playerNames=" + Converter.stringArrayToString(playerNames) +
+                ", playerColors=" + Converter.stringArrayToString(playerColors) +
+                ", playerEnergyCubes=" + Converter.intArrayToString(playerEnergyCubes) +
+                ", playerCheckPoints=" + Converter.intArrayToString(playerCheckPoints) +
+                ", playersXPosition=" + Converter.intArrayToString(playersXPosition) +
+                ", playersYPosition=" + Converter.intArrayToString(playersYPosition) +
+                ", mapCubePositions=" + Converter.intArrayToString(mapCubePositions) +
+                ", playerHeadings=" + Converter.headingArrayToString(playerHeadings) +
+                ", playerProgrammingDeck=" + Converter.commandArrArrToString(playerProgrammingDeck) +
+                ", playerCurrentProgram=" + Converter.commandArrArrToString(playerCurrentProgram) +
+                ", playerDiscardPile=" + Converter.commandArrArrToString(playerDiscardPile) +
+                ", playerUpgradeCards=" + Converter.commandArrArrToString(playerUpgradeCards) +
+                ", playersPulledCards=" + Converter.commandArrArrToString(playersPulledCards) + "}";
+
+
     }
+
 }

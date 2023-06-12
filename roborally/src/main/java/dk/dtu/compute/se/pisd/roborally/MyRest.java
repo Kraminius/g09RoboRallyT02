@@ -513,5 +513,13 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    @PostMapping (value = "/setGameState")
+    public ResponseEntity<String> saveGame(@RequestBody Load load) {
+
+        gameDataRep.gameState = gameDataRep.makeGameState(load);
+
+        return ResponseEntity.ok().body("gameSaved");
+    }
+
 
 }

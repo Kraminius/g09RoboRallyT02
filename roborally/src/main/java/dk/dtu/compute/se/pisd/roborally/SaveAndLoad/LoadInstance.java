@@ -183,6 +183,7 @@ public class LoadInstance {
             for(int i = 0; i < playerUpgradeCards[index].length; i++){
                 if(!UpgradeCardInfo.getPermanent(playerUpgradeCards[index][i]) && i < player.NO_UPGRADE_CARDS/2) extraUpgrade = player.NO_UPGRADE_CARDS/2; //If it's permanent I have to move it a bit to the right in the array.
                 upgradeCards[i+extraUpgrade] = new CommandCardField (player);
+                if(playerUpgradeCards[index][i] != null)
                 upgradeCards[i+extraUpgrade].setCard(new CommandCard(playerUpgradeCards[index][i]));
             }
         }

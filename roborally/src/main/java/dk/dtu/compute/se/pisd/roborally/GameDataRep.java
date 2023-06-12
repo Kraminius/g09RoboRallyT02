@@ -256,7 +256,7 @@ public class GameDataRep {
      * Creates a GameState.java object that can hold all the data from a given load.
      * The method uses the Converter.java class to convert after receiving the data from the obj file.
      */
-    private static GameState makeGameState(Load load){
+    public static GameState makeGameState(Load load){
 
         int playerAmount = load.getPlayerAmount();
         int step = load.getStep();

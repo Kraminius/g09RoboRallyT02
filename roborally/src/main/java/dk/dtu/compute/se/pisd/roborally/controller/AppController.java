@@ -376,9 +376,27 @@ public class AppController implements Observer {
             gameController = LoadInstance.load(this, serverLoad);
             //gameController = GameLoader.loadGameFromServer(serverLoad, this);
 
+            GameClient.setGameState(serverLoad);
+
             if(gameController == null) {
                 newGame();
             }
+
+            if(serverLoad.getPhase() == Phase.UPGRADE){
+                int playerNumber = GameClient.getPlayerNumber();
+                //List<Player> liste = gameController.antennaHandler.findPlayerSequence(gameController.board.getAntenna(), board);
+
+
+
+                /*if(playerNumber == liste.get(0).getId()-1){
+                    System.out.println("Its my turn load");
+                }else{
+                    GameClient.startWaitingForOpenShop();
+                }*/
+
+
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

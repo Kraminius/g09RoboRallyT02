@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
@@ -956,6 +957,20 @@ public class GameClient {
         int result = Integer.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
         return result;
 
+    }
+
+    public static void setGameState(Load load) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(load);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .uri(URI.create("http://localhost:8080/setGameState"))
+                .header("Content-Type", "application/json")
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
 
