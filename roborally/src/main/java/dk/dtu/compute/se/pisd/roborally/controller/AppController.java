@@ -425,6 +425,7 @@ public class AppController implements Observer {
                 }
             } else if (serverLoad.getPhase() == Phase.ACTIVATION) {
                 System.out.println("The game is starting from Activation Phase");
+                GameClient.resetReadyList();
                 GameClient.startWaitingForExecution();
 
             } else if (serverLoad.getPhase() == Phase.PROGRAMMING) {
