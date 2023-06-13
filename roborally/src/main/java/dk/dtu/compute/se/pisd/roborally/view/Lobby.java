@@ -5,6 +5,8 @@ import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
 import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
+import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import javafx.application.Platform;
@@ -53,6 +55,8 @@ public class Lobby {
     private GameLobby gameLobby;
 
     private RoboRally roboRally;
+
+    private LoadGameWindowRest loadGameWindowRest = new LoadGameWindowRest();
 
 
 
@@ -108,6 +112,17 @@ public class Lobby {
         lobbyView.getChildren().add(lobbySP);
     }
 
+    public void loadServerGameRest(){
+        String name = loadGameWindowRest.getLoadInput();
+        String[] players = loadGameWindowRest.playerNames(name);
+        String mapName = loadGameWindowRest.mapName(name);
+
+        openCreateGameSceneFromLoad(name, players,mapName);
+
+
+        //RoboRally.getAppController().loadServerGame();
+    }
+
 
     private void getButtStuffForLoad(){
         LoadGameWindow lgw = new LoadGameWindow();//Where i have method to get all saves
@@ -135,7 +150,6 @@ public class Lobby {
         stage.setScene(scene);
         //stage.initModality(Modality.APPLICATION_MODAL); //Make other window useless.
         //stage.setOnCloseRequest(Event::consume);
-        startChat();
         stage.showAndWait();
     }
 
@@ -238,8 +252,6 @@ public class Lobby {
 
         Label creatorNameLabel = new Label("Creator name:");
         TextField creatorNameInput = new TextField();
-        creatorNameInput.setText(ClientInfo.getUsername());
-        creatorNameInput.setDisable(true);
 
         Label numberOfPlayersLabel = new Label("How many players:");
         Spinner<Integer> numberOfPlayersInput = new Spinner<>();
@@ -269,7 +281,7 @@ public class Lobby {
                         boardsToPlayInput.getValue() };
 
                 try {
-                    GameClient.addGame(arr);
+                    GameClient.addGame(arr, false);
                     System.out.println("this works");
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
@@ -355,6 +367,150 @@ public class Lobby {
         rootLayout.setLeft(createGameLayout);
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
+
+
+        createGameStage.setScene(createGameScene);
+        createGameStage.show();
+    }
+
+    private void openCreateGameSceneFromLoad(String name, String[] playerNames, String mapName) {
+
+        // Create new Stage for this scene
+        Stage createGameStage = new Stage();
+
+        // Create a new BorderPane layout
+        rootLayout = new BorderPane();
+
+        // Create a new VBox layout
+        VBox createGameLayout = new VBox(10);
+
+        // Create the form inputs
+        Label gameNameLabel = new Label("Name of the game:");
+        TextField gameNameInput = new TextField();
+        gameNameInput.setText(name);
+
+
+        Label creatorNameLabel = new Label("Creator name:");
+        TextField creatorNameInput = new TextField();
+        creatorNameInput.setText(playerNames[0]);
+
+
+        Label numberOfPlayersLabel = new Label("How many players:");
+        Spinner<Integer> numberOfPlayersInput = new Spinner<>();
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, playerNames.length);
+        numberOfPlayersInput.setValueFactory(valueFactory);
+        numberOfPlayersInput.setEditable(false);
+
+
+        Label boardToPlayLabel = new Label("What board to play:");
+        ComboBox<String> boardsToPlayInput = new ComboBox<>();
+        BoardLoadWindow boardLoadWindow = new BoardLoadWindow();
+        boardLoadWindow.addFiles(boardsToPlayInput);
+        boardsToPlayInput.setValue(boardsToPlayInput.getItems().get(0));
+        boardsToPlayInput.setValue(mapName);
+
+        // Create a submit button
+        Button submitButton = new Button("Create Game");
+
+
+        // Add event to the submit button
+        submitButton.setOnAction(e -> {
+            // Set the game settings
+            if (!gameNameInput.getText().isEmpty() && !creatorNameInput.getText().isEmpty()) {
+                gameNameInput.setStyle(null);
+                creatorNameInput.setStyle(null);
+
+                String[] arr = {gameNameInput.getText(), creatorNameInput.getText(), String.valueOf(numberOfPlayersInput.getValue()),
+                        boardsToPlayInput.getValue() };
+
+                try {
+                    GameClient.addGame(arr, true);
+                    System.out.println("this works");
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                /*GameSettings gameSettings = new GameSettings();
+                gameSettings.setGameName(gameNameInput.getText());
+                gameSettings.setCreatorName(creatorNameInput.getText());
+                gameSettings.setNumberOfPlayers(numberOfPlayersInput.getValue());
+                gameSettings.setBoardToPlay(boardsToPlayInput.getValue());
+                gameSettings.getPlayerNames().add(gameSettings.getCreatorName());*/
+
+
+
+
+                gameNameInput.setDisable(true);
+                creatorNameInput.setDisable(true);
+                numberOfPlayersInput.setDisable(true);
+                boardsToPlayInput.setDisable(true);
+                submitButton.setDisable(true);
+
+
+
+
+                GameLobby gameLobbyTemp;
+
+
+                //APi call lobbyid gameSettings
+                try {
+                    System.out.println("what");
+                    gameLobbyTemp = GameClient.getGame();
+                    System.out.println("up");
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                System.out.println("Her står noget: " + gameLobbyTemp);
+
+                GameLobby gameLobby = gameLobbyTemp;
+                this.gameLobby = gameLobby;
+                lobbyManager.createGame(gameLobby);
+
+
+
+
+                try {
+                    GameClient.weConnect(0, gameLobby.getGameSettings().getCreatorName());
+                    gameLobby.getGameSettings().setPlayerNames(GameClient.getPlayerNames());
+
+
+                    System.out.println(gameLobby.toString());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+
+
+
+                addLobbyToLobby(gameLobby);
+
+
+
+                lobbyPlayer.setText("Players: " + gameLobby.getGameSettings().getPlayerNames().size() + "/" + gameLobby.getGameSettings().getNumberOfPlayers());
+                rootLayout.setRight(createLobbyLayout(gameLobby));
+            }
+            if (gameNameInput.getText().isEmpty()) {
+                gameNameInput.setStyle("-fx-border-color: #ff0000");
+            }
+            if (creatorNameInput.getText().isEmpty()){
+                creatorNameInput.setStyle("-fx-border-color: #ff0000");
+            }
+            if (!gameNameInput.getText().isEmpty()) {
+                gameNameInput.setStyle(null);
+            }
+            if(!creatorNameInput.getText().isEmpty()){
+                creatorNameInput.setStyle(null);
+            }
+
+            specificLobbyLabels.put(this.gameLobby.getLobbyId(), createGameLayout);
+            GameClient.startPlayerNamesPolling();
+        });
+
+        createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
+        rootLayout.setLeft(createGameLayout);
+        // Create the scene and add it to the stage
+        Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
+
 
 
         createGameStage.setScene(createGameScene);
@@ -461,6 +617,28 @@ public class Lobby {
                 throw new RuntimeException(e);
             }
         });*/
+        boolean temp;
+        try {
+            temp = GameClient.isLoadedGame();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if(temp){
+            String name = loadGameWindowRest.getLoadInput();
+            String[] players = loadGameWindowRest.playerNames(name);
+
+            int currLoaded = 0;
+            try {
+                currLoaded = GameClient.getCurrLoaded();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            nameField.setText(players[currLoaded]);
+            joinButton.setDisable(false);
+            nameField.setDisable(true);
+        }
+
 
         try {
             joinLobby(gameLobby, ClientInfo.getUsername());
@@ -596,11 +774,29 @@ public class Lobby {
             GameSettings gameSettings = theGame.getGameSettings();
 
             // Call the startGame method with these GameSettings
+            boolean temp;
             try {
-                RoboRally.getInstance().startGame(gameSettings, stage);
+                temp = GameClient.isLoadedGame();
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
+
+            if(temp){
+                try {
+                    RoboRally.getInstance().startLoadedGame(gameSettings, stage, gameSettings.getGameName());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            else {
+                try {
+                    RoboRally.getInstance().startGame(gameSettings, stage);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+
 
         });
 
@@ -608,7 +804,7 @@ public class Lobby {
 
     }
 
-    public void startingGame(){
+    public void startingGame(boolean loaded){
 
 
         // Retrieve the GameLobby using the button's ID (which is the lobbyId)
@@ -628,11 +824,23 @@ public class Lobby {
         GameSettings gameSettings = theGame.getGameSettings();
 
         // Call the startGame method with these GameSettings
-        try {
-            RoboRally.getInstance().startGame(gameSettings, stage);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        if(loaded){
+            try {
+                RoboRally.getInstance().startLoadedGame(gameSettings, stage, gameSettings.getGameName());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
+        else{
+            try {
+                RoboRally.getInstance().startGame(gameSettings, stage);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+
+
 
 
     }

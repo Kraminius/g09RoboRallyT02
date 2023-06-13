@@ -29,6 +29,7 @@ import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
+import dk.dtu.compute.se.pisd.roborally.view.*;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
 import dk.dtu.compute.se.pisd.roborally.view.Lobby;
 import dk.dtu.compute.se.pisd.roborally.view.RoboRallyMenuBar;
@@ -139,6 +140,33 @@ public class RoboRally extends Application {
         stage.setY(100);
         stage.show();
         appController.newGame();
+    }
+
+    public void startLoadedGame(GameSettings gameSettings, Stage primaryStage, String saveName) throws Exception {
+        stage = primaryStage;
+        appController = new AppController(this, gameSettings);
+        // create the primary scene with the a menu bar and a pane for
+        // the board view (which initially is empty); it will be filled
+        // when the user creates a new game or loads a game
+        RoboRallyMenuBar menuBar = new RoboRallyMenuBar(appController);
+        boardRoot = new BorderPane();
+        VBox vbox = new VBox(menuBar, boardRoot);
+        vbox.setMinWidth(MIN_APP_WIDTH);
+        Scene primaryScene = new Scene(vbox);
+
+        stage.setScene(primaryScene);
+        stage.setTitle("RoboRally");
+        stage.setOnCloseRequest(
+                e -> {
+                    e.consume();
+                    appController.exit();} );
+        stage.setResizable(false);
+        stage.sizeToScene();
+        stage.setX(700);
+        stage.setY(100);
+        stage.show();
+        System.out.println("Test ny");
+        appController.loadServerGameFromStart(saveName);
     }
 
     public void createBoardView(GameController gameController) {

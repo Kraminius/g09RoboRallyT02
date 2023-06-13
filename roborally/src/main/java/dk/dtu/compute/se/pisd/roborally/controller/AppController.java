@@ -100,6 +100,7 @@ public class AppController implements Observer {
         int no = gameSettings.getNumberOfPlayers();
 
 
+
         /*GameClient.instaGameData(no);
         MyClient.weConnect(0);
         GameClient.addMapName(gameSettings.getGameName());*/
@@ -146,6 +147,7 @@ public class AppController implements Observer {
         positionWindow.showWindow();
         System.out.println("I picked this: " + positionWindow.getStartPosChoice().getValue());
         GameClient.addStartPosition(Integer.parseInt(positionWindow.getStartPosChoice().getValue()));
+
         GameClient.nextPlayer();
 
         GameClient.picked();
@@ -359,6 +361,80 @@ public class AppController implements Observer {
             if(gameController == null) {
                 newGame();
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadServerGameFromStart(String saveName){
+        // XXX needs to be implemented eventually
+        // for now, we just create a new game
+
+        //These may be wrong check in on them
+        LoadGameWindowRest load = new LoadGameWindowRest();
+        //We need a way to get the saveNames from the server
+        System.out.println("Loading " + saveName);
+        try {
+            Load serverLoad = MyClient.getSave(saveName);
+            gameController = LoadInstance.load(this, serverLoad);
+            //gameController = GameLoader.loadGameFromServer(serverLoad, this);
+
+            GameClient.setGameState(serverLoad);
+
+            if(gameController == null) {
+                newGame();
+            }
+
+            if(board == null){
+                board = new Board(gameSettings.getBoardToPlay());
+                int no = gameSettings.getNumberOfPlayers();
+                int playerClient = GameClient.getPlayerNumber();
+
+                for (int i = 0; i < no; i++) {
+                    String name;
+                    if(gameSettings.getPlayerNames().size() <= i) name = "Player " + i+1;
+                    else name = gameSettings.getPlayerNames().get(i);
+                    Player player = new Player(board, PLAYER_COLORS.get(i), name, i+1);
+                    player.setSpace(new Space(board, serverLoad.getX()[i], serverLoad.getY()[i]));
+                    player.setEnergyCubes(5);
+                    gameController.fillStartDeck(player.getCardDeck());
+                    board.addPlayer(player);
+
+
+
+                    if(i == playerClient){
+                        System.out.println("vi gemmer player objected");
+                        clientPlayer = player;
+                    }
+
+
+                    //player.setSpace(board.getSpace(i % board.width, i));
+                }
+
+            }
+
+            if(serverLoad.getPhase() == Phase.UPGRADE){
+
+                System.out.println("The game is starting from Upgrade Phase");
+                int playerNumber = GameClient.getPlayerNumber();
+                List<Player> liste = gameController.antennaHandler.findPlayerSequence(gameController.board.getAntenna(), board);
+
+                if(playerNumber == liste.get(0).getId()-1){
+                    System.out.println("Its my turn load");
+                }else{
+                    GameClient.startWaitingForOpenShop();
+                }
+            } else if (serverLoad.getPhase() == Phase.ACTIVATION) {
+                System.out.println("The game is starting from Activation Phase");
+                GameClient.resetReadyList();
+                GameClient.startWaitingForExecution();
+
+            } else if (serverLoad.getPhase() == Phase.PROGRAMMING) {
+                System.out.println("The game is starting from Programming Phase");
+                GameClient.resetReadyList();
+                GameClient.startWaitingForAllPlayersToPickCards();
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

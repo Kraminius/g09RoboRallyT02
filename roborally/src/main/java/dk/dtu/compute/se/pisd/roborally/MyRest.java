@@ -73,7 +73,7 @@ public class MyRest {
     public ResponseEntity<Integer> instaGameData(@RequestParam("numberOfPlayers") String playerNumStr) {
         int numberOfPlayers = Integer.parseInt(playerNumStr);
         gameDataRep.instantiateGameData(numberOfPlayers);
-        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings());
+        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings(), false);
         System.out.println("Size: " + gameDataRep.gameData.getReadyList().length + "& " + gameDataRep.gameData.getGameSettings().getNumberOfPlayers());
         return ResponseEntity.ok().body(5);
     }
@@ -101,11 +101,16 @@ public class MyRest {
     }
 
     @PostMapping(value = "/addGame")
-    public ResponseEntity<String> addGame(@RequestBody String[] settings){
+    public ResponseEntity<String> addGame(@RequestBody Map<String, Object> payload){
 
-        gameDataRep.createGame(settings[0],settings[1], Integer.parseInt(settings[2]), settings[3]);
+        ArrayList<String> settings = (ArrayList<String>) payload.get("settings");
+        boolean loadedGame = (Boolean) payload.get("loadedGame");
 
-        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings());
+        gameDataRep.createGame(settings.get(0),settings.get(1), Integer.parseInt(settings.get(2)), settings.get(3));
+
+        gameInfo.instaGameInfo(gameDataRep.gameData.getId(), gameDataRep.gameData.getGameSettings(), loadedGame);
+
+
         //System.out.println(gameRepository.getGameSettings().toString());
 
         return ResponseEntity.ok("hej");
@@ -411,6 +416,9 @@ public class MyRest {
 
         gameInfo.setOpenShop(false);
 
+        //Temporary place for resetting players has chosen in interactive cards, so we can you use 1 interactive card each round of play
+        gameInfo.setPlayerChosen(false);
+
         return ResponseEntity.ok().body(true);
     }
 
@@ -488,5 +496,73 @@ public class MyRest {
         System.out.println("We have found saveGames: " + strings.toString());
         return ResponseEntity.ok().body(strings);
     }
+
+
+    @GetMapping(value = "/isLoadedGame")
+    public ResponseEntity<Boolean> isLoadedGame() {
+
+        boolean temp = gameInfo.isLoadedGame();
+
+        return ResponseEntity.ok().body(temp);
+    }
+
+    @GetMapping(value = "/getCurrLoaded")
+    public ResponseEntity<Integer> getCurrLoaded() {
+
+        int temp = gameInfo.getCurrLoaded();
+
+        gameInfo.setCurrLoaded(gameInfo.getCurrLoaded() + 1);
+
+        return ResponseEntity.ok().body(temp);
+    }
+
+    @PostMapping (value = "/setGameState")
+    public ResponseEntity<String> saveGame(@RequestBody Load load) {
+
+        gameDataRep.gameState = gameDataRep.makeGameState(load);
+
+        return ResponseEntity.ok().body("gameSaved");
+    }
+
+    @PostMapping (value = "/setCheckpointsForPlayer")
+    public ResponseEntity<Boolean> setCheckpointsForPlayer(@RequestBody String playerNumberString) {
+
+        int playerNumber = Integer.parseInt(playerNumberString);
+
+
+
+        gameDataRep.gameState.getPlayerCheckPoints()[playerNumber] = gameDataRep.gameState.getPlayerCheckPoints()[playerNumber] + 1;
+
+
+        System.out.println("PlayerNumber: " +  playerNumber  + " checkpoints: " + gameDataRep.gameState.getPlayerCheckPoints()[playerNumber] );
+
+        return ResponseEntity.ok().body(true);
+    }
+
+
+    @GetMapping(value = "/isPlayerChoice")
+    public ResponseEntity<Boolean> isPlayerChoice() {
+
+        return ResponseEntity.ok(gameInfo.isPlayerChosen());
+    }
+
+    @PostMapping (value = "/setPlayerHeadingInteractive")
+    public ResponseEntity<String> setPlayerHeadingInteractive(@RequestBody Map<String, Object> playerData) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Heading heading = objectMapper.convertValue(playerData.get("heading"), Heading.class);
+        int playerNumber = Integer.parseInt(playerData.get("playerNumber").toString());
+
+        gameDataRep.gameState.getPlayerHeadings()[playerNumber] = heading;
+        gameInfo.setPlayerChosen(true);
+
+        return ResponseEntity.ok().body("bob");
+    }
+
+    /*@GetMapping (value = "/getPlayerCommandInteractive")
+    public ResponseEntity<Command> getPlayerCommandInteractive() {
+        //Command command = gameInfo.getCommandChosen();
+        return ResponseEntity.ok().body(command);
+    }*/
+
 
 }

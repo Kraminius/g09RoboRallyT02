@@ -119,11 +119,7 @@ public enum Command {
 
     @Override
     public String toString() {
-        return "Command{" +
-                "displayName='" + displayName + '\'' +
-                ", description='" + description + '\'' +
-                ", options=" + options +
-                '}';
+        return name();
     }
 }
 
