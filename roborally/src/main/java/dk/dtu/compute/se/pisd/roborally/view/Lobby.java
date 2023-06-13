@@ -150,6 +150,7 @@ public class Lobby {
         stage.setScene(scene);
         //stage.initModality(Modality.APPLICATION_MODAL); //Make other window useless.
         //stage.setOnCloseRequest(Event::consume);
+        startChat();
         stage.showAndWait();
     }
 
