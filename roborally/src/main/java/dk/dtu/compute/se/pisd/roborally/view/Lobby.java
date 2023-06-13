@@ -392,11 +392,13 @@ public class Lobby {
         Label gameNameLabel = new Label("Name of the game:");
         TextField gameNameInput = new TextField();
         gameNameInput.setText(name);
+        gameNameInput.setDisable(true);
 
 
         Label creatorNameLabel = new Label("Creator name:");
         TextField creatorNameInput = new TextField();
         creatorNameInput.setText(playerNames[0]);
+        creatorNameInput.setDisable(true);
 
 
         Label numberOfPlayersLabel = new Label("How many players:");
@@ -404,7 +406,7 @@ public class Lobby {
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, playerNames.length);
         numberOfPlayersInput.setValueFactory(valueFactory);
         numberOfPlayersInput.setEditable(false);
-
+        numberOfPlayersInput.setDisable(true);
 
         Label boardToPlayLabel = new Label("What board to play:");
         ComboBox<String> boardsToPlayInput = new ComboBox<>();
@@ -412,6 +414,7 @@ public class Lobby {
         boardLoadWindow.addFiles(boardsToPlayInput);
         boardsToPlayInput.setValue(boardsToPlayInput.getItems().get(0));
         boardsToPlayInput.setValue(mapName);
+        boardsToPlayInput.setDisable(true);
 
         // Create a submit button
         Button submitButton = new Button("Create Game");
