@@ -10,6 +10,7 @@ import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
  */
 public class ChatController {
     private ChatClient client;
+    private ChatView chatView;
 
     /**
      * @author Freja Egelund Grønnemose, s224286@dtu.dk
@@ -25,7 +26,7 @@ public class ChatController {
      * @param username the username of the client to be added
      */
     public void addChatClient(String username){
-        ChatView chatView = new ChatView(this);
+        chatView = new ChatView(this);
         this.client = new ChatClient(username, chatView);
     }
 
@@ -46,5 +47,8 @@ public class ChatController {
      */
     public void onMessageSent(String message) {
         client.sendMessage(message);
+    }
+    public ChatView getChatView(){
+        return chatView;
     }
 }

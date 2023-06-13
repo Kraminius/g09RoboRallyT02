@@ -4,7 +4,7 @@ import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
-import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
+import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import javafx.application.Platform;
@@ -31,7 +31,9 @@ public class Lobby {
     Stage stage;
     VBox lobbyLayout;
     Stage waitStage;
-    VBox window;
+    HBox window;
+    VBox lobbyView;
+    VBox chatView;
     VBox lobbyList;
     VBox lobbyVbox;
     Label lobbyText;
@@ -59,19 +61,24 @@ public class Lobby {
      * @author Mikkel Jürs, s224279@student.dtu.dk
      */
     public Lobby(LobbyManager lobbyManager) {
+        ClientInfo.getUsername();
         this.gameSettings = gameSettings;
         this.lobbyManager = lobbyManager;
         lobbyWindow = new LobbyWindow();
         stage = new Stage();
-        window = new VBox();
+        lobbyView = new VBox();
         lobbySP = new ScrollPane();
         lobbyList = new VBox();
-        window.setMaxSize(900, 550);
-        window.setMinSize(900, 550);
-        window.setAlignment(Pos.TOP_CENTER);
+        lobbyView.setMaxSize(700, 550);
+        lobbyView.setMinSize(700, 550);
+        lobbyView.setAlignment(Pos.TOP_CENTER);
         lobbySP.setHmax(Double.MAX_VALUE);
         lobbySP.setHmin(Double.MAX_VALUE);
-
+        chatView = new VBox();
+        chatView.setMinWidth(200);
+        chatView.setStyle("-fx-background-color: #dadada");
+        window = new HBox();
+        window.getChildren().addAll(lobbyView, chatView);
         VBox top = new VBox();
         top.setAlignment(Pos.CENTER_LEFT);
         top.setPadding(new Insets(10, 10, 10, 10));
@@ -96,8 +103,8 @@ public class Lobby {
         top.getChildren().add(buttonBox);  // Add the HBox to top
 
         lobbySP.setContent(lobbyList);
-        window.getChildren().add(top);
-        window.getChildren().add(lobbySP);
+        lobbyView.getChildren().add(top);
+        lobbyView.getChildren().add(lobbySP);
     }
 
 
@@ -127,6 +134,7 @@ public class Lobby {
         stage.setScene(scene);
         //stage.initModality(Modality.APPLICATION_MODAL); //Make other window useless.
         //stage.setOnCloseRequest(Event::consume);
+        startChat();
         stage.showAndWait();
     }
 
@@ -229,6 +237,8 @@ public class Lobby {
 
         Label creatorNameLabel = new Label("Creator name:");
         TextField creatorNameInput = new TextField();
+        creatorNameInput.setText(ClientInfo.getUsername());
+        creatorNameInput.setDisable(true);
 
         Label numberOfPlayersLabel = new Label("How many players:");
         Spinner<Integer> numberOfPlayersInput = new Spinner<>();
@@ -406,7 +416,7 @@ public class Lobby {
         gameLobby = gameLobbyMap.get(lobbyId);
 
         lobbyHbox = lobbyHBoxMap.get(lobbyId);
-        // Create a new dialog
+        /*// Create a new dialog
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Join Game");
         dialog.setHeaderText("Enter Your Name");
@@ -449,8 +459,14 @@ public class Lobby {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        });
+        });*/
 
+        try {
+            joinLobby(gameLobby, ClientInfo.getUsername());
+            RoboRally.getInstance().createChatWindow(ClientInfo.getUsername()); //Creates the chatWindow with the joined players name
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         //Polling player names
         GameClient.startPlayerNamesPolling();
 
@@ -657,5 +673,33 @@ public class Lobby {
 
     public void setGameLobbyMap(Map<String, GameLobby> gameLobbyMap) {
         this.gameLobbyMap = gameLobbyMap;
+    }
+
+    public void addChatWindow(){
+        VBox chatWindow = RoboRally.getInstance().getChatView();
+        if(!chatView.getChildren().contains(chatWindow)){
+            this.chatView.getChildren().add(chatWindow);
+        }
+    }
+    public void removeChatView(){
+        chatView.getChildren().clear();
+    }
+    private void startChat(){
+        if(RoboRally.getInstance().getChatView() == null){
+            String name = ClientInfo.getUsername();
+            RoboRally.getInstance().createChatWindow(name);
+            chatView.getChildren().clear();
+            addChatWindow();
+        }
+    }
+    private void hideChat(boolean hide){
+        if(hide) {
+            chatView.getChildren().get(0).setOpacity(0);
+            chatView.getChildren().get(0).setDisable(true);
+        }
+        else{
+            chatView.getChildren().get(0).setOpacity(1);
+            chatView.getChildren().get(0).setDisable(false);
+        }
     }
 }

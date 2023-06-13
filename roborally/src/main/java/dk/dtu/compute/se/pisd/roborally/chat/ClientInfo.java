@@ -7,15 +7,15 @@ import dk.dtu.compute.se.pisd.roborally.view.Option;
  * Class representing client information.
  */
 public class ClientInfo {
-    private String username;
+    private static String username;
 
     /**
      * @author Freja Egelund Grønnemose, s224286@dtu.dk
      * Sets the username for the client.
-     * @param username the username to set
+     * @param newUsername the username to set
      */
-    public void setUsername(String username){
-        this.username = username;
+    public static void setUsername(String newUsername){
+        username = newUsername;
     }
 
     /**
@@ -24,16 +24,16 @@ public class ClientInfo {
      * If the username is not set, prompts the user to enter a username.
      * @return the username of the client
      */
-    public String getUsername(){
+    public static String getUsername(){
         if(username == null) getUserNameFromUser();
-        return this.username;
+        return username;
     }
 
     /**
      * @author Freja Egelund Grønnemose, s224286@dtu.dk
      * Prompts the user to enter a username.
      */
-    private void getUserNameFromUser(){
+    private static void getUserNameFromUser(){
         Option option = new Option("Write your Username");
         username = option.getPromptedAnswer("Username");
     }

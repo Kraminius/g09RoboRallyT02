@@ -23,6 +23,7 @@ public class ChatView implements ViewListener {
     private TextField messageField;
     private Button sendButton;
     private ChatController chatController;
+    private VBox chatRoomView;
 
     /**
      * @author Freja Egelund Grønnemose, s224286@dtu.dk
@@ -41,7 +42,7 @@ public class ChatView implements ViewListener {
      * Sets up event handlers for the send button and the window close request.
      */
     private void createChatRoomStage() {
-        VBox chatRoomView = new VBox(10);
+        chatRoomView = new VBox(10);
         chatRoomView.setPadding(new Insets(10));
 
         chatBox = new TextArea();
@@ -51,9 +52,12 @@ public class ChatView implements ViewListener {
         messageField = new TextField();
 
         sendButton = new Button("Send");
+        Button exitButton = new Button("Leave chat");
 
-        chatRoomView.getChildren().addAll(chatBox, messageField, sendButton);
+        chatRoomView.getChildren().addAll(chatBox, messageField, sendButton, exitButton);
 
+
+        /* It doesnt need to make it's own scene and stage, we are just using the view.
         Scene scene = new Scene(chatRoomView);
         stage = new Stage();
         stage.setScene(scene);
@@ -67,13 +71,26 @@ public class ChatView implements ViewListener {
                 e.consume();
             }
         });
+
+        stage.show();
+
+         */
+
         sendButton.setOnAction(actionEvent -> {
             String message = messageField.getText();
             chatController.onMessageSent(message);
             displayMessage(message);
             messageField.clear();
         });
-        stage.show();
+        exitButton.setOnAction(e -> {
+                    Option option = new Option("Leave RoboRally chat");
+                    if(option.getYESNO("Would you like to leave the chat room?")){
+                        chatController.disconnectClient();
+                        stage.close();
+                    } else {
+                        e.consume();
+                    }
+        });
     }
 
     /**
@@ -105,5 +122,9 @@ public class ChatView implements ViewListener {
     @Override
     public void onMessageReceived(String message) {
         displayMessage(message);
+    }
+
+    public VBox getChatRoomView(){
+        return chatRoomView;
     }
 }
