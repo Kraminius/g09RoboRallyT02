@@ -24,6 +24,7 @@ package dk.dtu.compute.se.pisd.roborally.view;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
+import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import javafx.geometry.Insets;
@@ -133,7 +134,10 @@ public class PlayerView extends Tab implements ViewObserver {
         //      refactored.
 
         finishButton = new Button("Finish Programming");
-        finishButton.setOnAction( e -> gameController.finishProgrammingPhase());
+        finishButton.setOnAction( e -> {
+            gameController.finishProgrammingPhase();
+            activateProgramming(false);
+        });
 
         executeButton = new Button("Execute Program");
         executeButton.setOnAction( e-> gameController.executePrograms());
@@ -161,6 +165,7 @@ public class PlayerView extends Tab implements ViewObserver {
         waitingImage.setFitHeight(90);
         waitingForPlayersPanel = new VBox(waitingImage);
         waitingForPlayersPanel.setAlignment(Pos.CENTER);
+        waitingForPlayersPanel.setOpacity(0);
         buttonPanel = new HBox(buttonsInButtonPanel, waitingForPlayersPanel);
         buttonPanel.setAlignment(Pos.CENTER_LEFT);
         buttonPanel.setSpacing(3.0);
@@ -285,14 +290,13 @@ public class PlayerView extends Tab implements ViewObserver {
     }
 
     /**
-     * @author Ekkart Kindler, //TODO TOBY, Freja Egelund Grønnemose, s224286@dtu.dk
+     * @author Ekkart Kindler, Tobias Gørlyk - s224271@dtu.dk, Freja Egelund Grønnemose, s224286@dtu.dk
      * Updates the view based on the changes in the subject.
      * @param subject The subject triggering the update.
      */
     @Override
     public void updateView(Subject subject) {
         if (subject == player.board) {
-            showOrHideWaiting(player.board.getIsWaiting());
             for (int i = 0; i < Player.NO_REGISTERS; i++) {
                 CardFieldView cardFieldView = programCardViews[i];
                 if (cardFieldView != null) {
@@ -437,15 +441,13 @@ public class PlayerView extends Tab implements ViewObserver {
             this.chatWindow.getChildren().add(chatWindow);
         }
     }
-    /**
-     * @Author Tobias Gørlyk - s224271@dtu.dk
-     * Removes the chat view from the player view if it is currently present.
-     */
-    public void removeChatView(){
-        VBox chatWindow = RoboRally.getInstance().getChatView();
-        if(this.chatWindow.getChildren().contains(chatWindow)){
-            this.chatWindow.getChildren().remove(chatWindow);
-        }
-    }
+    public void activateUpgrade(boolean isActive){
+        openShopButton.setDisable(!isActive);
+        showOrHideWaiting(!isActive);
 
+    }
+    public void activateProgramming(boolean isActive){
+        finishButton.setDisable(!isActive);
+        showOrHideWaiting(!isActive);
+    }
 }

@@ -35,6 +35,15 @@ public class GameClient {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
+    /**
+     * /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * ScheduledExecutorService creates a static, unchangeable thread pool with one thread for scheduling tasks.
+     * Tasks can be scheduled to run after a certain delay or periodically.
+     *
+     *  ScheduledFuture line declares a static variable that will hold the result of a scheduled task.
+     *  The task will likely involve polling player names, based on the variable's name.
+     */
     private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     private static final int POLLING_INTERVAL_SECONDS = 2;
 
@@ -52,6 +61,12 @@ public class GameClient {
     private static ScheduledFuture<?> waitingForInteractive;
 
     //Waiting for start position
+
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * These methods sets scheduled future to polling session with a specific method, intial delay, interval and timeunit and starts the polling.
+     * This way we are able to stop the scheduledFuture later.
+     */
     public static void startWaitingForStartPosition() {
         pickStartPosition = executorService.scheduleAtFixedRate(GameClient::startPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
@@ -80,6 +95,10 @@ public class GameClient {
         waitingForAllPlayersToPickCards = executorService.scheduleAtFixedRate(GameClient::pollWaitingForPickedCards, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling for interactive cards.
+     */
     public static void pollInteractive(){
 
         boolean playerChoice;
@@ -116,6 +135,10 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling for all players to execute.
+     */
     public static void pollForExecution() {
 
         System.out.println("går vi i gang");
@@ -157,7 +180,7 @@ public class GameClient {
                 startWaitingForOpenShop();
             }
             else {
-                System.out.println("its my turn");
+                RoboRally.getInstance().getBoardView().getPlayersView().activateUpgradeButton(true);
             }
 
             waitingForAllPlayersToExecute.cancel(false);
@@ -171,6 +194,10 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling for all players to pick cards.
+     */
     public static void pollWaitingForPickedCards() {
         boolean temp;
 
@@ -206,12 +233,16 @@ public class GameClient {
             RoboRally.getAppController().getGameController().finishProgrammingPhase2();
             waitingForAllPlayersToPickCards.cancel(false);
         } else {
-            System.out.println("we are waiting for all player to pick cards");
+            RoboRally.getInstance().getBoardView().getPlayersView().activateWaitingGif(true);
         }
 
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling upgrade cards.
+     */
     public static void pollUpgradeCards() {
 
         boolean temp;
@@ -245,6 +276,10 @@ public class GameClient {
         }
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling for the shop to open
+     */
     public static void pollOpenShop() {
 
         boolean openShop;
@@ -278,7 +313,7 @@ public class GameClient {
 
 
         } else {
-            System.out.println("waiting for players before to buy");
+            RoboRally.getInstance().getBoardView().getPlayersView().activateUpgradeButton(false);
         }
 
     }
@@ -294,7 +329,10 @@ public class GameClient {
         return result;
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling for all players to have picked a start position.
+     */
     public static void pollAllPickedStartPosition() {
 
 
@@ -319,6 +357,12 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if all players have picked.
+     * @return
+     * @throws Exception
+     */
     public static boolean allPlayersPicked() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -330,7 +374,10 @@ public class GameClient {
         return Boolean.parseBoolean(result);
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling for start position.
+     */
     public static void startPosition() {
         int player;
         try {
@@ -360,6 +407,11 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Tells the server that a player has picked.
+     * @throws Exception
+     */
     public static void picked() throws Exception {
         int number = playerInfo.getPlayerId();
 
@@ -373,6 +425,13 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Adds start position
+     * @param pos
+     * @return
+     * @throws Exception
+     */
     public static int addStartPosition(int pos) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString("pos=" + pos))
@@ -384,6 +443,14 @@ public class GameClient {
         return Integer.parseInt(result);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Get the start position.
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws TimeoutException
+     */
     public static ArrayList<Integer> getStartPosition() throws InterruptedException, ExecutionException, TimeoutException {
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -401,6 +468,12 @@ public class GameClient {
         return new Gson().fromJson(result, listType);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Get the current player.
+     * @return
+     * @throws Exception
+     */
     public static int getCurrentPlayer() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -412,6 +485,12 @@ public class GameClient {
         return Integer.parseInt(result);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Tell the server to go to next player.
+     * @return
+     * @throws Exception
+     */
     public static String nextPlayer() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
@@ -423,14 +502,22 @@ public class GameClient {
         return result;
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Start player name polling
+     */
     //Polling for how many players that have connected to the lobby
     public static void startPlayerNamesPolling() {
 
         playerNamesPollingTask = executorService.scheduleAtFixedRate(GameClient::pollPlayerNames, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks iif all are connected
+     * @return
+     * @throws Exception
+     */
     private static boolean pollAllConnected() throws Exception {
         Boolean allConnected = false;
         allConnected = areAllConnected();
@@ -440,8 +527,10 @@ public class GameClient {
         }
         return allConnected;
     }
-
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling for player names.
+     */
     private static void pollPlayerNames() {
         try {
             ArrayList<String> playerNames = getPlayerNames();
@@ -492,10 +581,18 @@ public class GameClient {
         }
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * waiting for join button.
+     */
     public static void waitingForJoinButton() {
         waitingForJoinButtonPress = executorService.scheduleAtFixedRate(GameClient::pollJoinButton, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Polling for join button (start button.)
+     */
     public static void pollJoinButton() {
         boolean temp = false;
         try {
@@ -533,7 +630,12 @@ public class GameClient {
         }
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * tells to the server that a join button has been pressed.
+     * @return
+     * @throws Exception
+     */
     public static String pressJoinButton() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -547,6 +649,12 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if a join button has been pressed.
+     * @return
+     * @throws Exception
+     */
     public static boolean isJoinButton() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -559,7 +667,12 @@ public class GameClient {
         return Boolean.parseBoolean(result);
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * gets the lobby id.
+     * @return
+     * @throws Exception
+     */
     public static String getLobbyId() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -572,6 +685,14 @@ public class GameClient {
         return result;
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Tells that a player has connected to the server
+     * @param playerNum
+     * @param name
+     * @return
+     * @throws Exception
+     */
     public static boolean weConnect(int playerNum, String name) throws Exception {
         // Create a JSON object
 
@@ -592,7 +713,12 @@ public class GameClient {
         return result.equals("we connected");
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if all players are connected.
+     * @return
+     * @throws Exception
+     */
     public static boolean areAllConnected() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -604,6 +730,13 @@ public class GameClient {
         return Boolean.parseBoolean(result);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Instantiate game data.
+     * @param numberOfPlayers
+     * @return
+     * @throws Exception
+     */
     public static boolean instaGameData(int numberOfPlayers) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
@@ -615,6 +748,13 @@ public class GameClient {
         return result.equals("something");
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Adds map name to the server.
+     * @param mapName
+     * @return
+     * @throws Exception
+     */
     public static String addMapName(String mapName) throws Exception {
         String encodedMapName = URLEncoder.encode(mapName, StandardCharsets.UTF_8.toString());
         HttpRequest request = HttpRequest.newBuilder()
@@ -627,6 +767,12 @@ public class GameClient {
         return result;
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets the map name.
+     * @return
+     * @throws Exception
+     */
     public static String getMapName() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -638,7 +784,14 @@ public class GameClient {
         return result;
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Adds the game to the server.
+     * @param settings
+     * @param loadedGame
+     * @return
+     * @throws Exception
+     */
     public static String addGame(String[] settings, boolean loadedGame) throws Exception {
         // Convert settings array to JSON Array
         String settingsJsonArray = new ObjectMapper().writeValueAsString(settings);
@@ -659,6 +812,12 @@ public class GameClient {
         return result;
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets the game from the server.
+     * @return
+     * @throws Exception
+     */
     public static GameLobby getGame() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -675,6 +834,12 @@ public class GameClient {
         return gameLobby;
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if a game is running.
+     * @return
+     * @throws Exception
+     */
     public static Boolean isGameRunning() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -686,6 +851,12 @@ public class GameClient {
         return result;
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets all the player names.
+     * @return
+     * @throws Exception
+     */
     public static ArrayList<String> getPlayerNames() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -707,7 +878,12 @@ public class GameClient {
         return playerInfo.getPlayerId();
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sends over the start data to the server.
+     * @param playerStartData
+     * @throws Exception
+     */
     public static void sendStartData(PlayerStartData playerStartData) throws Exception {
 
         int playerNumber = playerInfo.getPlayerId();
@@ -729,7 +905,14 @@ public class GameClient {
 
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sends over the upgrade shop to the server.
+     * @param cards
+     * @param nextPlayer
+     * @param currentPlayer
+     * @throws Exception
+     */
     public static void sendUpgradeCardsShop(Command[] cards, int nextPlayer, int currentPlayer) throws Exception {
         UpgradeCardsShopRequest requestObj = new UpgradeCardsShopRequest();
         requestObj.setCards(cards);
@@ -752,6 +935,12 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sends over the bought upgrade cards to the server
+     * @param command
+     * @throws Exception
+     */
     public static void sendBoughtUpgradeCards(Command[] command) throws Exception {
 
         int playerNumber = playerInfo.getPlayerId();
@@ -778,7 +967,12 @@ public class GameClient {
         startWaitingForUpgradeCards();
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets the turn number.
+     * @return
+     * @throws Exception
+     */
     public static int turnNumber() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -790,6 +984,12 @@ public class GameClient {
         return result;
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if all player have upgraded.
+     * @return
+     * @throws Exception
+     */
     public static Boolean allPlayersUpgraded() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -801,6 +1001,12 @@ public class GameClient {
         return result;
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Cahnges the phase of the game state.
+     * @param phase
+     * @throws Exception
+     */
     public static void changePhase(Phase phase) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -818,6 +1024,12 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sends over the players pulled cards.
+     * @param cards
+     * @throws Exception
+     */
     public static void sendPlayersPulledCards(Command[][] cards) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -835,6 +1047,12 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sends over the players picked cards
+     * @param playerPicked
+     * @throws Exception
+     */
     public static void sendOverPickedCards(Command[] playerPicked) throws Exception {
         int playerNumber = playerInfo.getPlayerId();
 
@@ -858,6 +1076,12 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Resets the ready list.
+     * @return
+     * @throws Exception
+     */
     public static String resetReadyList() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -871,6 +1095,12 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Resets upgrade list.
+     * @return
+     * @throws Exception
+     */
     public static String resetUpgradeList() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -884,6 +1114,12 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Says that a player is ready to reset.
+     * @return
+     * @throws Exception
+     */
     public static String readyToReset() throws Exception {
         int playerNumber = playerInfo.getPlayerId();
 
@@ -897,6 +1133,12 @@ public class GameClient {
         return "something";
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Tells that a player is ready.
+     * @return
+     * @throws Exception
+     */
     public static String readyReady() throws Exception {
         int playerNumber = playerInfo.getPlayerId();
 
@@ -912,7 +1154,16 @@ public class GameClient {
         return "something";
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sends over player position.
+     * @param playerNumber
+     * @param x
+     * @param y
+     * @param heading
+     * @param currUpgrade
+     * @throws Exception
+     */
     public static void sendPosition(int playerNumber, int x, int y, Heading heading, int currUpgrade) throws Exception {
         Map<String, Object> values = new HashMap<String, Object>() {{
             put("playerNumber", playerNumber);
@@ -939,6 +1190,12 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * gets the current upgrade player.
+     * @return
+     * @throws Exception
+     */
     public static int currentUpgradePlayer() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -950,6 +1207,13 @@ public class GameClient {
         return result;
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sets current upgrade player.
+     * @param player
+     * @return
+     * @throws Exception
+     */
     public static boolean setCurrentUpgradePlayer(int player) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
@@ -961,6 +1225,12 @@ public class GameClient {
         return result.equals("something");
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Removes current program.
+     * @return
+     * @throws Exception
+     */
     public static String removeCurrProgram() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -973,6 +1243,12 @@ public class GameClient {
         return "something";
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if a game is loaded.
+     * @return
+     * @throws Exception
+     */
     public static boolean isLoadedGame() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -986,6 +1262,12 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Get the current loaded.
+     * @return
+     * @throws Exception
+     */
     public static int getCurrLoaded() throws Exception{
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -999,6 +1281,12 @@ public class GameClient {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sets the game state.
+     * @param load
+     * @throws Exception
+     */
     public static void setGameState(Load load) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(load);
@@ -1013,6 +1301,13 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sets checkpoints for a player.
+     * @param playerNumber
+     * @return
+     * @throws Exception
+     */
     public static boolean setCheckpointForPlayer(int playerNumber) throws Exception{
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -1027,6 +1322,14 @@ public class GameClient {
         return Boolean.parseBoolean(result);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * SEts the player heading of a player, used for interactive cards.
+     * @param heading
+     * @param playerNumber
+     * @return
+     * @throws Exception
+     */
     public static boolean setPlayerHeadingInteractive(Heading heading, int playerNumber) throws Exception{
         Map<String, Object> data = new HashMap<>();
         data.put("heading", heading);
@@ -1047,8 +1350,13 @@ public class GameClient {
         return result.equals("bob");
     }
 
-
-    public static boolean isPlayerChoice() throws Exception{
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Has a player made a choice, used interactive cards.
+     * @return
+     * @throws Exception
+     */
+    public static boolean isPlayerChoice() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -1059,23 +1367,6 @@ public class GameClient {
         boolean result = Boolean.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
         return result;
 
-    }
-
-    public static Command getPlayerCommandInteractive() throws Exception{
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create("http://localhost:8080/getPlayerCommandInteractive"))
-                .build();
-        CompletableFuture<HttpResponse<String>> response =
-                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        Command command = objectMapper.readValue(result, Command.class);
-
-        return command;
     }
 
 

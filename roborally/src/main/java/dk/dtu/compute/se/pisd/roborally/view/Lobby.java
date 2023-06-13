@@ -5,11 +5,8 @@ import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
 import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
-import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
-import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -29,12 +26,13 @@ public class Lobby {
     private Map<String, HBox> lobbyHBoxMap = new HashMap<>();
 
     private Map<String, VBox> specificLobbyLabels = new HashMap<>();
+    private Stage createGameStage;
 
-    Stage stage;
+    private Stage stage;
     VBox lobbyLayout;
-    Stage waitStage;
     HBox window;
     VBox lobbyView;
+    Stage waitStage;
     VBox chatView;
     VBox lobbyList;
     VBox lobbyVbox;
@@ -43,6 +41,7 @@ public class Lobby {
     HBox lobbyHbox;
     ScrollPane lobbySP;
     BorderPane rootLayout;
+    Node currentLeft;
     private LobbyWindow lobbyWindow;
     private VBox joinWaitWindow;
     String answer;
@@ -158,10 +157,11 @@ public class Lobby {
     public void openJoinGame(GameLobby gameLobby) throws Exception {
 
         // Create new Stage for this scene
-        Stage createGameStage = new Stage();
+        createGameStage = new Stage();
 
         // Create a new BorderPane layout
-        rootLayout = new BorderPane();
+        if(rootLayout == null) rootLayout = new BorderPane();
+
 
         // Create a new VBox layout
         VBox createGameLayout = new VBox(10);
@@ -216,7 +216,8 @@ public class Lobby {
 
 
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput);
-        rootLayout.setLeft(createGameLayout);
+        rootLayout.setLeft(getLeft(gameLobby.getGameSettings()));
+
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
         createGameStage.setScene(createGameScene);
@@ -240,10 +241,10 @@ public class Lobby {
     private void openCreateGameScene() {
 
         // Create new Stage for this scene
-        Stage createGameStage = new Stage();
+        createGameStage = new Stage();
 
         // Create a new BorderPane layout
-        rootLayout = new BorderPane();
+        if(rootLayout == null) rootLayout = new BorderPane();
 
         // Create a new VBox layout
         VBox createGameLayout = new VBox(10);
@@ -369,6 +370,7 @@ public class Lobby {
 
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
         rootLayout.setLeft(createGameLayout);
+        currentLeft = createGameLayout;
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
 
@@ -380,10 +382,10 @@ public class Lobby {
     private void openCreateGameSceneFromLoad(String name, String[] playerNames, String mapName) {
 
         // Create new Stage for this scene
-        Stage createGameStage = new Stage();
+        createGameStage = new Stage();
 
         // Create a new BorderPane layout
-        rootLayout = new BorderPane();
+        if(rootLayout == null) rootLayout = new BorderPane();
 
         // Create a new VBox layout
         VBox createGameLayout = new VBox(10);
@@ -515,6 +517,7 @@ public class Lobby {
 
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
         rootLayout.setLeft(createGameLayout);
+        currentLeft = createGameLayout;
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
 
@@ -740,8 +743,36 @@ public class Lobby {
         /*if(gameLobby.getGameSettings().getPlayerNames().size() == gameLobby.getGameSettings().getNumberOfPlayers()){
            startGame.setVisible(true);
         }*/
-        //rootLayout.setRight(specificLobbyLayout);
+        rootLayout.setRight(specificLobbyLayout);
+        rootLayout.setLeft(getLeft(gameLobby.getGameSettings()));
 
+    }
+    private VBox getLeft(GameSettings gameSettings){
+        VBox createGameLayout = new VBox();
+        // Create the form inputs
+        Label gameNameLabel = new Label("Name of the game:");
+        TextField gameNameInput = new TextField();
+        gameNameInput.setText(gameSettings.getGameName());
+        gameNameInput.setDisable(true);
+
+
+        Label creatorNameLabel = new Label("Creator name:");
+        TextField creatorNameInput = new TextField();
+        creatorNameInput.setText(gameSettings.getCreatorName());
+        creatorNameInput.setDisable(true);
+
+        Label numberOfPlayersLabel = new Label("How Many Players:");
+        TextField numberOfPlayersInput = new TextField();
+        numberOfPlayersInput.setText(gameSettings.getNumberOfPlayers()+ "");
+        numberOfPlayersInput.setDisable(true);
+
+        Label boardToPlayLabel = new Label("What board to play:");
+        TextField boardsToPlayInput = new TextField();
+        boardsToPlayInput.setText(gameSettings.getBoardToPlay());
+        boardsToPlayInput.setDisable(true);
+
+        createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput);
+        return createGameLayout;
     }
 
     public void showStartButton(String lobbyId){
@@ -878,8 +909,8 @@ public class Lobby {
      * Method to close the lobby window.
      * @author Mikkel Jürs, s224279@student.dtu.dk
      */
-    private void close(){
-        stage.close();
+    public void closeCreateGameStage(){
+        createGameStage.close();
     }
 
     public Map<String, GameLobby> getGameLobbyMap() {

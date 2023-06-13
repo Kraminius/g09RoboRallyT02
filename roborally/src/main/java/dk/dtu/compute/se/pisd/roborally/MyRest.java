@@ -21,13 +21,20 @@ public class MyRest {
 
     @Autowired
     GameRepository gameRepository;
-
-
     @Autowired
     GameInfo gameInfo;
 
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     *
+     * Handles the connection of a player to the game server.
+     * This method is responsible for processing the payload containing the player information
+     * and updating the game data accordingly.
+     *
+     * @param payload
+     * @return
+     */
     @PostMapping(value = "/connected")
     public ResponseEntity<String> connector(@RequestBody Map<String, Object> payload){
         int playerNum = (int) payload.get("playerNum");
@@ -41,6 +48,13 @@ public class MyRest {
         return ResponseEntity.ok().body("we connected");
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     *  Checks if all players are connected to the game server.
+     *  This method verifies whether all players have successfully connected to the game server.
+     *
+     * @return
+     */
 
     @GetMapping(value = "/allConnected")
     public ResponseEntity<Boolean> allConnected() {
@@ -48,12 +62,22 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     *  Retrieves the lobby ID from the game server.
+     * @return
+     */
     @GetMapping(value = "/getLobbyId")
     public ResponseEntity<String> getLobbyId() {
         String temp = gameDataRep.gameData.getId();
         return ResponseEntity.ok().body(temp);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * It sets the "joinButtonPressed" boolean in the gameInfo object to true, indicating that the button has been pressed.
+     * @return
+     */
     @PostMapping (value = "/pressJoinButton")
     public ResponseEntity<String> pressJoinButton() {
 
@@ -61,6 +85,11 @@ public class MyRest {
         return ResponseEntity.ok().body("hej");
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Returns the the boolean that tells if join button is pressed or not.
+     * @return
+     */
     @GetMapping (value = "/isJoinButton")
     public ResponseEntity<Boolean> isJoinButton() {
 
@@ -68,7 +97,12 @@ public class MyRest {
         return ResponseEntity.ok().body(gameInfo.isJoinButtonPressed());
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * This method instantiates the gameData object that contains current game information.
+     * @param playerNumStr
+     * @return
+     */
     @PostMapping (value = "/instaGameData")
     public ResponseEntity<Integer> instaGameData(@RequestParam("numberOfPlayers") String playerNumStr) {
         int numberOfPlayers = Integer.parseInt(playerNumStr);
@@ -79,13 +113,23 @@ public class MyRest {
     }
 
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * This method returns the player number.
+     * @return
+     */
     @GetMapping(value = "/getPlayerNumber")
     public ResponseEntity<Integer> allConnectedNot() {
         Integer temp = gameDataRep.playerNumber();
         return ResponseEntity.ok().body(temp);
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Adds the mapname to game settings.
+     * @param map
+     * @return
+     */
     @PostMapping (value = "/addMapName")
     public ResponseEntity<Integer> instaGameName(@RequestParam("mapName") String map) {
         gameDataRep.gameData.getGameSettings().setGameName(map);
@@ -93,6 +137,11 @@ public class MyRest {
         return ResponseEntity.ok().body(5);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Get the map name from game settings
+     * @return
+     */
     @GetMapping(value = "/getMapName")
     public ResponseEntity<String> getMapName() {
 
@@ -100,6 +149,12 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Adds the game to server and creating instatiating and creating game settings.
+     * @param payload
+     * @return
+     */
     @PostMapping(value = "/addGame")
     public ResponseEntity<String> addGame(@RequestBody Map<String, Object> payload){
 
@@ -116,7 +171,11 @@ public class MyRest {
         return ResponseEntity.ok("hej");
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets the gameLobby object.
+     * @return
+     */
     @GetMapping(value = "/getGameLobby", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GameLobby> getGameLobby(){
         GameLobby gameLobby = gameDataRep.convertGameInfoToGameLobby();
@@ -132,6 +191,11 @@ public class MyRest {
         return new ResponseEntity.ok("test");
     }*/
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets all the player names.
+     * @return
+     */
     @GetMapping(value = "/getAllPlayers")
     public ResponseEntity<ArrayList<String>> getPlayerNames(){
 
@@ -141,8 +205,11 @@ public class MyRest {
     }
 
 
-
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if there is already a gameRunning, so that the lobby can see it.
+     * @return
+     */
     @GetMapping(value = "/isGameRunning")
     public ResponseEntity<Boolean> isGameRunning(){
 
@@ -154,6 +221,11 @@ public class MyRest {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if someone opened the upgrade shop.
+     * @return
+     */
     @GetMapping(value = "/isUpgradeShopOpen")
     public ResponseEntity<Boolean> isUpgradeShopOpen(){
 
@@ -163,7 +235,11 @@ public class MyRest {
 
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets the current player.
+     * @return
+     */
     @GetMapping(value = "/getCurrentPlayer")
     public ResponseEntity<Integer> getCurrentPlayer(){
 
@@ -172,6 +248,11 @@ public class MyRest {
 
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sets the next player based on player number. So the next player is current player + 1.
+     * @return
+     */
     @PostMapping(value = "/nextPlayer")
     public ResponseEntity<String> nextPlayer(){
 
@@ -182,6 +263,12 @@ public class MyRest {
         return ResponseEntity.ok("hej");
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Adds a player start position to gameinfo object.
+     * @param pos
+     * @return
+     */
     @PostMapping (value = "/addStartPosition")
     public ResponseEntity<Integer> addStartPosition(@RequestParam("pos") int pos) {
         gameInfo.addStartPosition(pos);
@@ -189,6 +276,11 @@ public class MyRest {
         return ResponseEntity.ok().body(5);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets the start position from all players.
+     * @return
+     */
     @GetMapping(value = "/getStartPosition")
     public ResponseEntity<ArrayList<Integer>> getStartPosition(){
 
@@ -226,6 +318,13 @@ public class MyRest {
         return ResponseEntity.ok().body(game);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Send start data of a player to the game state.
+     * @param playerDataString
+     * @param playerNumber
+     * @return
+     */
     @PostMapping (value = "/sendStartData/{playerNumber}")
     public ResponseEntity<GameState> sendStartData(@RequestBody String playerDataString, @PathVariable("playerNumber") int playerNumber){
 
@@ -248,19 +347,35 @@ public class MyRest {
     }
 
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if all players picked.
+     * @return
+     */
     @GetMapping(value = "/allPlayersPicked")
     public ResponseEntity<Boolean> allPlayersPicked(){
         Boolean temp = gameDataRep.checkerAllPlayersPicked();
         return ResponseEntity.ok().body(temp);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Tells the game data that this specific player has picked their start position
+     * @param playerNumber
+     * @return
+     */
     @PostMapping(value = "/picked/{playerNumber}")
     public ResponseEntity<Boolean> picked(@PathVariable("playerNumber") int playerNumber){
         gameDataRep.gameData.getAllPickedList()[playerNumber] = true;
         return ResponseEntity.ok().body(true);
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sends the upgradeshop and saves it in gamedata.
+     * @param request
+     * @return
+     */
     @PostMapping(value = "/sendUpgradeCardsShop")
     public ResponseEntity<Boolean> sendUpgradeCardsShop(@RequestBody UpgradeCardsShopRequest request){
         gameDataRep.gameState.setUpgradeShopCards(request.getCards());
@@ -290,7 +405,11 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets turn number
+     * @return
+     */
     @GetMapping(value = "/turnNumber")
     public ResponseEntity<Integer> turnNumber(){
 
@@ -299,6 +418,13 @@ public class MyRest {
         return ResponseEntity.ok().body(turn);
 
     }
+
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Send the bought upgrade cards to the game state.
+     * @param playerUpgradeCards
+     * @return
+     */
     @PostMapping(value = "/sendBoughtUpgradeCard")
     public ResponseEntity<Boolean> sendBoughtUpgradeCard(@RequestBody SendUpgradeCards playerUpgradeCards){
         Command[][] newUpgradeCard = gameDataRep.gameState.getPlayerUpgradeCards();
@@ -314,6 +440,11 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if all players has upgraded in a round.
+     * @return
+     */
     @GetMapping(value = "/allPlayersUpgraded")
     public ResponseEntity<Boolean> allPlayersUpgraded(){
 
@@ -326,6 +457,12 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Changes the phase of the game state.
+     * @param phase
+     * @return
+     */
     @PostMapping(value = "/changePhase")
     public ResponseEntity<Boolean> changePhase(@RequestBody Phase phase) {
         System.out.println("Changed game state to " + phase.name());
@@ -335,6 +472,12 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sends over the 9 pulled cards and saves it in the game state.
+     * @param pulledCards
+     * @return
+     */
     @PostMapping(value = "/sendPlayersPulledCards")
     public ResponseEntity<Boolean> sendPlayersPulledCards(@RequestBody Command[][] pulledCards) {
 
@@ -345,6 +488,12 @@ public class MyRest {
     }
 
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * sends over the 0-5 picked programming cards.
+     * @param info
+     * @return
+     */
     @PostMapping(value = "/sendOverPickedCards")
     public ResponseEntity<Boolean> sendPlayersPulledCards(@RequestBody SendCurrentCards info) {
 
@@ -363,6 +512,11 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Resets the ready list.
+     * @return
+     */
     @PostMapping(value = "/resetReadyList")
     public ResponseEntity<Boolean> resetReadyList() {
 
@@ -373,7 +527,12 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Tells that a player is ready to reset the ready list and they have already updated their data on the client side.
+     * @param playerNumber
+     * @return
+     */
     @PostMapping(value = "/readyToReset/{playerNumber}")
     public ResponseEntity<Boolean> readyToReset(@PathVariable int playerNumber) {
 
@@ -386,6 +545,12 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Tells that a player is ready.
+     * @param playerNumber
+     * @return
+     */
     @PostMapping(value = "/readyReady/{playerNumber}")
     public ResponseEntity<Boolean> readyReady(@PathVariable int playerNumber) {
 
@@ -400,6 +565,12 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * A players sends in their position to the game state.
+     * @param payload
+     * @return
+     */
     @PostMapping(value = "/sendPosition")
     public ResponseEntity<Boolean> sendPosition(@RequestBody Map<String, Object> payload) {
         int playerNumber = (int) payload.get("playerNumber");
@@ -422,6 +593,11 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Resets upgrade ready list.
+     * @return
+     */
     @PostMapping(value = "/resetUpgradeList")
     public ResponseEntity<Boolean> resetUpgraddeList() {
 
@@ -432,6 +608,12 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sets the player who is currently upgrading.
+     * @param player
+     * @return
+     */
     @PostMapping (value = "/setCurrentUpgradePlayer")
     public ResponseEntity<Integer> setCurrentUpgradePlayer(@RequestParam("player") String player) {
         int numberPlayer = Integer.parseInt(player);
@@ -441,6 +623,11 @@ public class MyRest {
         return ResponseEntity.ok().body(5);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Gets the current upgrade player.
+     * @return
+     */
     @GetMapping(value = "/currentUpgradePlayer")
     public ResponseEntity<Integer> currentUpgradePlayer(){
 
@@ -450,6 +637,11 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Removes the current programs for palyers.
+     * @return
+     */
     @PostMapping (value = "/removeCurrProgram")
     public ResponseEntity<Integer> removeCurrProgram() {
 
@@ -488,6 +680,11 @@ public class MyRest {
         return ResponseEntity.ok().body("gameSaved");
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Get save names from save files.
+     * @return
+     */
     @GetMapping(value = "/getSaveNames")
     public ResponseEntity<String[]> getSaveNames() {
 
@@ -498,6 +695,11 @@ public class MyRest {
     }
 
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Checks if a game is loaded or not.
+     * @return
+     */
     @GetMapping(value = "/isLoadedGame")
     public ResponseEntity<Boolean> isLoadedGame() {
 
@@ -506,6 +708,11 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Get the current loaded.
+     * @return
+     */
     @GetMapping(value = "/getCurrLoaded")
     public ResponseEntity<Integer> getCurrLoaded() {
 
@@ -516,6 +723,13 @@ public class MyRest {
         return ResponseEntity.ok().body(temp);
     }
 
+
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sets the game state from a load object.
+     * @param load
+     * @return
+     */
     @PostMapping (value = "/setGameState")
     public ResponseEntity<String> saveGame(@RequestBody Load load) {
 
@@ -524,6 +738,12 @@ public class MyRest {
         return ResponseEntity.ok().body("gameSaved");
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Sets the checkpoints for a player
+     * @param playerNumberString
+     * @return
+     */
     @PostMapping (value = "/setCheckpointsForPlayer")
     public ResponseEntity<Boolean> setCheckpointsForPlayer(@RequestBody String playerNumberString) {
 
@@ -540,12 +760,23 @@ public class MyRest {
     }
 
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Used for interactive cards. Has a player made choice concernings their interactive card.
+     * @return
+     */
     @GetMapping(value = "/isPlayerChoice")
     public ResponseEntity<Boolean> isPlayerChoice() {
 
         return ResponseEntity.ok(gameInfo.isPlayerChosen());
     }
 
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Used for interactive cards, sets the heading for a player.
+     * @param playerData
+     * @return
+     */
     @PostMapping (value = "/setPlayerHeadingInteractive")
     public ResponseEntity<String> setPlayerHeadingInteractive(@RequestBody Map<String, Object> playerData) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -558,11 +789,7 @@ public class MyRest {
         return ResponseEntity.ok().body("bob");
     }
 
-    /*@GetMapping (value = "/getPlayerCommandInteractive")
-    public ResponseEntity<Command> getPlayerCommandInteractive() {
-        //Command command = gameInfo.getCommandChosen();
-        return ResponseEntity.ok().body(command);
-    }*/
+
 
 
 }
