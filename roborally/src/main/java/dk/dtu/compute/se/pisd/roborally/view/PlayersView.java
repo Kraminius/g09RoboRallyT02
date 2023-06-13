@@ -22,6 +22,7 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
@@ -57,8 +58,17 @@ public class PlayersView extends TabPane implements ViewObserver {
     public void updateView(Subject subject) {
         if (subject == board) {
             Player current = board.getCurrentPlayer();
-            this.getSelectionModel().select(board.getPlayerNumber(current));
+            //this.getSelectionModel().select(board.getPlayerNumber(current));
         }
     }
 
+    public void disablePlayerViews(){
+        int exceptionPlayerID = GameClient.getPlayerNumber();
+        for(int i = 0; i < playerViews.length; i++){
+            if(i != exceptionPlayerID) playerViews[i].setDisable(true);
+            else{
+                this.getSelectionModel().select(exceptionPlayerID);
+            }
+        }
+    }
 }

@@ -1,11 +1,9 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
-import com.beust.ah.A;
-import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
+import dk.dtu.compute.se.pisd.roborally.controller.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.EnergyField;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Gear;
-import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Laser;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Push;
 
 import java.util.ArrayList;

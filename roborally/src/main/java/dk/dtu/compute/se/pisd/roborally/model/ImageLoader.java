@@ -28,6 +28,7 @@ public class ImageLoader {
     public Image[] push;
     public Image[] players;
     public Image winner;
+    public Image waiting;
 
     private static ImageLoader loader;
 
@@ -84,8 +85,8 @@ public class ImageLoader {
         blueBelts[2] = loadImage("blueTurnRight.png");
         blueBelts[3] = loadImage("tBlue1.png");
         blueBelts[4] = loadImage("tBlue2.png");
-        blueBelts[5] = loadImage("tBlue3.png");
-        blueBelts[6] = loadImage("tBlue4.png");
+        blueBelts[5] = loadImage("tBlue4.png");
+        blueBelts[6] = loadImage("tBlue3.png");
         gear = new Image[2];
         gear[0] = loadImage("gearLeft.png");
         gear[1] = loadImage("gearRight.png");
@@ -93,6 +94,7 @@ public class ImageLoader {
         push[0] = loadImage("push24.png");
         push[1] = loadImage("push135.png");
         winner = loadImage("robot-dancing.gif");
+        waiting = loadImage("waiting.gif");
     }
 
 

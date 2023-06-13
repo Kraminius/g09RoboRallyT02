@@ -21,6 +21,9 @@
  */
 package dk.dtu.compute.se.pisd.roborally.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.view.PlayerView;
 import javafx.scene.control.Label;
@@ -42,6 +45,8 @@ public class Player extends Subject {
     final public static int NO_CARDS = 9;
     final public static int NO_UPGRADE_CARDS = 6;
 
+
+
     final public Board board;
 
     private int id;
@@ -59,7 +64,7 @@ public class Player extends Subject {
     private PlayerView playerView;
 
     private CommandCardField[] program;
-    private CommandCardField[] cards;
+    private CommandCardField[] cards; //Command cards
     private CommandCardField[] upgradeCards;
 
     private ArrayList<CommandCard> cardDeck;
@@ -70,6 +75,7 @@ public class Player extends Subject {
     private boolean[] checkpointsReached;
 
     private PowerUps powerUps;
+
 
     public Player(@NotNull Board board, String color, @NotNull String name, @NotNull int id) {
         this.board = board;
@@ -214,7 +220,7 @@ public class Player extends Subject {
         return checkpointsReached;
     }
     //Method to change their checkpoints reached
-    public void setCheckpointReadhed(int Checkpoint, boolean state) {
+    public void setCheckpointReached(int Checkpoint, boolean state) {
         checkpointsReached[Checkpoint] = state;
     }
 
@@ -295,5 +301,7 @@ public class Player extends Subject {
     public void setCards(CommandCardField[] cards) {
         this.cards = cards;
     }
+
+
 
 }

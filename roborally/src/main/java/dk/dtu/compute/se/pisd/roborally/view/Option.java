@@ -62,11 +62,20 @@ public class Option {
         stage.setOnCloseRequest(Event::consume);
         stage.showAndWait();
     }
-    public void getOKPressed(){
+    public void getOKPressed(String text){
         VBox panel = new VBox();
         panel.setPadding(new Insets(20, 20 ,20, 20));
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 14");
+        label.setAlignment(Pos.CENTER);
+        label.setWrapText(true);
+        label.setMaxWidth(300);
         Button okButton = new Button("OK");
         okButton.setOnAction(e -> close());
+        panel.getChildren().addAll(label, okButton);
+        panel.setAlignment(Pos.CENTER);
+        panel.setSpacing(10);
+        window.getChildren().add(panel);
         show();
     }
     public boolean getYESNO(String text){

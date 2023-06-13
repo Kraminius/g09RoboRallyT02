@@ -21,7 +21,8 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
-import dk.dtu.compute.se.pisd.roborally.Exceptions.OutsideBoardException;
+import dk.dtu.compute.se.pisd.roborally.GameClient;
+import dk.dtu.compute.se.pisd.roborally.controller.Exceptions.OutsideBoardException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.model.SpaceElements.Wall;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
@@ -51,6 +52,8 @@ public class GameController {
     public AntennaHandler antennaHandler = new AntennaHandler();
 
    private List<Player> sequence;
+
+   private boolean once = true;
 
     /**
      * @param board the board which the game is played on
@@ -86,11 +89,14 @@ public class GameController {
     }
 
     public void startProgrammingPhase() {
+        System.out.println("kommer vi overhoved her");
         board.setPhase(Phase.PROGRAMMING);
         //board.setCurrentPlayer(sequence.get(0));
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
         setGameStateUpgradeCards();
+
+        Command[][] playersPulledCards = new Command[board.getPlayersNumber()][9];
 
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -106,11 +112,48 @@ public class GameController {
                 }
                 for (int j = 0; j < Player.NO_CARDS; j++) {
                     CommandCardField field = player.getCardField(j);
-                    field.setCard(drawTopCard(player));
+                    CommandCard commandCard = drawTopCard(player);
+                    field.setCard(commandCard);
+                    playersPulledCards[i][j] = commandCard.command;
                     field.setVisible(true);
                 }
             }
         }
+
+        /*for (int i = 0; i < playersPulledCards.length; i++) {
+            for (int j = 0; j < playersPulledCards[i].length; j++) {
+                Command command = playersPulledCards[i][j];
+                if (command != null) {
+                    System.out.println( "Player "+i+" pulledCards: " + command.toString() + " " + j);
+                } else {
+                    System.out.println("Null command at [" + i + "][" + j + "]");
+                }
+            }
+        }*/
+
+        int thisPlayer = GameClient.getPlayerNumber();
+        int currPlayer = antennaHandler.findPlayerSequence(board.getAntenna(), board).get(0).getId() - 1;
+
+        if(thisPlayer == currPlayer){
+
+            System.out.println("We are sending the pulled cards");
+
+            try {
+                GameClient.sendPlayersPulledCards(playersPulledCards);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        try {
+            GameClient.resetReadyList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        GameClient.startWaitingForAllPlayersToPickCards();
+
+
     }
 
     public void setGameStateUpgradeCards(){
@@ -203,11 +246,6 @@ public class GameController {
         Collections.shuffle(upgradeDeck);
     }
 
-
-
-
-
-
     /**
      * @Author Freja Egelund Grønnemose s224286@dtu.dk
      * This method fetches a players two ArrayLists - discardPile & cardDeck.
@@ -275,8 +313,45 @@ public class GameController {
             }
         }
     }
+
+    public void sendingOverPickedCards(){
+
+        int thisPlayer = GameClient.getPlayerNumber();
+        Command[] currentProgram = new Command[5];
+
+        for (int i = 0; i < 5; i++) {
+            if(board.getPlayer(thisPlayer).getProgramField(i).getCard() != null){
+                currentProgram[i] = board.getPlayer(thisPlayer).getProgramField(i).getCard().command;
+                System.out.println(currentProgram[i]);
+            }
+
+        }
+
+        try {
+            GameClient.sendOverPickedCards(currentProgram);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            //GameClient.readyReady();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        //CommandCard card = currentPlayer.getProgramField(step).getCard();
+
+    }
+
     // XXX: V2
     public void finishProgrammingPhase() {
+
+        sendingOverPickedCards();
+    }
+
+
+    public void finishProgrammingPhase2() {
 
         discardUnusedCards();
         //Checks who have priority
@@ -345,6 +420,27 @@ public class GameController {
 
     // XXX: V2
     private void executeNextStep() {
+
+
+        //Testing
+        if(once){
+            sequence = antennaHandler.antennaPriority(board);
+            board.setCurrentPlayer(board.getPlayer(sequence.get(0).getId()-1));
+            System.out.println("why is it not starting?");
+            //GameClient.startWaitingForExecution();
+
+            try {
+                GameClient.resetUpgradeList();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            once = false;
+
+
+        }
+
+
         int step = board.getStep();
         Player currentPlayer = board.getCurrentPlayer();
         sequence.remove(0);
@@ -372,6 +468,33 @@ public class GameController {
 
                     } else {
                         //Probably upgrade phase here?
+                        //startUpgradePhase();
+                        try {
+                            GameClient.readyReady();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        //Sending over positions to server
+                        //Just here for now
+                        List<Player> liste =antennaHandler.findPlayerSequence(board.getAntenna(), board);
+                        for (int i = 0; i < liste.size() ; i++) {
+
+                            try {
+                                GameClient.sendPosition(liste.get(i).getId()-1, liste.get(i).getSpace().getX(), liste.get(i).getSpace().getY(), liste.get(i).getHeading(), liste.get(0).getId()-1);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+
+                        }
+                        //Removing currProgram
+                        //Just here for now
+                        try {
+                            GameClient.removeCurrProgram();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
+
                         startUpgradePhase();
                     }
                 }else{
@@ -778,9 +901,9 @@ public class GameController {
         if (fromSpace.getX() < toSpace.x) {
             directionHeadingTo = Heading.EAST;
             directionHeadingFrom = Heading.WEST;
-        } else if (fromSpace.getX() > toSpace.x) {
-            directionHeadingTo = Heading.WEST;
-            directionHeadingFrom = Heading.EAST;
+        }  else if (fromSpace.getX() > toSpace.x) {
+            directionHeadingTo = Heading.EAST;
+            directionHeadingFrom = Heading.WEST;
         } else if (fromSpace.getY() < toSpace.getY()) {
             directionHeadingTo = Heading.NORTH;
             directionHeadingFrom = Heading.SOUTH;
@@ -791,7 +914,7 @@ public class GameController {
 
         if (toSpace.getWallHeading() != null && directionHeadingTo != null) {
             for (int i = 0; i < toSpace.getWallHeading().size(); i++) {
-                if (toSpace.getWallHeading().get(i) == directionHeadingFrom) {
+                if (toSpace.getWallHeading().get(i) == directionHeadingTo) {
                     obstacle = true;
                 }
             }
@@ -799,7 +922,7 @@ public class GameController {
 
         if (fromSpace.getWallHeading() != null && directionHeadingFrom != null) {
             for (int i = 0; i < fromSpace.getWallHeading().size(); i++) {
-                if (fromSpace.getWallHeading().get(i) == directionHeadingTo) {
+                if (fromSpace.getWallHeading().get(i) == directionHeadingFrom) {
                     obstacle = true;
                 }
             }
@@ -886,6 +1009,20 @@ public class GameController {
         }
     }
 
+
+    public void allPlayerHaveJoinedInstantiate(){
+        int playerNumber = GameClient.getPlayerNumber();
+        int temp = antennaHandler.findPlayerSequence(board.getAntenna(), board).get(0).getId()-1;
+        if(playerNumber != temp){
+            GameClient.startWaitingForOpenShop();
+        }
+        else{
+            System.out.println("its my turn");
+        }
+    }
+
+
+
     /**
      * @author Tobias Gørlyk     s223271.dtu.dk
      * Activates the belts on the board for all players one at a time but right after each other. While a player is on a belt they don't have any push collision.
@@ -950,10 +1087,10 @@ public class GameController {
             if (space.getElement().getCheckpoint() != null) {
                 number = space.getElement().getCheckpoint().getNumber();
                 if (number == 1) {
-                    player.setCheckpointReadhed(0, true);
+                    player.setCheckpointReached(0, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 } else if (checkpointStatus[(number - 2)]) {
-                    player.setCheckpointReadhed(number - 1, true);
+                    player.setCheckpointReached(number - 1, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
                 }
             }
@@ -1153,6 +1290,7 @@ public class GameController {
     }
 
 
+
 //region UPGRADE CARD SECTION
 
     /**
@@ -1233,9 +1371,91 @@ public class GameController {
         } //No card at that spot, so nothing happens.
     }
 
-    public void openUpgradeShop(){
-        if(upgradeShop == null) upgradeShop = new UpgradeShop();
-        upgradeShop.openShop(board, this);
+    public int testSeq(){
+        List<Player> players = antennaHandler.findPlayerSequence(board.getAntenna(), board);
+
+        return players.get(0).getId()-1;
+    }
+
+    public void openUpgradeShop() throws Exception {
+        if(upgradeShop == null) upgradeShop = new UpgradeShop(this, board);
+
+        int turnNumber = GameClient.turnNumber();
+
+        if(turnNumber != 0){
+            int playerTurn = GameClient.getCurrentPlayer();
+        }
+
+        List<Player> players = antennaHandler.findPlayerSequence(board.getAntenna(), board);
+
+        int playerTurn = players.get(turnNumber).getId()-1;
+
+
+        CommandCardField[] cardFields = upgradeShop.getCards(board.getPlayersNumber()-turnNumber);
+        upgradeShop.setCardsForRound(cardFields);
+
+
+
+        System.out.println("Its this player's turn: " + playerTurn);
+
+        upgradeShop.openShopFor(turnNumber); //You can use this to say which player should open. Right now it's just player 2.
+
+
+        Command[] temp = new Command[upgradeShop.getCardsToBuy().length];
+
+        for (int i = 0; i < upgradeShop.getCardsToBuy().length; i++) {
+            temp[i] = upgradeShop.getCardsToBuy()[i].getField().getCard().command;
+        }
+
+
+        for (int i = 0; i < temp.length; i++) {
+            System.out.println("Shop cards" + temp[i]);
+        }
+
+        CommandCardField[] newCards = players.get(turnNumber).getUpgradeCards();
+
+        int size = 0;
+
+        for (int i = 0; i < newCards.length; i++) {
+            if(players.get(turnNumber).getUpgradeCards()[i].getCard() != null){
+                size++;
+            }
+        }
+
+        Command[] bought = new Command[size];
+
+        size = 0;
+
+        for (int i = 0; i < newCards.length; i++) {
+            if(players.get(turnNumber).getUpgradeCards()[i].getCard() != null){
+                bought[size] = newCards[i].getCard().command;
+                size++;
+            }
+            else{
+                //bought[i] = null;
+            }
+
+        }
+
+        GameClient.sendBoughtUpgradeCards(bought);
+        System.out.println("vi sender købte kort");
+        int nextPlayer;
+        if(turnNumber + 1 < players.size()){
+            nextPlayer = players.get(turnNumber+1).getId()-1;
+        }
+        else {
+            nextPlayer = 99;
+        }
+
+
+
+
+        GameClient.sendUpgradeCardsShop(temp, nextPlayer, playerTurn);
+        //GameClient.nextPlayer();
+
+        //Commented out for now, will use it for the last player
+        //CommandCard[] discardCards = null;
+        //upgradeShop.finishUpgradePhase(discardCards); //You must call this to end the upgrade phase when all players have bought, this will discard the cards that have not been bought to a discarded pile.
         startProgrammingPhase();
     }
 

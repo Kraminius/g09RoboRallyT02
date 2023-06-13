@@ -21,9 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.BoardLoader;
 import org.jetbrains.annotations.NotNull;
@@ -41,17 +39,21 @@ import static java.lang.Integer.parseInt;
  * @author Ekkart Kindler, ekki@dtu.dk
  *
  */
+
 public class Board extends Subject {
 
     public int width;
 
     public int height;
+    private boolean isWaiting = false;
+
 
     public String boardName;
 
     private Integer gameId;
 
     public Space[][] spaces;
+
 
     private final List<Player> players = new ArrayList<>();
 
@@ -76,8 +78,8 @@ public class Board extends Subject {
      */
     public Board(String boardName) {
         if (!BoardLoader.getInstance().loadBoard(boardName, this)) {
-            System.out.println("Board not found with the name [" + boardName + "], loaded \"Dizzy Highway TESTBOARD\" instead.");
-            BoardLoader.getInstance().loadBoard("board_0", this);
+            System.out.println("Board not found with the name [" + boardName + "], loaded \" TESTBOARD\" instead.");
+            BoardLoader.getInstance().loadBoard("TESTBOARD", this);
         }
     }
 
@@ -388,5 +390,11 @@ public class Board extends Subject {
     }
     public void useCard(Command command, Player player){
 
+    }
+    public boolean getIsWaiting(){
+        return isWaiting;
+    }
+    public void setIsWaiting(boolean isWaiting){
+        this.isWaiting = isWaiting;
     }
 }

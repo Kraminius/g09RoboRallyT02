@@ -25,9 +25,11 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -59,7 +61,7 @@ public class PlayerView extends Tab implements ViewObserver {
     private CardFieldView[] cardViews;
     private CardFieldView[] upgradeCardView;
 
-    private VBox buttonPanel;
+    private HBox buttonPanel;
     private VBox bottomBar;
 
     private Button finishButton;
@@ -67,6 +69,7 @@ public class PlayerView extends Tab implements ViewObserver {
     private Button stepButton;
     private Button openShopButton;
     private VBox playerInteractionPanel;
+    private VBox waitingForPlayersPanel;
     private VBox valuesWindow;
     private HBox energyCubes;
     private GridPane upgradeCards;
@@ -125,11 +128,26 @@ public class PlayerView extends Tab implements ViewObserver {
         stepButton.setOnAction( e-> gameController.executeStep());
 
         openShopButton = new Button("Open Upgrade Shop");
-        openShopButton.setOnAction( e-> gameController.openUpgradeShop());
+        openShopButton.setOnAction( e-> {
+            try {
+                gameController.openUpgradeShop();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        VBox buttonsInButtonPanel = new VBox(finishButton, executeButton, stepButton, openShopButton);
+        finishButton.setPrefWidth(160);
+        executeButton.setPrefWidth(160);
+        stepButton.setPrefWidth(160);
+        openShopButton.setPrefWidth(160);
 
-
-
-        buttonPanel = new VBox(finishButton, executeButton, stepButton, openShopButton);
+        ImageView waitingImage = new ImageView();
+        waitingImage.setImage(ImageLoader.get().waiting);
+        waitingImage.setFitWidth(110);
+        waitingImage.setFitHeight(90);
+        waitingForPlayersPanel = new VBox(waitingImage);
+        waitingForPlayersPanel.setAlignment(Pos.CENTER);
+        buttonPanel = new HBox(buttonsInButtonPanel, waitingForPlayersPanel);
         buttonPanel.setAlignment(Pos.CENTER_LEFT);
         buttonPanel.setSpacing(3.0);
         // programPane.add(buttonPanel, Player.NO_REGISTERS, 0); done in update now
@@ -194,7 +212,7 @@ public class PlayerView extends Tab implements ViewObserver {
                     String name = cardField.getCard().getName();
                     String text = cardField.getCard().getDescription();
                     Option option = new Option(name, text, 130, 190);
-                    option.getOKPressed();
+                    option.getOKPressed("");
                 });
                 upgradeCard.getChildren().add(upgradeCardView[i]);
                 upgradeCard.getChildren().add(showCard);
@@ -256,6 +274,7 @@ public class PlayerView extends Tab implements ViewObserver {
     @Override
     public void updateView(Subject subject) {
         if (subject == player.board) {
+            showOrHideWaiting(player.board.getIsWaiting());
             for (int i = 0; i < Player.NO_REGISTERS; i++) {
                 CardFieldView cardFieldView = programCardViews[i];
                 if (cardFieldView != null) {
@@ -355,6 +374,10 @@ public class PlayerView extends Tab implements ViewObserver {
                 }
             }
         }
+    }
+    public void showOrHideWaiting(boolean show){
+        if(show) waitingForPlayersPanel.setOpacity(1);
+        else waitingForPlayersPanel.setOpacity(0);
     }
 
 }

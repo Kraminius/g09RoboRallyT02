@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
+import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import javafx.event.Event;
@@ -27,7 +28,9 @@ public class UpgradeShop {
     private VBox shop;
     private VBox playerInfo;
     private VBox cardHolder;
-    private Button nextPlayer;
+    private Button finishButton;
+
+    private Button close;
     private FlowPane buyCards;
     private Label messageLabel;
     private int playerOrder;
@@ -36,6 +39,8 @@ public class UpgradeShop {
     private ArrayList<CommandCard> deck;
     private ArrayList<CommandCard> discarded;
     private ArrayList<CommandCard> out;
+    private ArrayList<CommandCardField> loadedCards;
+
 
     private AntennaHandler antennaHandler = new AntennaHandler();
 
@@ -47,20 +52,47 @@ public class UpgradeShop {
      * @param board the board we are opening the shop for.
      * @param controller the controller we are using currently.
      */
-    public void openShop(Board board, GameController controller){
-        this.board = board;
+    public UpgradeShop(GameController controller, Board board){
         this.controller = controller;
+        this.board = board;
+    }
 
+    public void openShopFor(int player){
         createWindow();
-        playerOrder = -1;
-        switchToNextPlayer();
-
+        switchToPlayer(player);
+        currentPlayer = board.getPlayer(player);
+        stage.showAndWait();
     }
 
 
+    private boolean checkIfLoad(){
+        if(loadedCards.size() != 0) return true;
+        else return false;
+    }
+    public CommandCardField[] getCards(int amount){
+        if(checkIfLoad()){
+            CommandCardField[] cards = new CommandCardField[loadedCards.size()];
+            for(int i = 0; i < loadedCards.size(); i++){
+                cards[i] = loadedCards.get(i);
+            }
+            return cards;
+        }
+        else{
+            CommandCardField[] cards = new CommandCardField[amount];
+            for(int i = 0; i < cards.length; i++){
+                cards[i] = getNextCardField();
+            }
+            return cards;
+        }
 
+    }
 
-
+    public void setCardsForRound(CommandCardField[] cards){
+        cardsToBuy = new CardFieldView[cards.length];
+        for(int i = 0; i < cards.length; i++){
+            cardsToBuy[i] = new CardFieldView(controller, cards[i]);
+        }
+    }
     //region javaFX
     /**
      * @author Tobias - s224271@dtu.dk
@@ -91,25 +123,32 @@ public class UpgradeShop {
         label.setAlignment(Pos.CENTER);
         label.setWrapText(true);
         label.setStyle("-fx-font-size: 32; -fx-font-weight: bold");
-        nextPlayer = new Button("Start Shopping!");
-        nextPlayer.setOnAction(e -> switchToNextPlayer());
-        nextPlayer.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
+        finishButton = new Button("Exit Upgrade Shop");
+        finishButton.setOnAction(e -> {stage.close();});
+        finishButton.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
+        close = new Button("Close");
+        close.setOnAction(e -> {
+            try {
+                closeShop();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        close.setStyle("-fx-font-size: 13; -fx-font-weight: bold");
         cardHolder = new VBox();
         cardHolder.setAlignment(Pos.CENTER);
+
         buyCards = new FlowPane();
         buyCards.setPadding(new Insets(100, 10, 100, 10));
         buyCards.setHgap(80);
         buyCards.setVgap(130);
         buyCards.setAlignment(Pos.TOP_CENTER);
-        cardsToBuy = new CardFieldView[board.getPlayersNumber()];
-        for(int i = 0; i < board.getPlayersNumber(); i++){
-            cardsToBuy[i] = new CardFieldView(controller, getNextCardField());
-        }
+
         updateShopCards();
         shop.getChildren().add(label);
         shop.getChildren().add(messageLabel);
         shop.getChildren().add(cardHolder);
-        shop.getChildren().add(nextPlayer);
+        shop.getChildren().add(finishButton);
         Scene scene = new Scene(window, 900, 800);
         stage = new Stage();
         stage.setTitle("Uprade Shop");
@@ -118,7 +157,6 @@ public class UpgradeShop {
         stage.setY(5);
         stage.initModality(Modality.APPLICATION_MODAL); //Make other window useless.
         stage.setOnCloseRequest(Event::consume);
-        stage.showAndWait();
     }
     /**
      * @author Tobias - s224271@dtu.dk
@@ -223,12 +261,29 @@ public class UpgradeShop {
      * finish upgrade phase first puts the remaining cards into the discarded upgrade cards pile.
      * Afterward it closes the page.
      */
-    private void finishUpgradePhase(){
+    public void finishUpgradePhase(CommandCard[] cardsToDiscard){
+        if(cardsToDiscard == null) return;
+        if(cardsToDiscard.length < 1) return;
+        for(int i = 0; i < cardsToDiscard.length; i++){
+            discarded.add(cardsToDiscard[i]);
+        }
+    }
+
+    private void closeShop() throws Exception {
+
         for(int i = 0; i < cardsToBuy.length; i++){
             if(cardsToBuy[i].getField().getCard() != null){
                 discarded.add(cardsToBuy[i].getField().getCard());
             }
         }
+
+        Command[] temp = new Command[cardsToBuy.length];
+
+        for (int i = 0; i < cardsToBuy.length; i++) {
+            temp[i] = cardsToBuy[i].getField().getCard().command;
+        }
+
+
         stage.close();
     }
 
@@ -241,19 +296,11 @@ public class UpgradeShop {
      * The showForPlayer shows the players upgrade cards and how many energy cubes they have.
      * If the playerOrder is equal to the amount of players, they are the last player, and the button changes its text to display "finish upgrading", as there are no more players after.
      */
-    private void switchToNextPlayer(){
-        playerOrder += 1;
-        if(playerOrder > board.getPlayersNumber()) {
-            finishUpgradePhase();
-            return;
-        }
-        if(playerOrder > 0){
-            nextPlayer.setText("Next Player");
-            Player player = getPlayerPriority().get(playerOrder-1);
-            updateShopCards();
-            showForPlayer(player);
-        }
-        if(playerOrder ==  board.getPlayersNumber()) nextPlayer.setText("Finish Upgrading");
+    private void switchToPlayer(int playerNum){
+        finishButton.setText("Finish Upgrade Phase");
+        Player player = getPlayerPriority().get(playerNum);
+        updateShopCards();
+        showForPlayer(player);
     }
 
     /**
@@ -327,8 +374,7 @@ public class UpgradeShop {
         CommandCard card = cardField.getCard();
         discarded.add(card);
         cardField.setCard(null);
-        playerOrder--;
-        switchToNextPlayer();
+        switchToPlayer(currentPlayer.getId());
     }
     /**
      * @author Tobias - s224271@dtu.dk
@@ -369,7 +415,6 @@ public class UpgradeShop {
      * @param cardFieldView the card that the player has clicked buy at.
      */
     private void buyCard(CardFieldView cardFieldView){
-        if(nextPlayer.getText().equals("Start Shopping!")) return;
         int freeIndex = -1;
         for(int i = 0; i < playerCards.length; i++){
             if(playerCards[i].getField().getCard() == null){
@@ -383,7 +428,7 @@ public class UpgradeShop {
                 if(getPermanent(cardFieldView.getField().getCard().command)){
                     for(int i = 0; i < playerCards.length; i++){
                         if(playerCards[i].getField().getCard() != null){
-                            if(getPermanent(cardsToBuy[i].getField().getCard().command)) amountOfSame++;
+                            if(getPermanent(playerCards[i].getField().getCard().command)) amountOfSame++;
                         }
                     }
                     if(amountOfSame > 2) {
@@ -406,13 +451,10 @@ public class UpgradeShop {
                 currentPlayer.setEnergyCubes(currentPlayer.getEnergyCubes() - getPrice(cardFieldView.getField().getCard().command));
                 currentPlayer.updateUpgradeCardView();
                 out.add(cardFieldView.getField().getCard());
+                removeInstanceFromCardsToBuy(cardFieldView);
                 cardFieldView.getField().setCard(null);
-
                 updatePowerUps(currentPlayer);
-
-                System.out.println();
-
-                switchToNextPlayer();
+                stage.close();
             }
             else messageLabel.setText("You cannot afford this item");
         }
@@ -440,6 +482,19 @@ public class UpgradeShop {
         }
     }
 
+    public void removeInstanceFromCardsToBuy(CardFieldView commandCardField){
+        int newSize = cardsToBuy.length - 1;
+        CardFieldView[] newCardsToBuy = new CardFieldView[newSize];
+
+
+        for (int i = 0, j = 0; i < cardsToBuy.length; i++) {
+            if (cardsToBuy[i] != commandCardField) {
+                newCardsToBuy[j++] = cardsToBuy[i];
+            }
+        }
+        cardsToBuy = newCardsToBuy;
+    }
+
     public void setDeck(ArrayList<CommandCard> deck) {
         this.deck = deck;
     }
@@ -459,7 +514,19 @@ public class UpgradeShop {
     public void setOut(ArrayList<CommandCard> out) {
         this.out = out;
     }
+    public void setLoadedCards(ArrayList<CommandCardField> cards){
+        loadedCards = cards;
+    }
+    public ArrayList<CommandCardField> getLoadedCards(){
+        return loadedCards;
+    }
+
+    public CardFieldView[] getCardsToBuy() {
+        return cardsToBuy;
+    }
+
+    public void setCardsToBuy(CardFieldView[] cardsToBuy) {
+        this.cardsToBuy = cardsToBuy;
+    }
 }
-
-
 

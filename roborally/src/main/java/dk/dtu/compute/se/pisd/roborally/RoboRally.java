@@ -21,12 +21,18 @@
  */
 package dk.dtu.compute.se.pisd.roborally;
 
+import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuLoader;
 import dk.dtu.compute.se.pisd.roborally.chat.ChatController;
 import dk.dtu.compute.se.pisd.roborally.chat.ChatServer;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
+import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
+import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
+import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
+import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
+import dk.dtu.compute.se.pisd.roborally.view.Lobby;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.RoboRallyMenuBar;
 import javafx.application.Application;
@@ -46,12 +52,17 @@ import java.io.IOException;
 public class RoboRally extends Application {
 
     private static final int MIN_APP_WIDTH = 600;
+    private static RoboRally instance;
 
     private Stage stage;
     private BorderPane boardRoot;
+
+    private static Lobby lobby;
     // private RoboRallyMenuBar menuBar;
 
     // private AppController appController;
+
+    private static AppController appController;
 
     @Override
     public void init() throws Exception {
@@ -59,15 +70,38 @@ public class RoboRally extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        ChatController chatController = new ChatController();
-        chatController.startServer(4999);
-        chatController.addClient(chatController.getServerIP(), chatController.getServerPort());
-        chatController.addClient(chatController.getServerIP(), chatController.getServerPort());
+    public void start(Stage primaryStage) throws Exception {
+        MainMenuLoader mainMenu;
+        do{
+            mainMenu = new MainMenuLoader();
+        }while(!mainMenu.run()); //Returns true when playing game.
+        //Everything that will run after the main menu, is what happens when the player has pressed Play Game.
+
+
+        instance = this;
+
+        LobbyManager lobbyManager = new LobbyManager();
+
+        lobby = new Lobby(lobbyManager);
+
+        if(GameClient.isGameRunning()){
+            System.out.println("Vi kommer her");
+            GameLobby gameLobby = GameClient.getGame();
+            System.out.println(gameLobby.toString());
+            lobbyManager.createGame(gameLobby);
+            lobby.addLobbyToLobby(gameLobby);
+            lobby.getGameLobbyMap().put(gameLobby.getLobbyId(), gameLobby);
+        }
+
+        lobby.show();
+
         stage = primaryStage;
 
         AppController appController = new AppController(this);
 
+    public void startGame(GameSettings gameSettings, Stage primaryStage) throws Exception {
+        stage = primaryStage;
+        appController = new AppController(this, gameSettings);
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
         // when the user creates a new game or loads a game
@@ -82,13 +116,14 @@ public class RoboRally extends Application {
         stage.setOnCloseRequest(
                 e -> {
                     e.consume();
-                    appController.exit();
-                });
+                    appController.exit();} );
         stage.setResizable(false);
         stage.sizeToScene();
         stage.setX(700);
         stage.setY(100);
         stage.show();
+        System.out.println("Test ny");
+        appController.newGame();
     }
 
     public void createBoardView(GameController gameController) {
@@ -99,6 +134,7 @@ public class RoboRally extends Application {
             // create and add view for new board
             BoardView boardView = new BoardView(gameController);
             boardRoot.setCenter(boardView);
+            boardView.disablePlayerViews();
         }
 
         stage.sizeToScene();
@@ -117,5 +153,15 @@ public class RoboRally extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    public static RoboRally getInstance() { // And add this method
+        return instance;
+    }
+
+    public static Lobby getLobby(){
+        return lobby;
+    }
+
+    public static AppController getAppController(){return appController;}
 
 }
