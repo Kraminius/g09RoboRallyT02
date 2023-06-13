@@ -2,6 +2,7 @@ package dk.dtu.compute.se.pisd.roborally;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,6 @@ public class GameInfo {
     private ArrayList<Integer> chosenStartPlaces = new ArrayList<>();
 
     private boolean openShop = false;
-
-
 
 
     public void instaGameInfo(String id, GameSettings gameSettings){

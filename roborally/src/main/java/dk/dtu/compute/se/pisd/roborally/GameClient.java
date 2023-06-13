@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class GameClient {
     public static ArrayList<String> players = new ArrayList<>();
 
     private static PlayerInfo playerInfo;
+
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)

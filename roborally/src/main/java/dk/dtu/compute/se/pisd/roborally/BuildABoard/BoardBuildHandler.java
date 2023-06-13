@@ -52,6 +52,8 @@ public class BoardBuildHandler {
             if(error == null){
                 checkBoardBuild = checkBoardBuild.getSortedBoardBuild(boardBuild);
                 BuildJSON.saveBoard(checkBoardBuild);
+                Option option = new Option("Board Saved");
+                option.getOKPressed("Your board has been saved under the name: " + name);
             }
             else{
                 view.showError(error);
