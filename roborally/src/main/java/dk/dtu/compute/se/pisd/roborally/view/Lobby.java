@@ -633,10 +633,7 @@ public class Lobby {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-
-            nameField.setText(players[currLoaded]);
-            joinButton.setDisable(false);
-            nameField.setDisable(true);
+            ClientInfo.setUsername(players[currLoaded]);
         }
 
 
