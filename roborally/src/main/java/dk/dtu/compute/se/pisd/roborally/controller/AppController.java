@@ -99,6 +99,7 @@ public class AppController implements Observer {
         int no = gameSettings.getNumberOfPlayers();
 
 
+
         /*GameClient.instaGameData(no);
         MyClient.weConnect(0);
         GameClient.addMapName(gameSettings.getGameName());*/
@@ -145,6 +146,7 @@ public class AppController implements Observer {
         positionWindow.showWindow();
         System.out.println("I picked this: " + positionWindow.getStartPosChoice().getValue());
         GameClient.addStartPosition(Integer.parseInt(positionWindow.getStartPosChoice().getValue()));
+
         GameClient.nextPlayer();
 
         GameClient.picked();
@@ -383,16 +385,48 @@ public class AppController implements Observer {
             }
 
             if(serverLoad.getPhase() == Phase.UPGRADE){
+
+                if(board == null){
+                    board = new Board(gameSettings.getBoardToPlay());
+                    int no = gameSettings.getNumberOfPlayers();
+                    int playerClient = GameClient.getPlayerNumber();
+
+                    for (int i = 0; i < no; i++) {
+                        String name;
+                        if(gameSettings.getPlayerNames().size() <= i) name = "Player " + i+1;
+                        else name = gameSettings.getPlayerNames().get(i);
+                        Player player = new Player(board, PLAYER_COLORS.get(i), name, i+1);
+                        player.setSpace(new Space(board, serverLoad.getX()[i], serverLoad.getY()[i]));
+                        player.setEnergyCubes(5);
+                        gameController.fillStartDeck(player.getCardDeck());
+                        board.addPlayer(player);
+
+
+
+                        if(i == playerClient){
+                            System.out.println("vi gemmer player objected");
+                            clientPlayer = player;
+                        }
+
+
+                        //player.setSpace(board.getSpace(i % board.width, i));
+                    }
+
+                }
+
+
                 int playerNumber = GameClient.getPlayerNumber();
-                //List<Player> liste = gameController.antennaHandler.findPlayerSequence(gameController.board.getAntenna(), board);
+                List<Player> liste = gameController.antennaHandler.findPlayerSequence(gameController.board.getAntenna(), board);
 
 
 
-                /*if(playerNumber == liste.get(0).getId()-1){
+
+
+                if(playerNumber == liste.get(0).getId()-1){
                     System.out.println("Its my turn load");
                 }else{
                     GameClient.startWaitingForOpenShop();
-                }*/
+                }
 
 
             }

@@ -47,7 +47,7 @@ public class AntennaHandler {
         //Used for checking the position of each player
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             players.add(board.getPlayer(i));
-            System.out.println("x: " + board.getPlayer(i).getSpace().x+ " y: " + board.getPlayer(i).getSpace().x);
+            //System.out.println("x: " + board.getPlayer(i).getSpace().x+ " y: " + board.getPlayer(i).getSpace().x);
 
         }
 

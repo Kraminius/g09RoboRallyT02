@@ -504,7 +504,7 @@ public class GameDataRep {
             playersProgram.add("#");
             if(saveGameState.getPlayerCurrentProgram()[i] != null){
                 for(int j = 0; j < saveGameState.getPlayerCurrentProgram()[i].length; j++){
-                    if(saveGameState.getPlayerProgrammingDeck()[i][j] != null){
+                    if(saveGameState.getPlayerCurrentProgram()[i][j] != null){
                         playersProgram.add(saveGameState.getPlayerCurrentProgram()[i][j].toString());
                     }
                 }}

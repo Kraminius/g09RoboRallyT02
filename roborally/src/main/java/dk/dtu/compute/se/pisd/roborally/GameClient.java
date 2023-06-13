@@ -973,5 +973,19 @@ public class GameClient {
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
     }
 
+    public static boolean setCheckpointForPlayer(int playerNumber) throws Exception{
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(Integer.toString(playerNumber)))
+                .uri(URI.create("http://localhost:8080/setCheckpointsForPlayer"))
+                .header("Content-Type", "text/plain;charset=UTF-8")
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return Boolean.parseBoolean(result);
+    }
+
 
 }

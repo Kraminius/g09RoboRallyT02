@@ -521,5 +521,19 @@ public class MyRest {
         return ResponseEntity.ok().body("gameSaved");
     }
 
+    @PostMapping (value = "/setCheckpointsForPlayer")
+    public ResponseEntity<Boolean> setCheckpointsForPlayer(@RequestBody String playerNumberString) {
+
+        int playerNumber = Integer.parseInt(playerNumberString);
+
+
+
+        gameDataRep.gameState.getPlayerCheckPoints()[playerNumber] = gameDataRep.gameState.getPlayerCheckPoints()[playerNumber] + 1;
+
+
+        System.out.println("PlayerNumber: " +  playerNumber  + " checkpoints: " + gameDataRep.gameState.getPlayerCheckPoints()[playerNumber] );
+
+        return ResponseEntity.ok().body(true);
+    }
 
 }

@@ -1086,12 +1086,42 @@ public class GameController {
             int number;
             if (space.getElement().getCheckpoint() != null) {
                 number = space.getElement().getCheckpoint().getNumber();
+
+
+
+
+
                 if (number == 1) {
+                    if(player.getId()-1 == GameClient.getPlayerNumber() && player.getCheckpointReadhed()[0] == false){
+                        try {
+                            GameClient.setCheckpointForPlayer(player.getId()-1);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+
+
                     player.setCheckpointReached(0, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
+                    //Sender checkPointsState
+
+
+
+
                 } else if (checkpointStatus[(number - 2)]) {
+
+                    if(player.getId()-1 == GameClient.getPlayerNumber() && player.getCheckpointReadhed()[number-1] == false){
+                        try {
+                            GameClient.setCheckpointForPlayer(player.getId()-1);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
                     player.setCheckpointReached(number - 1, true);
                     System.out.println("Player: " + (i + 1) + " has reached checkpoint: " + (number));
+                    //Sender checkPoints til gameState
                 }
             }
             checkForWinner();
@@ -1441,6 +1471,7 @@ public class GameController {
         int nextPlayer;
         if(turnNumber + 1 < players.size()){
             nextPlayer = players.get(turnNumber+1).getId()-1;
+            System.out.println("The next player is: " + nextPlayer);
         }
         else {
             nextPlayer = 99;
