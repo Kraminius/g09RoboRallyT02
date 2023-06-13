@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally;
 
+import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Converter;
 import dk.dtu.compute.se.pisd.roborally.model.Command;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Phase;
@@ -275,7 +276,7 @@ public class GameState {
         this.upgradeShopCards = upgradeShopCards;
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return "GameState{" +
                 "playerAmount=" + playerAmount +
@@ -303,6 +304,6 @@ public class GameState {
                 ", playersPulledCards=" + Converter.commandArrArrToString(playersPulledCards) + "}";
 
 
-    }
+    }*/
 
 }

@@ -416,6 +416,9 @@ public class MyRest {
 
         gameInfo.setOpenShop(false);
 
+        //Temporary place for resetting players has chosen in interactive cards, so we can you use 1 interactive card each round of play
+        gameInfo.setPlayerChosen(false);
+
         return ResponseEntity.ok().body(true);
     }
 
