@@ -23,8 +23,10 @@ package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.GameClient;
+import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -60,14 +62,16 @@ public class PlayerView extends Tab implements ViewObserver {
     private CardFieldView[] cardViews;
     private CardFieldView[] upgradeCardView;
 
-    private VBox buttonPanel;
+    private HBox buttonPanel;
     private VBox bottomBar;
+    private HBox chatWindow;
 
     private Button finishButton;
     private Button executeButton;
     private Button stepButton;
     private Button openShopButton;
     private VBox playerInteractionPanel;
+    private VBox waitingForPlayersPanel;
     private VBox valuesWindow;
     private HBox energyCubes;
     private GridPane upgradeCards;
@@ -133,10 +137,19 @@ public class PlayerView extends Tab implements ViewObserver {
                 throw new RuntimeException(ex);
             }
         });
+        VBox buttonsInButtonPanel = new VBox(finishButton, executeButton, stepButton, openShopButton);
+        finishButton.setPrefWidth(160);
+        executeButton.setPrefWidth(160);
+        stepButton.setPrefWidth(160);
+        openShopButton.setPrefWidth(160);
 
-
-
-        buttonPanel = new VBox(finishButton, executeButton, stepButton, openShopButton);
+        ImageView waitingImage = new ImageView();
+        waitingImage.setImage(ImageLoader.get().waiting);
+        waitingImage.setFitWidth(110);
+        waitingImage.setFitHeight(90);
+        waitingForPlayersPanel = new VBox(waitingImage);
+        waitingForPlayersPanel.setAlignment(Pos.CENTER);
+        buttonPanel = new HBox(buttonsInButtonPanel, waitingForPlayersPanel);
         buttonPanel.setAlignment(Pos.CENTER_LEFT);
         buttonPanel.setSpacing(3.0);
         // programPane.add(buttonPanel, Player.NO_REGISTERS, 0); done in update now
@@ -225,6 +238,9 @@ public class PlayerView extends Tab implements ViewObserver {
         sideBySide.getChildren().add(top);
         sideBySide.getChildren().add(bottomBar);
         stackPane.getChildren().add(sideBySide);
+        chatWindow = new HBox();
+        chatWindow.setPadding(new Insets(10, 10, 10, 10));
+        sideBySide.getChildren().add(chatWindow);
 
         player.updateCubeLabel();
 
@@ -263,6 +279,7 @@ public class PlayerView extends Tab implements ViewObserver {
     @Override
     public void updateView(Subject subject) {
         if (subject == player.board) {
+            showOrHideWaiting(player.board.getIsWaiting());
             for (int i = 0; i < Player.NO_REGISTERS; i++) {
                 CardFieldView cardFieldView = programCardViews[i];
                 if (cardFieldView != null) {
@@ -385,6 +402,22 @@ public class PlayerView extends Tab implements ViewObserver {
             throw new RuntimeException(e);
         }
 
+    }
+    public void showOrHideWaiting(boolean show){
+        if(show) waitingForPlayersPanel.setOpacity(1);
+        else waitingForPlayersPanel.setOpacity(0);
+    }
+    public void addChatWindow(){
+        VBox chatWindow = RoboRally.getInstance().getChatView();
+        if(!this.chatWindow.getChildren().contains(chatWindow)){
+            this.chatWindow.getChildren().add(chatWindow);
+        }
+    }
+    public void removeChatView(){
+        VBox chatWindow = RoboRally.getInstance().getChatView();
+        if(this.chatWindow.getChildren().contains(chatWindow)){
+            this.chatWindow.getChildren().remove(chatWindow);
+        }
     }
 
 }

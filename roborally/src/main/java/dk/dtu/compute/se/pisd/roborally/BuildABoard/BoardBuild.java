@@ -42,7 +42,6 @@ public class BoardBuild {
      * @param name the name of the board that needs to be loaded, at this point it should already have been checked to see if it's an existing board.
      */
     public void loadBoard(String name){
-        System.out.println("Loading: " + name);
         JSONtoBuild jsonToBuild = new JSONtoBuild(name, this);
     }
     /**

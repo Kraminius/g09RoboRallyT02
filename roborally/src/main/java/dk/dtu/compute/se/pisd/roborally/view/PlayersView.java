@@ -68,6 +68,7 @@ public class PlayersView extends TabPane implements ViewObserver {
             if(i != exceptionPlayerID) playerViews[i].setDisable(true);
             else{
                 this.getSelectionModel().select(exceptionPlayerID);
+                playerViews[i].addChatWindow();
             }
         }
     }

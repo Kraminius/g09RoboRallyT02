@@ -22,16 +22,17 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Phase;
-import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,18 +52,21 @@ public class BoardView extends VBox implements ViewObserver {
     private PlayersView playersView;
 
     private Label statusLabel;
+    private HBox window;
 
     private SpaceEventHandler spaceEventHandler;
 
     public BoardView(@NotNull GameController gameController) {
         board = gameController.board;
+        window = new HBox();
         mainBoardPane = new GridPane();
+        window.getChildren().add(mainBoardPane);
         playersView = new PlayersView(gameController);
         statusLabel = new Label("<no status>");
         VBox centerTheDiv = new VBox();
         VBox center2 = new VBox();
         centerTheDiv.setStyle("-fx-background-color: #eeeeee");
-        center2.getChildren().add(mainBoardPane);
+        center2.getChildren().add(window);
         centerTheDiv.getChildren().add(center2);
         centerTheDiv.setAlignment(Pos.CENTER);
         center2.setAlignment(Pos.CENTER);
@@ -85,7 +89,6 @@ public class BoardView extends VBox implements ViewObserver {
                 spaceView.setOnMouseClicked(spaceEventHandler);
             }
         }
-
         board.attach(this);
         update(board);
     }
@@ -127,5 +130,6 @@ public class BoardView extends VBox implements ViewObserver {
     public void disablePlayerViews(){
         playersView.disablePlayerViews();
     }
+
 
 }

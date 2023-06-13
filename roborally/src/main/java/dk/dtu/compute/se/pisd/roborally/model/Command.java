@@ -69,7 +69,6 @@ public enum Command {
     SANDBOX("Sandbox Routine", FORWARD, FAST_FORWARD, SPRINT_FORWARD, BACK_UP, LEFT, RIGHT, U_TURN),
     WEASEL("Weasel routine", LEFT, RIGHT, U_TURN),
     SANDBOX_UPG("Sandbox Routine","Add the Sandbox routine card to your discard pile"),
-    //Bug with this card. If you turn right, then use this card. You will move 3 steps forward and 3 steps downwards. ISSUE
     SPEED("Speed routine","Move 3"),
     SPEED_TUPG("Speed Routine","Add the speed routine to your discard pile"),
     ENERGY("Energy","Gain 1 energy"),

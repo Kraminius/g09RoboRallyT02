@@ -268,6 +268,7 @@ public class Lobby {
                 gameNameInput.setStyle(null);
                 creatorNameInput.setStyle(null);
 
+
                 String[] arr = {gameNameInput.getText(), creatorNameInput.getText(), String.valueOf(numberOfPlayersInput.getValue()),
                         boardsToPlayInput.getValue() };
 
@@ -358,7 +359,6 @@ public class Lobby {
         rootLayout.setLeft(createGameLayout);
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
-
 
 
         createGameStage.setScene(createGameScene);
@@ -629,6 +629,7 @@ public class Lobby {
         result.ifPresent(playerName -> {
             try {
                 joinLobby(gameLobby, playerName);
+                RoboRally.getInstance().createChatWindow(playerName); //Creates the chatWindow with the joined players name
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -727,7 +728,7 @@ public class Lobby {
     }
 
     public void showStartButton(String lobbyId){
-
+        RoboRally.getInstance().createChatWindow(gameLobby.getGameSettings().getCreatorName()); //Creates the chatwindow with the name of the creator
         Button startGame = new Button();
         startGame.setId(lobbyId);
         startGame.setText("Start Game");

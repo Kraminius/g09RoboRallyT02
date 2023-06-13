@@ -45,6 +45,8 @@ public class Board extends Subject {
     public int width;
 
     public int height;
+    private boolean isWaiting = false;
+
 
     public String boardName;
 
@@ -388,5 +390,11 @@ public class Board extends Subject {
     }
     public void useCard(Command command, Player player){
 
+    }
+    public boolean getIsWaiting(){
+        return isWaiting;
+    }
+    public void setIsWaiting(boolean isWaiting){
+        this.isWaiting = isWaiting;
     }
 }

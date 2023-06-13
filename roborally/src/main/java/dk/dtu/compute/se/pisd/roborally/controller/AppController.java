@@ -36,6 +36,7 @@ import dk.dtu.compute.se.pisd.roborally.view.LoadGameWindowRest;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.StartPositionWindow;
 import javafx.application.Platform;
+import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -469,4 +470,6 @@ public class AppController implements Observer {
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
     }
+
+
 }

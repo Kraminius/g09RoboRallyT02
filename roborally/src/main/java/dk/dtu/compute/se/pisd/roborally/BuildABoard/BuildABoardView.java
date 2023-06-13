@@ -17,7 +17,7 @@ import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
-public class BuildABoardViewController {
+public class BuildABoardView {
     final double SCREEN_WIDTH = 1600;
     final double SCREEN_HEIGHT = 900;
     private final BoardBuildHandler handler;
@@ -43,7 +43,7 @@ public class BuildABoardViewController {
      * Constructor of the controllerView of the build a board window.
      * @param handler the handler that clicks and presses should use.
      */
-    public BuildABoardViewController(BoardBuildHandler handler) {
+    public BuildABoardView(BoardBuildHandler handler) {
         this.handler = handler;
         if (window == null) createWindow();
         if (stage == null) createScene();
