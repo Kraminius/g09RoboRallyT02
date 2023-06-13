@@ -899,8 +899,8 @@ public class GameController {
         Boolean obstacle = false;
 
         if (fromSpace.getX() < toSpace.x) {
-            directionHeadingTo = Heading.EAST;
-            directionHeadingFrom = Heading.WEST;
+            directionHeadingTo = Heading.WEST;
+            directionHeadingFrom = Heading.EAST;
         }  else if (fromSpace.getX() > toSpace.x) {
             directionHeadingTo = Heading.EAST;
             directionHeadingFrom = Heading.WEST;
