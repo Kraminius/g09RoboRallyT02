@@ -708,14 +708,10 @@ public class GameController {
         }
     }
 
-
-
-    // TODO Assignment V2
     public void moveForward(@NotNull Player player) throws OutsideBoardException {
         movePlayerForward(player, 1, null, false);
     }
 
-    // TODO Assignment V2
     public void fastForward(@NotNull Player player) throws OutsideBoardException {
         movePlayerForward(player, 1, null, false);
         movePlayerForward(player, 1, null, false);

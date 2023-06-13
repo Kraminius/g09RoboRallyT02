@@ -20,8 +20,6 @@ class CheckPointsTest {
     @BeforeEach
     void setUp() {
 
-
-
         Board board = new Board();
         board.width = 8;
         board.height = 8;
