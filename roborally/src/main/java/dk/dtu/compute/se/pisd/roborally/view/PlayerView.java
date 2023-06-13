@@ -77,6 +77,12 @@ public class PlayerView extends Tab implements ViewObserver {
     private GridPane upgradeCards;
 
     private GameController gameController;
+    /**
+     * @author Tobias Gørlyk - s224271@dtu.dk
+     * Sets the colors for the card views.
+     *      This method applies a border with a specific color to each card view in the programCardViews,
+     *      cardViews, and upgradeCardView lists.
+     */
     private void setColors() {
         Border bordor = new Border(new BorderStroke(Color.valueOf(player.getColor()), BorderStrokeStyle.SOLID, null, new BorderWidths(2)));
         for(CardFieldView view : programCardViews){
@@ -90,6 +96,12 @@ public class PlayerView extends Tab implements ViewObserver {
         }
     }
 
+    /**
+     * @author Ekkart Kindler, Tobias Gørlyk - s224271@dtu.dk, Kenneth Kaiser, s221064@student.dtu.dk
+     * Creates a PlayerView object for a specific player.
+     * @param gameController The game controller object responsible for controlling the game.
+     * @param player The player object associated with this view.
+     */
     public PlayerView(@NotNull GameController gameController, @NotNull Player player) {
         super(player.getName());
         player.setPlayerView(this);
@@ -273,8 +285,9 @@ public class PlayerView extends Tab implements ViewObserver {
     }
 
     /**
-     *
-     * @param subject
+     * @author Ekkart Kindler, //TODO TOBY, Freja Egelund Grønnemose, s224286@dtu.dk
+     * Updates the view based on the changes in the subject.
+     * @param subject The subject triggering the update.
      */
     @Override
     public void updateView(Subject subject) {
@@ -353,10 +366,6 @@ public class PlayerView extends Tab implements ViewObserver {
                 playerInteractionPanel.getChildren().clear();
                 System.out.println(player.board.getCurrentPlayer().getName() + " & " + player.getName());
                 if (player.board.getCurrentPlayer() == player) {
-                    // TODO Assignment V3: these buttons should be shown only when there is
-                    //      an interactive command card, and the buttons should represent
-                    //      the player's choices of the interactive command card. The
-                    //      following is just a mockup showing two options
                     if(player.getRespawnStatus()){
                         Set<Heading> headings = EnumSet.allOf(Heading.class);
                         for(Heading heading : headings){
@@ -387,7 +396,13 @@ public class PlayerView extends Tab implements ViewObserver {
             }
         }
     }
-
+    /**
+     * @author Kenneth Kaiser, s221064@student.dtu.dk
+     * Executes the selected command option and continues the game.
+     * Also updates the player's heading and notifies the GameClient.
+     * @param option       The selected command option to execute.
+     * @param playerNumber The player's number.
+     */
     public void interactiveButtonFunctionality(Command option, int playerNumber){
 
         gameController.executeCommandOptionAndContinue(option);
@@ -403,16 +418,29 @@ public class PlayerView extends Tab implements ViewObserver {
         }
 
     }
+    /**
+     * @Author Tobias Gørlyk - s224271@dtu.dk
+     * Shows or hides the waiting panel based on the specified boolean value.
+     * @param show {@code true} to show the waiting panel, {@code false} to hide it.
+     */
     public void showOrHideWaiting(boolean show){
         if(show) waitingForPlayersPanel.setOpacity(1);
         else waitingForPlayersPanel.setOpacity(0);
     }
+    /**
+     * @Author Tobias Gørlyk - s224271@dtu.dk
+     * Adds the chat window to the player view if it is not already present.
+     */
     public void addChatWindow(){
         VBox chatWindow = RoboRally.getInstance().getChatView();
         if(!this.chatWindow.getChildren().contains(chatWindow)){
             this.chatWindow.getChildren().add(chatWindow);
         }
     }
+    /**
+     * @Author Tobias Gørlyk - s224271@dtu.dk
+     * Removes the chat view from the player view if it is currently present.
+     */
     public void removeChatView(){
         VBox chatWindow = RoboRally.getInstance().getChatView();
         if(this.chatWindow.getChildren().contains(chatWindow)){

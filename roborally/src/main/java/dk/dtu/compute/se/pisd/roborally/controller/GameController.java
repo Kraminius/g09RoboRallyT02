@@ -1181,8 +1181,6 @@ public class GameController {
      * This method calls the powerUp method.
      * @param player the player who plays the Energy Routine card
      */
-
-
     public void playEnergyRoutine(Player player){
         powerUp(player, 1);
     }
@@ -1196,11 +1194,8 @@ public class GameController {
         assert false;
     }
 
-
-
-
-
     /**
+     * @author Nicklas Christensen, s224314.dtu.dk
      * Make all the given players shoot a laser.
      * The laser gives 1 SPAM Card to any players hit
      * @param player an single player who's laser will be shot, this should be available through board.
@@ -1295,6 +1290,11 @@ public class GameController {
         }
     }
 
+    /**
+     * @author Nicklas Christensen, s224314.dtu.dk
+     * Checks if any player has reached all the checkpoints and determines the winner of the game.
+     *  * If a winner is found, a window is displayed to announce the winner.
+     */
     public void checkForWinner(){
         for(int i = 0; i < board.getPlayersNumber(); i++){
             Player playerTesting = board.getPlayer(i);
@@ -1605,7 +1605,12 @@ public class GameController {
                 break;
         }
     }
-
+    /**
+     * @author Mikkel Jürs, s224279@student.dtu.dk
+     * Allows the player to rotate their character to face any direction by providing options
+     * for North, South, East, and West. The player's heading is updated based on their choice.
+     * @param player the player whose character's heading will be rotated
+     */
     public void zoopFunctionality(Player player){
         String[] options = new String[4];
         options[0] = "North";
@@ -1739,8 +1744,5 @@ public class GameController {
         CommandCard sandboxCard = new CommandCard(Command.SANDBOX);
         discardCard(player, sandboxCard);
     }
-
-
-//endregion
 
 }

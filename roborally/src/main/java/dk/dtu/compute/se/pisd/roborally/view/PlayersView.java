@@ -40,6 +40,10 @@ public class PlayersView extends TabPane implements ViewObserver {
 
     private PlayerView[] playerViews;
 
+    /**
+     * Constructs a PlayersView object with the specified GameController.
+     * @param gameController the GameController associated with the view
+     */
     public PlayersView(GameController gameController) {
         board = gameController.board;
 
@@ -54,6 +58,10 @@ public class PlayersView extends TabPane implements ViewObserver {
         update(board);
     }
 
+    /**
+     * Updates the view based on changes in the observed subject.
+     * @param subject the subject that triggered the update
+     */
     @Override
     public void updateView(Subject subject) {
         if (subject == board) {
@@ -62,6 +70,11 @@ public class PlayersView extends TabPane implements ViewObserver {
         }
     }
 
+    /**
+     * @Author Tobias Gørlyk - s224271@dtu.dk
+     * Disables the player views, except for the current player's view.
+     * Additionally, it selects the tab of the current player and adds the chat window to their view.
+     */
     public void disablePlayerViews(){
         int exceptionPlayerID = GameClient.getPlayerNumber();
         for(int i = 0; i < playerViews.length; i++){

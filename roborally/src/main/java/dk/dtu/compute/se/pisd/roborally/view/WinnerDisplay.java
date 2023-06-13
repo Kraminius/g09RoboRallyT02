@@ -25,7 +25,12 @@ public class WinnerDisplay {
         Stage stage;
 
 
-        public void createWindow(Player winner){
+    /**
+     * @author Nicklas Christensen, s224314.dtu.dk
+     * Creates a window to display the winner of the game.
+     * @param winner the player who has won the game
+     */
+    public void createWindow(Player winner){
 
             dance.setImage(imageLoader.winner);
 

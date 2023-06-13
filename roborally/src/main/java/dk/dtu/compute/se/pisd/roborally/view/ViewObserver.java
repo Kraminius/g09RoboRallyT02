@@ -33,13 +33,20 @@ import javafx.application.Platform;
  */
 public interface ViewObserver extends Observer {
 
+    /**
+     * Updates the view based on the changes in the observed subject.
+     * @param subject the subject that has changed
+     */
     void updateView(Subject subject);
 
+    /**
+     * Default implementation of the update method that ensures the updateView method is called in the FX application thread.
+     * If the update is already being executed in the FX application thread, the updateView method is called directly.
+     * Otherwise, the updateView method is wrapped in a Platform.runLater() call to ensure it is executed in the FX application thread.
+     * @param subject the subject that has changed
+     */
     @Override
     default void update(Subject subject) {
-        // This default implementation of the update method makes sure that ViewObserver implementations
-        // are doing the update only in the FX application thread. The update of the view is instead
-        // done in the updateView() method;
         if (Platform.isFxApplicationThread()) {
             updateView(subject);
         } else {
