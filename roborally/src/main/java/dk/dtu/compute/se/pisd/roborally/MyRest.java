@@ -536,4 +536,30 @@ public class MyRest {
         return ResponseEntity.ok().body(true);
     }
 
+
+    @GetMapping(value = "/isPlayerChoice")
+    public ResponseEntity<Boolean> isPlayerChoice() {
+
+        return ResponseEntity.ok(gameInfo.isPlayerChosen());
+    }
+
+    @PostMapping (value = "/setPlayerHeadingInteractive")
+    public ResponseEntity<String> setPlayerHeadingInteractive(@RequestBody Map<String, Object> playerData) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Heading heading = objectMapper.convertValue(playerData.get("heading"), Heading.class);
+        int playerNumber = Integer.parseInt(playerData.get("playerNumber").toString());
+
+        gameDataRep.gameState.getPlayerHeadings()[playerNumber] = heading;
+        gameInfo.setPlayerChosen(true);
+
+        return ResponseEntity.ok().body("bob");
+    }
+
+    /*@GetMapping (value = "/getPlayerCommandInteractive")
+    public ResponseEntity<Command> getPlayerCommandInteractive() {
+        //Command command = gameInfo.getCommandChosen();
+        return ResponseEntity.ok().body(command);
+    }*/
+
+
 }

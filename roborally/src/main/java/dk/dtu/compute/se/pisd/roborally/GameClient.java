@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.json.simple.JSONObject;
-import org.springframework.http.ResponseEntity;
 
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -18,7 +17,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -49,10 +47,15 @@ public class GameClient {
     private static ScheduledFuture<?> updateAllPlayersUpgradeCards;
     private static ScheduledFuture<?> waitingForAllPlayersToPickCards;
     private static ScheduledFuture<?> waitingForAllPlayersToExecute;
+    private static ScheduledFuture<?> waitingForInteractive;
 
     //Waiting for start position
     public static void startWaitingForStartPosition() {
         pickStartPosition = executorService.scheduleAtFixedRate(GameClient::startPosition, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void startWaitingForInteractive(){
+        waitingForInteractive = executorService.scheduleAtFixedRate(GameClient::pollInteractive, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
     public static void startWaitingForExecution() {
@@ -73,6 +76,42 @@ public class GameClient {
 
     public static void startWaitingForAllPlayersToPickCards() {
         waitingForAllPlayersToPickCards = executorService.scheduleAtFixedRate(GameClient::pollWaitingForPickedCards, 0, POLLING_INTERVAL_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public static void pollInteractive(){
+
+        boolean playerChoice;
+
+        try {
+            playerChoice = isPlayerChoice();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        if(playerChoice){
+
+            System.out.println("we have updated interactive");
+
+            try {
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            javafx.application.Platform.runLater(() -> {
+                RoboRally.getAppController().updateGame();
+            });
+
+
+            waitingForInteractive.cancel(false);
+
+
+        }else {
+            System.out.println("We are waiting for player to use interactive card");
+        }
+
+
+
     }
 
     public static void pollForExecution() {
@@ -98,7 +137,6 @@ public class GameClient {
             System.out.println("all players have executed");
             javafx.application.Platform.runLater(() -> {
                 RoboRally.getAppController().updateGame();
-                // RoboRally.getAppController().startActivationPhaseWithRest();
             });
 
             try {
@@ -985,6 +1023,57 @@ public class GameClient {
 
         String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
         return Boolean.parseBoolean(result);
+    }
+
+    public static boolean setPlayerHeadingInteractive(Heading heading, int playerNumber) throws Exception{
+        Map<String, Object> data = new HashMap<>();
+        data.put("heading", heading);
+        data.put("playerNumber", playerNumber);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(data);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .uri(URI.create("http://localhost:8080/setPlayerHeadingInteractive"))
+                .header("Content-Type", "application/json")
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+        return result.equals("bob");
+    }
+
+
+    public static boolean isPlayerChoice() throws Exception{
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/isPlayerChoice"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        boolean result = Boolean.valueOf(response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS));
+        return result;
+
+    }
+
+    public static Command getPlayerCommandInteractive() throws Exception{
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/getPlayerCommandInteractive"))
+                .build();
+        CompletableFuture<HttpResponse<String>> response =
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+        String result = response.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Command command = objectMapper.readValue(result, Command.class);
+
+        return command;
     }
 
 
