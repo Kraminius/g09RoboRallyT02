@@ -3,14 +3,13 @@ package dk.dtu.compute.se.pisd.roborally.chat;
 import dk.dtu.compute.se.pisd.roborally.view.Option;
 import javafx.animation.RotateTransition;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.io.IOException;
 
 /**
  * @author Freja Egelund Grønnemose, s224286@dtu.dk
@@ -22,7 +21,11 @@ public class ChatView implements ViewListener {
     private TextArea chatBox;
     private TextField messageField;
     private Button sendButton;
+    private Button exitButton;
     private ChatController chatController;
+    private VBox chatRoomView;
+    private String userName;
+    private boolean currentChatActive = true;
 
     /**
      * @author Freja Egelund Grønnemose, s224286@dtu.dk
@@ -41,7 +44,7 @@ public class ChatView implements ViewListener {
      * Sets up event handlers for the send button and the window close request.
      */
     private void createChatRoomStage() {
-        VBox chatRoomView = new VBox(10);
+        chatRoomView = new VBox(10);
         chatRoomView.setPadding(new Insets(10));
 
         chatBox = new TextArea();
@@ -51,9 +54,14 @@ public class ChatView implements ViewListener {
         messageField = new TextField();
 
         sendButton = new Button("Send");
+        exitButton = new Button("Leave chat");
+        BorderPane borderPane = new BorderPane();
+        borderPane.setLeft(sendButton);
+        borderPane.setRight(exitButton);
+        chatRoomView.getChildren().addAll(chatBox, messageField, borderPane);
 
-        chatRoomView.getChildren().addAll(chatBox, messageField, sendButton);
 
+        /* It doesnt need to make it's own scene and stage, we are just using the view.
         Scene scene = new Scene(chatRoomView);
         stage = new Stage();
         stage.setScene(scene);
@@ -67,13 +75,20 @@ public class ChatView implements ViewListener {
                 e.consume();
             }
         });
+
+        stage.show();
+
+         */
+
         sendButton.setOnAction(actionEvent -> {
             String message = messageField.getText();
             chatController.onMessageSent(message);
             displayMessage(message);
             messageField.clear();
         });
-        stage.show();
+        exitButton.setOnAction(e -> {
+            closeChat(currentChatActive);
+        });
     }
 
     /**
@@ -105,5 +120,42 @@ public class ChatView implements ViewListener {
     @Override
     public void onMessageReceived(String message) {
         displayMessage(message);
+    }
+
+    public VBox getChatRoomView(){
+        return chatRoomView;
+    }
+    private void closeChat(boolean hide){
+        if(hide){
+            Option option = new Option("Leave RoboRally chat");
+            if(option.getYESNO("Would you like to leave the chat room?")){
+                chatController.disconnectClient();
+            } else {
+                return;
+            }
+        }
+        else{
+            chatController.addChatClient(ClientInfo.getUsername());
+        }
+        if(hide){
+            chatBox.setDisable(true);
+            messageField.setDisable(true);
+            sendButton.setDisable(true);
+            chatBox.setOpacity(0);
+            messageField.setOpacity(0);
+            sendButton.setOpacity(0);
+            exitButton.setText("Rejoin chat");
+        }
+        else{
+            chatBox.setDisable(false);
+            messageField.setDisable(false);
+            sendButton.setDisable(false);
+            chatBox.setOpacity(1);
+            messageField.setOpacity(1);
+            sendButton.setOpacity(1);
+            exitButton.setText("Leave chat");
+        }
+
+        currentChatActive = !hide;
     }
 }

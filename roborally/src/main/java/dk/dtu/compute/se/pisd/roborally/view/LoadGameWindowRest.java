@@ -20,6 +20,7 @@ public class LoadGameWindowRest {
      */
     public void addFiles(ComboBox<String> box){
         String[] listOfNames = MyClient.getSaveNames();
+        if(listOfNames == null) return;
         for (int i = 0; i < listOfNames.length; i++) {
             box.getItems().add(listOfNames[i]);
         }

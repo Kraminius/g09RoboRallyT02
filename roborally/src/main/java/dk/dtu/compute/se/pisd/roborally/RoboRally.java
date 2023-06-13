@@ -22,6 +22,7 @@
 package dk.dtu.compute.se.pisd.roborally;
 
 import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuLoader;
+import dk.dtu.compute.se.pisd.roborally.chat.ChatController;
 import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
@@ -102,16 +103,17 @@ public class RoboRally extends Application {
 
     public void createChatWindow(String name){
         if(name != null) playerName = name;
+        if(chatView != null) return;
         chatView = new VBox();
         chatView.setMinWidth(200);
         //Activate a ChatClient and add their view to this chatView
 
+        ChatController chatController = new ChatController();
+        chatController.addChatClient(playerName);
+        chatView = chatController.getChatView().getChatRoomView();
 
         //Remove the following two lines of code, these are just to show where the chat will be located.
         //Once the real chatView is added to the chatView VBox then these are no longer needed.
-        Label label = new Label("This will be the chat for:\n" + playerName);
-        chatView.getChildren().add(label);
-
     }
 
     public void startGame(GameSettings gameSettings, Stage primaryStage) throws Exception {
