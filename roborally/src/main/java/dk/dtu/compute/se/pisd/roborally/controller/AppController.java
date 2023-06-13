@@ -413,6 +413,8 @@ public class AppController implements Observer {
             }
 
             if(serverLoad.getPhase() == Phase.UPGRADE){
+
+                System.out.println("The game is starting from Upgrade Phase");
                 int playerNumber = GameClient.getPlayerNumber();
                 List<Player> liste = gameController.antennaHandler.findPlayerSequence(gameController.board.getAntenna(), board);
 
@@ -422,9 +424,12 @@ public class AppController implements Observer {
                     GameClient.startWaitingForOpenShop();
                 }
             } else if (serverLoad.getPhase() == Phase.ACTIVATION) {
+                System.out.println("The game is starting from Activation Phase");
                 GameClient.startWaitingForExecution();
 
             } else if (serverLoad.getPhase() == Phase.PROGRAMMING) {
+                System.out.println("The game is starting from Programming Phase");
+                GameClient.resetReadyList();
                 GameClient.startWaitingForAllPlayersToPickCards();
             }
 
