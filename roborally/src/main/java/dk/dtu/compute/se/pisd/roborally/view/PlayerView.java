@@ -22,6 +22,7 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.GameClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
@@ -368,16 +369,39 @@ public class PlayerView extends Tab implements ViewObserver {
                     /*Access the interactive command card and creates buttons from the options the command has */
                     CommandCard card = player.getProgramField(gameController.board.getStep()).getCard();
                     List<Command> options = card.command.getOptions();
-                    for (int i = 0; i < options.size(); i++){
-                        final Command option = options.get(i);
-                        Button optionButton = new Button(options.get(i).displayName);
-                        optionButton.setOnAction( e -> gameController.executeCommandOptionAndContinue(option));
-                        optionButton.setDisable(false);
-                        playerInteractionPanel.getChildren().add(optionButton);
+                    if(GameClient.getPlayerNumber() == player.getId()-1){
+                        for (int i = 0; i < options.size(); i++){
+                            final Command option = options.get(i);
+                            Button optionButton = new Button(options.get(i).displayName);
+                            optionButton.setOnAction( e -> interactiveButtonFunctionality(option, player.getId()));
+                            optionButton.setDisable(false);
+                            playerInteractionPanel.getChildren().add(optionButton);
+                        }
                     }
+                    else {
+                        System.out.println("we will wait for you bby");
+                        GameClient.startWaitingForInteractive();
+                    }
+
                 }
             }
         }
+    }
+
+    public void interactiveButtonFunctionality(Command option, int playerNumber){
+
+        gameController.executeCommandOptionAndContinue(option);
+
+        Heading heading = gameController.board.getPlayer(playerNumber-1).getHeading();
+
+        System.out.println("Our new heading: " + heading);
+
+        try {
+            GameClient.setPlayerHeadingInteractive(heading, playerNumber-1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
     public void showOrHideWaiting(boolean show){
         if(show) waitingForPlayersPanel.setOpacity(1);

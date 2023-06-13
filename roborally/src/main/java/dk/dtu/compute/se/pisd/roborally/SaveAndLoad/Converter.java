@@ -47,7 +47,7 @@ public class Converter {
         return null;
     }
     public static Command getCommand(String command){
-        switch (command){
+        switch (command.toUpperCase()){
             //programming cards
             case "AGAIN": return Command.AGAIN;
             case "BACK_UP": return Command.BACK_UP;

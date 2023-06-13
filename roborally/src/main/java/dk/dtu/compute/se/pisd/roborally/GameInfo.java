@@ -3,8 +3,10 @@ package dk.dtu.compute.se.pisd.roborally;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
+import dk.dtu.compute.se.pisd.roborally.model.Command;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
+import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,13 +30,25 @@ public class GameInfo {
 
     private boolean openShop = false;
 
+    private boolean loadedGame;
 
-    public void instaGameInfo(String id, GameSettings gameSettings){
+    private int currLoaded = 0;
+
+    private boolean playerChosen = false;
+    private Heading headingChosen;
+
+
+
+
+    public void instaGameInfo(String id, GameSettings gameSettings, boolean loadedGame){
 
         this.id = id;
         this.gameSettings = gameSettings;
         gameIsRunning = true;
         currentPlayer = 0;
+        this.loadedGame = loadedGame;
+
+        currLoaded = 1;
 
 
     }
@@ -144,5 +158,37 @@ public class GameInfo {
 
     public void setOpenShop(boolean openShop) {
         this.openShop = openShop;
+    }
+
+    public boolean isLoadedGame() {
+        return loadedGame;
+    }
+
+    public void setLoadedGame(boolean loadedGame) {
+        this.loadedGame = loadedGame;
+    }
+
+    public int getCurrLoaded() {
+        return currLoaded;
+    }
+
+    public void setCurrLoaded(int currLoaded) {
+        this.currLoaded = currLoaded;
+    }
+
+    public boolean isPlayerChosen() {
+        return playerChosen;
+    }
+
+    public void setPlayerChosen(boolean playerChosen) {
+        this.playerChosen = playerChosen;
+    }
+
+    public Heading getHeadingChosen() {
+        return headingChosen;
+    }
+
+    public void setHeadingChosen(Heading headingChosen) {
+        this.headingChosen = headingChosen;
     }
 }

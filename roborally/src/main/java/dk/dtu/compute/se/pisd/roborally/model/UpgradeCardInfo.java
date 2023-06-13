@@ -10,36 +10,44 @@ public class UpgradeCardInfo {
      * @return if it is a permanent upgrade card or not.
      */
     public static boolean getPermanent(Command command){
-        switch(command){
-            case DEFRAG_GIZMO_PUPG:
-                return true;
-            case RAMMING_GEAR_PUPG:
-                return true;
-            case SPAM_BLOCKER_TUPG:
-                return false;
-            case SPAM_FOLDER_TUPG:
-                return false;
-            case SANDBOX_UPG:
-                return false;
-            case RECOMPILE_TUPG:
-                return false;
-            case RECHARGE_TUPG:
-                return false;
-            case HACK_TUPG:
-                return false;
-            case ZOOP_TUPG:
-                return false;
-            case SPEED_TUPG:
-                return false;
-            case REPEAT_ROUTINE_TUPG:
-                return false;
-            case BOINK_TUPG:
-                return false;
-            case DOUBLE_BARREL_LASER_PUGB:
-                return true;
+        if(command != null){
+            switch(command) {
+                case DEFRAG_GIZMO_PUPG:
+                    return true;
+                case RAMMING_GEAR_PUPG:
+                    return true;
+                case SPAM_BLOCKER_TUPG:
+                    return false;
+                case SPAM_FOLDER_TUPG:
+                    return false;
+                case SANDBOX_UPG:
+                    return false;
+                case RECOMPILE_TUPG:
+                    return false;
+                case RECHARGE_TUPG:
+                    return false;
+                case HACK_TUPG:
+                    return false;
+                case ZOOP_TUPG:
+                    return false;
+                case SPEED_TUPG:
+                    return false;
+                case REPEAT_ROUTINE_TUPG:
+                    return false;
+                case BOINK_TUPG:
+                    return false;
+                case DOUBLE_BARREL_LASER_PUGB:
+                    return true;
 
-            default: return false;
+                default:
+                    return false;
+            }
         }
+        else {
+            return false;
+        }
+
+
     }
     /**
      * @author Tobias, Mikkel - s224271@dtu.dk, s224279@dtu.dk
