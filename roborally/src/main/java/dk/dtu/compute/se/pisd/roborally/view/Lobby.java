@@ -43,6 +43,7 @@ public class Lobby {
     HBox lobbyHbox;
     ScrollPane lobbySP;
     BorderPane rootLayout;
+    Node currentLeft;
     private LobbyWindow lobbyWindow;
     private VBox joinWaitWindow;
     String answer;
@@ -161,7 +162,8 @@ public class Lobby {
         Stage createGameStage = new Stage();
 
         // Create a new BorderPane layout
-        rootLayout = new BorderPane();
+        if(rootLayout == null) rootLayout = new BorderPane();
+
 
         // Create a new VBox layout
         VBox createGameLayout = new VBox(10);
@@ -216,7 +218,8 @@ public class Lobby {
 
 
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput);
-        rootLayout.setLeft(createGameLayout);
+        rootLayout.setLeft(getLeft(gameLobby.getGameSettings()));
+
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
         createGameStage.setScene(createGameScene);
@@ -243,7 +246,7 @@ public class Lobby {
         Stage createGameStage = new Stage();
 
         // Create a new BorderPane layout
-        rootLayout = new BorderPane();
+        if(rootLayout == null) rootLayout = new BorderPane();
 
         // Create a new VBox layout
         VBox createGameLayout = new VBox(10);
@@ -369,6 +372,7 @@ public class Lobby {
 
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
         rootLayout.setLeft(createGameLayout);
+        currentLeft = createGameLayout;
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
 
@@ -383,7 +387,7 @@ public class Lobby {
         Stage createGameStage = new Stage();
 
         // Create a new BorderPane layout
-        rootLayout = new BorderPane();
+        if(rootLayout == null) rootLayout = new BorderPane();
 
         // Create a new VBox layout
         VBox createGameLayout = new VBox(10);
@@ -515,6 +519,7 @@ public class Lobby {
 
         createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput, submitButton);
         rootLayout.setLeft(createGameLayout);
+        currentLeft = createGameLayout;
         // Create the scene and add it to the stage
         Scene createGameScene = new Scene(rootLayout, 500, 400); // Increased width to accommodate for lobby
 
@@ -740,8 +745,36 @@ public class Lobby {
         /*if(gameLobby.getGameSettings().getPlayerNames().size() == gameLobby.getGameSettings().getNumberOfPlayers()){
            startGame.setVisible(true);
         }*/
-        //rootLayout.setRight(specificLobbyLayout);
+        rootLayout.setRight(specificLobbyLayout);
+        rootLayout.setLeft(getLeft(gameLobby.getGameSettings()));
 
+    }
+    private VBox getLeft(GameSettings gameSettings){
+        VBox createGameLayout = new VBox();
+        // Create the form inputs
+        Label gameNameLabel = new Label("Name of the game:");
+        TextField gameNameInput = new TextField();
+        gameNameInput.setText(gameSettings.getGameName());
+        gameNameInput.setDisable(true);
+
+
+        Label creatorNameLabel = new Label("Creator name:");
+        TextField creatorNameInput = new TextField();
+        creatorNameInput.setText(gameSettings.getCreatorName());
+        creatorNameInput.setDisable(true);
+
+        Label numberOfPlayersLabel = new Label("How Many Players:");
+        TextField numberOfPlayersInput = new TextField();
+        numberOfPlayersInput.setText(gameSettings.getNumberOfPlayers()+ "");
+        numberOfPlayersInput.setDisable(true);
+
+        Label boardToPlayLabel = new Label("What board to play:");
+        TextField boardsToPlayInput = new TextField();
+        boardsToPlayInput.setText(gameSettings.getBoardToPlay());
+        boardsToPlayInput.setDisable(true);
+
+        createGameLayout.getChildren().addAll(gameNameLabel, gameNameInput, creatorNameLabel, creatorNameInput, numberOfPlayersLabel, numberOfPlayersInput, boardToPlayLabel, boardsToPlayInput);
+        return createGameLayout;
     }
 
     public void showStartButton(String lobbyId){
