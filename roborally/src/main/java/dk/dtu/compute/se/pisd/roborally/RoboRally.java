@@ -23,7 +23,7 @@ package dk.dtu.compute.se.pisd.roborally;
 
 import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuLoader;
 import dk.dtu.compute.se.pisd.roborally.chat.ChatController;
-import dk.dtu.compute.se.pisd.roborally.chat.ChatServer;
+import dk.dtu.compute.se.pisd.roborally.chat.Server.ChatServer;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
@@ -72,9 +72,9 @@ public class RoboRally extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         MainMenuLoader mainMenu;
-        do{
+        do {
             mainMenu = new MainMenuLoader();
-        }while(!mainMenu.run()); //Returns true when playing game.
+        } while (!mainMenu.run()); //Returns true when playing game.
         //Everything that will run after the main menu, is what happens when the player has pressed Play Game.
 
 
@@ -84,7 +84,7 @@ public class RoboRally extends Application {
 
         lobby = new Lobby(lobbyManager);
 
-        if(GameClient.isGameRunning()){
+        if (GameClient.isGameRunning()) {
             System.out.println("Vi kommer her");
             GameLobby gameLobby = GameClient.getGame();
             System.out.println(gameLobby.toString());
@@ -97,7 +97,7 @@ public class RoboRally extends Application {
 
         stage = primaryStage;
 
-        AppController appController = new AppController(this);
+    }
 
     public void startGame(GameSettings gameSettings, Stage primaryStage) throws Exception {
         stage = primaryStage;
