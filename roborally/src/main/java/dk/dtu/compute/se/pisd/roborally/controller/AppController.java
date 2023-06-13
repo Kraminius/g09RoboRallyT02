@@ -72,6 +72,7 @@ public class AppController implements Observer {
     }
 
     public void newGame() throws Exception {
+        RoboRally.getLobby().closeCreateGameStage();
         /*
         ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
         dialog.setTitle("Player number");
@@ -199,9 +200,9 @@ public class AppController implements Observer {
     }
 
     public void loadGame() throws Exception {
+        RoboRally.getLobby().closeCreateGameStage();
         // XXX needs to be implemented eventually
         // for now, we just create a new game
-
 
 
         LoadGameWindow load = new LoadGameWindow();

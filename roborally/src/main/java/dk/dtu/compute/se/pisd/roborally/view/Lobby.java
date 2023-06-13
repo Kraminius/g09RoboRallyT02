@@ -5,11 +5,8 @@ import dk.dtu.compute.se.pisd.roborally.MyClient;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.JSONHandler;
 import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
-import dk.dtu.compute.se.pisd.roborally.SaveAndLoad.Load;
-import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -29,12 +26,13 @@ public class Lobby {
     private Map<String, HBox> lobbyHBoxMap = new HashMap<>();
 
     private Map<String, VBox> specificLobbyLabels = new HashMap<>();
+    private Stage createGameStage;
 
-    Stage stage;
+    private Stage stage;
     VBox lobbyLayout;
-    Stage waitStage;
     HBox window;
     VBox lobbyView;
+    Stage waitStage;
     VBox chatView;
     VBox lobbyList;
     VBox lobbyVbox;
@@ -159,7 +157,7 @@ public class Lobby {
     public void openJoinGame(GameLobby gameLobby) throws Exception {
 
         // Create new Stage for this scene
-        Stage createGameStage = new Stage();
+        createGameStage = new Stage();
 
         // Create a new BorderPane layout
         if(rootLayout == null) rootLayout = new BorderPane();
@@ -243,7 +241,7 @@ public class Lobby {
     private void openCreateGameScene() {
 
         // Create new Stage for this scene
-        Stage createGameStage = new Stage();
+        createGameStage = new Stage();
 
         // Create a new BorderPane layout
         if(rootLayout == null) rootLayout = new BorderPane();
@@ -384,7 +382,7 @@ public class Lobby {
     private void openCreateGameSceneFromLoad(String name, String[] playerNames, String mapName) {
 
         // Create new Stage for this scene
-        Stage createGameStage = new Stage();
+        createGameStage = new Stage();
 
         // Create a new BorderPane layout
         if(rootLayout == null) rootLayout = new BorderPane();
@@ -911,8 +909,8 @@ public class Lobby {
      * Method to close the lobby window.
      * @author Mikkel Jürs, s224279@student.dtu.dk
      */
-    private void close(){
-        stage.close();
+    public void closeCreateGameStage(){
+        createGameStage.close();
     }
 
     public Map<String, GameLobby> getGameLobbyMap() {

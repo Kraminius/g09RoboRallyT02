@@ -212,4 +212,7 @@ public class RoboRally extends Application {
         System.out.println("Chat view is null");
         return null;
     }
+    public BoardView getBoardView(){
+        return boardView;
+    }
 }

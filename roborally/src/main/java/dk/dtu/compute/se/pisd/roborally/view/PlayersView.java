@@ -23,6 +23,7 @@ package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.GameClient;
+import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
@@ -70,6 +71,21 @@ public class PlayersView extends TabPane implements ViewObserver {
                 this.getSelectionModel().select(exceptionPlayerID);
                 playerViews[i].addChatWindow();
             }
+        }
+    }
+    public void activateUpgradeButton(boolean isActive){
+        for(int i = 0; i < playerViews.length; i++){
+            playerViews[i].activateUpgrade(isActive);
+        }
+    }
+    public void activateProgrammingButtons(boolean isActive){
+        for(int i = 0; i < playerViews.length; i++){
+            playerViews[i].activateProgramming(isActive);
+        }
+    }
+    public void activateWaitingGif(boolean isActive){
+        for(int i = 0; i < playerViews.length; i++){
+            playerViews[i].showOrHideWaiting(isActive);
         }
     }
 }

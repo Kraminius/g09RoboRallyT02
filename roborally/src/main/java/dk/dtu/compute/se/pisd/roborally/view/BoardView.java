@@ -130,6 +130,9 @@ public class BoardView extends VBox implements ViewObserver {
     public void disablePlayerViews(){
         playersView.disablePlayerViews();
     }
+    public PlayersView getPlayersView(){
+        return playersView;
+    }
 
 
 }

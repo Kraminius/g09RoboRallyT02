@@ -157,7 +157,7 @@ public class GameClient {
                 startWaitingForOpenShop();
             }
             else {
-                System.out.println("its my turn");
+                RoboRally.getInstance().getBoardView().getPlayersView().activateUpgradeButton(true);
             }
 
             waitingForAllPlayersToExecute.cancel(false);
@@ -206,7 +206,7 @@ public class GameClient {
             RoboRally.getAppController().getGameController().finishProgrammingPhase2();
             waitingForAllPlayersToPickCards.cancel(false);
         } else {
-            System.out.println("we are waiting for all player to pick cards");
+            RoboRally.getInstance().getBoardView().getPlayersView().activateWaitingGif(true);
         }
 
 
@@ -278,7 +278,7 @@ public class GameClient {
 
 
         } else {
-            System.out.println("waiting for players before to buy");
+            RoboRally.getInstance().getBoardView().getPlayersView().activateUpgradeButton(false);
         }
 
     }
