@@ -1063,8 +1063,8 @@ public class GameController {
                         } else
                             movePlayerForward(player, 1, heading, true); //Won't move players as they are also on a belt and just haven't moved yet.
 
-                        if (spaceInFront.getElement().getBelt().getTurn().equals("LEFT")) turnLeft(player);
-                        else if (spaceInFront.getElement().getBelt().getTurn().equals("RIGHT")) turnRight(player);
+                        if (player.getSpace().getElement().getBelt().getTurn().equals("LEFT")) turnLeft(player);
+                        else if (player.getSpace().getElement().getBelt().getTurn().equals("RIGHT")) turnRight(player);
 
                     }
                 }
