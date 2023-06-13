@@ -176,7 +176,6 @@ public class JSONtoBuild {
                                     element.setWall(3);
                                     element.setWallRotation(getRotation(infoOnSpot.get(0)[2]));
                                 }
-                                else System.out.println("2 wall not recognised in loading");
                             }
                             else if(infoOnSpot.size() == 3){
                                 element.setWall(4);

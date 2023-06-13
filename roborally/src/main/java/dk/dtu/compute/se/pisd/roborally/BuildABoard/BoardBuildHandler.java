@@ -9,7 +9,7 @@ import static java.lang.Integer.parseInt;
 public class BoardBuildHandler {
 
     private BoardBuild boardBuild;
-    private BuildABoardViewController view;
+    private BuildABoardView view;
 
     /**
      * @Author Tobias Gørlyk s224271
@@ -17,7 +17,7 @@ public class BoardBuildHandler {
      */
     public void createNewBoard(){
         boardBuild = new BoardBuild();
-        view = new BuildABoardViewController(this);
+        view = new BuildABoardView(this);
         updateBoard();
         view.show();
     }
@@ -31,7 +31,7 @@ public class BoardBuildHandler {
         boardBuild = new BoardBuild();
         boardBuild.getCurrentBuild();
         boardBuild.loadBoard(name);
-        view = new BuildABoardViewController(this);
+        view = new BuildABoardView(this);
         updateBoard();
         view.setBoardName(name);
         view.setSizeText(boardBuild.getWidth(), boardBuild.getHeight());
@@ -104,7 +104,6 @@ public class BoardBuildHandler {
      * @param value the type variant
      */
     public void elementVariantClicked(int type, int value, int x, int y){
-        System.out.println(type + "    " + value + " [" + x + ", " + y + "]");
         ArrayList<ArrayList<BoardBuildElement>> build = boardBuild.getCurrentBuild();
         BoardBuildElement element = build.get(x).get(y);
         BoardBuildLogic.changeElementVariant(element, type, value);
