@@ -26,7 +26,7 @@ public class ChatController {
      * @param username the username of the client to be added
      */
     public void addChatClient(String username){
-        chatView = new ChatView(this);
+        if(chatView == null) chatView = new ChatView(this);
         this.client = new ChatClient(username, chatView);
     }
 

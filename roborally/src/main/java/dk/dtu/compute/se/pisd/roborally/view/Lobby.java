@@ -75,7 +75,8 @@ public class Lobby {
         lobbySP.setHmax(Double.MAX_VALUE);
         lobbySP.setHmin(Double.MAX_VALUE);
         chatView = new VBox();
-        chatView.setMinWidth(200);
+        chatView.setMinSize(200, 550);
+        chatView.setMaxSize(200, 550);
         chatView.setStyle("-fx-background-color: #dadada");
         window = new HBox();
         window.getChildren().addAll(lobbyView, chatView);
@@ -676,9 +677,13 @@ public class Lobby {
     }
 
     public void addChatWindow(){
+        VBox filler;
+        filler = new VBox();
+        filler.setStyle("-fx-background-color: #dadada");
+        filler.setMinHeight(66);
         VBox chatWindow = RoboRally.getInstance().getChatView();
         if(!chatView.getChildren().contains(chatWindow)){
-            this.chatView.getChildren().add(chatWindow);
+            this.chatView.getChildren().addAll(filler,chatWindow);
         }
     }
     public void removeChatView(){
@@ -690,16 +695,6 @@ public class Lobby {
             RoboRally.getInstance().createChatWindow(name);
             chatView.getChildren().clear();
             addChatWindow();
-        }
-    }
-    private void hideChat(boolean hide){
-        if(hide) {
-            chatView.getChildren().get(0).setOpacity(0);
-            chatView.getChildren().get(0).setDisable(true);
-        }
-        else{
-            chatView.getChildren().get(0).setOpacity(1);
-            chatView.getChildren().get(0).setDisable(false);
         }
     }
 }
