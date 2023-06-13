@@ -22,26 +22,21 @@
 package dk.dtu.compute.se.pisd.roborally;
 
 import dk.dtu.compute.se.pisd.roborally.MainMenu.MainMenuLoader;
-import dk.dtu.compute.se.pisd.roborally.chat.ChatController;
-import dk.dtu.compute.se.pisd.roborally.chat.Server.ChatServer;
+import dk.dtu.compute.se.pisd.roborally.chat.ClientInfo;
 import dk.dtu.compute.se.pisd.roborally.controller.AppController;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
-import dk.dtu.compute.se.pisd.roborally.controller.LobbyController;
-import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.GameLobby;
 import dk.dtu.compute.se.pisd.roborally.model.GameSettings;
 import dk.dtu.compute.se.pisd.roborally.model.LobbyManager;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
 import dk.dtu.compute.se.pisd.roborally.view.Lobby;
-import dk.dtu.compute.se.pisd.roborally.view.Option;
 import dk.dtu.compute.se.pisd.roborally.view.RoboRallyMenuBar;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 /**
  * ...
@@ -56,6 +51,9 @@ public class RoboRally extends Application {
 
     private Stage stage;
     private BorderPane boardRoot;
+    private VBox chatView;
+    private BoardView boardView;
+    String playerName;
 
     private static Lobby lobby;
     // private RoboRallyMenuBar menuBar;
@@ -91,11 +89,27 @@ public class RoboRally extends Application {
             lobbyManager.createGame(gameLobby);
             lobby.addLobbyToLobby(gameLobby);
             lobby.getGameLobbyMap().put(gameLobby.getLobbyId(), gameLobby);
+
         }
+
 
         lobby.show();
 
         stage = primaryStage;
+
+    }
+
+    public void createChatWindow(String name){
+        if(name != null) playerName = name;
+        chatView = new VBox();
+        chatView.setMinWidth(200);
+        //Activate a ChatClient and add their view to this chatView
+
+
+        //Remove the following two lines of code, these are just to show where the chat will be located.
+        //Once the real chatView is added to the chatView VBox then these are no longer needed.
+        Label label = new Label("This will be the chat for:\n" + playerName);
+        chatView.getChildren().add(label);
 
     }
 
@@ -122,7 +136,6 @@ public class RoboRally extends Application {
         stage.setX(700);
         stage.setY(100);
         stage.show();
-        System.out.println("Test ny");
         appController.newGame();
     }
 
@@ -132,7 +145,7 @@ public class RoboRally extends Application {
 
         if (gameController != null) {
             // create and add view for new board
-            BoardView boardView = new BoardView(gameController);
+            boardView = new BoardView(gameController);
             boardRoot.setCenter(boardView);
             boardView.disablePlayerViews();
         }
@@ -164,4 +177,9 @@ public class RoboRally extends Application {
 
     public static AppController getAppController(){return appController;}
 
+    public VBox getChatView(){
+        if(chatView != null) return chatView;
+        System.out.println("Chat view is null");
+        return null;
+    }
 }

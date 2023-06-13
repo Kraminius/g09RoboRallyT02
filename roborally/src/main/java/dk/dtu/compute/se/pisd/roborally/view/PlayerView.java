@@ -22,14 +22,14 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -63,6 +63,7 @@ public class PlayerView extends Tab implements ViewObserver {
 
     private HBox buttonPanel;
     private VBox bottomBar;
+    private HBox chatWindow;
 
     private Button finishButton;
     private Button executeButton;
@@ -236,6 +237,9 @@ public class PlayerView extends Tab implements ViewObserver {
         sideBySide.getChildren().add(top);
         sideBySide.getChildren().add(bottomBar);
         stackPane.getChildren().add(sideBySide);
+        chatWindow = new HBox();
+        chatWindow.setPadding(new Insets(10, 10, 10, 10));
+        sideBySide.getChildren().add(chatWindow);
 
         player.updateCubeLabel();
 
@@ -378,6 +382,18 @@ public class PlayerView extends Tab implements ViewObserver {
     public void showOrHideWaiting(boolean show){
         if(show) waitingForPlayersPanel.setOpacity(1);
         else waitingForPlayersPanel.setOpacity(0);
+    }
+    public void addChatWindow(){
+        VBox chatWindow = RoboRally.getInstance().getChatView();
+        if(!this.chatWindow.getChildren().contains(chatWindow)){
+            this.chatWindow.getChildren().add(chatWindow);
+        }
+    }
+    public void removeChatView(){
+        VBox chatWindow = RoboRally.getInstance().getChatView();
+        if(this.chatWindow.getChildren().contains(chatWindow)){
+            this.chatWindow.getChildren().remove(chatWindow);
+        }
     }
 
 }
